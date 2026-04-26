@@ -18,6 +18,7 @@ const ITEMS = {
   shoes:   { emoji: '👟', name: 'The Run',          desc: 'An hour without the phone.' },
 };
 const WORLD_LABELS = ['', 'Echo Chamber', 'Dopamine Arcade', 'Validation City', "Nomad's Trail", 'The Beach'];
+const CURIOSITY_WORDS = ['read', 'podcast', 'book', 'journal', 'write', 'learn', 'meditat', 'article', 'long-form'];
 const WORLD_STARTS = { 0: 'intro', 1: 'w1_enter', 2: 'w2_enter', 3: 'w3_enter', 4: 'w4_enter', 5: 'win' };
 const BG_COLORS = {
   intro:  'radial-gradient(ellipse at 50% 65%, #1a0f2e 0%, #06030f 70%)',
@@ -25,6 +26,14 @@ const BG_COLORS = {
   arcade: 'linear-gradient(180deg, #0d0015 0%, #130020 55%, #0a001a 100%)',
   city:   'linear-gradient(180deg, #030308 0%, #06060f 50%, #0a0a18 100%)',
   trail:  'linear-gradient(180deg, #020803 0%, #0a1804 50%, #162008 100%)',
+  beach:  'linear-gradient(180deg, #2a5fa8 0%, #e07b39 22%, #f5c06a 48%, #fffbe8 72%, #eaf6fd 100%)',
+};
+const BG_COLORS_LIGHT = {
+  intro:  'radial-gradient(ellipse at 50% 65%, #dcd4f0 0%, #f4f0ff 70%)',
+  swamp:  'linear-gradient(180deg, #d4edcc 0%, #e8f6e4 45%, #cce8c8 100%)',
+  arcade: 'linear-gradient(180deg, #f2d8ff 0%, #fde8ff 55%, #f4d4ff 100%)',
+  city:   'linear-gradient(180deg, #eaeff6 0%, #f4f8fc 50%, #eaeef6 100%)',
+  trail:  'linear-gradient(180deg, #d8edcc 0%, #e8f8d4 50%, #d0e8c4 100%)',
   beach:  'linear-gradient(180deg, #2a5fa8 0%, #e07b39 22%, #f5c06a 48%, #fffbe8 72%, #eaf6fd 100%)',
 };
 
@@ -37,23 +46,29 @@ function applyEffects(meters, effects) {
 }
 
 // ── BACKGROUND ────────────────────────────────────────────────────────────────
-function Background({ bg, ghostMode }) {
+function Background({ bg, ghostMode, theme }) {
+  const colors = theme === 'light' ? BG_COLORS_LIGHT : BG_COLORS;
   return (
     <div
       className={`scene-bg scene-bg--${bg}${ghostMode ? ' ghost-mode' : ''}`}
-      style={{ background: BG_COLORS[bg] || BG_COLORS.intro }}
+      style={{ background: colors[bg] || colors.intro }}
     />
   );
 }
 
 // ── HUD ───────────────────────────────────────────────────────────────────────
-function HUD({ meters, world, ghostMode, inventory, muted, onToggleMute }) {
+function HUD({ meters, world, ghostMode, inventory, muted, onToggleMute, curiosityXP, onOpenSettings, theme, onToggleTheme }) {
   return (
     <div className="hud">
       <div className="hud-top">
         <span className="hud-world-label">{world > 0 ? WORLD_LABELS[world] : 'The Wanderer\'s Journey'}</span>
         <div className="hud-top-right">
           {ghostMode && <span className="ghost-warning">👻 Elsewhere…</span>}
+          {curiosityXP > 0 && <span className="hud-xp">⚡ {curiosityXP} XP</span>}
+          <button className="hud-mute" onClick={onToggleTheme} title={theme === 'dark' ? 'Light mode' : 'Dark mode'}>
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+          <button className="hud-mute" onClick={onOpenSettings} title="Settings">⚙️</button>
           <button className="hud-mute" onClick={onToggleMute} title={muted ? 'Unmute' : 'Mute'}>
             {muted ? '🔇' : '🔊'}
           </button>
@@ -72,6 +87,11 @@ function HUD({ meters, world, ghostMode, inventory, muted, onToggleMute }) {
           </div>
         ))}
       </div>
+      {world > 0 && (
+        <div className="hud-progress-wrap">
+          <div className="hud-progress-fill" style={{ width: `${Math.min(100, ((world - 1) / 4) * 100)}%` }} />
+        </div>
+      )}
       {inventory.size > 0 && (
         <div className="hud-inventory">
           {[...inventory].map(key => (
@@ -444,6 +464,132 @@ function shareOnPlatform(platform, overall) {
   return false;
 }
 
+// ── HOME SCREEN ───────────────────────────────────────────────────────────────
+function HomePage({ onStart, hasSave, theme, onToggleTheme }) {
+  const [vis, setVis] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setVis(true), 60); return () => clearTimeout(t); }, []);
+
+  const WORLDS = [
+    { num: '01', name: 'Echo Chamber',    desc: 'Infinite feeds that close the world in' },
+    { num: '02', name: 'Dopamine Arcade', desc: 'Every scroll is engineered to reward' },
+    { num: '03', name: 'Validation City', desc: 'Built on likes, followers, and comparison' },
+    { num: '04', name: "Nomad's Trail",   desc: 'The long walk back to yourself' },
+  ];
+  const METER_HINTS = {
+    focus:       'Your capacity for deep, sustained thought',
+    dopamine:    "The brain's reward signal — keep it balanced",
+    oneness:     'Your real-world connections and presence',
+    tranquility: 'Inner stillness beyond the noise',
+  };
+
+  return (
+    <div className={`home-screen${vis ? ' home-screen--vis' : ''}`}>
+      <button className="home-theme-btn" onClick={onToggleTheme} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
+      <div className="home-glow" />
+      <div className="home-inner">
+
+        <header className="home-header">
+          <div className="home-eyebrow">A Digital Wellbeing Experience</div>
+          <h1 className="home-title">The Wanderer's<br />Digital Escape</h1>
+          <p className="home-tagline">"What lies beyond the horizon of your mundane life?"</p>
+        </header>
+
+        <section className="home-about">
+          <p className="home-about-text">
+            You are a wanderer lost in the attention economy. Navigate four worlds — each one a mirror of how social media reshapes the mind. Every choice shifts four meters that measure the health of your inner life.
+          </p>
+        </section>
+
+        <div className="home-columns">
+          <section className="home-section">
+            <div className="home-section-label">Four Meters to Balance</div>
+            <div className="home-meter-list">
+              {Object.entries(METER_CONFIG).map(([key, cfg]) => (
+                <div key={key} className="home-meter-row">
+                  <div className="home-meter-pip" style={{ background: cfg.color, boxShadow: `0 0 7px ${cfg.color}` }} />
+                  <div>
+                    <div className="home-meter-name" style={{ color: cfg.color }}>{cfg.label}</div>
+                    <div className="home-meter-hint">{METER_HINTS[key]}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="home-section">
+            <div className="home-section-label">Four Worlds to Traverse</div>
+            <div className="home-world-list">
+              {WORLDS.map(w => (
+                <div key={w.num} className="home-world-row">
+                  <span className="home-world-num">{w.num}</span>
+                  <div className="home-world-info">
+                    <span className="home-world-name">{w.name}</span>
+                    <span className="home-world-desc">{w.desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <div className="home-ctas">
+          <button className="home-btn-primary" onClick={() => onStart(false)}>Begin Journey →</button>
+          {hasSave && (
+            <button className="home-btn-secondary" onClick={() => onStart(true)}>↩ Continue Journey</button>
+          )}
+        </div>
+
+        <div className="home-hints">
+          Press <kbd className="home-kbd">1</kbd>–<kbd className="home-kbd">9</kbd> for choice shortcuts · Ambient soundscapes · ~15 min
+        </div>
+
+        <section className="home-creator">
+          <div className="home-creator-divider" />
+          <div className="home-section-label" style={{ textAlign: 'center', marginBottom: 20 }}>About the Creator</div>
+          <div className="home-creator-card">
+            <div className="home-creator-avatar">ST</div>
+            <div className="home-creator-meta">
+              <div className="home-creator-name">Sanket Tambare</div>
+              <div className="home-creator-role">Software Developer · Full-Stack</div>
+            </div>
+          </div>
+          <div className="home-creator-bio">
+            <p>
+              I am a software developer specialised in full-stack development. Since college days I find myself inclined towards technology, society, psychology, blogging, designing, video editing, and digital well-being — in short, towards a variety of issues, technologies, topics, and interests.
+            </p>
+            <p>
+              This has culminated in all-round curiosity across podcasts, development, writing, reading, and much more. All this exploration has helped me decide what I am good at, what I am not, what I like, what I don't — and most importantly what I wish to do in my career and what I don't want to do.
+            </p>
+            <p>
+              And here's what I wish to do: critically engage with new developments across technology, better myself every day, learn something about what's happening around me, understand it, and enjoy this meaningful, purposeful journey.
+            </p>
+          </div>
+          <div className="home-creator-links">
+            <a className="home-creator-link" href="https://linktr.ee/daredavil" target="_blank" rel="noopener noreferrer">
+              <span className="home-creator-link-icon">🌿</span> Linktree
+            </a>
+            <a className="home-creator-link" href="https://www.linkedin.com/in/sankettambare/" target="_blank" rel="noopener noreferrer">
+              <span className="home-creator-link-icon">in</span> LinkedIn
+            </a>
+            <a className="home-creator-link" href="https://sankettambare.substack.com/" target="_blank" rel="noopener noreferrer">
+              <span className="home-creator-link-icon">✦</span> Substack
+            </a>
+            <a className="home-creator-cta" href="mailto:sanket.tambare01@gmail.com">
+              Get in touch →
+            </a>
+          </div>
+        </section>
+
+        <div className="home-footer-bar">
+          Built with care · The Wanderer's Digital Escape © 2025
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── WIN SCREEN ────────────────────────────────────────────────────────────────
 function WinScreen({ meters, inventory }) {
   const [vis, setVis] = useState(false);
@@ -546,7 +692,12 @@ function WinScreen({ meters, inventory }) {
         <button className="choice-btn" onClick={() => downloadScoreCard(meters, dims, overall, inventory)}>
           📥  Download Score Card
         </button>
-        <button className="choice-btn" onClick={() => { localStorage.clear(); window.location.reload(); }}>
+        <button className="choice-btn" onClick={() => {
+          const t = localStorage.getItem('wde_theme');
+          localStorage.clear();
+          if (t) localStorage.setItem('wde_theme', t);
+          window.location.reload();
+        }}>
           Begin Again
         </button>
       </div>
@@ -560,6 +711,7 @@ function SceneView({ scene, onChoice, onAward }) {
   const [modal, setModal] = useState(null);   // null | 'timer60' | 'deleteInstagram' | 'frogZoomOut'
   const [pendingChoice, setPendingChoice] = useState(null);
   const [speaking, setSpeaking] = useState(false);
+  const [displayedText, setDisplayedText] = useState('');
 
   const getReadText = (sc) => {
     let t = (sc.narrative || '').replace(/\n\n/g, '. ').replace(/\n/g, ' ');
@@ -587,9 +739,16 @@ function SceneView({ scene, onChoice, onAward }) {
 
   useEffect(() => {
     setVis(false); setModal(null); setPendingChoice(null); stopSpeech();
+    setDisplayedText('');
     const fade = setTimeout(() => setVis(true), 60);
     const read = setTimeout(() => startSpeech(getReadText(scene)), 700);
-    return () => { clearTimeout(fade); clearTimeout(read); stopSpeech(); };
+    let i = 0;
+    const fullText = scene.narrative || '';
+    const tw = setInterval(() => {
+      setDisplayedText(fullText.slice(0, ++i));
+      if (i >= fullText.length) clearInterval(tw);
+    }, 18);
+    return () => { clearTimeout(fade); clearTimeout(read); stopSpeech(); clearInterval(tw); };
   }, [scene.id]);
 
   const handleClick = useCallback((choice) => {
@@ -603,6 +762,17 @@ function SceneView({ scene, onChoice, onAward }) {
       onChoice(choice);
     }
   }, [scene.special, onChoice]);
+
+  useEffect(() => {
+    const handler = (e) => {
+      const idx = parseInt(e.key) - 1;
+      if (!isNaN(idx) && idx >= 0 && modal === null && scene.choices?.[idx]) {
+        handleClick(scene.choices[idx]);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [scene, modal, handleClick]);
 
   // Modal overlays
   if (modal === 'timer60') return (
@@ -636,7 +806,7 @@ function SceneView({ scene, onChoice, onAward }) {
     </div>
   );
 
-  const paras = (scene.narrative || '').split('\n\n');
+  const paras = (displayedText || '').split('\n\n');
 
   return (
     <div className={`scene-content${vis ? ' scene-content--visible' : ''}`}>
@@ -663,7 +833,7 @@ function SceneView({ scene, onChoice, onAward }) {
       <div className="choices">
         {(scene.choices || []).map((choice, i) => (
           <button key={i} className="choice-btn" onClick={() => handleClick(choice)}>
-            {choice.text}
+            <span className="choice-kbd">[{i + 1}]</span> {choice.text}
           </button>
         ))}
       </div>
@@ -692,9 +862,20 @@ function App() {
   const [fading, setFading] = useState(false);
   const [floats, setFloats] = useState([]);
   const [itemToast, setItemToast] = useState(null);
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_key') || '');
+  const [showApiModal, setShowApiModal] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [curiosityXP, setCuriosityXP] = useState(0);
+  const [gameState, setGameState] = useState('home');
+  const [theme, setTheme] = useState(() => localStorage.getItem('wde_theme') || 'dark');
 
   const scene = window.SCENES[sceneId];
   const ghostMode = meters.dopamine > 75;
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('wde_theme', theme);
+  }, [theme]);
 
   // Check world intro on scene change
   useEffect(() => {
@@ -736,6 +917,9 @@ function App() {
     const newMeters = applyEffects(meters, choice.effects);
     triggerFloats(choice.effects);
     if (choice.awards) awardItem(choice.awards);
+    if (choice.text && CURIOSITY_WORDS.some(w => choice.text.toLowerCase().includes(w))) {
+      setCuriosityXP(prev => prev + 10);
+    }
     setHistory(prev => [...prev, sceneId]);
     setFading(true);
     setTimeout(() => {
@@ -789,7 +973,17 @@ function App() {
     setTimeout(() => { setSceneId(target); setFading(false); }, 400);
   }, [scene, sceneId]);
 
-  const handleReset = useCallback(() => { localStorage.clear(); window.location.reload(); }, []);
+  const handleReset = useCallback(() => {
+    if (!confirmReset) {
+      setConfirmReset(true);
+      setTimeout(() => setConfirmReset(false), 3000);
+      return;
+    }
+    const savedTheme = localStorage.getItem('wde_theme');
+    localStorage.clear();
+    if (savedTheme) localStorage.setItem('wde_theme', savedTheme);
+    window.location.reload();
+  }, [confirmReset]);
 
   const handleFinish = useCallback(() => {
     handleChoice({ next: 'win', effects: {} });
@@ -803,6 +997,38 @@ function App() {
     if (window.AudioEngine) { const m = window.AudioEngine.toggle(); setMuted(m); }
   }, [scene]);
 
+  const handleToggleTheme = useCallback(() => setTheme(t => t === 'dark' ? 'light' : 'dark'), []);
+
+  const handleStartGame = useCallback((continueGame) => {
+    if (!continueGame) {
+      const savedTheme = localStorage.getItem('wde_theme');
+      localStorage.clear();
+      if (savedTheme) localStorage.setItem('wde_theme', savedTheme);
+      setMeters(INITIAL_METERS);
+      setSceneId('intro');
+      setSeenWorlds(new Set());
+      setInventory(new Set());
+      setHistory([]);
+      setCuriosityXP(0);
+      setConfirmReset(false);
+    }
+    setGameState('playing');
+    if (window.AudioEngine) {
+      window.AudioEngine.init();
+      const savedId = localStorage.getItem('wde_scene');
+      const bg = (continueGame && savedId && window.SCENES[savedId])
+        ? (window.SCENES[savedId].background || 'intro')
+        : 'intro';
+      window.AudioEngine.play(bg);
+    }
+  }, []);
+
+  const hasSave = !!(localStorage.getItem('wde_scene') && localStorage.getItem('wde_scene') !== 'intro');
+
+  if (gameState === 'home') {
+    return <HomePage onStart={handleStartGame} hasSave={hasSave} theme={theme} onToggleTheme={handleToggleTheme} />;
+  }
+
   if (!scene) return <div style={{ color: '#fff', padding: 24, fontFamily: 'monospace' }}>Loading…</div>;
 
   const Il = window.Illustration;
@@ -811,7 +1037,7 @@ function App() {
   if (scene.special === 'winScreen') {
     return (
       <div className="app">
-        <Background bg="beach" />
+        <Background bg="beach" theme={theme} />
         <main className="main-content">
           <div className="illustration-area">{Il && <Il bg="beach" />}</div>
           <div className="scene-area" style={{ justifyContent: 'flex-start', overflowY: 'auto' }}>
@@ -821,7 +1047,9 @@ function App() {
         <div className="nav-bar">
           <button className="nav-btn nav-btn--world" onClick={handlePrevWorld} title="Previous world">⏮ World</button>
           <button className="nav-btn" onClick={handlePrev} disabled={history.length === 0}>← Scene</button>
-          <button className="nav-btn nav-btn--danger" onClick={handleReset}>Reset</button>
+          <button className={`nav-btn nav-btn--danger${confirmReset ? ' nav-btn--confirm' : ''}`} onClick={handleReset}>
+            {confirmReset ? 'Sure?' : 'Reset'}
+          </button>
         </div>
       </div>
     );
@@ -829,7 +1057,7 @@ function App() {
 
   return (
     <div className={`app${fading ? ' app--fade' : ''}${ghostMode ? ' ghost-active' : ''}`}>
-      <Background bg={bg} ghostMode={ghostMode} />
+      <Background bg={bg} ghostMode={ghostMode} theme={theme} />
 
       <div className="floating-container">
         {floats.map(f => (
@@ -848,7 +1076,27 @@ function App() {
       )}
 
       <HUD meters={meters} world={scene.world} ghostMode={ghostMode}
-           inventory={inventory} muted={muted} onToggleMute={handleToggleMute} />
+           inventory={inventory} muted={muted} onToggleMute={handleToggleMute}
+           curiosityXP={curiosityXP} onOpenSettings={() => setShowApiModal(true)}
+           theme={theme} onToggleTheme={handleToggleTheme} />
+
+      {showApiModal && (
+        <div className="api-modal-overlay" onClick={() => setShowApiModal(false)}>
+          <div className="api-modal" onClick={e => e.stopPropagation()}>
+            <div className="api-modal-title">Settings</div>
+            <label className="api-modal-label">Gemini API Key</label>
+            <input
+              className="api-modal-input"
+              type="password"
+              placeholder="Enter your Gemini API key…"
+              value={apiKey}
+              onChange={e => { setApiKey(e.target.value); localStorage.setItem('gemini_key', e.target.value); }}
+            />
+            {!apiKey && <div className="api-modal-banner">Add an API key to enable AI-generated images and enhanced TTS.</div>}
+            <button className="choice-btn choice-btn--primary" onClick={() => setShowApiModal(false)}>Save & Close</button>
+          </div>
+        </div>
+      )}
 
       <main className="main-content">
         <div className="illustration-area">{Il && <Il bg={bg} />}</div>
@@ -867,7 +1115,9 @@ function App() {
         <button className="nav-btn" onClick={handleSkip} title="Skip scene">Skip</button>
         <button className="nav-btn" onClick={handleNext} title="Next scene">Scene →</button>
         <button className="nav-btn nav-btn--world" onClick={handleNextWorld} disabled={(scene?.world ?? 0) >= 5} title="Next world">World ⏭</button>
-        <button className="nav-btn nav-btn--danger" onClick={handleReset} title="Reset">Reset</button>
+        <button className={`nav-btn nav-btn--danger${confirmReset ? ' nav-btn--confirm' : ''}`} onClick={handleReset} title="Reset">
+          {confirmReset ? 'Sure?' : 'Reset'}
+        </button>
         <button className="nav-btn nav-btn--accent" onClick={handleFinish} title="Finish">Finish</button>
       </div>
     </div>
