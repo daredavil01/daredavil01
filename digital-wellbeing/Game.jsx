@@ -630,7 +630,7 @@ function InfoPage({ onBack }) {
 
         <div className="info-footer">
           <button className="info-back-btn" onClick={onBack}>← Back to Home</button>
-          <div className="info-footer-note">The Wanderer's Digital Escape © 2025</div>
+          <div className="info-footer-note">The Wanderer's Digital Escape © 2026</div>
         </div>
 
       </div>
@@ -758,7 +758,7 @@ function HomePage({ onStart, hasSave, onInfo, theme, onToggleTheme }) {
         </section>
 
         <div className="home-footer-bar">
-          Built with care · The Wanderer's Digital Escape © 2025
+          Built with care · The Wanderer's Digital Escape © 2026
         </div>
       </div>
     </div>
@@ -1041,11 +1041,22 @@ function App() {
   const [showApiModal, setShowApiModal] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [curiosityXP, setCuriosityXP] = useState(0);
-  const [gameState, setGameState] = useState('home');
+  const [gameState, setGameState] = useState(() =>
+    window.location.hash === '#how-it-works' ? 'info' : 'home'
+  );
   const [theme, setTheme] = useState(() => localStorage.getItem('wde_theme') || 'dark');
 
   const scene = window.SCENES[sceneId];
   const ghostMode = meters.dopamine > 75;
+
+  useEffect(() => {
+    const onHashChange = () => {
+      if (window.location.hash === '#how-it-works') setGameState('info');
+      else if (window.location.hash === '' || window.location.hash === '#') setGameState('home');
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -1200,12 +1211,15 @@ function App() {
 
   const hasSave = !!(localStorage.getItem('wde_scene') && localStorage.getItem('wde_scene') !== 'intro');
 
+  const openInfo = () => { window.history.pushState(null, '', '#how-it-works'); setGameState('info'); };
+  const closeInfo = () => { window.history.pushState(null, '', window.location.pathname); setGameState('home'); };
+
   if (gameState === 'home') {
-    return <HomePage onStart={handleStartGame} hasSave={hasSave} onInfo={() => setGameState('info')} theme={theme} onToggleTheme={handleToggleTheme} />;
+    return <HomePage onStart={handleStartGame} hasSave={hasSave} onInfo={openInfo} theme={theme} onToggleTheme={handleToggleTheme} />;
   }
 
   if (gameState === 'info') {
-    return <InfoPage onBack={() => setGameState('home')} />;
+    return <InfoPage onBack={closeInfo} />;
   }
 
   if (!scene) return <div style={{ color: '#fff', padding: 24, fontFamily: 'monospace' }}>Loading…</div>;
