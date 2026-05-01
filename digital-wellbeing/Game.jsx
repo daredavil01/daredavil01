@@ -465,7 +465,7 @@ function shareOnPlatform(platform, overall) {
 }
 
 // ── INFO PAGE ─────────────────────────────────────────────────────────────────
-function InfoPage({ onBack }) {
+function InfoPage({ onBack, theme, onToggleTheme }) {
   const [vis, setVis] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVis(true), 60); return () => clearTimeout(t); }, []);
 
@@ -508,6 +508,10 @@ function InfoPage({ onBack }) {
             <h1 className="info-title">How It Works</h1>
             <p className="info-subtitle">Everything behind The Wanderer's Digital Escape</p>
           </div>
+          <button className="home-theme-btn info-theme-btn" onClick={onToggleTheme}
+                  title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
         </div>
 
         {/* ── GAMEPLAY ── */}
@@ -572,6 +576,141 @@ function InfoPage({ onBack }) {
           <div className="info-dimensions-row">
             {DIMENSIONS.map(d => (
               <div key={d} className="info-dimension-chip">{d}</div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── SIMULATED RESULTS ── */}
+        <section className="info-section">
+          <h2 className="info-section-title">Simulated Results</h2>
+          <p className="info-body">
+            These are illustrative player paths — not averages, but deliberate archetypes. Each shows how a consistent pattern of choices compounds into a final score.
+          </p>
+          <div className="info-scenario-grid">
+            {[
+              {
+                name: 'The Mindless Scroller',
+                desc: 'Always chose distraction. Never resisted a scroll. Each world pulled deeper into the loop.',
+                accentColor: '#ef4444',
+                meters: { focus: 18, dopamine: 88, oneness: 22, tranquility: 15 },
+                overall: 17,
+                dims: [
+                  { name: 'Physical Health',         score: 30 },
+                  { name: 'Psychological Wellbeing', score: 26 },
+                  { name: 'Focus & Attention',       score: 18 },
+                  { name: 'Social Connection',       score: 22 },
+                  { name: 'Inner Tranquility',       score: 15 },
+                  { name: 'Dopamine Freedom',        score: 12 },
+                  { name: 'Intentionality',          score: 17 },
+                  { name: 'Digital Flourishing',     score: 17 },
+                ],
+              },
+              {
+                name: 'The Social Butterfly',
+                desc: 'Prioritised connection at the cost of depth. Strong online bonds, but restless and dopamine-chased.',
+                accentColor: '#fb923c',
+                meters: { focus: 42, dopamine: 65, oneness: 68, tranquility: 35 },
+                overall: 45,
+                dims: [
+                  { name: 'Physical Health',         score: 50 },
+                  { name: 'Psychological Wellbeing', score: 50 },
+                  { name: 'Focus & Attention',       score: 42 },
+                  { name: 'Social Connection',       score: 68 },
+                  { name: 'Inner Tranquility',       score: 35 },
+                  { name: 'Dopamine Freedom',        score: 35 },
+                  { name: 'Intentionality',          score: 39 },
+                  { name: 'Digital Flourishing',     score: 45 },
+                ],
+              },
+              {
+                name: 'The Balanced Explorer',
+                desc: 'Sometimes scrolled, sometimes stepped back. No obsession in either direction. A middle path.',
+                accentColor: '#facc15',
+                meters: { focus: 58, dopamine: 45, oneness: 55, tranquility: 60 },
+                overall: 57,
+                dims: [
+                  { name: 'Physical Health',         score: 75 },
+                  { name: 'Psychological Wellbeing', score: 66 },
+                  { name: 'Focus & Attention',       score: 58 },
+                  { name: 'Social Connection',       score: 55 },
+                  { name: 'Inner Tranquility',       score: 60 },
+                  { name: 'Dopamine Freedom',        score: 55 },
+                  { name: 'Intentionality',          score: 59 },
+                  { name: 'Digital Flourishing',     score: 57 },
+                ],
+              },
+              {
+                name: 'The Mindful Achiever',
+                desc: 'Chose depth and presence consistently. Picked the book, the run, the conversation over the feed.',
+                accentColor: '#4ade80',
+                meters: { focus: 78, dopamine: 28, oneness: 72, tranquility: 80 },
+                overall: 76,
+                dims: [
+                  { name: 'Physical Health',         score: 95 },
+                  { name: 'Psychological Wellbeing', score: 86 },
+                  { name: 'Focus & Attention',       score: 78 },
+                  { name: 'Social Connection',       score: 72 },
+                  { name: 'Inner Tranquility',       score: 80 },
+                  { name: 'Dopamine Freedom',        score: 72 },
+                  { name: 'Intentionality',          score: 79 },
+                  { name: 'Digital Flourishing',     score: 76 },
+                ],
+              },
+              {
+                name: 'The Digital Ascetic',
+                desc: "Refused every digital pull. Collected every item. Walked the Nomad's Trail without looking back.",
+                accentColor: '#22d3ee',
+                meters: { focus: 92, dopamine: 12, oneness: 65, tranquility: 88 },
+                overall: 83,
+                dims: [
+                  { name: 'Physical Health',         score: 100 },
+                  { name: 'Psychological Wellbeing', score: 100 },
+                  { name: 'Focus & Attention',       score: 92 },
+                  { name: 'Social Connection',       score: 65 },
+                  { name: 'Inner Tranquility',       score: 88 },
+                  { name: 'Dopamine Freedom',        score: 88 },
+                  { name: 'Intentionality',          score: 90 },
+                  { name: 'Digital Flourishing',     score: 83 },
+                ],
+              },
+            ].map(s => (
+              <div key={s.name} className="info-scenario-card" style={{ borderTopColor: s.accentColor }}>
+                <div className="info-scenario-head">
+                  <div className="info-scenario-name">{s.name}</div>
+                  <div className="info-scenario-score" style={{ color: s.accentColor }}>
+                    {s.overall}<span className="info-scenario-score-denom">/100</span>
+                  </div>
+                </div>
+                <p className="info-scenario-desc">{s.desc}</p>
+                <div className="info-scenario-meter-row">
+                  {[
+                    { key: 'focus',       label: 'F', color: '#22d3ee', value: s.meters.focus },
+                    { key: 'dopamine',    label: 'D', color: '#fb923c', value: s.meters.dopamine },
+                    { key: 'oneness',     label: 'O', color: '#a78bfa', value: s.meters.oneness },
+                    { key: 'tranquility', label: 'T', color: '#4ade80', value: s.meters.tranquility },
+                  ].map(m => (
+                    <div key={m.key} className="info-scenario-pill" title={`${m.key}: ${m.value}`}>
+                      <span className="info-scenario-pill-dot" style={{ background: m.color }} />
+                      <span className="info-scenario-pill-label">{m.label}</span>
+                      <span className="info-scenario-pill-val" style={{ color: m.color }}>{m.value}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="info-scenario-bar-wrap">
+                  <div className="info-scenario-bar" style={{ width: `${s.overall}%`, background: s.accentColor }} />
+                </div>
+                <div className="info-scenario-dim-grid">
+                  {s.dims.map(d => (
+                    <div key={d.name} className="info-scenario-dim-row">
+                      <span className="info-scenario-dim-name">{d.name}</span>
+                      <div className="info-scenario-dim-track">
+                        <div className="info-scenario-dim-fill" style={{ width: `${d.score}%`, background: s.accentColor }} />
+                      </div>
+                      <span className="info-scenario-dim-val">{d.score}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </section>
@@ -1219,7 +1358,7 @@ function App() {
   }
 
   if (gameState === 'info') {
-    return <InfoPage onBack={closeInfo} />;
+    return <InfoPage onBack={closeInfo} theme={theme} onToggleTheme={handleToggleTheme} />;
   }
 
   if (!scene) return <div style={{ color: '#fff', padding: 24, fontFamily: 'monospace' }}>Loading…</div>;
