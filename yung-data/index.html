@@ -1,0 +1,1713 @@
+<!doctype html>
+<html lang="mr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>आदिवासी सर्वेक्षण डॅशबोर्ड — नंदुरबार</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+      :root {
+        --bg: #f5efe6;
+        --card: #ffffff;
+        --primary: #b5682a;
+        --primary2: #8b3a3a;
+        --accent: #2c6b3f;
+        --blue: #2f5fa3;
+        --border: #e0cdb5;
+        --text: #2d1e0f;
+        --muted: #7a5c3e;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      /* Header */
+      header {
+        background: linear-gradient(
+          135deg,
+          #2d1e0f 0%,
+          #5a2a0a 60%,
+          #8b3a1a 100%
+        );
+        color: #f5efe6;
+        padding: 28px 24px 20px;
+        text-align: center;
+      }
+      header h1 {
+        font-size: 1.9rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        margin-bottom: 4px;
+      }
+      header p {
+        font-size: 0.95rem;
+        opacity: 0.8;
+      }
+
+      /* Hero stats */
+      #hero {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        padding: 20px 24px;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+      }
+      .stat {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition: 0.15s;
+      }
+      .stat:hover {
+        box-shadow: var(--shadow);
+      }
+      .stat-icon {
+        font-size: 1.4rem;
+      }
+      .stat-value {
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: var(--primary);
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .stat-sub {
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      /* Filter bar */
+      #filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        background: #fdf8f2;
+        border-bottom: 2px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      }
+      .filter-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+      .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      input[type="number"] {
+        width: 64px;
+        padding: 6px 8px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        text-align: center;
+      }
+      #reset-btn {
+        padding: 6px 14px;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.83rem;
+        font-weight: 600;
+        transition: 0.15s;
+      }
+      #reset-btn:hover {
+        background: var(--primary2);
+      }
+      #filter-info {
+        margin-left: auto;
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      /* Village multiselect */
+      .ms-wrap {
+        position: relative;
+      }
+      .ms-btn {
+        padding: 6px 12px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        background: #fff;
+        font-size: 0.85rem;
+        cursor: pointer;
+        min-width: 160px;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+      }
+      .ms-btn:after {
+        content: "▾";
+        font-size: 0.7rem;
+        opacity: 0.6;
+      }
+      .ms-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        background: #fff;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        min-width: 220px;
+        max-height: 260px;
+        overflow-y: auto;
+        z-index: 200;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        padding: 6px;
+      }
+      .ms-wrap.open .ms-dropdown {
+        display: block;
+      }
+      .ms-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.83rem;
+      }
+      .ms-item:hover {
+        background: var(--bg);
+      }
+      .ms-item input {
+        cursor: pointer;
+      }
+      .ms-all {
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 4px;
+        padding-bottom: 6px;
+        font-weight: 600;
+      }
+
+      /* Tab nav */
+      #tab-nav {
+        display: flex;
+        overflow-x: auto;
+        padding: 0 24px;
+        background: #fff;
+        border-bottom: 2px solid var(--border);
+        scrollbar-width: none;
+      }
+      #tab-nav::-webkit-scrollbar {
+        display: none;
+      }
+      .tab-btn {
+        padding: 12px 18px;
+        border: none;
+        background: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--muted);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+        transition: 0.15s;
+      }
+      .tab-btn:hover {
+        color: var(--text);
+      }
+      .tab-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+
+      /* Tab panels */
+      .tab-panel {
+        display: none;
+        padding: 24px;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+
+      /* Chart grid */
+      .chart-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      .chart-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+      .chart-card.full {
+        grid-column: 1 / -1;
+      }
+      .chart-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+      }
+      .chart-wrap {
+        position: relative;
+        height: 280px;
+      }
+      .chart-wrap.tall {
+        height: 360px;
+      }
+      .chart-wrap.short {
+        height: 220px;
+      }
+
+      /* Loading */
+      #loading {
+        position: fixed;
+        inset: 0;
+        background: rgba(245, 239, 230, 0.94);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        gap: 16px;
+      }
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 5px solid var(--border);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      #loading p {
+        font-size: 0.95rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      /* ── Responsive ── */
+
+      /* Tablet landscape / small desktop  (≤ 1100px) */
+      @media (max-width: 1100px) {
+        #hero {
+          grid-template-columns: repeat(5, 1fr);
+          gap: 10px;
+          padding: 16px 18px;
+        }
+        .stat-value {
+          font-size: 1.45rem;
+        }
+      }
+
+      /* Tablet portrait (≤ 900px) */
+      @media (max-width: 900px) {
+        #hero {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+          padding: 16px 16px;
+        }
+        .chart-grid {
+          grid-template-columns: 1fr;
+        }
+        .chart-card.full {
+          grid-column: 1;
+        }
+        .chart-wrap {
+          height: 220px;
+        }
+        .chart-wrap.tall {
+          height: 280px;
+        }
+        .chart-wrap.short {
+          height: 180px;
+        }
+        .tab-panel {
+          padding: 16px;
+        }
+        #tab-nav {
+          padding: 0 12px;
+        }
+        .tab-btn {
+          padding: 10px 12px;
+          font-size: 0.8rem;
+        }
+        header {
+          padding: 20px 16px 16px;
+        }
+        header h1 {
+          font-size: 1.6rem;
+        }
+        #filter-bar {
+          padding: 10px 16px;
+          gap: 8px;
+        }
+      }
+
+      /* Large mobile (≤ 640px) */
+      @media (max-width: 640px) {
+        #hero {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 8px;
+          padding: 12px;
+        }
+        .stat {
+          padding: 10px 12px;
+        }
+        .stat-icon {
+          font-size: 1.1rem;
+        }
+        .stat-value {
+          font-size: 1.25rem;
+        }
+        .stat-label {
+          font-size: 0.65rem;
+        }
+        .stat-sub {
+          display: none;
+        }
+        .chart-grid {
+          gap: 12px;
+        }
+        .chart-card {
+          padding: 14px;
+          border-radius: 10px;
+        }
+        .chart-wrap {
+          height: 200px;
+        }
+        .chart-wrap.tall {
+          height: 240px;
+        }
+        .chart-wrap.short {
+          height: 160px;
+        }
+        .chart-title {
+          font-size: 0.75rem;
+          margin-bottom: 8px;
+        }
+        header h1 {
+          font-size: 1.3rem;
+        }
+        header p {
+          font-size: 0.82rem;
+        }
+        .tab-btn {
+          padding: 8px 10px;
+          font-size: 0.75rem;
+        }
+        .ms-btn {
+          min-width: 130px;
+          font-size: 0.8rem;
+        }
+        /* Dropdown stays within viewport on small screens */
+        .ms-dropdown {
+          min-width: 180px;
+          max-width: calc(100vw - 32px);
+        }
+        #filter-bar {
+          padding: 8px 12px;
+          gap: 6px;
+        }
+        #filter-info {
+          width: 100%;
+          margin-left: 0;
+          font-size: 0.75rem;
+        }
+        input[type="number"] {
+          width: 54px;
+          font-size: 0.8rem;
+        }
+        #reset-btn {
+          font-size: 0.78rem;
+          padding: 5px 10px;
+        }
+        .tab-panel {
+          padding: 12px;
+        }
+      }
+
+      /* Small mobile (≤ 420px) */
+      @media (max-width: 420px) {
+        #hero {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 6px;
+          padding: 8px;
+        }
+        .stat {
+          padding: 8px 10px;
+          border-radius: 8px;
+        }
+        .stat-value {
+          font-size: 1.1rem;
+        }
+        .stat-label {
+          font-size: 0.6rem;
+          letter-spacing: 0;
+        }
+        .chart-wrap {
+          height: 180px;
+        }
+        .chart-wrap.tall {
+          height: 220px;
+        }
+        .chart-wrap.short {
+          height: 140px;
+        }
+        header h1 {
+          font-size: 1.15rem;
+        }
+        .filter-label {
+          display: none;
+        }
+        #tab-nav {
+          padding: 0 4px;
+        }
+        .tab-btn {
+          padding: 8px 8px;
+          font-size: 0.7rem;
+        }
+        .chart-card {
+          padding: 10px;
+        }
+        .chart-title {
+          font-size: 0.68rem;
+        }
+      }
+
+      /* Chart.js legend: hide on very small screens to save space */
+      @media (max-width: 420px) {
+        /* Chart.js responsive is handled via maintainAspectRatio:false + fixed height above */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading">
+      <div class="spinner"></div>
+      <p>माहिती लोड होत आहे…</p>
+    </div>
+
+    <header>
+      <h1>🌿 आदिवासी सर्वेक्षण डॅशबोर्ड</h1>
+      <p>आदिवासी पावरा समुदाय · नंदुरबार जिल्हा, महाराष्ट्र</p>
+    </header>
+
+    <!-- Hero KPIs -->
+    <section id="hero">
+      <div class="stat">
+        <span class="stat-icon">🏠</span
+        ><span class="stat-value" id="s-total">—</span
+        ><span class="stat-label">एकूण कुटुंबे</span
+        ><span class="stat-sub" id="s-villages">— गावे</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">📚</span
+        ><span class="stat-value" id="s-school">—</span
+        ><span class="stat-label">शाळेत जाणारी मुले</span
+        ><span class="stat-sub">मुले असलेल्या कुटुंबांपैकी</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">🪪</span
+        ><span class="stat-value" id="s-aadhaar">—</span
+        ><span class="stat-label">आधारकार्ड</span
+        ><span class="stat-sub">आधारकार्ड आहे</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">🏦</span
+        ><span class="stat-value" id="s-bank">—</span
+        ><span class="stat-label">बँक खाते</span
+        ><span class="stat-sub">बँक खाते आहे</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">💰</span
+        ><span class="stat-value" id="s-income">—</span
+        ><span class="stat-label">सरासरी वार्षिक उत्पन्न</span
+        ><span class="stat-sub">प्रति कुटुंब</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">🚌</span
+        ><span class="stat-value" id="s-migration">—</span
+        ><span class="stat-label">मजुरीसाठी स्थलांतर</span
+        ><span class="stat-sub">मजुरीसाठी जातात</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">🧱</span
+        ><span class="stat-value" id="s-kutcha">—</span
+        ><span class="stat-label">कच्ची घरे</span
+        ><span class="stat-sub">माती/कच्च्या घरात राहतात</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">🚽</span
+        ><span class="stat-value" id="s-toilet">—</span
+        ><span class="stat-label">शौचालय नाही</span
+        ><span class="stat-sub">स्वच्छतागृह नाही</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">👩‍👩‍👦</span
+        ><span class="stat-value" id="s-shg">—</span
+        ><span class="stat-label">महिला बचत गट</span
+        ><span class="stat-sub">बचत गटात सहभाग</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">🎓</span
+        ><span class="stat-value" id="s-noedu">—</span
+        ><span class="stat-label">शिक्षण नाही</span
+        ><span class="stat-sub">कुटुंब प्रमुख</span>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <div id="filter-bar">
+      <span class="filter-label">फिल्टर</span>
+      <div class="filter-group">
+        <span class="filter-label">गाव</span>
+        <div class="ms-wrap" id="village-ms">
+          <button class="ms-btn" id="ms-toggle">सर्व गावे</button>
+          <div class="ms-dropdown" id="ms-dropdown">
+            <label class="ms-item ms-all"
+              ><input type="checkbox" id="ms-all" checked /> सर्व गावे</label
+            >
+          </div>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">प्रमुखाचे वय</span>
+        <input
+          type="number"
+          id="age-min"
+          value="0"
+          min="0"
+          max="120"
+          placeholder="किमान"
+        />
+        <span style="color: var(--muted)">–</span>
+        <input
+          type="number"
+          id="age-max"
+          value="120"
+          min="0"
+          max="120"
+          placeholder="कमाल"
+        />
+      </div>
+      <button id="reset-btn">फिल्टर रीसेट करा</button>
+      <span id="filter-info"></span>
+    </div>
+
+    <!-- Tab navigation -->
+    <nav id="tab-nav">
+      <button class="tab-btn active" data-tab="overview">सारांश</button>
+      <button class="tab-btn" data-tab="demographics">लोकसंख्या</button>
+      <button class="tab-btn" data-tab="documents">कागदपत्रे व योजना</button>
+      <button class="tab-btn" data-tab="agriculture">शेती</button>
+      <button class="tab-btn" data-tab="income">उत्पन्न व मजुरी</button>
+      <button class="tab-btn" data-tab="education">शिक्षण</button>
+      <button class="tab-btn" data-tab="housing">घर व मालमत्ता</button>
+      <button class="tab-btn" data-tab="women">महिला व आरोग्य</button>
+    </nav>
+
+    <main>
+      <!-- सारांश -->
+      <div class="tab-panel active" id="tab-overview">
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-title">गावनिहाय कुटुंबे</div>
+            <div class="chart-wrap"><canvas id="c-village-pie"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">कुटुंब आकार वितरण</div>
+            <div class="chart-wrap"><canvas id="c-family-size"></canvas></div>
+          </div>
+          <div class="chart-card full">
+            <div class="chart-title">प्रत्येक गावातील कुटुंबे</div>
+            <div class="chart-wrap tall">
+              <canvas id="c-village-bar"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- लोकसंख्या -->
+      <div class="tab-panel" id="tab-demographics">
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-title">कुटुंब प्रमुखांचे वय वितरण</div>
+            <div class="chart-wrap"><canvas id="c-age"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">कुटुंब प्रमुखांचे शिक्षण</div>
+            <div class="chart-wrap"><canvas id="c-edu"></canvas></div>
+          </div>
+          <div class="chart-card full">
+            <div class="chart-title">मुख्य व्यवसाय</div>
+            <div class="chart-wrap short"><canvas id="c-occ"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- कागदपत्रे व योजना -->
+      <div class="tab-panel" id="tab-documents">
+        <div class="chart-grid">
+          <div class="chart-card full">
+            <div class="chart-title">
+              कागदपत्रे व योजना कव्हरेज (कुटुंबांची %)
+            </div>
+            <div class="chart-wrap tall"><canvas id="c-docs"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">
+              गावनिहाय शासकीय योजनेचा लाभ (शीर्ष १०)
+            </div>
+            <div class="chart-wrap tall">
+              <canvas id="c-govt-village"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">रोजगार हमी योजना (MNREGA) सहभाग</div>
+            <div class="chart-wrap short"><canvas id="c-mnrega"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- शेती -->
+      <div class="tab-panel" id="tab-agriculture">
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-title">जमीन वितरण (एकर)</div>
+            <div class="chart-wrap"><canvas id="c-land"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">सरासरी पशुधन प्रति कुटुंब</div>
+            <div class="chart-wrap"><canvas id="c-livestock"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">महूची झाडे प्रति कुटुंब</div>
+            <div class="chart-wrap"><canvas id="c-mahua"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">तेंदूपत्ता संकलन व वनजमीन</div>
+            <div class="chart-wrap short"><canvas id="c-forest"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- उत्पन्न व मजुरी -->
+      <div class="tab-panel" id="tab-income">
+        <div class="chart-grid">
+          <div class="chart-card full">
+            <div class="chart-title">वार्षिक कुटुंब उत्पन्न वितरण (₹)</div>
+            <div class="chart-wrap"><canvas id="c-income"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">मजुरीचे ठिकाण</div>
+            <div class="chart-wrap"><canvas id="c-labor-dest"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">पिण्याचे पाण्याचे स्रोत</div>
+            <div class="chart-wrap"><canvas id="c-water"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">कर्जदार कुटुंबे</div>
+            <div class="chart-wrap short"><canvas id="c-loan"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">मजुरीचे काम</div>
+            <div class="chart-wrap"><canvas id="c-labor-type"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- शिक्षण -->
+      <div class="tab-panel" id="tab-education">
+        <div class="chart-grid">
+          <div class="chart-card full">
+            <div class="chart-title">गावनिहाय शाळा उपस्थिती % (शीर्ष १५)</div>
+            <div class="chart-wrap tall">
+              <canvas id="c-school-village"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">शाळा (शीर्ष १०)</div>
+            <div class="chart-wrap tall"><canvas id="c-schools"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">कुटुंब सदस्यांचे शिक्षण</div>
+            <div class="chart-wrap"><canvas id="c-mem-edu"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- घर व मालमत्ता -->
+      <div class="tab-panel" id="tab-housing">
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-title">घराचा प्रकार</div>
+            <div class="chart-wrap short"><canvas id="c-house"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">शौचालय वापर</div>
+            <div class="chart-wrap short">
+              <canvas id="c-toilet-pie"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">मोबाईल फोनचा प्रकार</div>
+            <div class="chart-wrap short">
+              <canvas id="c-mobile-type"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">मालमत्ता (कुटुंबांची %)</div>
+            <div class="chart-wrap"><canvas id="c-assets"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- महिला व आरोग्य -->
+      <div class="tab-panel" id="tab-women">
+        <div class="chart-grid">
+          <div class="chart-card full">
+            <div class="chart-title">गावनिहाय महिला बचत गट % (शीर्ष १५)</div>
+            <div class="chart-wrap tall">
+              <canvas id="c-shg-village"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">दैनंदिन जेवणात भाजीपाला</div>
+            <div class="chart-wrap short"><canvas id="c-veg"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">नोंदवलेले आजार (शीर्ष १०)</div>
+            <div class="chart-wrap tall"><canvas id="c-illness"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">जन्म दाखला</div>
+            <div class="chart-wrap short"><canvas id="c-birth"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      import { parseCSV } from "./parse.js";
+
+      const C = [
+        "#c17b2c",
+        "#8b3a3a",
+        "#2c6b3f",
+        "#2f5fa3",
+        "#7a4a9b",
+        "#d4735a",
+        "#5a8a4a",
+        "#c9a040",
+        "#3a8ba0",
+        "#a04a4a",
+        "#6b7a3a",
+        "#4a6ba0",
+        "#9b6a2c",
+        "#3a6b5a",
+        "#c14a7a",
+      ];
+
+      let DATA = [];
+      const CHARTS = {};
+      const FILTERS = { villages: new Set(), ageMin: 0, ageMax: 120 };
+
+      /* ── Normalize helpers ── */
+      function wNorm(s) {
+        if (!s || s === "नाही" || !s.trim()) return "अज्ञात";
+        if (s.includes("नर्मदा")) return "नर्मदा नदी";
+        if (s.includes("झर") || s.includes("ओढा") || s.includes("झऱ्या"))
+          return "झरा / ओढा";
+        if (s.includes("हॅण्ड") || s.includes("हेन्ड") || s.includes("पंप"))
+          return "हॅण्ड पंप";
+        if (s.includes("विहीर")) return "विहीर";
+        if (s.includes("बोअर")) return "बोअरवेल";
+        if (s.includes("नदी")) return "नदी";
+        if (s.includes("नळ") || s.includes("पाइप") || s.includes("टॅप"))
+          return "नळ / पाइपलाइन";
+        return "इतर";
+      }
+
+      function lNorm(s) {
+        if (!s || !s.trim() || s.trim() === "नाही") return "स्थलांतर नाही";
+        if (s.includes("गुजरात")) return "गुजरात";
+        if (
+          s.includes("तळोदा") ||
+          s.includes("धडगाव") ||
+          s.includes("नंदुरबार") ||
+          s.includes("शहापूर") ||
+          s.includes("अमळनेर")
+        )
+          return "स्थानिक (महाराष्ट्र)";
+        if (s.includes("मध्यप्रदेश") || s.includes("MP")) return "मध्यप्रदेश";
+        if (s.includes("राजस्थान")) return "राजस्थान";
+        return "इतर";
+      }
+
+      function hNorm(s) {
+        if (!s) return "अज्ञात";
+        if (s.includes("कच्चे") || s.includes("कच्च")) return "कच्चे घर";
+        if (
+          s.includes("पक्के") ||
+          s.includes("पक्क") ||
+          s.includes("RCC") ||
+          s.includes("सिमेंट")
+        )
+          return "पक्के घर";
+        if (s.includes("अर्ध") || s.includes("सेमी")) return "अर्धपक्के घर";
+        return s.trim() || "अज्ञात";
+      }
+
+      function mNorm(s) {
+        if (!s || !s.trim()) return "नाही";
+        if (
+          s.includes("अँड्रॉइड") ||
+          s.toLowerCase().includes("android") ||
+          s.includes("स्मार्ट")
+        )
+          return "अँड्रॉइड / स्मार्टफोन";
+        if (s.includes("साधा") || s.includes("कीपॅड")) return "साधा फोन";
+        return "इतर";
+      }
+
+      function ltNorm(s) {
+        if (!s || !s.trim() || s === "नाही") return "अज्ञात";
+        if (s.includes("शेती") || s.includes("शर्ती") || s.includes("कृषी"))
+          return "शेती काम";
+        if (s.includes("बांधकाम") || s.includes("मजुरी"))
+          return "बांधकाम / मजुरी";
+        if (s.includes("वीट") || s.includes("भट्टी")) return "वीट भट्टी";
+        if (
+          s.includes("कारखाना") ||
+          s.includes("factory") ||
+          s.includes("mill")
+        )
+          return "कारखाना / मिल";
+        if (s.includes("घर")) return "घरगुती काम";
+        return "इतर";
+      }
+
+      /* ── Aggregation utils ── */
+      const pct = (d, f) =>
+        d.length
+          ? +((d.filter((h) => h[f]).length / d.length) * 100).toFixed(1)
+          : 0;
+      const avg = (d, f) =>
+        d.length
+          ? Math.round(d.reduce((s, h) => s + (h[f] || 0), 0) / d.length)
+          : 0;
+      function countBy(d, fn) {
+        return d.reduce((m, h) => {
+          const k = fn(h);
+          m[k] = (m[k] || 0) + 1;
+          return m;
+        }, {});
+      }
+      function topN(map, n = 12) {
+        return Object.entries(map)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, n);
+      }
+      function hist(d, f, edges) {
+        return edges
+          .slice(0, -1)
+          .map(
+            (lo, i) =>
+              d.filter((h) => h[f] >= lo && h[f] < edges[i + 1]).length,
+          );
+      }
+      const pctMigrate = (d) =>
+        d.length
+          ? +(
+              (d.filter(
+                (h) =>
+                  h.labor_place &&
+                  h.labor_place.trim() &&
+                  h.labor_place.trim() !== "नाही",
+              ).length /
+                d.length) *
+              100
+            ).toFixed(1)
+          : 0;
+      const pctKutcha = (d) =>
+        d.length
+          ? +(
+              (d.filter((h) => hNorm(h.house_type) === "कच्चे घर").length /
+                d.length) *
+              100
+            ).toFixed(1)
+          : 0;
+      const pctNoEdu = (d) =>
+        d.length
+          ? +(
+              (d.filter((h) => !h.education || h.education === "नाही").length /
+                d.length) *
+              100
+            ).toFixed(1)
+          : 0;
+
+      /* ── Chart factory ── */
+      function mkChart(id, type, labels, data, extra = {}) {
+        const ctx = document.getElementById(id);
+        if (!ctx) return null;
+        const isH = extra.indexAxis === "y";
+        const isDoughnut = type === "doughnut";
+        return new Chart(ctx.getContext("2d"), {
+          type,
+          data: {
+            labels,
+            datasets: [
+              {
+                data,
+                backgroundColor: isDoughnut ? C.slice(0, data.length) : C[0],
+                borderColor: isDoughnut ? "#fff" : "transparent",
+                borderWidth: isDoughnut ? 2 : 0,
+                borderRadius: !isDoughnut && !isH ? 4 : 0,
+                hoverOffset: isDoughnut ? 6 : 0,
+                ...extra.ds,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: {
+              legend: {
+                display: isDoughnut,
+                position: "bottom",
+                labels: { boxWidth: 12, padding: 8, font: { size: 11 } },
+              },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) =>
+                    extra.pctTooltip
+                      ? ` ${ctx.raw}%`
+                      : ` ${typeof ctx.raw === "number" ? ctx.raw.toLocaleString("hi-IN") : ctx.raw}`,
+                },
+              },
+              ...extra.plugins,
+            },
+            scales: !isDoughnut
+              ? {
+                  x: {
+                    grid: { display: isH, color: "#f0e8d8" },
+                    ticks: {
+                      maxRotation: extra.rotate || 0,
+                      font: { size: 10 },
+                    },
+                  },
+                  y: {
+                    grid: { display: !isH, color: "#f0e8d8" },
+                    ticks: { font: { size: 10 } },
+                  },
+                  ...extra.scales,
+                }
+              : undefined,
+            indexAxis: extra.indexAxis,
+            ...extra.chart,
+          },
+        });
+      }
+
+      function upd(key, labels, data) {
+        const chart = CHARTS[key];
+        if (!chart) return;
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = data;
+        chart.data.datasets[0].backgroundColor = C.slice(0, data.length);
+        chart.update("none");
+      }
+
+      /* ── Hero update ── */
+      function updateHero(d) {
+        const villages = new Set(d.map((h) => h.village));
+        document.getElementById("s-total").textContent =
+          d.length.toLocaleString("hi-IN");
+        document.getElementById("s-villages").textContent =
+          villages.size + " गावे";
+        document.getElementById("s-school").textContent =
+          pct(d, "children_school") + "%";
+        document.getElementById("s-aadhaar").textContent =
+          pct(d, "aadhaar") + "%";
+        document.getElementById("s-bank").textContent =
+          pct(d, "bank_account") + "%";
+        const inc = avg(d, "annual_income");
+        document.getElementById("s-income").textContent =
+          "₹" + (inc >= 1000 ? (inc / 1000).toFixed(1) + "K" : inc);
+        document.getElementById("s-migration").textContent =
+          pctMigrate(d) + "%";
+        document.getElementById("s-kutcha").textContent = pctKutcha(d) + "%";
+        document.getElementById("s-toilet").textContent =
+          (100 - pct(d, "toilet_use")).toFixed(1) + "%";
+        document.getElementById("s-shg").textContent =
+          pct(d, "women_shg") + "%";
+        document.getElementById("s-noedu").textContent = pctNoEdu(d) + "%";
+        document.getElementById("filter-info").textContent =
+          d.length < DATA.length
+            ? `${DATA.length} पैकी ${d.length} कुटुंबे दाखवत आहे`
+            : `${d.length} कुटुंबे`;
+      }
+
+      /* ── Chart update functions ── */
+      function updOverview(d) {
+        const vcounts = countBy(d, (h) => h.village);
+        const top10 = topN(vcounts, 10);
+        const pieLabels = top10.map(([v]) => v);
+        const pieData = top10.map(([, c]) => c);
+        const rest = d.length - pieData.reduce((a, b) => a + b, 0);
+        if (rest > 0) {
+          pieLabels.push("इतर");
+          pieData.push(rest);
+        }
+        upd("village-pie", pieLabels, pieData);
+
+        const fEdges = [1, 2, 3, 4, 5, 6, 7, 9, 12, 20];
+        const fLabels = fEdges
+          .slice(0, -1)
+          .map((lo, i) => (i === fEdges.length - 2 ? lo + "+" : String(lo)));
+        upd("family-size", fLabels, hist(d, "family_size", fEdges));
+
+        const vEntries = topN(vcounts, 20);
+        upd(
+          "village-bar",
+          vEntries.map(([v]) => v),
+          vEntries.map(([, c]) => c),
+        );
+      }
+
+      function updDemographics(d) {
+        const aEdges = [0, 18, 25, 35, 45, 55, 65, 90];
+        const aLabels = [
+          "<१८",
+          "१८-२४",
+          "२५-३४",
+          "३५-४४",
+          "४५-५४",
+          "५५-६४",
+          "६५+",
+        ];
+        upd("age", aLabels, hist(d, "age", aEdges));
+
+        const eduMap = countBy(d, (h) => {
+          const e = (h.education || "नाही").trim();
+          if (!e || e === "नाही") return "शिक्षण नाही";
+          if (/[1-5]|[१-५]ली|[१-५]री|[१-५]थी/.test(e)) return "१ली–५वी";
+          if (/[6-8]|[६-८]वी/.test(e)) return "६वी–८वी";
+          if (/[9]|[९]वी|10|१0|SSC|एस\.एस\.सी/.test(e)) return "९वी–१०वी";
+          if (/12|बारावी|HSC/.test(e)) return "११वी–१२वी";
+          if (/पदवी|B\.|graduate/.test(e)) return "पदवीधर+";
+          return "प्राथमिक";
+        });
+        const eTop = topN(eduMap, 8);
+        upd(
+          "edu",
+          eTop.map(([k]) => k),
+          eTop.map(([, v]) => v),
+        );
+
+        const occMap = countBy(
+          d,
+          (h) => (h.occupation || "अज्ञात").trim() || "अज्ञात",
+        );
+        const oTop = topN(occMap, 8);
+        upd(
+          "occ",
+          oTop.map(([k]) => k),
+          oTop.map(([, v]) => v),
+        );
+      }
+
+      function updDocuments(d) {
+        const docs = [
+          ["आधारकार्ड", pct(d, "aadhaar")],
+          ["मतदानकार्ड", pct(d, "voter_id")],
+          ["रेशनकार्ड", pct(d, "ration_card")],
+          ["जॉबकार्ड", pct(d, "job_card")],
+          ["आरोग्यकार्ड", pct(d, "health_card")],
+          ["ग्यास सिलेंडर", pct(d, "gas_cylinder")],
+          ["बँक खाते", pct(d, "bank_account")],
+          ["जातीचा दाखला", pct(d, "caste_cert")],
+          ["वनजमीन", pct(d, "forest_land")],
+          ["सातबारा", pct(d, "satbara")],
+          ["जन्म दाखला", pct(d, "birth_cert")],
+          ["ड्रायविंग लायसन्स", pct(d, "driving_license")],
+        ].sort((a, b) => b[1] - a[1]);
+        upd(
+          "docs",
+          docs.map(([l]) => l),
+          docs.map(([, v]) => v),
+        );
+
+        const vGovt = {},
+          vTotal = {};
+        d.forEach((h) => {
+          vGovt[h.village] = (vGovt[h.village] || 0) + (h.govt_scheme ? 1 : 0);
+          vTotal[h.village] = (vTotal[h.village] || 0) + 1;
+        });
+        const vPct = topN(
+          Object.fromEntries(Object.keys(vTotal).map((v) => [v, vTotal[v]])),
+          10,
+        ).map(([v]) => [v, +((vGovt[v] / vTotal[v]) * 100).toFixed(1)]);
+        upd(
+          "govt-village",
+          vPct.map(([v]) => v),
+          vPct.map(([, p]) => p),
+        );
+
+        upd(
+          "mnrega",
+          ["रोजगार हमी (MNREGA)", "MNREGA नाही"],
+          [
+            d.filter((h) => h.mnrega_work).length,
+            d.filter((h) => !h.mnrega_work).length,
+          ],
+        );
+      }
+
+      function updAgriculture(d) {
+        const lEdges = [0, 0.5, 1, 1.5, 2, 3, 4, 5, 7, 10, 20];
+        const lLabels = [
+          "0",
+          "0.5",
+          "1",
+          "1.5",
+          "2",
+          "3",
+          "4",
+          "5",
+          "7",
+          "१०+",
+        ];
+        upd("land", lLabels, hist(d, "land_acres", lEdges));
+
+        upd(
+          "livestock",
+          ["% गाय/बैल आहे", "सरासरी बकऱ्या", "सरासरी कोंबड्या", "सरासरी गाढवे"],
+          [
+            +((d.filter((h) => h.has_cattle).length / d.length) * 100).toFixed(
+              1,
+            ),
+            avg(d, "goats"),
+            avg(d, "chickens"),
+            avg(d, "donkeys"),
+          ],
+        );
+
+        const mEdges = [0, 1, 2, 3, 5, 8, 12, 20, 50];
+        const mLabels = ["0", "1", "2", "3", "४-५", "६-८", "९-१२", "१३+"];
+        upd("mahua", mLabels, hist(d, "mahua_trees", mEdges));
+
+        upd(
+          "forest",
+          ["तेंदूपत्ता संकलन", "वनजमीन मिळाली", "सातबारा मिळाला"],
+          [
+            d.filter((h) => h.tendu_collect).length,
+            d.filter((h) => h.forest_land).length,
+            d.filter((h) => h.satbara).length,
+          ],
+        );
+      }
+
+      function updIncome(d) {
+        const iEdges = [
+          0, 5000, 10000, 15000, 20000, 30000, 40000, 50000, 75000, 100000,
+          200000,
+        ];
+        const iLabels = [
+          "<5K",
+          "5–10K",
+          "10–15K",
+          "15–20K",
+          "20–30K",
+          "30–40K",
+          "40–50K",
+          "50–75K",
+          "75–100K",
+          "100K+",
+        ];
+        upd("income", iLabels, hist(d, "annual_income", iEdges));
+
+        const labMap = countBy(d, (h) => lNorm(h.labor_place));
+        const labTop = topN(labMap);
+        upd(
+          "labor-dest",
+          labTop.map(([k]) => k),
+          labTop.map(([, v]) => v),
+        );
+
+        const waterMap = countBy(d, (h) => wNorm(h.water_source));
+        const wTop = topN(waterMap);
+        upd(
+          "water",
+          wTop.map(([k]) => k),
+          wTop.map(([, v]) => v),
+        );
+
+        upd(
+          "loan",
+          ["कर्ज आहे", "कर्ज नाही"],
+          [
+            d.filter((h) => h.loan_amount > 0).length,
+            d.filter((h) => h.loan_amount === 0).length,
+          ],
+        );
+
+        const ltMap = countBy(d, (h) => ltNorm(h.labor_work));
+        const ltTop = topN(ltMap, 6);
+        upd(
+          "labor-type",
+          ltTop.map(([k]) => k),
+          ltTop.map(([, v]) => v),
+        );
+      }
+
+      function updEducation(d) {
+        const vSchool = {},
+          vTot = {};
+        d.forEach((h) => {
+          vSchool[h.village] =
+            (vSchool[h.village] || 0) + (h.children_school ? 1 : 0);
+          vTot[h.village] = (vTot[h.village] || 0) + 1;
+        });
+        const vArr = topN(vTot, 15).map(([v]) => [
+          v,
+          +((vSchool[v] / vTot[v]) * 100).toFixed(1),
+        ]);
+        upd(
+          "school-village",
+          vArr.map(([v]) => v),
+          vArr.map(([, p]) => p),
+        );
+
+        const sMap = {};
+        d.forEach((h) => {
+          if (!h.school_name || !h.school_name.trim()) return;
+          const k = h.school_name.trim().replace(/\s+/g, " ").slice(0, 30);
+          sMap[k] = (sMap[k] || 0) + 1;
+        });
+        const sTop = topN(sMap, 10);
+        upd(
+          "schools",
+          sTop.map(([k]) => k),
+          sTop.map(([, v]) => v),
+        );
+
+        const mEduFlat = d.flatMap((h) => h.member_education);
+        const mEduMap = {};
+        mEduFlat.forEach((e) => {
+          const k =
+            e && e !== "नाही"
+              ? e.length > 10
+                ? e.slice(0, 10) + "…"
+                : e
+              : "शिक्षण नाही";
+          mEduMap[k] = (mEduMap[k] || 0) + 1;
+        });
+        const mEduTop = topN(mEduMap, 10);
+        upd(
+          "mem-edu",
+          mEduTop.map(([k]) => k),
+          mEduTop.map(([, v]) => v),
+        );
+      }
+
+      function updHousing(d) {
+        const hMap = countBy(d, (h) => hNorm(h.house_type));
+        const hTop = topN(hMap);
+        upd(
+          "house",
+          hTop.map(([k]) => k),
+          hTop.map(([, v]) => v),
+        );
+
+        upd(
+          "toilet-pie",
+          ["शौचालय आहे", "शौचालय नाही"],
+          [
+            d.filter((h) => h.toilet_use).length,
+            d.filter((h) => !h.toilet_use).length,
+          ],
+        );
+
+        const mobMap = countBy(d, (h) => mNorm(h.mobile_type));
+        upd(
+          "mobile-type",
+          [...Object.keys(mobMap)],
+          [...Object.values(mobMap)],
+        );
+
+        const assets = [
+          ["आधारकार्ड", pct(d, "aadhaar")],
+          ["मतदानकार्ड", pct(d, "voter_id")],
+          ["स्वतःचे घर", pct(d, "own_house")],
+          ["मोटरसायकल", pct(d, "motorcycle")],
+          ["मोबाईल फोन", pct(d, "has_mobile")],
+          [
+            "गाय/बैल आहे",
+            +((d.filter((h) => h.has_cattle).length / d.length) * 100).toFixed(
+              1,
+            ),
+          ],
+          ["बँक खाते", pct(d, "bank_account")],
+          ["ग्यास सिलेंडर", pct(d, "gas_cylinder")],
+        ].sort((a, b) => b[1] - a[1]);
+        upd(
+          "assets",
+          assets.map(([l]) => l),
+          assets.map(([, v]) => v),
+        );
+      }
+
+      function updWomen(d) {
+        const vShg = {},
+          vTot = {};
+        d.forEach((h) => {
+          vShg[h.village] = (vShg[h.village] || 0) + (h.women_shg ? 1 : 0);
+          vTot[h.village] = (vTot[h.village] || 0) + 1;
+        });
+        const shgArr = topN(vTot, 15).map(([v]) => [
+          v,
+          +((vShg[v] / vTot[v]) * 100).toFixed(1),
+        ]);
+        upd(
+          "shg-village",
+          shgArr.map(([v]) => v),
+          shgArr.map(([, p]) => p),
+        );
+
+        upd(
+          "veg",
+          ["दररोज भाजीपाला", "भाजीपाला नाही"],
+          [
+            d.filter((h) => h.vegetables).length,
+            d.filter((h) => !h.vegetables).length,
+          ],
+        );
+
+        const ilMap = {};
+        d.forEach((h) => {
+          if (!h.illness || h.illness === "नाही" || !h.illness.trim()) return;
+          const parts = h.illness
+            .split(/[,\n\/]+/)
+            .map((s) => s.trim())
+            .filter(Boolean);
+          parts.forEach((p) => {
+            if (p.length > 1) ilMap[p] = (ilMap[p] || 0) + 1;
+          });
+        });
+        const ilTop = topN(ilMap, 10);
+        upd(
+          "illness",
+          ilTop.map(([k]) => k.slice(0, 22)),
+          ilTop.map(([, v]) => v),
+        );
+
+        upd(
+          "birth",
+          ["जन्म दाखला आहे", "जन्म दाखला नाही"],
+          [
+            d.filter((h) => h.birth_cert).length,
+            d.filter((h) => !h.birth_cert).length,
+          ],
+        );
+      }
+
+      /* ── Initialize all charts ── */
+      function createCharts() {
+        CHARTS["village-pie"] = mkChart(
+          "c-village-pie",
+          "doughnut",
+          [],
+          [],
+          {},
+        );
+        CHARTS["family-size"] = mkChart("c-family-size", "bar", [], [], {
+          ds: { backgroundColor: C[0] },
+        });
+        CHARTS["village-bar"] = mkChart("c-village-bar", "bar", [], [], {
+          rotate: 45,
+          ds: { backgroundColor: C[2] },
+        });
+        CHARTS["age"] = mkChart("c-age", "bar", [], [], {
+          ds: { backgroundColor: C[1] },
+        });
+        CHARTS["edu"] = mkChart("c-edu", "bar", [], [], {
+          indexAxis: "y",
+          ds: { backgroundColor: C },
+        });
+        CHARTS["occ"] = mkChart("c-occ", "bar", [], [], {
+          indexAxis: "y",
+          ds: { backgroundColor: C },
+        });
+        CHARTS["docs"] = mkChart("c-docs", "bar", [], [], {
+          indexAxis: "y",
+          ds: { backgroundColor: C },
+          pctTooltip: true,
+          scales: { x: { min: 0, max: 100 } },
+        });
+        CHARTS["govt-village"] = mkChart("c-govt-village", "bar", [], [], {
+          indexAxis: "y",
+          ds: { backgroundColor: C[3] },
+          pctTooltip: true,
+          scales: { x: { min: 0, max: 100 } },
+        });
+        CHARTS["mnrega"] = mkChart("c-mnrega", "doughnut", [], [], {});
+        CHARTS["land"] = mkChart("c-land", "bar", [], [], {
+          ds: { backgroundColor: C[2] },
+        });
+        CHARTS["livestock"] = mkChart("c-livestock", "bar", [], [], {
+          ds: { backgroundColor: C },
+        });
+        CHARTS["mahua"] = mkChart("c-mahua", "bar", [], [], {
+          ds: { backgroundColor: C[4] },
+        });
+        CHARTS["forest"] = mkChart("c-forest", "bar", [], [], {
+          ds: { backgroundColor: C },
+        });
+        CHARTS["income"] = mkChart("c-income", "bar", [], [], {
+          ds: { backgroundColor: C[0] },
+        });
+        CHARTS["labor-dest"] = mkChart("c-labor-dest", "doughnut", [], [], {});
+        CHARTS["water"] = mkChart("c-water", "doughnut", [], [], {});
+        CHARTS["loan"] = mkChart("c-loan", "doughnut", [], [], {});
+        CHARTS["labor-type"] = mkChart("c-labor-type", "bar", [], [], {
+          indexAxis: "y",
+          ds: { backgroundColor: C },
+        });
+        CHARTS["school-village"] = mkChart("c-school-village", "bar", [], [], {
+          ds: { backgroundColor: C[2] },
+          pctTooltip: true,
+          scales: { y: { min: 0, max: 100 } },
+        });
+        CHARTS["schools"] = mkChart("c-schools", "bar", [], [], {
+          indexAxis: "y",
+          ds: { backgroundColor: C[3] },
+        });
+        CHARTS["mem-edu"] = mkChart("c-mem-edu", "bar", [], [], {
+          indexAxis: "y",
+          ds: { backgroundColor: C },
+        });
+        CHARTS["house"] = mkChart("c-house", "doughnut", [], [], {});
+        CHARTS["toilet-pie"] = mkChart("c-toilet-pie", "doughnut", [], [], {});
+        CHARTS["mobile-type"] = mkChart(
+          "c-mobile-type",
+          "doughnut",
+          [],
+          [],
+          {},
+        );
+        CHARTS["assets"] = mkChart("c-assets", "bar", [], [], {
+          indexAxis: "y",
+          ds: { backgroundColor: C },
+          pctTooltip: true,
+          scales: { x: { min: 0, max: 100 } },
+        });
+        CHARTS["shg-village"] = mkChart("c-shg-village", "bar", [], [], {
+          ds: { backgroundColor: C[4] },
+          pctTooltip: true,
+          scales: { y: { min: 0, max: 100 } },
+        });
+        CHARTS["veg"] = mkChart("c-veg", "doughnut", [], [], {});
+        CHARTS["illness"] = mkChart("c-illness", "bar", [], [], {
+          indexAxis: "y",
+          ds: { backgroundColor: C },
+        });
+        CHARTS["birth"] = mkChart("c-birth", "doughnut", [], [], {});
+      }
+
+      function renderAll(d) {
+        updateHero(d);
+        updOverview(d);
+        updDemographics(d);
+        updDocuments(d);
+        updAgriculture(d);
+        updIncome(d);
+        updEducation(d);
+        updHousing(d);
+        updWomen(d);
+      }
+
+      /* ── Filter logic ── */
+      function getFiltered() {
+        return DATA.filter((h) => {
+          if (FILTERS.villages.size && !FILTERS.villages.has(h.village))
+            return false;
+          if (
+            h.age < FILTERS.ageMin ||
+            (FILTERS.ageMax < 120 && h.age > FILTERS.ageMax)
+          )
+            return false;
+          return true;
+        });
+      }
+      function applyFilters() {
+        renderAll(getFiltered());
+      }
+
+      /* ── Village multiselect ── */
+      function buildVillageFilter() {
+        const villages = [...new Set(DATA.map((h) => h.village))].sort();
+        const dropdown = document.getElementById("ms-dropdown");
+        const btn = document.getElementById("ms-toggle");
+        villages.forEach((v) => {
+          const label = document.createElement("label");
+          label.className = "ms-item";
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.value = v;
+          cb.dataset.village = v;
+          cb.checked = true;
+          cb.addEventListener("change", syncVillageFilter);
+          label.appendChild(cb);
+          label.appendChild(document.createTextNode(" " + v));
+          dropdown.appendChild(label);
+        });
+        document.getElementById("ms-all").addEventListener("change", (e) => {
+          const checked = e.target.checked;
+          dropdown
+            .querySelectorAll("input[data-village]")
+            .forEach((cb) => (cb.checked = checked));
+          FILTERS.villages = checked ? new Set() : new Set(villages);
+          btn.textContent = checked ? "सर्व गावे" : "कोणतेही गाव नाही";
+          applyFilters();
+        });
+        document.getElementById("ms-toggle").addEventListener("click", (e) => {
+          e.stopPropagation();
+          document.getElementById("village-ms").classList.toggle("open");
+        });
+        document.addEventListener("click", () =>
+          document.getElementById("village-ms").classList.remove("open"),
+        );
+      }
+
+      function syncVillageFilter() {
+        const checked = [
+          ...document.querySelectorAll(
+            "#ms-dropdown input[data-village]:checked",
+          ),
+        ].map((cb) => cb.value);
+        const all = [
+          ...document.querySelectorAll("#ms-dropdown input[data-village]"),
+        ];
+        FILTERS.villages =
+          checked.length === all.length ? new Set() : new Set(checked);
+        document.getElementById("ms-all").checked =
+          checked.length === all.length;
+        document.getElementById("ms-toggle").textContent =
+          checked.length === all.length
+            ? "सर्व गावे"
+            : checked.length + " गावे";
+        applyFilters();
+      }
+
+      /* ── Tab switching ── */
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tab-btn")
+            .forEach((b) => b.classList.remove("active"));
+          document
+            .querySelectorAll(".tab-panel")
+            .forEach((p) => p.classList.remove("active"));
+          btn.classList.add("active");
+          document
+            .getElementById("tab-" + btn.dataset.tab)
+            .classList.add("active");
+          Object.values(CHARTS).forEach((c) => c && c.resize());
+        });
+      });
+
+      /* ── Age range filter ── */
+      document.getElementById("age-min").addEventListener("change", (e) => {
+        FILTERS.ageMin = +e.target.value || 0;
+        applyFilters();
+      });
+      document.getElementById("age-max").addEventListener("change", (e) => {
+        FILTERS.ageMax = +e.target.value || 120;
+        applyFilters();
+      });
+
+      document.getElementById("reset-btn").addEventListener("click", () => {
+        FILTERS.villages.clear();
+        FILTERS.ageMin = 0;
+        FILTERS.ageMax = 120;
+        document.getElementById("age-min").value = 0;
+        document.getElementById("age-max").value = 120;
+        document.getElementById("ms-all").checked = true;
+        document
+          .querySelectorAll("#ms-dropdown input[data-village]")
+          .forEach((cb) => (cb.checked = true));
+        document.getElementById("ms-toggle").textContent = "सर्व गावे";
+        applyFilters();
+      });
+
+      /* ── Entry point ── */
+      async function init() {
+        try {
+          const raw = await fetch("./yung_data.csv").then((r) => r.text());
+          DATA = parseCSV(raw);
+          console.log("Parsed", DATA.length, "household records");
+          createCharts();
+          buildVillageFilter();
+          renderAll(DATA);
+          document.getElementById("loading").style.display = "none";
+        } catch (err) {
+          document.getElementById("loading").innerHTML =
+            `<p style="color:#c14a4a">माहिती लोड करताना त्रुटी: ${err.message}</p>`;
+          console.error(err);
+        }
+      }
+
+      init();
+
+      // Resize all charts when viewport changes (orientation change, window resize)
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          Object.values(CHARTS).forEach((c) => c && c.resize());
+        }, 100);
+      });
+    </script>
+  </body>
+</html>
