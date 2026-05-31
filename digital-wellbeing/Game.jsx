@@ -464,8 +464,321 @@ function shareOnPlatform(platform, overall) {
   return false;
 }
 
+// ── INFO PAGE ─────────────────────────────────────────────────────────────────
+function InfoPage({ onBack, theme, onToggleTheme }) {
+  const [vis, setVis] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setVis(true), 60); return () => clearTimeout(t); }, []);
+
+  const METERS_INFO = [
+    { key: 'focus',       color: '#22d3ee', label: 'Focus',       start: 30, desc: 'Your capacity for deep, sustained thought. High-quality attention is the scarcest resource in the digital age.' },
+    { key: 'dopamine',    color: '#fb923c', label: 'Dopamine',    start: 40, desc: "The brain's reward signal. This meter works in reverse — the higher it climbs, the more trapped you are in the scroll loop." },
+    { key: 'oneness',     color: '#a78bfa', label: 'Oneness',     start: 25, desc: 'Your real-world connections and presence. Social media can mimic belonging while eroding the real thing.' },
+    { key: 'tranquility', color: '#4ade80', label: 'Tranquility', start: 20, desc: 'Inner stillness beyond the noise. The quiet that remains when you stop reaching for the phone.' },
+  ];
+
+  const WORLDS_INFO = [
+    { num: '01', name: 'Echo Chamber Swamp', bg: 'swamp',   desc: 'Algorithm bubbles that close the world in. The feed only shows you what keeps you scrolling — and slowly, that becomes all you see.' },
+    { num: '02', name: 'Dopamine Arcade',    bg: 'arcade',  desc: 'Every scroll is engineered to reward. Infinite reels, variable rewards, and the pull of one more video — all designed by teams of engineers.' },
+    { num: '03', name: 'Validation City',    bg: 'city',    desc: 'Built on likes, followers, and comparison. The city runs on external approval, and the currency is never enough.' },
+    { num: '04', name: "Nomad's Trail",      bg: 'trail',   desc: 'The long walk back to yourself. Away from the feeds, you rediscover boredom, depth, and the texture of unmediated experience.' },
+  ];
+
+  const ITEMS_INFO = [
+    { emoji: '📚', name: 'Long-form Mind',  desc: 'You chose depth over speed.' },
+    { emoji: '📔', name: 'Inner Voice',     desc: 'You listened to yourself.' },
+    { emoji: '🧘', name: 'Still Point',     desc: 'You found silence.' },
+    { emoji: '🧭', name: 'True North',      desc: 'You chose direction.' },
+    { emoji: '☕', name: '5:30am Hour',     desc: 'You claimed the morning.' },
+    { emoji: '👟', name: 'The Run',         desc: 'You moved your body.' },
+  ];
+
+  const DIMENSIONS = [
+    'Physical Health', 'Psychological Wellbeing', 'Focus & Attention',
+    'Social Connection', 'Inner Tranquility', 'Dopamine Freedom',
+    'Intentionality', 'Digital Flourishing',
+  ];
+
+  return (
+    <div className={`info-page${vis ? ' info-page--vis' : ''}`}>
+      <div className="info-inner">
+
+        <div className="info-header">
+          <button className="info-back-btn" onClick={onBack}>← Back</button>
+          <div className="info-header-text">
+            <h1 className="info-title">How It Works</h1>
+            <p className="info-subtitle">Everything behind The Wanderer's Digital Escape</p>
+          </div>
+          <button className="home-theme-btn info-theme-btn" onClick={onToggleTheme}
+                  title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+        </div>
+
+        {/* ── GAMEPLAY ── */}
+        <section className="info-section">
+          <h2 className="info-section-title">Gameplay</h2>
+          <p className="info-body">
+            The Wanderer's Digital Escape is a text-based narrative game — a choose-your-own-adventure through the attention economy. You play as The Wanderer, a person navigating four digital worlds, each a mirror of how social media reshapes the mind.
+          </p>
+          <p className="info-body">
+            At every scene you make a choice. Each choice shifts your four wellbeing meters. There are roughly 40 scenes across the four worlds, taking about 15 minutes to complete. When you reach the beach, you receive your Digital Flourishing Score.
+          </p>
+          <div className="info-feature-row">
+            <div className="info-feature-chip">~40 scenes</div>
+            <div className="info-feature-chip">~15 minutes</div>
+            <div className="info-feature-chip">Keys 1–9 for shortcuts</div>
+            <div className="info-feature-chip">Ambient soundscapes</div>
+            <div className="info-feature-chip">Collectible items</div>
+          </div>
+        </section>
+
+        {/* ── THE FOUR METERS ── */}
+        <section className="info-section">
+          <h2 className="info-section-title">The Four Meters</h2>
+          <p className="info-body">
+            Your inner life is tracked across four dimensions. Each starts at a different value — you are not beginning from a place of wellness.
+          </p>
+          <div className="info-meter-grid">
+            {METERS_INFO.map(m => (
+              <div key={m.key} className="info-meter-card" style={{ borderColor: m.color }}>
+                <div className="info-meter-card-header">
+                  <span className="info-meter-dot" style={{ background: m.color, boxShadow: `0 0 8px ${m.color}` }} />
+                  <span className="info-meter-label" style={{ color: m.color }}>{m.label}</span>
+                  <span className="info-meter-start">starts at {m.start}</span>
+                </div>
+                <p className="info-meter-desc">{m.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── SCORING ── */}
+        <section className="info-section">
+          <h2 className="info-section-title">Scoring Mechanism</h2>
+          <p className="info-body">
+            At the end of the game, your four meter values are combined into a single <strong>Digital Flourishing Score</strong> from 0 to 100.
+          </p>
+          <div className="info-formula-block">
+            <div className="info-formula-label">Flourishing Score</div>
+            <div className="info-formula">
+              ( Focus + Oneness + Tranquility + (100 − Dopamine) ) ÷ 4
+            </div>
+          </div>
+          <p className="info-body">
+            Dopamine is <em>inverted</em> in the formula. A high Dopamine score means you leaned into the scroll loop — and that actively lowers your flourishing. The other three meters reward you directly for building them up.
+          </p>
+          <p className="info-body">
+            <strong>Ghost Mode</strong> activates when Dopamine exceeds 75. The game world shifts visually, signalling that you are deep inside the scroll trap.
+          </p>
+          <p className="info-body info-body--small">
+            Your final report breaks the score into eight dimensions:
+          </p>
+          <div className="info-dimensions-row">
+            {DIMENSIONS.map(d => (
+              <div key={d} className="info-dimension-chip">{d}</div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── SIMULATED RESULTS ── */}
+        <section className="info-section">
+          <h2 className="info-section-title">Simulated Results</h2>
+          <p className="info-body">
+            These are illustrative player paths — not averages, but deliberate archetypes. Each shows how a consistent pattern of choices compounds into a final score.
+          </p>
+          <div className="info-scenario-grid">
+            {[
+              {
+                name: 'The Mindless Scroller',
+                desc: 'Always chose distraction. Never resisted a scroll. Each world pulled deeper into the loop.',
+                accentColor: '#ef4444',
+                meters: { focus: 18, dopamine: 88, oneness: 22, tranquility: 15 },
+                overall: 17,
+                dims: [
+                  { name: 'Physical Health',         score: 30 },
+                  { name: 'Psychological Wellbeing', score: 26 },
+                  { name: 'Focus & Attention',       score: 18 },
+                  { name: 'Social Connection',       score: 22 },
+                  { name: 'Inner Tranquility',       score: 15 },
+                  { name: 'Dopamine Freedom',        score: 12 },
+                  { name: 'Intentionality',          score: 17 },
+                  { name: 'Digital Flourishing',     score: 17 },
+                ],
+              },
+              {
+                name: 'The Social Butterfly',
+                desc: 'Prioritised connection at the cost of depth. Strong online bonds, but restless and dopamine-chased.',
+                accentColor: '#fb923c',
+                meters: { focus: 42, dopamine: 65, oneness: 68, tranquility: 35 },
+                overall: 45,
+                dims: [
+                  { name: 'Physical Health',         score: 50 },
+                  { name: 'Psychological Wellbeing', score: 50 },
+                  { name: 'Focus & Attention',       score: 42 },
+                  { name: 'Social Connection',       score: 68 },
+                  { name: 'Inner Tranquility',       score: 35 },
+                  { name: 'Dopamine Freedom',        score: 35 },
+                  { name: 'Intentionality',          score: 39 },
+                  { name: 'Digital Flourishing',     score: 45 },
+                ],
+              },
+              {
+                name: 'The Balanced Explorer',
+                desc: 'Sometimes scrolled, sometimes stepped back. No obsession in either direction. A middle path.',
+                accentColor: '#facc15',
+                meters: { focus: 58, dopamine: 45, oneness: 55, tranquility: 60 },
+                overall: 57,
+                dims: [
+                  { name: 'Physical Health',         score: 75 },
+                  { name: 'Psychological Wellbeing', score: 66 },
+                  { name: 'Focus & Attention',       score: 58 },
+                  { name: 'Social Connection',       score: 55 },
+                  { name: 'Inner Tranquility',       score: 60 },
+                  { name: 'Dopamine Freedom',        score: 55 },
+                  { name: 'Intentionality',          score: 59 },
+                  { name: 'Digital Flourishing',     score: 57 },
+                ],
+              },
+              {
+                name: 'The Mindful Achiever',
+                desc: 'Chose depth and presence consistently. Picked the book, the run, the conversation over the feed.',
+                accentColor: '#4ade80',
+                meters: { focus: 78, dopamine: 28, oneness: 72, tranquility: 80 },
+                overall: 76,
+                dims: [
+                  { name: 'Physical Health',         score: 95 },
+                  { name: 'Psychological Wellbeing', score: 86 },
+                  { name: 'Focus & Attention',       score: 78 },
+                  { name: 'Social Connection',       score: 72 },
+                  { name: 'Inner Tranquility',       score: 80 },
+                  { name: 'Dopamine Freedom',        score: 72 },
+                  { name: 'Intentionality',          score: 79 },
+                  { name: 'Digital Flourishing',     score: 76 },
+                ],
+              },
+              {
+                name: 'The Digital Ascetic',
+                desc: "Refused every digital pull. Collected every item. Walked the Nomad's Trail without looking back.",
+                accentColor: '#22d3ee',
+                meters: { focus: 92, dopamine: 12, oneness: 65, tranquility: 88 },
+                overall: 83,
+                dims: [
+                  { name: 'Physical Health',         score: 100 },
+                  { name: 'Psychological Wellbeing', score: 100 },
+                  { name: 'Focus & Attention',       score: 92 },
+                  { name: 'Social Connection',       score: 65 },
+                  { name: 'Inner Tranquility',       score: 88 },
+                  { name: 'Dopamine Freedom',        score: 88 },
+                  { name: 'Intentionality',          score: 90 },
+                  { name: 'Digital Flourishing',     score: 83 },
+                ],
+              },
+            ].map(s => (
+              <div key={s.name} className="info-scenario-card" style={{ borderTopColor: s.accentColor }}>
+                <div className="info-scenario-head">
+                  <div className="info-scenario-name">{s.name}</div>
+                  <div className="info-scenario-score" style={{ color: s.accentColor }}>
+                    {s.overall}<span className="info-scenario-score-denom">/100</span>
+                  </div>
+                </div>
+                <p className="info-scenario-desc">{s.desc}</p>
+                <div className="info-scenario-meter-row">
+                  {[
+                    { key: 'focus',       label: 'F', color: '#22d3ee', value: s.meters.focus },
+                    { key: 'dopamine',    label: 'D', color: '#fb923c', value: s.meters.dopamine },
+                    { key: 'oneness',     label: 'O', color: '#a78bfa', value: s.meters.oneness },
+                    { key: 'tranquility', label: 'T', color: '#4ade80', value: s.meters.tranquility },
+                  ].map(m => (
+                    <div key={m.key} className="info-scenario-pill" title={`${m.key}: ${m.value}`}>
+                      <span className="info-scenario-pill-dot" style={{ background: m.color }} />
+                      <span className="info-scenario-pill-label">{m.label}</span>
+                      <span className="info-scenario-pill-val" style={{ color: m.color }}>{m.value}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="info-scenario-bar-wrap">
+                  <div className="info-scenario-bar" style={{ width: `${s.overall}%`, background: s.accentColor }} />
+                </div>
+                <div className="info-scenario-dim-grid">
+                  {s.dims.map(d => (
+                    <div key={d.name} className="info-scenario-dim-row">
+                      <span className="info-scenario-dim-name">{d.name}</span>
+                      <div className="info-scenario-dim-track">
+                        <div className="info-scenario-dim-fill" style={{ width: `${d.score}%`, background: s.accentColor }} />
+                      </div>
+                      <span className="info-scenario-dim-val">{d.score}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── THE FOUR WORLDS ── */}
+        <section className="info-section">
+          <h2 className="info-section-title">The Four Worlds</h2>
+          <div className="info-world-grid">
+            {WORLDS_INFO.map(w => (
+              <div key={w.num} className={`info-world-card info-world-card--${w.bg}`}>
+                <div className="info-world-num">{w.num}</div>
+                <div className="info-world-name">{w.name}</div>
+                <p className="info-world-desc">{w.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── COLLECTIBLES ── */}
+        <section className="info-section">
+          <h2 className="info-section-title">Collectible Items</h2>
+          <p className="info-body">
+            Certain choices award you a collectible item — a symbol of a real habit or practice reclaimed from the noise. Six items can be earned across the journey.
+          </p>
+          <div className="info-items-row">
+            {ITEMS_INFO.map(item => (
+              <div key={item.name} className="info-item-chip" title={item.desc}>
+                <span className="info-item-emoji">{item.emoji}</span>
+                <span className="info-item-name">{item.name}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── DATA SOURCE ── */}
+        <section className="info-section">
+          <h2 className="info-section-title">Data &amp; Ideas</h2>
+          <p className="info-body">
+            The game's scenarios, meter mechanics, and wellbeing framing are drawn from Sanket Tambare's ongoing writing on digital wellbeing. The articles explore screen habits, dopamine loops, the attention economy, algorithmic influence, and the practice of digital minimalism.
+          </p>
+          <div className="info-source-box">
+            <div className="info-source-label">Primary Source</div>
+            <a
+              className="info-source-link"
+              href="https://sankettambare.substack.com/t/digital-wellbeing"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Digital Wellbeing on Substack ↗
+            </a>
+            <p className="info-source-desc">
+              A collection of essays and reflections on how we live with technology — and how we might live better.
+            </p>
+          </div>
+        </section>
+
+        <div className="info-footer">
+          <button className="info-back-btn" onClick={onBack}>← Back to Home</button>
+          <div className="info-footer-note">The Wanderer's Digital Escape © 2026</div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 // ── HOME SCREEN ───────────────────────────────────────────────────────────────
-function HomePage({ onStart, hasSave, theme, onToggleTheme }) {
+function HomePage({ onStart, hasSave, onInfo, theme, onToggleTheme }) {
   const [vis, setVis] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVis(true), 60); return () => clearTimeout(t); }, []);
 
@@ -539,6 +852,7 @@ function HomePage({ onStart, hasSave, theme, onToggleTheme }) {
           {hasSave && (
             <button className="home-btn-secondary" onClick={() => onStart(true)}>↩ Continue Journey</button>
           )}
+          <button className="home-btn-info" onClick={onInfo}>How It Works ↗</button>
         </div>
 
         <div className="home-hints">
@@ -583,7 +897,7 @@ function HomePage({ onStart, hasSave, theme, onToggleTheme }) {
         </section>
 
         <div className="home-footer-bar">
-          Built with care · The Wanderer's Digital Escape © 2025
+          Built with care · The Wanderer's Digital Escape © 2026
         </div>
       </div>
     </div>
@@ -866,11 +1180,22 @@ function App() {
   const [showApiModal, setShowApiModal] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [curiosityXP, setCuriosityXP] = useState(0);
-  const [gameState, setGameState] = useState('home');
+  const [gameState, setGameState] = useState(() =>
+    window.location.hash === '#how-it-works' ? 'info' : 'home'
+  );
   const [theme, setTheme] = useState(() => localStorage.getItem('wde_theme') || 'dark');
 
   const scene = window.SCENES[sceneId];
   const ghostMode = meters.dopamine > 75;
+
+  useEffect(() => {
+    const onHashChange = () => {
+      if (window.location.hash === '#how-it-works') setGameState('info');
+      else if (window.location.hash === '' || window.location.hash === '#') setGameState('home');
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -1025,8 +1350,15 @@ function App() {
 
   const hasSave = !!(localStorage.getItem('wde_scene') && localStorage.getItem('wde_scene') !== 'intro');
 
+  const openInfo = () => { window.history.pushState(null, '', '#how-it-works'); setGameState('info'); };
+  const closeInfo = () => { window.history.pushState(null, '', window.location.pathname); setGameState('home'); };
+
   if (gameState === 'home') {
-    return <HomePage onStart={handleStartGame} hasSave={hasSave} theme={theme} onToggleTheme={handleToggleTheme} />;
+    return <HomePage onStart={handleStartGame} hasSave={hasSave} onInfo={openInfo} theme={theme} onToggleTheme={handleToggleTheme} />;
+  }
+
+  if (gameState === 'info') {
+    return <InfoPage onBack={closeInfo} theme={theme} onToggleTheme={handleToggleTheme} />;
   }
 
   if (!scene) return <div style={{ color: '#fff', padding: 24, fontFamily: 'monospace' }}>Loading…</div>;
