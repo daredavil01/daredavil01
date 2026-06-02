@@ -43,6 +43,151 @@
         color: #f5efe6;
         padding: 28px 24px 20px;
         text-align: center;
+        position: relative;
+      }
+      #header-actions {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+      }
+      #lang-toggle {
+        background: rgba(255, 255, 255, 0.15);
+        color: #f5efe6;
+        border: 1.5px solid rgba(255, 255, 255, 0.45);
+        border-radius: 20px;
+        padding: 5px 15px;
+        cursor: pointer;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        transition: 0.15s;
+        white-space: nowrap;
+      }
+      #lang-toggle:hover {
+        background: rgba(255, 255, 255, 0.28);
+      }
+      #creator-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: #f5efe6;
+        border: 1.5px solid rgba(255, 255, 255, 0.28);
+        border-radius: 20px;
+        padding: 4px 12px;
+        cursor: pointer;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: 0.15s;
+        white-space: nowrap;
+      }
+      #creator-btn:hover {
+        background: rgba(255, 255, 255, 0.22);
+      }
+
+      /* Creator modal */
+      #creator-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.48);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      #creator-modal.open {
+        display: flex;
+      }
+      .creator-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        max-width: 580px;
+        width: 100%;
+        max-height: 88vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
+        animation: modalIn 0.2s ease;
+      }
+      @keyframes modalIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .creator-close {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: var(--muted);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.15s;
+      }
+      .creator-close:hover {
+        background: var(--bg);
+        color: var(--text);
+      }
+      .creator-body {
+        padding: 36px 40px 40px;
+      }
+      .creator-eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.78rem;
+        color: var(--primary);
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .creator-name {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 20px;
+        line-height: 1.2;
+      }
+      .creator-bio {
+        color: var(--muted);
+        line-height: 1.72;
+        font-size: 0.95rem;
+      }
+      .creator-bio p + p {
+        margin-top: 14px;
+      }
+      .creator-bio .highlight {
+        font-weight: 600;
+        color: var(--text);
+        margin-top: 20px;
+      }
+      .creator-connect {
+        margin-top: 28px;
+      }
+      .creator-connect a {
+        display: inline-flex;
+        align-items: center;
+        padding: 11px 24px;
+        background: var(--primary);
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        box-shadow: 0 2px 6px rgba(181, 104, 42, 0.35);
+        transition: background 0.15s;
+      }
+      .creator-connect a:hover {
+        background: var(--primary2);
       }
       header h1 {
         font-size: 1.9rem;
@@ -465,6 +610,16 @@
         }
       }
 
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 20px 24px;
+        font-size: 0.78rem;
+        color: var(--muted);
+        border-top: 1px solid var(--border);
+        background: #fdf8f2;
+      }
+
       /* Small mobile (≤ 420px) */
       @media (max-width: 420px) {
         #hero {
@@ -522,12 +677,16 @@
   <body>
     <div id="loading">
       <div class="spinner"></div>
-      <p>माहिती लोड होत आहे…</p>
+      <p data-mr="माहिती लोड होत आहे…" data-en="Loading data…">माहिती लोड होत आहे…</p>
     </div>
 
     <header>
-      <h1>🌿 आदिवासी सर्वेक्षण डॅशबोर्ड</h1>
-      <p>आदिवासी पावरा समुदाय · नंदुरबार जिल्हा, महाराष्ट्र</p>
+      <h1 data-mr="🌿 आदिवासी सर्वेक्षण डॅशबोर्ड" data-en="🌿 Tribal Survey Dashboard">🌿 आदिवासी सर्वेक्षण डॅशबोर्ड</h1>
+      <p data-mr="आदिवासी पावरा समुदाय · नंदुरबार जिल्हा, महाराष्ट्र" data-en="Adivasi Pawra Community · Nandurbar District, Maharashtra">आदिवासी पावरा समुदाय · नंदुरबार जिल्हा, महाराष्ट्र</p>
+      <div id="header-actions">
+        <button id="lang-toggle">EN</button>
+        <button id="creator-btn">Created By</button>
+      </div>
     </header>
 
     <!-- Hero KPIs -->
@@ -535,72 +694,72 @@
       <div class="stat">
         <span class="stat-icon">🏠</span
         ><span class="stat-value" id="s-total">—</span
-        ><span class="stat-label">एकूण कुटुंबे</span
+        ><span class="stat-label" data-mr="एकूण कुटुंबे" data-en="Total Households">एकूण कुटुंबे</span
         ><span class="stat-sub" id="s-villages">— गावे</span>
       </div>
       <div class="stat">
         <span class="stat-icon">📚</span
         ><span class="stat-value" id="s-school">—</span
-        ><span class="stat-label">शाळेत जाणारी मुले</span
-        ><span class="stat-sub">मुले असलेल्या कुटुंबांपैकी</span>
+        ><span class="stat-label" data-mr="शाळेत जाणारी मुले" data-en="Children in School">शाळेत जाणारी मुले</span
+        ><span class="stat-sub" data-mr="मुले असलेल्या कुटुंबांपैकी" data-en="of families with children">मुले असलेल्या कुटुंबांपैकी</span>
       </div>
       <div class="stat">
         <span class="stat-icon">🪪</span
         ><span class="stat-value" id="s-aadhaar">—</span
-        ><span class="stat-label">आधारकार्ड</span
-        ><span class="stat-sub">आधारकार्ड आहे</span>
+        ><span class="stat-label" data-mr="आधारकार्ड" data-en="Aadhaar Card">आधारकार्ड</span
+        ><span class="stat-sub" data-mr="आधारकार्ड आहे" data-en="have Aadhaar">आधारकार्ड आहे</span>
       </div>
       <div class="stat">
         <span class="stat-icon">🏦</span
         ><span class="stat-value" id="s-bank">—</span
-        ><span class="stat-label">बँक खाते</span
-        ><span class="stat-sub">बँक खाते आहे</span>
+        ><span class="stat-label" data-mr="बँक खाते" data-en="Bank Account">बँक खाते</span
+        ><span class="stat-sub" data-mr="बँक खाते आहे" data-en="have bank account">बँक खाते आहे</span>
       </div>
       <div class="stat">
         <span class="stat-icon">💰</span
         ><span class="stat-value" id="s-income">—</span
-        ><span class="stat-label">सरासरी वार्षिक उत्पन्न</span
-        ><span class="stat-sub">प्रति कुटुंब</span>
+        ><span class="stat-label" data-mr="सरासरी वार्षिक उत्पन्न" data-en="Avg Annual Income">सरासरी वार्षिक उत्पन्न</span
+        ><span class="stat-sub" data-mr="प्रति कुटुंब" data-en="per household">प्रति कुटुंब</span>
       </div>
       <div class="stat">
         <span class="stat-icon">🚌</span
         ><span class="stat-value" id="s-migration">—</span
-        ><span class="stat-label">मजुरीसाठी स्थलांतर</span
-        ><span class="stat-sub">मजुरीसाठी जातात</span>
+        ><span class="stat-label" data-mr="मजुरीसाठी स्थलांतर" data-en="Labour Migration">मजुरीसाठी स्थलांतर</span
+        ><span class="stat-sub" data-mr="मजुरीसाठी जातात" data-en="migrate for labour">मजुरीसाठी जातात</span>
       </div>
       <div class="stat">
         <span class="stat-icon">🧱</span
         ><span class="stat-value" id="s-kutcha">—</span
-        ><span class="stat-label">कच्ची घरे</span
-        ><span class="stat-sub">माती/कच्च्या घरात राहतात</span>
+        ><span class="stat-label" data-mr="कच्ची घरे" data-en="Kutcha Houses">कच्ची घरे</span
+        ><span class="stat-sub" data-mr="माती/कच्च्या घरात राहतात" data-en="live in kutcha houses">माती/कच्च्या घरात राहतात</span>
       </div>
       <div class="stat">
         <span class="stat-icon">🚽</span
         ><span class="stat-value" id="s-toilet">—</span
-        ><span class="stat-label">शौचालय नाही</span
-        ><span class="stat-sub">स्वच्छतागृह नाही</span>
+        ><span class="stat-label" data-mr="शौचालय नाही" data-en="No Toilet">शौचालय नाही</span
+        ><span class="stat-sub" data-mr="स्वच्छतागृह नाही" data-en="no sanitation">स्वच्छतागृह नाही</span>
       </div>
       <div class="stat">
         <span class="stat-icon">👩‍👩‍👦</span
         ><span class="stat-value" id="s-shg">—</span
-        ><span class="stat-label">महिला बचत गट</span
-        ><span class="stat-sub">बचत गटात सहभाग</span>
+        ><span class="stat-label" data-mr="महिला बचत गट" data-en="Women's SHG">महिला बचत गट</span
+        ><span class="stat-sub" data-mr="बचत गटात सहभाग" data-en="in savings groups">बचत गटात सहभाग</span>
       </div>
       <div class="stat">
         <span class="stat-icon">🎓</span
         ><span class="stat-value" id="s-noedu">—</span
-        ><span class="stat-label">शिक्षण नाही</span
-        ><span class="stat-sub">कुटुंब प्रमुख</span>
+        ><span class="stat-label" data-mr="शिक्षण नाही" data-en="No Education">शिक्षण नाही</span
+        ><span class="stat-sub" data-mr="कुटुंब प्रमुख" data-en="household heads">कुटुंब प्रमुख</span>
       </div>
     </section>
 
     <!-- Filters -->
     <div id="filter-bar">
-      <span class="filter-label">फिल्टर</span>
+      <span class="filter-label" data-mr="फिल्टर" data-en="Filter">फिल्टर</span>
       <div class="filter-group">
-        <span class="filter-label">गाव</span>
+        <span class="filter-label" data-mr="गाव" data-en="Village">गाव</span>
         <div class="ms-wrap" id="village-ms">
-          <button class="ms-btn" id="ms-toggle">सर्व गावे</button>
+          <button class="ms-btn" id="ms-toggle" data-mr="सर्व गावे" data-en="All Villages">सर्व गावे</button>
           <div class="ms-dropdown" id="ms-dropdown">
             <label class="ms-item ms-all"
               ><input type="checkbox" id="ms-all" checked /> सर्व गावे</label
@@ -609,7 +768,7 @@
         </div>
       </div>
       <div class="filter-group">
-        <span class="filter-label">प्रमुखाचे वय</span>
+        <span class="filter-label" data-mr="प्रमुखाचे वय" data-en="Head's Age">प्रमुखाचे वय</span>
         <input
           type="number"
           id="age-min"
@@ -617,6 +776,8 @@
           min="0"
           max="120"
           placeholder="किमान"
+          data-placeholder-mr="किमान"
+          data-placeholder-en="Min"
         />
         <span style="color: var(--muted)">–</span>
         <input
@@ -626,22 +787,24 @@
           min="0"
           max="120"
           placeholder="कमाल"
+          data-placeholder-mr="कमाल"
+          data-placeholder-en="Max"
         />
       </div>
-      <button id="reset-btn">फिल्टर रीसेट करा</button>
+      <button id="reset-btn" data-mr="फिल्टर रीसेट करा" data-en="Reset Filters">फिल्टर रीसेट करा</button>
       <span id="filter-info"></span>
     </div>
 
     <!-- Tab navigation -->
     <nav id="tab-nav">
-      <button class="tab-btn active" data-tab="overview">सारांश</button>
-      <button class="tab-btn" data-tab="demographics">लोकसंख्या</button>
-      <button class="tab-btn" data-tab="documents">कागदपत्रे व योजना</button>
-      <button class="tab-btn" data-tab="agriculture">शेती</button>
-      <button class="tab-btn" data-tab="income">उत्पन्न व मजुरी</button>
-      <button class="tab-btn" data-tab="education">शिक्षण</button>
-      <button class="tab-btn" data-tab="housing">घर व मालमत्ता</button>
-      <button class="tab-btn" data-tab="women">महिला व आरोग्य</button>
+      <button class="tab-btn active" data-tab="overview" data-mr="सारांश" data-en="Overview">सारांश</button>
+      <button class="tab-btn" data-tab="demographics" data-mr="लोकसंख्या" data-en="Demographics">लोकसंख्या</button>
+      <button class="tab-btn" data-tab="documents" data-mr="कागदपत्रे व योजना" data-en="Documents & Schemes">कागदपत्रे व योजना</button>
+      <button class="tab-btn" data-tab="agriculture" data-mr="शेती" data-en="Agriculture">शेती</button>
+      <button class="tab-btn" data-tab="income" data-mr="उत्पन्न व मजुरी" data-en="Income & Labour">उत्पन्न व मजुरी</button>
+      <button class="tab-btn" data-tab="education" data-mr="शिक्षण" data-en="Education">शिक्षण</button>
+      <button class="tab-btn" data-tab="housing" data-mr="घर व मालमत्ता" data-en="Housing & Assets">घर व मालमत्ता</button>
+      <button class="tab-btn" data-tab="women" data-mr="महिला व आरोग्य" data-en="Women & Health">महिला व आरोग्य</button>
     </nav>
 
     <main>
@@ -649,15 +812,15 @@
       <div class="tab-panel active" id="tab-overview">
         <div class="chart-grid">
           <div class="chart-card">
-            <div class="chart-title">गावनिहाय कुटुंबे</div>
+            <div class="chart-title" data-mr="गावनिहाय कुटुंबे" data-en="Households by Village">गावनिहाय कुटुंबे</div>
             <div class="chart-wrap"><canvas id="c-village-pie"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">कुटुंब आकार वितरण</div>
+            <div class="chart-title" data-mr="कुटुंब आकार वितरण" data-en="Household Size Distribution">कुटुंब आकार वितरण</div>
             <div class="chart-wrap"><canvas id="c-family-size"></canvas></div>
           </div>
           <div class="chart-card full">
-            <div class="chart-title">प्रत्येक गावातील कुटुंबे</div>
+            <div class="chart-title" data-mr="प्रत्येक गावातील कुटुंबे" data-en="Households per Village">प्रत्येक गावातील कुटुंबे</div>
             <div class="chart-wrap tall">
               <canvas id="c-village-bar"></canvas>
             </div>
@@ -669,15 +832,15 @@
       <div class="tab-panel" id="tab-demographics">
         <div class="chart-grid">
           <div class="chart-card">
-            <div class="chart-title">कुटुंब प्रमुखांचे वय वितरण</div>
+            <div class="chart-title" data-mr="कुटुंब प्रमुखांचे वय वितरण" data-en="Age Distribution of Heads">कुटुंब प्रमुखांचे वय वितरण</div>
             <div class="chart-wrap"><canvas id="c-age"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">कुटुंब प्रमुखांचे शिक्षण</div>
+            <div class="chart-title" data-mr="कुटुंब प्रमुखांचे शिक्षण" data-en="Education of Heads">कुटुंब प्रमुखांचे शिक्षण</div>
             <div class="chart-wrap"><canvas id="c-edu"></canvas></div>
           </div>
           <div class="chart-card full">
-            <div class="chart-title">मुख्य व्यवसाय</div>
+            <div class="chart-title" data-mr="मुख्य व्यवसाय" data-en="Main Occupation">मुख्य व्यवसाय</div>
             <div class="chart-wrap short"><canvas id="c-occ"></canvas></div>
           </div>
         </div>
@@ -687,13 +850,13 @@
       <div class="tab-panel" id="tab-documents">
         <div class="chart-grid">
           <div class="chart-card full">
-            <div class="chart-title">
+            <div class="chart-title" data-mr="कागदपत्रे व योजना कव्हरेज (कुटुंबांची %)" data-en="Documents & Schemes Coverage (%)">
               कागदपत्रे व योजना कव्हरेज (कुटुंबांची %)
             </div>
             <div class="chart-wrap tall"><canvas id="c-docs"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">
+            <div class="chart-title" data-mr="गावनिहाय शासकीय योजनेचा लाभ (शीर्ष १०)" data-en="Govt. Scheme by Village (Top 10)">
               गावनिहाय शासकीय योजनेचा लाभ (शीर्ष १०)
             </div>
             <div class="chart-wrap tall">
@@ -701,7 +864,7 @@
             </div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">रोजगार हमी योजना (MNREGA) सहभाग</div>
+            <div class="chart-title" data-mr="रोजगार हमी योजना (MNREGA) सहभाग" data-en="MNREGA Participation">रोजगार हमी योजना (MNREGA) सहभाग</div>
             <div class="chart-wrap short"><canvas id="c-mnrega"></canvas></div>
           </div>
         </div>
@@ -711,19 +874,19 @@
       <div class="tab-panel" id="tab-agriculture">
         <div class="chart-grid">
           <div class="chart-card">
-            <div class="chart-title">जमीन वितरण (एकर)</div>
+            <div class="chart-title" data-mr="जमीन वितरण (एकर)" data-en="Land Distribution (acres)">जमीन वितरण (एकर)</div>
             <div class="chart-wrap"><canvas id="c-land"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">सरासरी पशुधन प्रति कुटुंब</div>
+            <div class="chart-title" data-mr="सरासरी पशुधन प्रति कुटुंब" data-en="Avg Livestock per Household">सरासरी पशुधन प्रति कुटुंब</div>
             <div class="chart-wrap"><canvas id="c-livestock"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">महूची झाडे प्रति कुटुंब</div>
+            <div class="chart-title" data-mr="महूची झाडे प्रति कुटुंब" data-en="Mahua Trees per Household">महूची झाडे प्रति कुटुंब</div>
             <div class="chart-wrap"><canvas id="c-mahua"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">तेंदूपत्ता संकलन व वनजमीन</div>
+            <div class="chart-title" data-mr="तेंदूपत्ता संकलन व वनजमीन" data-en="Tendu Collection & Forest Land">तेंदूपत्ता संकलन व वनजमीन</div>
             <div class="chart-wrap short"><canvas id="c-forest"></canvas></div>
           </div>
         </div>
@@ -733,23 +896,23 @@
       <div class="tab-panel" id="tab-income">
         <div class="chart-grid">
           <div class="chart-card full">
-            <div class="chart-title">वार्षिक कुटुंब उत्पन्न वितरण (₹)</div>
+            <div class="chart-title" data-mr="वार्षिक कुटुंब उत्पन्न वितरण (₹)" data-en="Annual Household Income (₹)">वार्षिक कुटुंब उत्पन्न वितरण (₹)</div>
             <div class="chart-wrap"><canvas id="c-income"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">मजुरीचे ठिकाण</div>
+            <div class="chart-title" data-mr="मजुरीचे ठिकाण" data-en="Labour Destination">मजुरीचे ठिकाण</div>
             <div class="chart-wrap"><canvas id="c-labor-dest"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">पिण्याचे पाण्याचे स्रोत</div>
+            <div class="chart-title" data-mr="पिण्याचे पाण्याचे स्रोत" data-en="Drinking Water Sources">पिण्याचे पाण्याचे स्रोत</div>
             <div class="chart-wrap"><canvas id="c-water"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">कर्जदार कुटुंबे</div>
+            <div class="chart-title" data-mr="कर्जदार कुटुंबे" data-en="Households with Loans">कर्जदार कुटुंबे</div>
             <div class="chart-wrap short"><canvas id="c-loan"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">मजुरीचे काम</div>
+            <div class="chart-title" data-mr="मजुरीचे काम" data-en="Type of Labour">मजुरीचे काम</div>
             <div class="chart-wrap"><canvas id="c-labor-type"></canvas></div>
           </div>
         </div>
@@ -759,17 +922,17 @@
       <div class="tab-panel" id="tab-education">
         <div class="chart-grid">
           <div class="chart-card full">
-            <div class="chart-title">गावनिहाय शाळा उपस्थिती % (शीर्ष १५)</div>
+            <div class="chart-title" data-mr="गावनिहाय शाळा उपस्थिती % (शीर्ष १५)" data-en="School Attendance % by Village (Top 15)">गावनिहाय शाळा उपस्थिती % (शीर्ष १५)</div>
             <div class="chart-wrap tall">
               <canvas id="c-school-village"></canvas>
             </div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">शाळा (शीर्ष १०)</div>
+            <div class="chart-title" data-mr="शाळा (शीर्ष १०)" data-en="Schools (Top 10)">शाळा (शीर्ष १०)</div>
             <div class="chart-wrap tall"><canvas id="c-schools"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">कुटुंब सदस्यांचे शिक्षण</div>
+            <div class="chart-title" data-mr="कुटुंब सदस्यांचे शिक्षण" data-en="Education of Members">कुटुंब सदस्यांचे शिक्षण</div>
             <div class="chart-wrap"><canvas id="c-mem-edu"></canvas></div>
           </div>
         </div>
@@ -779,23 +942,23 @@
       <div class="tab-panel" id="tab-housing">
         <div class="chart-grid">
           <div class="chart-card">
-            <div class="chart-title">घराचा प्रकार</div>
+            <div class="chart-title" data-mr="घराचा प्रकार" data-en="House Type">घराचा प्रकार</div>
             <div class="chart-wrap short"><canvas id="c-house"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">शौचालय वापर</div>
+            <div class="chart-title" data-mr="शौचालय वापर" data-en="Toilet Usage">शौचालय वापर</div>
             <div class="chart-wrap short">
               <canvas id="c-toilet-pie"></canvas>
             </div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">मोबाईल फोनचा प्रकार</div>
+            <div class="chart-title" data-mr="मोबाईल फोनचा प्रकार" data-en="Mobile Phone Type">मोबाईल फोनचा प्रकार</div>
             <div class="chart-wrap short">
               <canvas id="c-mobile-type"></canvas>
             </div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">मालमत्ता (कुटुंबांची %)</div>
+            <div class="chart-title" data-mr="मालमत्ता (कुटुंबांची %)" data-en="Assets (% of households)">मालमत्ता (कुटुंबांची %)</div>
             <div class="chart-wrap"><canvas id="c-assets"></canvas></div>
           </div>
         </div>
@@ -805,29 +968,147 @@
       <div class="tab-panel" id="tab-women">
         <div class="chart-grid">
           <div class="chart-card full">
-            <div class="chart-title">गावनिहाय महिला बचत गट % (शीर्ष १५)</div>
+            <div class="chart-title" data-mr="गावनिहाय महिला बचत गट % (शीर्ष १५)" data-en="Women's SHG % by Village (Top 15)">गावनिहाय महिला बचत गट % (शीर्ष १५)</div>
             <div class="chart-wrap tall">
               <canvas id="c-shg-village"></canvas>
             </div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">दैनंदिन जेवणात भाजीपाला</div>
+            <div class="chart-title" data-mr="दैनंदिन जेवणात भाजीपाला" data-en="Vegetables in Daily Diet">दैनंदिन जेवणात भाजीपाला</div>
             <div class="chart-wrap short"><canvas id="c-veg"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">नोंदवलेले आजार (शीर्ष १०)</div>
+            <div class="chart-title" data-mr="नोंदवलेले आजार (शीर्ष १०)" data-en="Reported Illnesses (Top 10)">नोंदवलेले आजार (शीर्ष १०)</div>
             <div class="chart-wrap tall"><canvas id="c-illness"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">जन्म दाखला</div>
+            <div class="chart-title" data-mr="जन्म दाखला" data-en="Birth Certificate">जन्म दाखला</div>
             <div class="chart-wrap short"><canvas id="c-birth"></canvas></div>
           </div>
         </div>
       </div>
     </main>
 
+    <!-- Creator modal -->
+    <div id="creator-modal">
+      <div class="creator-card">
+        <button class="creator-close" id="creator-close">✕</button>
+        <div class="creator-body">
+          <div class="creator-eyebrow"
+            data-en="About the Creator"
+            data-mr="निर्मात्याबद्दल">निर्मात्याबद्दल</div>
+          <h2 class="creator-name" data-mr="संकेत तांबारे" data-en="Sanket Tambare">संकेत तांबारे</h2>
+          <div class="creator-bio">
+            <p data-en="I am a software developer specialized in full-stack development. Since college days, I find myself to be inclined towards technology, society, psychology, blogging, designing, video editing, digital well-being, in short towards a variety of issues, technologies, topics and interests."
+               data-mr="मी फुल-स्टॅक डेव्हलपमेंटमध्ये तज्ज्ञ असलेला सॉफ्टवेअर डेव्हलपर आहे. महाविद्यालयीन दिवसांपासून, मला तंत्रज्ञान, समाज, मानसशास्त्र, ब्लॉगिंग, डिझायनिंग, व्हिडिओ एडिटिंग, डिजिटल वेल-बीइंग — थोडक्यात विविध विषय, तंत्रज्ञान आणि आवडींकडे आकर्षण जाणवते.">मी फुल-स्टॅक डेव्हलपमेंटमध्ये तज्ज्ञ असलेला सॉफ्टवेअर डेव्हलपर आहे. महाविद्यालयीन दिवसांपासून, मला तंत्रज्ञान, समाज, मानसशास्त्र, ब्लॉगिंग, डिझायनिंग, व्हिडिओ एडिटिंग, डिजिटल वेल-बीइंग — थोडक्यात विविध विषय, तंत्रज्ञान आणि आवडींकडे आकर्षण जाणवते.</p>
+            <p data-en="This has culminated in all-round interest across podcasts, development, writing, reading and much more! Also, all this exploration has helped me to decide what I am good at, what I am not good at, what I like, what I don't like and most importantly what I wish to do in my career and what I don't want to do."
+               data-mr="याचा परिणाम म्हणजे पॉडकास्ट, विकास, लेखन, वाचन आणि बरंच काही यांमध्ये सर्वांगीण रस निर्माण झाला! तसेच या सगळ्या शोधामुळे मला हे ठरवता आले की मी कशात चांगला आहे, कशात नाही, मला काय आवडते, काय आवडत नाही आणि सर्वात महत्त्वाचे — माझ्या करिअरमध्ये मला काय करायचे आहे आणि काय नाही.">याचा परिणाम म्हणजे पॉडकास्ट, विकास, लेखन, वाचन आणि बरंच काही यांमध्ये सर्वांगीण रस निर्माण झाला! तसेच या सगळ्या शोधामुळे मला हे ठरवता आले की मी कशात चांगला आहे, कशात नाही, मला काय आवडते, काय आवडत नाही आणि सर्वात महत्त्वाचे — माझ्या करिअरमध्ये मला काय करायचे आहे आणि काय नाही.</p>
+            <p data-en="And, here's what I wish to do: critically engage in new developments across technology, better thou-self everyday, learn something about stuff happening around me, understand it and enjoy this meaningful and purposeful journey!"
+               data-mr="आणि, मला हे करायचे आहे: तंत्रज्ञानातील नवीन घडामोडींमध्ये विचारपूर्वक सहभागी होणे, दररोज स्वतःला सुधारणे, आजूबाजूला घडणाऱ्या गोष्टींबद्दल काहीतरी शिकणे, त्या समजून घेणे आणि या अर्थपूर्ण व हेतूपूर्ण प्रवासाचा आनंद घेणे!">आणि, मला हे करायचे आहे: तंत्रज्ञानातील नवीन घडामोडींमध्ये विचारपूर्वक सहभागी होणे, दररोज स्वतःला सुधारणे, आजूबाजूला घडणाऱ्या गोष्टींबद्दल काहीतरी शिकणे, त्या समजून घेणे आणि या अर्थपूर्ण व हेतूपूर्ण प्रवासाचा आनंद घेणे!</p>
+            <p class="highlight"
+               data-en="Interested in any of above topics? Get in touch if you wish to engage!"
+               data-mr="वरीलपैकी कोणत्याही विषयात रस आहे का? जोडले जायचे असेल तर संपर्क करा!">वरीलपैकी कोणत्याही विषयात रस आहे का? जोडले जायचे असेल तर संपर्क करा!</p>
+          </div>
+          <div class="creator-connect">
+            <a href="https://linktr.ee/daredavil" target="_blank" rel="noopener noreferrer"
+               data-en="Connect with Sanket"
+               data-mr="संकेतशी जोडा">संकेतशी जोडा</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <span>© Created with intentionality by Sanket Tambare, 2026</span>
+    </footer>
+
     <script type="module">
       import { parseCSV } from "./parse.js";
+
+      /* ── Language toggle ── */
+      let LANG = 'mr';
+
+      const LABELS_EN = {
+        'अज्ञात': 'Unknown', 'इतर': 'Other', 'नाही': 'None',
+        'नर्मदा नदी': 'Narmada River', 'झरा / ओढा': 'Spring / Stream',
+        'हॅण्ड पंप': 'Hand Pump', 'विहीर': 'Well', 'बोअरवेल': 'Borewell',
+        'नदी': 'River', 'नळ / पाइपलाइन': 'Tap / Pipeline',
+        'स्थलांतर नाही': 'No Migration', 'स्थानिक (महाराष्ट्र)': 'Local (Maharashtra)',
+        'गुजरात': 'Gujarat', 'मध्यप्रदेश': 'Madhya Pradesh', 'राजस्थान': 'Rajasthan',
+        'कच्चे घर': 'Kutcha House', 'पक्के घर': 'Pucca House', 'अर्धपक्के घर': 'Semi-Pucca House',
+        'अँड्रॉइड / स्मार्टफोन': 'Android / Smartphone', 'साधा फोन': 'Basic Phone',
+        'शेती काम': 'Agricultural Work', 'बांधकाम / मजुरी': 'Construction / Labour',
+        'वीट भट्टी': 'Brick Kiln', 'कारखाना / मिल': 'Factory / Mill', 'घरगुती काम': 'Domestic Work',
+        'शिक्षण नाही': 'No Education', '१ली–५वी': '1st–5th', '६वी–८वी': '6th–8th',
+        '९वी–१०वी': '9th–10th', '११वी–१२वी': '11th–12th', 'पदवीधर+': 'Graduate+', 'प्राथमिक': 'Primary',
+        'आधारकार्ड': 'Aadhaar Card', 'मतदानकार्ड': 'Voter ID', 'रेशनकार्ड': 'Ration Card',
+        'जॉबकार्ड': 'Job Card', 'आरोग्यकार्ड': 'Health Card', 'ग्यास सिलेंडर': 'Gas Cylinder',
+        'बँक खाते': 'Bank Account', 'जातीचा दाखला': 'Caste Certificate',
+        'वनजमीन': 'Forest Land', 'सातबारा': 'Satbara',
+        'जन्म दाखला': 'Birth Certificate', 'ड्रायविंग लायसन्स': 'Driving License',
+        'तेंदूपत्ता संकलन': 'Tendu Collection', 'वनजमीन मिळाली': 'Forest Land Obtained',
+        'सातबारा मिळाला': 'Satbara Obtained',
+        '% गाय/बैल आहे': '% have cattle', 'सरासरी बकऱ्या': 'Avg Goats',
+        'सरासरी कोंबड्या': 'Avg Chickens', 'सरासरी गाढवे': 'Avg Donkeys',
+        'रोजगार हमी (MNREGA)': 'Employment Guarantee (MNREGA)', 'MNREGA नाही': 'No MNREGA',
+        'कर्ज आहे': 'Has Loan', 'कर्ज नाही': 'No Loan',
+        'शौचालय आहे': 'Has Toilet', 'शौचालय नाही': 'No Toilet',
+        'स्वतःचे घर': 'Own House', 'मोटरसायकल': 'Motorcycle',
+        'मोबाईल फोन': 'Mobile Phone', 'गाय/बैल आहे': 'Has Cattle',
+        'दररोज भाजीपाला': 'Daily Vegetables', 'भाजीपाला नाही': 'No Vegetables',
+        'जन्म दाखला आहे': 'Has Birth Certificate', 'जन्म दाखला नाही': 'No Birth Certificate',
+        'उडद्या': 'Uddadya', 'खापरमाळ': 'Khaparmal', 'सादरी': 'Sadri',
+        'नवाड्या पाडा': 'Navadya Pada', 'निवसा पाडा': 'Nivsa Pada',
+        'पाटील पाडा': 'Patil Pada', 'मानसिंग पाडा': 'Mansing Pada',
+        // School names
+        'तोरणमाळ': 'Toranmal',
+        'निसर्ग संवाद शाळा': 'Nisarg Samvad School',
+        'आश्रम शाळा': 'Ashram School',
+        'गावात': 'Village School',
+        'नर्मदा जीवन शाळा': 'Narmada Jeevan School',
+        'निसर्ग संवाद शाळा उडद्या': 'Nisarg Samvad School Uddadya',
+        'निसर्ग संवाद शाळा सादरी': 'Nisarg Samvad School Sadri',
+        'खापरमाळ आश्रम शाळा': 'Khaparmal Ashram School',
+        // Member education (raw CSV values)
+        'होय': 'Yes', 'आहे': 'Yes',
+        '1ली': '1st Grade', '2री': '2nd Grade', '3री': '3rd Grade', '4थी': '4th Grade',
+        '12वी': '12th Grade', 'अंगणवाडी': 'Anganwadi',
+        // Illness names
+        'पोटाचा आजार': 'Stomach Ailment',
+        'अपंग': 'Disabled',
+        'आहे माईन हेमरेज': 'Main Hemorrhage',
+        'एक पायाने अपंग': 'One Leg Disability',
+        'सिकलसेल': 'Sickle Cell',
+        '<१८': '<18', '१८-२४': '18-24', '२५-३४': '25-34', '३५-४४': '35-44',
+        '४५-५४': '45-54', '५५-६४': '55-64', '६५+': '65+',
+        '१०+': '10+', '४-५': '4-5', '६-८': '6-8', '९-१२': '9-12', '१३+': '13+',
+      };
+
+      const tL = (arr) => LANG === 'en' ? arr.map(l => LABELS_EN[l] || l) : arr;
+
+      function applyLang() {
+        document.querySelectorAll('[data-mr][data-en]').forEach(el => {
+          el.textContent = el.dataset[LANG];
+        });
+        document.querySelectorAll('[data-placeholder-mr]').forEach(el => {
+          el.placeholder = el.dataset['placeholder' + LANG.charAt(0).toUpperCase() + LANG.slice(1)];
+        });
+        document.getElementById('lang-toggle').textContent = LANG === 'mr' ? 'EN' : 'मराठी';
+        document.documentElement.lang = LANG === 'en' ? 'en' : 'mr';
+      }
+
+      function toggleLang() {
+        LANG = LANG === 'mr' ? 'en' : 'mr';
+        applyLang();
+        if (DATA.length) renderAll(getFiltered());
+      }
+
+      document.getElementById('lang-toggle').addEventListener('click', toggleLang);
+
+      const creatorModal = document.getElementById('creator-modal');
+      document.getElementById('creator-btn').addEventListener('click', () => creatorModal.classList.add('open'));
+      document.getElementById('creator-close').addEventListener('click', () => creatorModal.classList.remove('open'));
+      creatorModal.addEventListener('click', (e) => { if (e.target === creatorModal) creatorModal.classList.remove('open'); });
 
       const C = [
         "#c17b2c",
@@ -1064,7 +1345,7 @@
         document.getElementById("s-total").textContent =
           d.length.toLocaleString("hi-IN");
         document.getElementById("s-villages").textContent =
-          villages.size + " गावे";
+          villages.size + (LANG === 'en' ? ' villages' : ' गावे');
         document.getElementById("s-school").textContent =
           pct(d, "children_school") + "%";
         document.getElementById("s-aadhaar").textContent =
@@ -1084,8 +1365,10 @@
         document.getElementById("s-noedu").textContent = pctNoEdu(d) + "%";
         document.getElementById("filter-info").textContent =
           d.length < DATA.length
-            ? `${DATA.length} पैकी ${d.length} कुटुंबे दाखवत आहे`
-            : `${d.length} कुटुंबे`;
+            ? (LANG === 'en'
+                ? `Showing ${d.length} of ${DATA.length} households`
+                : `${DATA.length} पैकी ${d.length} कुटुंबे दाखवत आहे`)
+            : (d.length.toLocaleString('hi-IN') + (LANG === 'en' ? ' households' : ' कुटुंबे'));
       }
 
       /* ── Chart update functions ── */
@@ -1096,10 +1379,10 @@
         const pieData = top10.map(([, c]) => c);
         const rest = d.length - pieData.reduce((a, b) => a + b, 0);
         if (rest > 0) {
-          pieLabels.push("इतर");
+          pieLabels.push(LANG === 'en' ? 'Other' : 'इतर');
           pieData.push(rest);
         }
-        upd("village-pie", pieLabels, pieData);
+        upd("village-pie", tL(pieLabels), pieData);
 
         const fEdges = [1, 2, 3, 4, 5, 6, 7, 9, 12, 20];
         const fLabels = fEdges
@@ -1110,22 +1393,14 @@
         const vEntries = topN(vcounts, 20);
         upd(
           "village-bar",
-          vEntries.map(([v]) => v),
+          tL(vEntries.map(([v]) => v)),
           vEntries.map(([, c]) => c),
         );
       }
 
       function updDemographics(d) {
         const aEdges = [0, 18, 25, 35, 45, 55, 65, 90];
-        const aLabels = [
-          "<१८",
-          "१८-२४",
-          "२५-३४",
-          "३५-४४",
-          "४५-५४",
-          "५५-६४",
-          "६५+",
-        ];
+        const aLabels = tL(["<१८","१८-२४","२५-३४","३५-४४","४५-५४","५५-६४","६५+"]);
         upd("age", aLabels, hist(d, "age", aEdges));
 
         const eduMap = countBy(d, (h) => {
@@ -1141,7 +1416,7 @@
         const eTop = topN(eduMap, 8);
         upd(
           "edu",
-          eTop.map(([k]) => k),
+          tL(eTop.map(([k]) => k)),
           eTop.map(([, v]) => v),
         );
 
@@ -1174,7 +1449,7 @@
         ].sort((a, b) => b[1] - a[1]);
         upd(
           "docs",
-          docs.map(([l]) => l),
+          tL(docs.map(([l]) => l)),
           docs.map(([, v]) => v),
         );
 
@@ -1190,13 +1465,13 @@
         ).map(([v]) => [v, +((vGovt[v] / vTotal[v]) * 100).toFixed(1)]);
         upd(
           "govt-village",
-          vPct.map(([v]) => v),
+          tL(vPct.map(([v]) => v)),
           vPct.map(([, p]) => p),
         );
 
         upd(
           "mnrega",
-          ["रोजगार हमी (MNREGA)", "MNREGA नाही"],
+          tL(["रोजगार हमी (MNREGA)", "MNREGA नाही"]),
           [
             d.filter((h) => h.mnrega_work).length,
             d.filter((h) => !h.mnrega_work).length,
@@ -1206,23 +1481,12 @@
 
       function updAgriculture(d) {
         const lEdges = [0, 0.5, 1, 1.5, 2, 3, 4, 5, 7, 10, 20];
-        const lLabels = [
-          "0",
-          "0.5",
-          "1",
-          "1.5",
-          "2",
-          "3",
-          "4",
-          "5",
-          "7",
-          "१०+",
-        ];
+        const lLabels = ["0","0.5","1","1.5","2","3","4","5","7", tL(["१०+"])[0]];
         upd("land", lLabels, hist(d, "land_acres", lEdges));
 
         upd(
           "livestock",
-          ["% गाय/बैल आहे", "सरासरी बकऱ्या", "सरासरी कोंबड्या", "सरासरी गाढवे"],
+          tL(["% गाय/बैल आहे", "सरासरी बकऱ्या", "सरासरी कोंबड्या", "सरासरी गाढवे"]),
           [
             +((d.filter((h) => h.has_cattle).length / d.length) * 100).toFixed(
               1,
@@ -1234,12 +1498,12 @@
         );
 
         const mEdges = [0, 1, 2, 3, 5, 8, 12, 20, 50];
-        const mLabels = ["0", "1", "2", "3", "४-५", "६-८", "९-१२", "१३+"];
+        const mLabels = tL(["0", "1", "2", "3", "४-५", "६-८", "९-१२", "१३+"]);
         upd("mahua", mLabels, hist(d, "mahua_trees", mEdges));
 
         upd(
           "forest",
-          ["तेंदूपत्ता संकलन", "वनजमीन मिळाली", "सातबारा मिळाला"],
+          tL(["तेंदूपत्ता संकलन", "वनजमीन मिळाली", "सातबारा मिळाला"]),
           [
             d.filter((h) => h.tendu_collect).length,
             d.filter((h) => h.forest_land).length,
@@ -1271,7 +1535,7 @@
         const labTop = topN(labMap);
         upd(
           "labor-dest",
-          labTop.map(([k]) => k),
+          tL(labTop.map(([k]) => k)),
           labTop.map(([, v]) => v),
         );
 
@@ -1279,13 +1543,13 @@
         const wTop = topN(waterMap);
         upd(
           "water",
-          wTop.map(([k]) => k),
+          tL(wTop.map(([k]) => k)),
           wTop.map(([, v]) => v),
         );
 
         upd(
           "loan",
-          ["कर्ज आहे", "कर्ज नाही"],
+          tL(["कर्ज आहे", "कर्ज नाही"]),
           [
             d.filter((h) => h.loan_amount > 0).length,
             d.filter((h) => h.loan_amount === 0).length,
@@ -1296,7 +1560,7 @@
         const ltTop = topN(ltMap, 6);
         upd(
           "labor-type",
-          ltTop.map(([k]) => k),
+          tL(ltTop.map(([k]) => k)),
           ltTop.map(([, v]) => v),
         );
       }
@@ -1315,7 +1579,7 @@
         ]);
         upd(
           "school-village",
-          vArr.map(([v]) => v),
+          tL(vArr.map(([v]) => v)),
           vArr.map(([, p]) => p),
         );
 
@@ -1328,7 +1592,7 @@
         const sTop = topN(sMap, 10);
         upd(
           "schools",
-          sTop.map(([k]) => k),
+          tL(sTop.map(([k]) => k)),
           sTop.map(([, v]) => v),
         );
 
@@ -1346,7 +1610,7 @@
         const mEduTop = topN(mEduMap, 10);
         upd(
           "mem-edu",
-          mEduTop.map(([k]) => k),
+          tL(mEduTop.map(([k]) => k)),
           mEduTop.map(([, v]) => v),
         );
       }
@@ -1356,13 +1620,13 @@
         const hTop = topN(hMap);
         upd(
           "house",
-          hTop.map(([k]) => k),
+          tL(hTop.map(([k]) => k)),
           hTop.map(([, v]) => v),
         );
 
         upd(
           "toilet-pie",
-          ["शौचालय आहे", "शौचालय नाही"],
+          tL(["शौचालय आहे", "शौचालय नाही"]),
           [
             d.filter((h) => h.toilet_use).length,
             d.filter((h) => !h.toilet_use).length,
@@ -1372,7 +1636,7 @@
         const mobMap = countBy(d, (h) => mNorm(h.mobile_type));
         upd(
           "mobile-type",
-          [...Object.keys(mobMap)],
+          tL([...Object.keys(mobMap)]),
           [...Object.values(mobMap)],
         );
 
@@ -1384,16 +1648,14 @@
           ["मोबाईल फोन", pct(d, "has_mobile")],
           [
             "गाय/बैल आहे",
-            +((d.filter((h) => h.has_cattle).length / d.length) * 100).toFixed(
-              1,
-            ),
+            +((d.filter((h) => h.has_cattle).length / d.length) * 100).toFixed(1),
           ],
           ["बँक खाते", pct(d, "bank_account")],
           ["ग्यास सिलेंडर", pct(d, "gas_cylinder")],
         ].sort((a, b) => b[1] - a[1]);
         upd(
           "assets",
-          assets.map(([l]) => l),
+          tL(assets.map(([l]) => l)),
           assets.map(([, v]) => v),
         );
       }
@@ -1411,13 +1673,13 @@
         ]);
         upd(
           "shg-village",
-          shgArr.map(([v]) => v),
+          tL(shgArr.map(([v]) => v)),
           shgArr.map(([, p]) => p),
         );
 
         upd(
           "veg",
-          ["दररोज भाजीपाला", "भाजीपाला नाही"],
+          tL(["दररोज भाजीपाला", "भाजीपाला नाही"]),
           [
             d.filter((h) => h.vegetables).length,
             d.filter((h) => !h.vegetables).length,
@@ -1438,13 +1700,13 @@
         const ilTop = topN(ilMap, 10);
         upd(
           "illness",
-          ilTop.map(([k]) => k.slice(0, 22)),
+          tL(ilTop.map(([k]) => k.slice(0, 22))),
           ilTop.map(([, v]) => v),
         );
 
         upd(
           "birth",
-          ["जन्म दाखला आहे", "जन्म दाखला नाही"],
+          tL(["जन्म दाखला आहे", "जन्म दाखला नाही"]),
           [
             d.filter((h) => h.birth_cert).length,
             d.filter((h) => !h.birth_cert).length,
@@ -1608,7 +1870,9 @@
             .querySelectorAll("input[data-village]")
             .forEach((cb) => (cb.checked = checked));
           FILTERS.villages = checked ? new Set() : new Set(villages);
-          btn.textContent = checked ? "सर्व गावे" : "कोणतेही गाव नाही";
+          btn.textContent = checked
+            ? (LANG === 'en' ? 'All Villages' : 'सर्व गावे')
+            : (LANG === 'en' ? 'No Villages' : 'कोणतेही गाव नाही');
           applyFilters();
         });
         document.getElementById("ms-toggle").addEventListener("click", (e) => {
@@ -1635,8 +1899,8 @@
           checked.length === all.length;
         document.getElementById("ms-toggle").textContent =
           checked.length === all.length
-            ? "सर्व गावे"
-            : checked.length + " गावे";
+            ? (LANG === 'en' ? 'All Villages' : 'सर्व गावे')
+            : checked.length + (LANG === 'en' ? ' villages' : ' गावे');
         applyFilters();
       }
 
@@ -1677,7 +1941,7 @@
         document
           .querySelectorAll("#ms-dropdown input[data-village]")
           .forEach((cb) => (cb.checked = true));
-        document.getElementById("ms-toggle").textContent = "सर्व गावे";
+        document.getElementById("ms-toggle").textContent = LANG === 'en' ? 'All Villages' : 'सर्व गावे';
         applyFilters();
       });
 
