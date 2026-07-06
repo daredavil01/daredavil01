@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Self — Three.js Prototype · The Wanderer's Digital Escape</title>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; background: #06030f; }
+    canvas { position: fixed; inset: 0; display: block; }
+
+    .panel {
+      position: fixed; z-index: 10;
+      font-family: 'Space Mono', monospace;
+      color: rgba(255,255,255,0.7);
+    }
+    .title-bar {
+      top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 14px 18px; gap: 12px; flex-wrap: wrap;
+      pointer-events: none;
+    }
+    .title-block { pointer-events: auto; }
+    .title-eyebrow {
+      font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: rgba(255,255,255,0.32); margin-bottom: 5px;
+    }
+    .title-main {
+      font-family: 'Crimson Pro', serif; font-weight: 300;
+      font-size: 26px; color: rgba(255,255,255,0.92);
+    }
+    .title-sub {
+      font-family: 'Crimson Pro', serif; font-style: italic;
+      font-size: 13px; color: rgba(255,255,255,0.38); margin-top: 3px;
+    }
+    .worlds { display: flex; gap: 5px; flex-wrap: wrap; pointer-events: auto; }
+    .world-btn {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 2px; padding: 6px 10px; cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .world-btn:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.12); }
+    .world-btn.active { color: #22d3ee; border-color: rgba(34,211,238,0.5); background: rgba(34,211,238,0.08); }
+
+    .ghost-badge {
+      bottom: 175px; left: 50%; transform: translateX(-50%);
+      pointer-events: none;
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #a78bfa; border: 1px solid rgba(167,139,250,0.4);
+      background: rgba(20,10,40,0.6); backdrop-filter: blur(8px);
+      padding: 6px 14px; border-radius: 2px;
+      opacity: 0; transition: opacity 0.6s ease;
+      animation: ghost-pulse 1.6s ease-in-out infinite alternate;
+    }
+    .ghost-badge.on { opacity: 1; }
+    @keyframes ghost-pulse { from { box-shadow: 0 0 0 0 rgba(167,139,250,0.25); } to { box-shadow: 0 0 18px 2px rgba(167,139,250,0.25); } }
+
+    .controls {
+      bottom: 0; left: 0; right: 0;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      padding: 14px 16px 18px;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.55) 40%);
+    }
+    .scenarios { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+    .scenario-btn {
+      font-family: 'Crimson Pro', serif; font-style: italic; font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px; padding: 6px 16px; cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .scenario-btn:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    .sliders {
+      display: grid; grid-template-columns: repeat(4, minmax(120px, 160px));
+      gap: 14px; width: 100%; max-width: 700px; justify-content: center;
+    }
+    @media (max-width: 620px) { .sliders { grid-template-columns: repeat(2, 1fr); } }
+    .slider-group { display: flex; flex-direction: column; gap: 4px; }
+    .slider-head { display: flex; justify-content: space-between; align-items: baseline; }
+    .slider-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .slider-val { font-size: 10px; font-weight: 700; }
+    input[type="range"] { width: 100%; height: 18px; cursor: pointer; background: transparent; }
+    #focus       { accent-color: #22d3ee; }
+    #dopamine    { accent-color: #fb923c; }
+    #oneness     { accent-color: #a78bfa; }
+    #tranquility { accent-color: #4ade80; }
+    .footnote {
+      font-size: 9px; letter-spacing: 0.1em; color: rgba(255,255,255,0.22);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+
+  <div class="panel title-bar">
+    <div class="title-block">
+      <div class="title-eyebrow">Three.js exploration · The Wanderer's Digital Escape</div>
+      <div class="title-main">The Self</div>
+      <div class="title-sub">Your four meters, given a body. Drag the sliders. Watch it change.</div>
+    </div>
+    <div class="worlds">
+      <button class="world-btn active" data-world="intro">Intro</button>
+      <button class="world-btn" data-world="swamp">Swamp</button>
+      <button class="world-btn" data-world="arcade">Arcade</button>
+      <button class="world-btn" data-world="city">City</button>
+      <button class="world-btn" data-world="trail">Trail</button>
+      <button class="world-btn" data-world="beach">Beach</button>
+    </div>
+  </div>
+
+  <div class="panel ghost-badge" id="ghost-badge">👻 Ghost Mode — elsewhere…</div>
+
+  <div class="panel controls">
+    <div class="scenarios">
+      <button class="scenario-btn" data-scenario="doom">the doomscroll spiral</button>
+      <button class="scenario-btn" data-scenario="deep">a deep work morning</button>
+      <button class="scenario-btn" data-scenario="still">the still point</button>
+    </div>
+    <div class="sliders">
+      <div class="slider-group">
+        <div class="slider-head">
+          <span class="slider-label" style="color:#22d3ee">Focus</span>
+          <span class="slider-val" style="color:#22d3ee" id="focus-v">55</span>
+        </div>
+        <input type="range" id="focus" min="0" max="100" step="1" value="55">
+      </div>
+      <div class="slider-group">
+        <div class="slider-head">
+          <span class="slider-label" style="color:#fb923c">Dopamine</span>
+          <span class="slider-val" style="color:#fb923c" id="dopamine-v">45</span>
+        </div>
+        <input type="range" id="dopamine" min="0" max="100" step="1" value="45">
+      </div>
+      <div class="slider-group">
+        <div class="slider-head">
+          <span class="slider-label" style="color:#a78bfa">Oneness</span>
+          <span class="slider-val" style="color:#a78bfa" id="oneness-v">40</span>
+        </div>
+        <input type="range" id="oneness" min="0" max="100" step="1" value="40">
+      </div>
+      <div class="slider-group">
+        <div class="slider-head">
+          <span class="slider-label" style="color:#4ade80">Tranquility</span>
+          <span class="slider-val" style="color:#4ade80" id="tranquility-v">35</span>
+        </div>
+        <input type="range" id="tranquility" min="0" max="100" step="1" value="35">
+      </div>
+    </div>
+    <div class="footnote">DOPAMINE → turbulence &amp; heart-rate · FOCUS → swarm coherence · ONENESS → connection nodes · TRANQUILITY → stillness · DOPAMINE &gt; 75 → ghost mode</div>
+  </div>
+
+  <script type="importmap">
+  { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+
+    // ── STATE ─────────────────────────────────────────────────────────────────
+    const meters = { focus: 55, dopamine: 45, oneness: 40, tranquility: 35 }; // targets
+    const cur    = { focus: 55, dopamine: 45, oneness: 40, tranquility: 35 }; // smoothed
+
+    const METER_COLORS = {
+      focus:       new THREE.Color(0x22d3ee),
+      dopamine:    new THREE.Color(0xfb923c),
+      oneness:     new THREE.Color(0xa78bfa),
+      tranquility: new THREE.Color(0x4ade80),
+    };
+
+    const WORLDS = {
+      intro:  { bg: 0x06030f, pt: 0x8b7cf6 },
+      swamp:  { bg: 0x04120a, pt: 0x22c55e },
+      arcade: { bg: 0x10021c, pt: 0xd946ef },
+      city:   { bg: 0x030314, pt: 0xf59e0b },
+      trail:  { bg: 0x160f04, pt: 0xfcd34d },
+      beach:  { bg: 0x04121c, pt: 0x67e8f9 },
+    };
+    let worldTarget = WORLDS.intro;
+
+    const SCENARIOS = {
+      doom:  { focus: 18, dopamine: 92, oneness: 22, tranquility: 12 },
+      deep:  { focus: 86, dopamine: 28, oneness: 48, tranquility: 62 },
+      still: { focus: 72, dopamine: 12, oneness: 84, tranquility: 92 },
+    };
+
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const lerp = (a, b, k) => a + (b - a) * k;
+
+    // ── RENDERER / SCENE ──────────────────────────────────────────────────────
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    const scene = new THREE.Scene();
+    const bgCur = new THREE.Color(WORLDS.intro.bg);
+    scene.background = bgCur;
+    const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 100);
+    camera.position.set(0, 0.4, 7);
+
+    // ── SOFT-DOT TEXTURE (shared by glow sprite + particles) ──────────────────
+    function makeGlowTexture() {
+      const c = document.createElement('canvas'); c.width = c.height = 256;
+      const g = c.getContext('2d');
+      const grd = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+      grd.addColorStop(0.0, 'rgba(255,255,255,0.85)');
+      grd.addColorStop(0.35, 'rgba(255,255,255,0.22)');
+      grd.addColorStop(1.0, 'rgba(255,255,255,0)');
+      g.fillStyle = grd; g.fillRect(0, 0, 256, 256);
+      return new THREE.CanvasTexture(c);
+    }
+    const glowTex = makeGlowTexture();
+
+    // ── ORB SHADER ────────────────────────────────────────────────────────────
+    const vertexShader = /* glsl */`
+      uniform float uTime, uAmp, uFreq, uSpeed;
+      varying float vDisp;
+      varying vec3 vNormal, vView;
+
+      float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453123); }
+      float vnoise(vec3 p) {
+        vec3 i = floor(p), f = fract(p);
+        vec3 u = f * f * (3.0 - 2.0 * f);
+        return mix(
+          mix(mix(hash(i + vec3(0,0,0)), hash(i + vec3(1,0,0)), u.x),
+              mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), u.x), u.y),
+          mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), u.x),
+              mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), u.x), u.y), u.z);
+      }
+      float fbm(vec3 p) {
+        float v = 0.0, a = 0.5;
+        for (int i = 0; i < 3; i++) { v += a * vnoise(p); p *= 2.1; a *= 0.5; }
+        return v;
+      }
+      void main() {
+        float n = fbm(normal * uFreq + vec3(uTime * uSpeed));
+        vDisp = n;
+        vec3 pos = position + normal * (n - 0.5) * 2.0 * uAmp;
+        vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+        vNormal = normalize(normalMatrix * normal);
+        vView = normalize(-mv.xyz);
+        gl_Position = projectionMatrix * mv;
+      }
+    `;
+    const fragmentShader = /* glsl */`
+      uniform vec3 uColor, uRim;
+      uniform float uOpacity;
+      varying float vDisp;
+      varying vec3 vNormal, vView;
+      void main() {
+        float fres = pow(1.0 - max(dot(normalize(vNormal), normalize(vView)), 0.0), 2.2);
+        vec3 col = uColor * (0.10 + vDisp * 0.38) + uRim * fres * 1.5;
+        gl_FragColor = vec4(col, uOpacity);
+      }
+    `;
+    function makeOrbUniforms() {
+      return {
+        uTime:    { value: 0 },
+        uAmp:     { value: 0.1 },
+        uFreq:    { value: 2.0 },
+        uSpeed:   { value: 0.3 },
+        uColor:   { value: new THREE.Color(0xffffff) },
+        uRim:     { value: new THREE.Color(0xffffff) },
+        uOpacity: { value: 1.0 },
+      };
+    }
+    const orbGeo = new THREE.IcosahedronGeometry(1.35, 5);
+    const orbMat = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms: makeOrbUniforms() });
+    const orb = new THREE.Mesh(orbGeo, orbMat);
+    scene.add(orb);
+
+    // Ghost double — visible when dopamine > 75
+    const ghostMat = new THREE.ShaderMaterial({
+      vertexShader, fragmentShader, uniforms: makeOrbUniforms(),
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    ghostMat.uniforms.uColor.value.set(0xa78bfa);
+    ghostMat.uniforms.uRim.value.set(0xc4b5fd);
+    ghostMat.uniforms.uOpacity.value = 0;
+    const ghost = new THREE.Mesh(orbGeo, ghostMat);
+    ghost.scale.setScalar(1.07);
+    ghost.visible = false;
+    scene.add(ghost);
+
+    // Aura glow sprite behind the orb
+    const auraMat = new THREE.SpriteMaterial({
+      map: glowTex, color: 0x8b7cf6, transparent: true, opacity: 0.5,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    const aura = new THREE.Sprite(auraMat);
+    aura.scale.set(6, 6, 1);
+    aura.renderOrder = -1;
+    scene.add(aura);
+
+    // ── PARTICLE SWARM (focus = coherence, tranquility = speed) ──────────────
+    const N = 1400;
+    const ptGeo = new THREE.BufferGeometry();
+    const ptPos = new Float32Array(N * 3);
+    ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPos, 3));
+    const ptData = [];
+    for (let i = 0; i < N; i++) {
+      const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+      const cr = 1.8 + Math.random() * 3.4;
+      ptData.push({
+        r: 2.3 + Math.random() * 2.4,
+        ang: Math.random() * Math.PI * 2,
+        w: 0.12 + Math.random() * 0.28,
+        yAmp: 0.15 + Math.random() * 0.5,
+        ph: Math.random() * Math.PI * 2,
+        cx: Math.sin(ph) * Math.cos(th) * cr,
+        cy: Math.cos(ph) * cr * 0.8,
+        cz: Math.sin(ph) * Math.sin(th) * cr,
+        f1: 0.3 + Math.random() * 0.6, s1: Math.random() * 10, a1: 0.5 + Math.random() * 1.1,
+        f2: 0.3 + Math.random() * 0.6, s2: Math.random() * 10, a2: 0.5 + Math.random() * 1.1,
+        f3: 0.3 + Math.random() * 0.6, s3: Math.random() * 10, a3: 0.5 + Math.random() * 1.1,
+      });
+    }
+    const ptCur = new THREE.Color(WORLDS.intro.pt);
+    const ptMat = new THREE.PointsMaterial({
+      size: 0.055, map: glowTex, color: ptCur,
+      transparent: true, opacity: 0.85,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    const particles = new THREE.Points(ptGeo, ptMat);
+    scene.add(particles);
+
+    // ── ONENESS SATELLITES + CONNECTION THREADS ───────────────────────────────
+    const SAT_MAX = 7;
+    const sats = [];
+    for (let i = 0; i < SAT_MAX; i++) {
+      const mesh = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(0.075, 1),
+        new THREE.MeshBasicMaterial({ color: 0xa78bfa })
+      );
+      mesh.scale.setScalar(0.001);
+      scene.add(mesh);
+      const lineGeo = new THREE.BufferGeometry();
+      lineGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+      const lineMat = new THREE.LineBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0 });
+      const line = new THREE.Line(lineGeo, lineMat);
+      scene.add(line);
+      sats.push({
+        mesh, line, lineGeo, lineMat, sc: 0,
+        r: 1.95 + i * 0.14,
+        sp: 0.22 + i * 0.055,
+        off: (i / SAT_MAX) * Math.PI * 2,
+        off2: Math.random() * Math.PI * 2,
+      });
+    }
+
+    // ── UI WIRING ─────────────────────────────────────────────────────────────
+    const KEYS = ['focus', 'dopamine', 'oneness', 'tranquility'];
+    KEYS.forEach(k => {
+      const el = document.getElementById(k);
+      el.addEventListener('input', () => {
+        meters[k] = +el.value;
+        document.getElementById(k + '-v').textContent = el.value;
+      });
+    });
+    function setMeters(vals) {
+      KEYS.forEach(k => {
+        meters[k] = vals[k];
+        document.getElementById(k).value = vals[k];
+        document.getElementById(k + '-v').textContent = vals[k];
+      });
+    }
+    document.querySelectorAll('[data-scenario]').forEach(b =>
+      b.addEventListener('click', () => setMeters(SCENARIOS[b.dataset.scenario])));
+    document.querySelectorAll('[data-world]').forEach(b =>
+      b.addEventListener('click', () => {
+        worldTarget = WORLDS[b.dataset.world];
+        document.querySelectorAll('[data-world]').forEach(x => x.classList.toggle('active', x === b));
+      }));
+    const ghostBadge = document.getElementById('ghost-badge');
+
+    // Pointer parallax
+    let px = 0, py = 0;
+    addEventListener('pointermove', e => {
+      px = (e.clientX / innerWidth) * 2 - 1;
+      py = (e.clientY / innerHeight) * 2 - 1;
+    });
+
+    // ── LOOP ──────────────────────────────────────────────────────────────────
+    const clock = new THREE.Clock();
+    let time = 0, ghostK = 0;
+    const orbColor = new THREE.Color(), rimColor = new THREE.Color(), white = new THREE.Color(0xffffff);
+    const bgTarget = new THREE.Color(), ptTarget = new THREE.Color();
+    const motionScale = reducedMotion ? 0.35 : 1;
+
+    function frame() {
+      const dt = Math.min(clock.getDelta(), 0.05);
+      time += dt * motionScale;
+
+      // Smooth meters toward targets
+      KEYS.forEach(k => { cur[k] = lerp(cur[k], meters[k], 1 - Math.pow(0.02, dt)); });
+      const f01 = cur.focus / 100, d01 = cur.dopamine / 100,
+            o01 = cur.oneness / 100, t01 = cur.tranquility / 100;
+
+      // Orb color = weighted blend of meter colors
+      const sum = (cur.focus + cur.dopamine + cur.oneness + cur.tranquility) || 1;
+      orbColor.setRGB(0, 0, 0);
+      KEYS.forEach(k => {
+        const c = METER_COLORS[k];
+        const w = cur[k] / sum;
+        orbColor.r += c.r * w; orbColor.g += c.g * w; orbColor.b += c.b * w;
+      });
+      rimColor.copy(orbColor).lerp(white, 0.35);
+
+      // Orb turbulence: dopamine agitates, tranquility soothes
+      const amp   = (0.06 + d01 * 0.5) * (1 - t01 * 0.45);
+      const speed = Math.max(0.1, 0.25 + d01 * 1.6 - t01 * 0.15);
+      const freq  = 1.6 + d01 * 2.2;
+      [orbMat, ghostMat].forEach(m => {
+        m.uniforms.uTime.value = time;
+        m.uniforms.uAmp.value = amp;
+        m.uniforms.uSpeed.value = speed;
+        m.uniforms.uFreq.value = freq;
+      });
+      orbMat.uniforms.uColor.value.copy(orbColor);
+      orbMat.uniforms.uRim.value.copy(rimColor);
+
+      // Breathing: heart-rate rises with dopamine, settles with tranquility
+      const pulse = 1 + Math.sin(time * (0.8 + d01 * 3.2)) * (0.015 + d01 * 0.03) * (1 - t01 * 0.5);
+      orb.scale.setScalar(pulse);
+      orb.rotation.y = time * 0.12;
+
+      // Ghost mode
+      const ghostOn = cur.dopamine > 75;
+      ghostK = lerp(ghostK, ghostOn ? 1 : 0, 1 - Math.pow(0.01, dt));
+      ghost.visible = ghostK > 0.01;
+      ghostMat.uniforms.uOpacity.value = 0.5 * ghostK;
+      ghost.scale.setScalar(1.07 * pulse);
+      ghost.rotation.y = orb.rotation.y;
+      ghost.position.set(Math.sin(time * 6.3) * 0.09 * ghostK, Math.sin(time * 4.1) * 0.05 * ghostK, 0);
+      ghostBadge.classList.toggle('on', ghostOn);
+
+      // Aura follows blend color, breathes with the orb
+      auraMat.color.copy(orbColor);
+      auraMat.opacity = 0.35 + t01 * 0.2;
+      aura.scale.setScalar(6 * pulse);
+
+      // Particle swarm: focus = chaos → orbit; tranquility slows drift
+      const pt = time * (0.9 + (1 - t01) * 0.8);
+      for (let i = 0; i < N; i++) {
+        const d = ptData[i], j = i * 3;
+        const ox = Math.cos(d.ang + pt * d.w) * d.r;
+        const oz = Math.sin(d.ang + pt * d.w) * d.r;
+        const oy = Math.sin(pt * 0.7 + d.ph) * d.yAmp * 0.6;
+        const cx = d.cx + Math.sin(pt * d.f1 + d.s1) * d.a1;
+        const cy = d.cy + Math.sin(pt * d.f2 + d.s2) * d.a2;
+        const cz = d.cz + Math.sin(pt * d.f3 + d.s3) * d.a3;
+        ptPos[j]     = lerp(cx, ox, f01);
+        ptPos[j + 1] = lerp(cy, oy, f01);
+        ptPos[j + 2] = lerp(cz, oz, f01);
+      }
+      ptGeo.attributes.position.needsUpdate = true;
+
+      // Oneness: satellites fade in with connection threads
+      const visCount = Math.round(o01 * SAT_MAX);
+      sats.forEach((s, i) => {
+        s.sc = lerp(s.sc, i < visCount ? 1 : 0, 1 - Math.pow(0.02, dt));
+        const a = time * s.sp + s.off;
+        s.mesh.position.set(
+          Math.cos(a) * s.r,
+          Math.sin(time * s.sp * 0.9 + s.off2) * s.r * 0.35,
+          Math.sin(a) * s.r
+        );
+        s.mesh.scale.setScalar(Math.max(0.001, s.sc));
+        s.lineMat.opacity = 0.28 * s.sc;
+        const arr = s.lineGeo.attributes.position.array;
+        arr[0] = 0; arr[1] = 0; arr[2] = 0;
+        arr[3] = s.mesh.position.x; arr[4] = s.mesh.position.y; arr[5] = s.mesh.position.z;
+        s.lineGeo.attributes.position.needsUpdate = true;
+      });
+
+      // World palette crossfade
+      bgTarget.set(worldTarget.bg);
+      ptTarget.set(worldTarget.pt);
+      bgCur.lerp(bgTarget, 1 - Math.pow(0.1, dt));
+      ptCur.lerp(ptTarget, 1 - Math.pow(0.1, dt));
+
+      // Camera: parallax + a shiver of ghost jitter
+      camera.position.x = lerp(camera.position.x, px * 0.6, 0.04) + (reducedMotion ? 0 : Math.sin(time * 23.7) * 0.012 * ghostK);
+      camera.position.y = lerp(camera.position.y, 0.4 - py * 0.3, 0.04);
+      camera.lookAt(0, 0, 0);
+
+      renderer.render(scene, camera);
+      if (!document.hidden) requestAnimationFrame(frame);
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) { clock.getDelta(); requestAnimationFrame(frame); }
+    });
+
+    function resize() {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    }
+    addEventListener('resize', resize);
+    resize();
+    requestAnimationFrame(frame);
+  </script>
+</body>
+</html>
