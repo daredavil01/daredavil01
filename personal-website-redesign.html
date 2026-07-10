@@ -1,0 +1,2253 @@
+<title>The Wanderer's Atlas — Feature Dossier</title>
+<style>
+  /* ============================================================
+     The Wanderer's Atlas — Feature Dossier
+     A cartographer's field dossier that reproduces the Atlas's own
+     surfaces. The light/dark toggle IS the Atlas's day <-> night.
+     Palette + material language derived from src/atlas/theme/atlasTokens.css
+     ============================================================ */
+
+  /* ---- Day (default) tokens ---- */
+  :root {
+    color-scheme: light dark;
+
+    --paper: #efe3c6; /* page ground, deeper than card parchment */
+    --paper-2: #e7d8b6;
+    --card: #faf3e3; /* --atlas-parchment */
+    --card-2: #f4ead2;
+    --ink: #3b3228; /* --atlas-ink */
+    --ink-soft: #6a5d49;
+    --ink-faint: #8c7c62;
+    --line: rgba(59, 50, 40, 0.18);
+    --line-2: rgba(59, 50, 40, 0.3);
+    --grid: rgba(59, 50, 40, 0.045);
+
+    --sky: #7ec8e3; /* --atlas-sky (day) */
+    --sky-ink: #1f6f92; /* legible sky for text/links */
+    --glow: #f2a949; /* --atlas-glow */
+    --glow-ink: #a5620d; /* legible lantern amber for text */
+    --foliage: #3d7d44;
+
+    --sun-moon: #f2a949;
+    --sun-glow: rgba(242, 169, 73, 0.35);
+    --hero-sky-a: #a8dcf0;
+    --hero-sky-b: #f7e9c9; /* --atlas-horizon */
+    --hero-land: #7cb56b; /* --atlas-foliage-1 */
+    --star-op: 0;
+
+    --shadow:
+      0 2px 10px rgba(31, 41, 55, 0.1), 0 12px 30px rgba(31, 41, 55, 0.06);
+    --shadow-lift:
+      0 6px 16px rgba(31, 41, 55, 0.14), 0 20px 44px rgba(31, 41, 55, 0.12);
+
+    /* six region signal hues (globe/domains.js) */
+    --rg-treks: #1f9e4a;
+    --rg-reader: #e26a0a;
+    --rg-creator: #9333ea;
+    --rg-marathons: #2f6fd6;
+    --rg-writer: #d6357f;
+    --rg-person: #b22200;
+
+    --maxw: 1140px;
+  }
+
+  /* ---- Night tokens (shared by OS-dark and explicit toggle) ---- */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0b1330;
+      --paper-2: #0e1838;
+      --card: #16203f; /* night parchment surface */
+      --card-2: #1b2749;
+      --ink: #ece7d8; /* --atlas-ink (night) */
+      --ink-soft: #b3b3c6;
+      --ink-faint: #8388a0;
+      --line: rgba(232, 228, 216, 0.16);
+      --line-2: rgba(232, 228, 216, 0.28);
+      --grid: rgba(232, 228, 216, 0.05);
+
+      --sky: #101b3c;
+      --sky-ink: #8fd3ec;
+      --glow: #ffd166; /* --atlas-glow (night) */
+      --glow-ink: #ffd98a;
+      --foliage: #6fce8f;
+
+      --sun-moon: #ffe6a3;
+      --sun-glow: rgba(255, 209, 102, 0.28);
+      --hero-sky-a: #0a1430;
+      --hero-sky-b: #24305c;
+      --hero-land: #1a3830;
+      --star-op: 1;
+
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 14px 34px rgba(0, 0, 0, 0.34);
+      --shadow-lift:
+        0 6px 18px rgba(0, 0, 0, 0.46), 0 24px 50px rgba(0, 0, 0, 0.42);
+
+      --rg-treks: #34d374;
+      --rg-reader: #ff9a4d;
+      --rg-creator: #c690ff;
+      --rg-marathons: #6aa8ff;
+      --rg-writer: #ff74ad;
+      --rg-person: #ff6b4d;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #0b1330;
+    --paper-2: #0e1838;
+    --card: #16203f;
+    --card-2: #1b2749;
+    --ink: #ece7d8;
+    --ink-soft: #b3b3c6;
+    --ink-faint: #8388a0;
+    --line: rgba(232, 228, 216, 0.16);
+    --line-2: rgba(232, 228, 216, 0.28);
+    --grid: rgba(232, 228, 216, 0.05);
+    --sky: #101b3c;
+    --sky-ink: #8fd3ec;
+    --glow: #ffd166;
+    --glow-ink: #ffd98a;
+    --foliage: #6fce8f;
+    --sun-moon: #ffe6a3;
+    --sun-glow: rgba(255, 209, 102, 0.28);
+    --hero-sky-a: #0a1430;
+    --hero-sky-b: #24305c;
+    --hero-land: #1a3830;
+    --star-op: 1;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 14px 34px rgba(0, 0, 0, 0.34);
+    --shadow-lift:
+      0 6px 18px rgba(0, 0, 0, 0.46), 0 24px 50px rgba(0, 0, 0, 0.42);
+    --rg-treks: #34d374;
+    --rg-reader: #ff9a4d;
+    --rg-creator: #c690ff;
+    --rg-marathons: #6aa8ff;
+    --rg-writer: #ff74ad;
+    --rg-person: #ff6b4d;
+  }
+
+  /* ---- Type roles (CSP-safe system stacks, chosen deliberately) ---- */
+  :root {
+    --serif:
+      "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+      "Times New Roman", serif;
+    --sans:
+      "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mono:
+      "Cascadia Code", "SF Mono", ui-monospace, "Liberation Mono", Consolas,
+      monospace;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* faint map substrate: graticule grid + elevation glows */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(
+        1100px 720px at 12% -8%,
+        color-mix(in srgb, var(--sky) 26%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        900px 680px at 104% 6%,
+        color-mix(in srgb, var(--glow) 16%, transparent),
+        transparent 58%
+      ),
+      radial-gradient(
+        1000px 900px at 50% 120%,
+        color-mix(in srgb, var(--foliage) 14%, transparent),
+        transparent 60%
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 71px,
+        var(--grid) 71px 72px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 71px,
+        var(--grid) 71px 72px
+      );
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 clamp(1.1rem, 4vw, 2.5rem);
+  }
+
+  /* ---- Shared type ---- */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55em;
+    margin: 0 0 0.9rem;
+  }
+  .eyebrow::before {
+    content: "◆";
+    color: var(--glow-ink);
+    font-size: 0.7em;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--serif);
+    font-weight: 600;
+    line-height: 1.12;
+    text-wrap: balance;
+    margin: 0;
+  }
+  h2 {
+    font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.16rem;
+    line-height: 1.25;
+  }
+
+  .lede {
+    color: var(--ink-soft);
+    font-size: clamp(1.02rem, 1.6vw, 1.16rem);
+    max-width: 64ch;
+  }
+
+  a {
+    color: var(--sky-ink);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  code,
+  .code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+  }
+  .section p code,
+  li code {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 0.06em 0.38em;
+  }
+
+  .section {
+    padding: clamp(3rem, 7vw, 5.5rem) 0;
+    border-top: 1px solid var(--line);
+  }
+  .section-head {
+    max-width: 66ch;
+    margin-bottom: 2.4rem;
+  }
+  .section-head p {
+    margin: 0.9rem 0 0;
+  }
+
+  /* ============================================================ HERO */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line-2);
+  }
+  .hero-sky {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(
+      180deg,
+      var(--hero-sky-a) 0%,
+      var(--hero-sky-b) 72%,
+      var(--hero-land) 100%
+    );
+    opacity: 0.9;
+    transition: background 0.8s ease;
+  }
+  .hero-stars {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: var(--star-op);
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+  .hero-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 4px #fff;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.25;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 0.95;
+      transform: scale(1.25);
+    }
+  }
+
+  .hero-sun {
+    position: absolute;
+    top: clamp(2rem, 8vw, 5rem);
+    right: clamp(1.5rem, 10vw, 8rem);
+    z-index: 1;
+    width: clamp(54px, 9vw, 92px);
+    height: clamp(54px, 9vw, 92px);
+    border-radius: 50%;
+    background: var(--sun-moon);
+    box-shadow:
+      0 0 0 14px var(--sun-glow),
+      0 0 60px 12px var(--sun-glow);
+    animation: bob 9s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    padding: clamp(3.4rem, 9vw, 7rem) 0 clamp(3rem, 7vw, 5rem);
+  }
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: color-mix(in srgb, var(--card) 78%, transparent);
+    border: 1px solid var(--line-2);
+    border-radius: 999px;
+    padding: 0.4rem 0.85rem;
+    backdrop-filter: blur(3px);
+  }
+  .hero h1 {
+    font-size: clamp(2.7rem, 8.2vw, 5.6rem);
+    letter-spacing: -0.02em;
+    line-height: 0.98;
+    margin: 1.4rem 0 0;
+    color: var(--ink);
+  }
+  .hero h1 .swash {
+    font-style: italic;
+    color: var(--glow-ink);
+  }
+  .hero-tag {
+    margin: 1.3rem 0 0;
+    max-width: 46ch;
+    font-size: clamp(1.05rem, 2vw, 1.28rem);
+    color: var(--ink);
+  }
+  .hero-teaser {
+    font-family: var(--mono);
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+    margin-top: 1.1rem;
+    letter-spacing: 0.01em;
+  }
+
+  .theme-toggle {
+    position: absolute;
+    top: clamp(1rem, 3vw, 1.6rem);
+    right: clamp(1rem, 4vw, 2.5rem);
+    z-index: 5;
+    width: 2.9rem;
+    height: 2.9rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--card) 82%, transparent);
+    border: 1px solid var(--line-2);
+    color: var(--ink);
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(4px);
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .theme-toggle:hover {
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: var(--shadow-lift);
+  }
+
+  /* region legend row under the hero */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.8rem;
+    position: relative;
+    z-index: 2;
+  }
+  .legend-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    background: color-mix(in srgb, var(--card) 84%, transparent);
+    border: 1px solid var(--line-2);
+    border-radius: 999px;
+    padding: 0.4rem 0.8rem 0.4rem 0.6rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink);
+    backdrop-filter: blur(3px);
+  }
+  .dot {
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 50%;
+    flex: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--rg) 22%, transparent);
+    background: var(--rg);
+  }
+
+  /* ============================================================ STATS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .stat {
+    background: var(--card);
+    padding: 1.4rem 1.2rem;
+  }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .stat-num small {
+    font-size: 0.5em;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-weight: 500;
+    margin-left: 0.15em;
+  }
+  .stat-label {
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+
+  /* ============================================================ JOURNEY */
+  .journey {
+    display: grid;
+    gap: 1rem;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(1rem, 3vw, 2rem);
+    align-items: start;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: clamp(1.3rem, 3vw, 1.9rem);
+    box-shadow: var(--shadow);
+  }
+  .step-num {
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 4vw, 2.3rem);
+    font-weight: 600;
+    width: clamp(2.6rem, 7vw, 3.4rem);
+    height: clamp(2.6rem, 7vw, 3.4rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    border-radius: 50%;
+    color: var(--glow-ink);
+    border: 2px solid color-mix(in srgb, var(--glow) 55%, var(--line));
+    font-variant-numeric: tabular-nums;
+    background: color-mix(in srgb, var(--glow) 12%, transparent);
+  }
+  .step h3 {
+    margin-bottom: 0.35rem;
+  }
+  .step p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.96rem;
+  }
+  .step .tag {
+    display: inline-block;
+    margin-top: 0.7rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.04em;
+  }
+  .step .tag b {
+    color: var(--sky-ink);
+    font-weight: 600;
+  }
+
+  /* ============================================================ REGIONS */
+  .regions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.1rem;
+  }
+  .region {
+    --rg: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.4rem;
+    box-shadow: var(--shadow);
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .region::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--rg), transparent 82%);
+    opacity: 0.9;
+  }
+  .region:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in srgb, var(--rg) 45%, var(--line));
+  }
+  /* plaque — echoes the map's real region plaques (parchment + colored dot + name) */
+  .plaque {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 0.2rem;
+  }
+  .plaque .dot {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+  .plaque .biome {
+    font-size: 1.1rem;
+    filter: saturate(1.1);
+  }
+  .region h3 {
+    display: inline;
+  }
+  .region .route {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--rg);
+    font-weight: 600;
+    margin-top: 0.5rem;
+    display: block;
+    word-break: break-word;
+  }
+  .region .blurb {
+    margin: 0.55rem 0 0.9rem;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    font-style: italic;
+  }
+  .region .quest-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.84rem;
+    padding-top: 0.85rem;
+    border-top: 1px dashed var(--line-2);
+    color: var(--ink-soft);
+  }
+  .region .quest-line b {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .qseal {
+    flex: none;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    border: 2px solid color-mix(in srgb, var(--rg) 60%, var(--line));
+    background: color-mix(in srgb, var(--rg) 14%, transparent);
+  }
+
+  /* ============================================================ GAME: quests + stamps */
+  .game-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(1.2rem, 4vw, 2.4rem);
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .game-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .subhead {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 1rem;
+  }
+
+  .quests {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .quest {
+    --rg: var(--glow-ink);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.85rem;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    padding: 0.9rem 1rem;
+    box-shadow: var(--shadow);
+  }
+  .quest .seal {
+    flex: none;
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    border: 2px solid color-mix(in srgb, var(--rg) 60%, var(--line));
+    background: color-mix(in srgb, var(--rg) 14%, transparent);
+  }
+  .quest .qname {
+    font-weight: 700;
+    font-size: 0.98rem;
+  }
+  .quest .qdesc {
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    margin-top: 0.1rem;
+  }
+  .quest .target {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--rg);
+    white-space: nowrap;
+    border: 1px solid color-mix(in srgb, var(--rg) 40%, var(--line));
+    border-radius: 999px;
+    padding: 0.28rem 0.6rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .quest.ach {
+    --rg: var(--sky-ink);
+  }
+
+  .passport {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.3rem;
+    box-shadow: var(--shadow);
+  }
+  .passport-cap {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin: 0 0 1.1rem;
+  }
+  .stamps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 0.7rem;
+  }
+  .stamp {
+    --rg: var(--glow-ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    text-align: center;
+    padding: 0.85rem 0.4rem;
+    border-radius: 12px;
+    border: 2px dashed var(--line-2);
+    color: var(--ink-faint);
+    font-size: 0.68rem;
+    font-weight: 600;
+  }
+  .stamp .sseal {
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    border: 2px dashed color-mix(in srgb, var(--rg) 50%, var(--line-2));
+    color: color-mix(in srgb, var(--rg) 80%, var(--ink));
+    opacity: 0.85;
+  }
+
+  /* ============================================================ EGGS */
+  .eggs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.1rem;
+  }
+  .egg {
+    --rg: var(--glow-ink);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    padding: 1.3rem;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .egg-top {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.6rem;
+  }
+  .egg-glint {
+    flex: none;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    background: radial-gradient(
+      circle at 50% 40%,
+      color-mix(in srgb, var(--rg) 40%, transparent),
+      transparent 70%
+    );
+    border: 1px solid color-mix(in srgb, var(--rg) 45%, var(--line));
+  }
+  .egg h3 {
+    font-size: 1.02rem;
+  }
+  .egg .where {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--rg);
+    text-transform: uppercase;
+  }
+  .egg .hint {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    margin: 0.2rem 0 0.7rem;
+  }
+  .egg .reveal {
+    font-size: 0.86rem;
+    padding-top: 0.7rem;
+    border-top: 1px dashed var(--line-2);
+    color: var(--ink);
+  }
+  .egg .reveal b {
+    color: var(--rg);
+  }
+  .night-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    margin-top: 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: color-mix(in srgb, #4762b8 30%, var(--card));
+    color: var(--ink);
+    border: 1px solid color-mix(in srgb, #6f86d6 45%, var(--line));
+    border-radius: 999px;
+    padding: 0.25rem 0.6rem;
+  }
+
+  /* ============================================================ CHOICES */
+  .choices {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 0.7rem;
+  }
+  .choice {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.9rem;
+    align-items: baseline;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.95rem 1.1rem;
+  }
+  .choice .k {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    padding-top: 0.15rem;
+  }
+  .choice .v {
+    font-size: 0.92rem;
+  }
+  .choice .v b {
+    color: var(--ink);
+  }
+
+  /* ============================================================ PATTERNS */
+  .patterns {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.1rem;
+  }
+  .pattern {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    padding: 1.35rem 1.4rem;
+    box-shadow: var(--shadow);
+  }
+  .pattern h3 {
+    margin-bottom: 0.55rem;
+  }
+  .pattern p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+  }
+  .pattern .files {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .pattern .files code {
+    font-size: 0.72rem;
+    color: var(--sky-ink);
+    background: color-mix(in srgb, var(--sky) 12%, transparent);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 0.12rem 0.44rem;
+  }
+
+  /* ============================================================ CRAFT list */
+  .craft {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+  .craft-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.85rem;
+    align-items: start;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    padding: 1.1rem 1.2rem;
+  }
+  .craft-item .ico {
+    font-size: 1.3rem;
+    line-height: 1;
+    padding-top: 0.1rem;
+  }
+  .craft-item h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+  .craft-item p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+  }
+
+  /* ============================================================ FOOTER */
+  .colophon {
+    border-top: 1px solid var(--line-2);
+    padding: 3rem 0 4rem;
+  }
+  .colophon .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.5rem;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .colophon p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.86rem;
+    max-width: 54ch;
+  }
+  .colophon .mono {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ============================================================ PHASE RAIL */
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 0.6rem;
+  }
+  .phase {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    padding: 0.7rem 0.85rem;
+  }
+  .phase .pn {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 0.78rem;
+    width: 1.95rem;
+    height: 1.95rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    color: var(--glow-ink);
+    border: 1px solid color-mix(in srgb, var(--glow) 48%, var(--line));
+    background: color-mix(in srgb, var(--glow) 11%, transparent);
+    font-variant-numeric: tabular-nums;
+  }
+  .phase.flip .pn {
+    color: var(--sky-ink);
+    border-color: color-mix(in srgb, var(--sky) 55%, var(--line));
+    background: color-mix(in srgb, var(--sky) 15%, transparent);
+  }
+  .phase .pname {
+    font-weight: 700;
+    font-size: 0.86rem;
+    line-height: 1.2;
+  }
+  .phase .psize {
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    margin-top: 0.1rem;
+    display: block;
+  }
+
+  /* ============================================================ STORY */
+  .story {
+    max-width: 72ch;
+  }
+  .story p {
+    margin: 0 0 1.15rem;
+    color: var(--ink-soft);
+  }
+  .story p b,
+  .story p strong {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .prompt {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.85rem;
+    align-items: baseline;
+    background: color-mix(in srgb, var(--ink) 5%, var(--card));
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line-2);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    margin: 0 0 1.15rem;
+  }
+  .prompt .who {
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+  .prompt .said {
+    color: var(--ink);
+    font-style: italic;
+    font-size: 0.98rem;
+  }
+
+  /* reveal-on-scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s ease;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-sun,
+    .hero-star {
+      animation: none;
+    }
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    .region,
+    .theme-toggle {
+      transition: none;
+    }
+  }
+</style>
+
+<!-- ====================================================== HERO -->
+<header class="hero">
+  <div class="hero-sky"></div>
+  <div class="hero-stars" id="stars" aria-hidden="true"></div>
+  <div class="hero-sun" aria-hidden="true"></div>
+  <button
+    class="theme-toggle"
+    id="themeToggle"
+    type="button"
+    aria-label="Toggle day / night"
+    title="Toggle day / night"
+  >
+    🌙
+  </button>
+
+  <div class="wrap hero-inner">
+    <span class="kicker">Feature Dossier · v11.1.0</span>
+    <h1>The Wanderer's<br /><span class="swash">Atlas</span></h1>
+    <p class="hero-tag">
+      The personal site is now an explorable illustrated world — arrive in
+      orbit, dive through the clouds, and walk a hand-drawn map whose six
+      regions <em>are</em> the six things this site is about.
+    </p>
+    <p class="hero-teaser">
+      orbit ▸ dive ▸ map ▸ region interiors ▸ the game layer
+    </p>
+
+    <div class="legend" aria-label="The six regions">
+      <span class="legend-chip"
+        ><span class="dot" style="--rg: var(--rg-person)"></span>Hometown
+        Square</span
+      >
+      <span class="legend-chip"
+        ><span class="dot" style="--rg: var(--rg-treks)"></span>Treks</span
+      >
+      <span class="legend-chip"
+        ><span class="dot" style="--rg: var(--rg-reader)"></span>Book
+        Forest</span
+      >
+      <span class="legend-chip"
+        ><span class="dot" style="--rg: var(--rg-marathons)"></span
+        >Marathons</span
+      >
+      <span class="legend-chip"
+        ><span class="dot" style="--rg: var(--rg-writer)"></span
+        >Scriptorium</span
+      >
+      <span class="legend-chip"
+        ><span class="dot" style="--rg: var(--rg-creator)"></span>Projects</span
+      >
+    </div>
+  </div>
+</header>
+
+<!-- ====================================================== ORIENTATION / STATS -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Orientation</p>
+      <h2>One theme, end to end</h2>
+      <p class="lede">
+        Built as sixteen phases on a single branch behind an
+        <code>ATLAS_LIVE</code> flag and a hidden <code>/world</code> preview
+        route, then flipped live at <code>/</code>. The old editorial layout
+        survives one click away — and is automatic under reduced-motion — but it
+        is no longer the front door. Toggle the sun/moon in the corner: this
+        page's day and night <em>are</em> the Atlas's own palette swap.
+      </p>
+    </div>
+    <div class="stats reveal">
+      <div class="stat">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Regions, each a real page group</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">7<small>+3</small></div>
+        <div class="stat-label">Quests + time / return achievements</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Hidden easter eggs on the map</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">149.66<small>KB gz</small></div>
+        <div class="stat-label">Entry bundle, within budget</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Accounts or servers — all local</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== JOURNEY -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">The journey</p>
+      <h2>Five moves from orbit to a page</h2>
+      <p>
+        A real sequence — each stage hands off to the next, and every one is
+        skippable, remembered, or gracefully reduced.
+      </p>
+    </div>
+    <div class="journey">
+      <article class="step reveal">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Arrival — the orbit</h3>
+          <p>
+            A bright orbital scene: the homepage globe in a new
+            <code>orbit</code> mode, day-side, drifting clouds, six glowing
+            regions teasing their live counts. Drag to rotate. One pulsing call
+            to action — <b>Enter the World</b> — with <em>Skip intro</em> always
+            beneath it.
+          </p>
+          <span class="tag"
+            >reuses <b>GlobeRenderer</b> · three.js stays lazy</span
+          >
+        </div>
+      </article>
+      <article class="step reveal">
+        <div class="step-num">2</div>
+        <div>
+          <h3>The dive</h3>
+          <p>
+            Clicking Enter plays an authored ~3.5s GSAP cinematic: the camera
+            plunges, clouds whip past into a white bloom, and the curved globe
+            unfolds into a flat illustrated map. Skippable mid-flight;
+            remembered forever after (<code>introSeen</code>); a quiet fade
+            under <code>prefers-reduced-motion</code>.
+          </p>
+          <span class="tag">GSAP loads only if you actually dive</span>
+        </div>
+      </article>
+      <article class="step reveal">
+        <div class="step-num">3</div>
+        <div>
+          <h3>The map hub</h3>
+          <p>
+            A full-screen 2.5D parallax vector map — six biomes around a
+            hometown center, idle life everywhere, pan / zoom / pinch. Hover a
+            region and it lifts with a teaser; click and the camera flies in,
+            turning the region's art into the page's header. On phones the whole
+            map fits in one window.
+          </p>
+          <span class="tag"
+            ><b>usePanZoom</b> owns the viewBox · GSAP owns transforms</span
+          >
+        </div>
+      </article>
+      <article class="step reveal">
+        <div class="step-num">4</div>
+        <div>
+          <h3>Region interiors</h3>
+          <p>
+            Every content page is rebuilt as a themed interior of its region — a
+            biome header band, breadcrumb, parchment column and per-region
+            accent tokens — rendered by <code>RegionShell</code> from a single
+            truth table. The page content itself is untouched between shells.
+          </p>
+          <span class="tag"
+            >one <b>registry.js</b> feeds shells + the compass menu</span
+          >
+        </div>
+      </article>
+      <article class="step reveal">
+        <div class="step-num">5</div>
+        <div>
+          <h3>The game layer</h3>
+          <p>
+            A passport with per-region stamps, quests, hidden easter eggs,
+            achievement toasts and confetti — plus a mini illustrated Sanket who
+            guides you one speech-bubble at a time. Everything is local: no
+            accounts, no server.
+          </p>
+          <span class="tag"
+            >pure <b>questEngine</b> over declarative quests</span
+          >
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== REGIONS -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">The six regions</p>
+      <h2>Every place is a page group</h2>
+      <p>
+        The map's domain table is the single source of truth for keys, colours
+        and routes. Each biome carries its own collector quest.
+      </p>
+    </div>
+    <div class="regions">
+      <article class="region reveal" style="--rg: var(--rg-person)">
+        <div class="plaque">
+          <span class="biome">🏘️</span><span class="dot"></span>
+          <h3>Hometown Square</h3>
+        </div>
+        <span class="route"
+          >/about · /now · /stats · /changelog · /mindmap ·
+          /interactive-me</span
+        >
+        <p class="blurb">about, now and everything home</p>
+        <div class="quest-line">
+          <span class="qseal">🧭</span
+          ><span
+            >The hub — its Square biome anchors the map and holds the
+            <b>Observatory</b> &amp; <b>Gallery Trail</b>.</span
+          >
+        </div>
+      </article>
+      <article class="region reveal" style="--rg: var(--rg-treks)">
+        <div class="plaque">
+          <span class="biome">⛰️</span><span class="dot"></span>
+          <h3>Treks</h3>
+        </div>
+        <span class="route">/treks</span>
+        <p class="blurb">treks and summit forts</p>
+        <div class="quest-line">
+          <span class="qseal">⛰️</span
+          ><span><b>Summiteer</b> — open five treks on the Ridge.</span>
+        </div>
+      </article>
+      <article class="region reveal" style="--rg: var(--rg-reader)">
+        <div class="plaque">
+          <span class="biome">🌲</span><span class="dot"></span>
+          <h3>Book Forest</h3>
+        </div>
+        <span class="route">/books</span>
+        <p class="blurb">books and reviews</p>
+        <div class="quest-line">
+          <span class="qseal">📖</span
+          ><span><b>Bibliophile</b> — open five books in the Forest.</span>
+        </div>
+      </article>
+      <article class="region reveal" style="--rg: var(--rg-marathons)">
+        <div class="plaque">
+          <span class="biome">🌊</span><span class="dot"></span>
+          <h3>Marathons</h3>
+        </div>
+        <span class="route">/sports</span>
+        <p class="blurb">races and running</p>
+        <div class="quest-line">
+          <span class="qseal">🏃</span
+          ><span><b>Roadrunner</b> — open five races on the Coast.</span>
+        </div>
+      </article>
+      <article class="region reveal" style="--rg: var(--rg-writer)">
+        <div class="plaque">
+          <span class="biome">📜</span><span class="dot"></span>
+          <h3>Scriptorium</h3>
+        </div>
+        <span class="route"
+          >/100-days-to-offload · /micro-blog · /challenges</span
+        >
+        <p class="blurb">blogs and micro-posts (1,600+ of them)</p>
+        <div class="quest-line">
+          <span class="qseal">✒️</span
+          ><span><b>Wordsmith</b> — open five posts in the Scriptorium.</span>
+        </div>
+      </article>
+      <article class="region reveal" style="--rg: var(--rg-creator)">
+        <div class="plaque">
+          <span class="biome">🛠️</span><span class="dot"></span>
+          <h3>Projects</h3>
+        </div>
+        <span class="route">/projects · /resume</span>
+        <p class="blurb">projects and resume</p>
+        <div class="quest-line">
+          <span class="qseal">🔧</span
+          ><span><b>Tinkerer</b> — open three projects in the Workshop.</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== GAME LAYER -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">The game layer</p>
+      <h2>A passport you actually fill</h2>
+      <p>
+        A pure engine evaluates declarative quests over your visit log —
+        Explorer counts regions, Collectors count actions, the hunt counts eggs,
+        and time / return achievements read the clock. Completing one drops a
+        stamp with confetti. All of it lives in one versioned
+        <code>atlas.v1</code> localStorage key.
+      </p>
+    </div>
+
+    <div class="game-grid">
+      <div class="reveal">
+        <p class="subhead">The quest ledger</p>
+        <div class="quests">
+          <div class="quest" style="--rg: var(--glow-ink)">
+            <span class="seal">🧭</span>
+            <div>
+              <div class="qname">Cartographer</div>
+              <div class="qdesc">Set foot in all six regions of the Atlas.</div>
+            </div>
+            <span class="target">× 6</span>
+          </div>
+          <div class="quest" style="--rg: var(--rg-reader)">
+            <span class="seal">📖</span>
+            <div>
+              <div class="qname">Bibliophile</div>
+              <div class="qdesc">Open five books in the Book Forest.</div>
+            </div>
+            <span class="target">× 5</span>
+          </div>
+          <div class="quest" style="--rg: var(--rg-marathons)">
+            <span class="seal">🏃</span>
+            <div>
+              <div class="qname">Roadrunner</div>
+              <div class="qdesc">Open five races in Marathons.</div>
+            </div>
+            <span class="target">× 5</span>
+          </div>
+          <div class="quest" style="--rg: var(--rg-treks)">
+            <span class="seal">⛰️</span>
+            <div>
+              <div class="qname">Summiteer</div>
+              <div class="qdesc">Open five treks in Treks.</div>
+            </div>
+            <span class="target">× 5</span>
+          </div>
+          <div class="quest" style="--rg: var(--rg-writer)">
+            <span class="seal">✒️</span>
+            <div>
+              <div class="qname">Wordsmith</div>
+              <div class="qdesc">Open five posts in the Scriptorium.</div>
+            </div>
+            <span class="target">× 5</span>
+          </div>
+          <div class="quest" style="--rg: var(--rg-creator)">
+            <span class="seal">🔧</span>
+            <div>
+              <div class="qname">Tinkerer</div>
+              <div class="qdesc">Open three projects in Projects.</div>
+            </div>
+            <span class="target">× 3</span>
+          </div>
+          <div class="quest" style="--rg: var(--rg-treks)">
+            <span class="seal">🔎</span>
+            <div>
+              <div class="qname">Curious Wanderer</div>
+              <div class="qdesc">Uncover every hidden secret on the map.</div>
+            </div>
+            <span class="target">× 5</span>
+          </div>
+          <div class="quest ach">
+            <span class="seal">🦉</span>
+            <div>
+              <div class="qname">Night Owl <em>· achievement</em></div>
+              <div class="qdesc">
+                Explore the Atlas after dark (23:00–05:00).
+              </div>
+            </div>
+            <span class="target">time</span>
+          </div>
+          <div class="quest ach">
+            <span class="seal">📅</span>
+            <div>
+              <div class="qname">Regular <em>· achievement</em></div>
+              <div class="qdesc">
+                Drop by on three different days within a week.
+              </div>
+            </div>
+            <span class="target">× 3</span>
+          </div>
+          <div class="quest ach">
+            <span class="seal">🏅</span>
+            <div>
+              <div class="qname">Completionist <em>· achievement</em></div>
+              <div class="qdesc">Finish every other quest in the Atlas.</div>
+            </div>
+            <span class="target">all</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <p class="subhead">The passport · ten stamps</p>
+        <div class="passport">
+          <p class="passport-cap">
+            Shown at start state — every traveller begins with an empty
+            passport. Each earned quest turns its dashed seal solid.
+          </p>
+          <div class="stamps">
+            <div class="stamp" style="--rg: var(--glow-ink)">
+              <span class="sseal">🧭</span>Cartographer
+            </div>
+            <div class="stamp" style="--rg: var(--rg-reader)">
+              <span class="sseal">📖</span>Bibliophile
+            </div>
+            <div class="stamp" style="--rg: var(--rg-marathons)">
+              <span class="sseal">🏃</span>Roadrunner
+            </div>
+            <div class="stamp" style="--rg: var(--rg-treks)">
+              <span class="sseal">⛰️</span>Summiteer
+            </div>
+            <div class="stamp" style="--rg: var(--rg-writer)">
+              <span class="sseal">✒️</span>Wordsmith
+            </div>
+            <div class="stamp" style="--rg: var(--rg-creator)">
+              <span class="sseal">🔧</span>Tinkerer
+            </div>
+            <div class="stamp" style="--rg: var(--rg-treks)">
+              <span class="sseal">🔎</span>Curious
+            </div>
+            <div class="stamp" style="--rg: var(--sky-ink)">
+              <span class="sseal">🦉</span>Night Owl
+            </div>
+            <div class="stamp" style="--rg: var(--sky-ink)">
+              <span class="sseal">📅</span>Regular
+            </div>
+            <div class="stamp" style="--rg: var(--sky-ink)">
+              <span class="sseal">🏅</span>Completionist
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== EASTER EGGS -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Hidden on the map</p>
+      <h2>Five secrets in the art</h2>
+      <p>
+        Each egg is a small hotspot tucked into a biome — click it to stamp it
+        and pop a toast. The hints on the map stay deliberately vague; here is
+        what they are (spoilers, gently). One only appears after dark.
+      </p>
+    </div>
+    <div class="eggs">
+      <article class="egg reveal" style="--rg: var(--rg-marathons)">
+        <div class="egg-top">
+          <span class="egg-glint">🎖️</span>
+          <div>
+            <span class="where">Marathons · shore</span>
+            <h3>The 50K medal</h3>
+          </div>
+        </div>
+        <p class="hint">“A glint half-buried along the shore.”</p>
+        <p class="reveal"><b>Tata Ultra 50K</b> — the ultra-marathon medal.</p>
+      </article>
+      <article class="egg reveal" style="--rg: var(--rg-treks)">
+        <div class="egg-top">
+          <span class="egg-glint">⛺</span>
+          <div>
+            <span class="where">Treks · the ridge</span>
+            <h3>A lone tent</h3>
+          </div>
+        </div>
+        <p class="hint">“Something pitched high on the ridge.”</p>
+        <p class="reveal">
+          <b>Panhala → Pawankhind</b> — the 22-hour night trek.
+        </p>
+      </article>
+      <article class="egg reveal" style="--rg: var(--rg-writer)">
+        <div class="egg-top">
+          <span class="egg-glint">⛵</span>
+          <div>
+            <span class="where">Scriptorium</span>
+            <h3>A paper boat</h3>
+          </div>
+        </div>
+        <p class="hint">“Adrift near the Scriptorium.”</p>
+        <p class="reveal">
+          A paper boat — a nod to <b>The Wanderer's</b> Substack.
+        </p>
+      </article>
+      <article class="egg reveal" style="--rg: var(--rg-person)">
+        <div class="egg-top">
+          <span class="egg-glint">🌱</span>
+          <div>
+            <span class="where">Hometown Square</span>
+            <h3>A young sapling</h3>
+          </div>
+        </div>
+        <p class="hint">“Newly planted in the square.”</p>
+        <p class="reveal">A <b>Nirman</b> sapling — growing something new.</p>
+      </article>
+      <article class="egg reveal" style="--rg: var(--rg-reader)">
+        <div class="egg-top">
+          <span class="egg-glint">⭐</span>
+          <div>
+            <span class="where">Book Forest · sky</span>
+            <h3>A bright star</h3>
+          </div>
+        </div>
+        <p class="hint">“Twinkles only after dark.”</p>
+        <p class="reveal">The <b>Jan-22 birthday</b> constellation.</p>
+        <span class="night-badge">🌙 Night only</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== DESIGN CHOICES -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Design choices</p>
+      <h2>The locked creative decisions</h2>
+      <p>
+        Every direction below was confirmed one-by-one before a line was written
+        — the creative guardrails the whole build answers to.
+      </p>
+    </div>
+    <div class="choices">
+      <div class="choice reveal">
+        <span class="k">Direction</span
+        ><span class="v"
+          ><b>Living Atlas</b> — globe orbit → cinematic dive → illustrated map
+          hub.</span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">Game depth</span
+        ><span class="v"
+          >HUD + quests + passport. <b>No walkable avatar</b> — explorable, but
+          nobody gets lost.</span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">Breadth</span
+        ><span class="v"
+          >Full rebuild of every page as a region interior.
+          <b>The data layer is unchanged.</b></span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">Escape hatch</span
+        ><span class="v"
+          >Skip intro always visible; remembered Atlas / Classic preference;
+          reduced-motion auto-lands in Classic.</span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">Art style</span
+        ><span class="v"
+          >Flat vector illustration, authored as
+          <b>inline-JSX SVG</b> components (for CSS-var theming + per-element
+          life).</span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">Sound</span
+        ><span class="v"
+          >Ambient loop per biome + micro-SFX, <b>off by default</b>,
+          hand-rolled WebAudio — no library.</span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">Guide</span
+        ><span class="v"
+          >A mini illustrated Sanket with speech bubbles —
+          <b>replaces react-joyride</b>.</span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">Chrome</span
+        ><span class="v"
+          >A world HUD (compass, return-to-map, passport, sound, sun/moon)
+          replaces the nav, sidebar and footer.</span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">Day / night</span
+        ><span class="v"
+          >Auto from the visitor's local hour (19:00–06:00 → night) + a manual
+          toggle, coupled to the theme.</span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">World name</span
+        ><span class="v"
+          ><b>The Wanderer's Atlas</b> — tying to the Substack identity, framing
+          visitors as fellow explorers.</span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">Quests</span
+        ><span class="v"
+          >Explorer + Collector + hidden eggs + time / return achievements — all
+          localStorage, no accounts.</span
+        >
+      </div>
+      <div class="choice reveal">
+        <span class="k">Animation</span
+        ><span class="v"
+          >GSAP (free, all plugins), <b>confined to lazy atlas chunks</b> —
+          never the entry bundle.</span
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== SYSTEM PATTERNS -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">System patterns</p>
+      <h2>How it holds together</h2>
+      <p>
+        The spectacle sits on a boring, testable spine. A handful of ownership
+        rules keep animation, routing and theming from ever fighting each other.
+      </p>
+    </div>
+    <div class="patterns">
+      <article class="pattern reveal">
+        <h3>Two shells, one route table</h3>
+        <p>
+          Atlas and Classic share one set of routes. View mode resolves
+          <em>synchronously</em> — <code>?view=</code> → stored choice →
+          reduced-motion → flag — so the first paint is never wrong, and a
+          shared <code>PageMeta</code> means metadata can't fork between shells.
+        </p>
+        <div class="files">
+          <code>PageShell.js</code><code>useViewMode.js</code
+          ><code>PageMeta.js</code>
+        </div>
+      </article>
+      <article class="pattern reveal">
+        <h3>The ownership rule</h3>
+        <p>
+          To stop animations fighting over the same value:
+          <code>usePanZoom</code> owns the SVG <code>viewBox</code>; GSAP only
+          ever touches element transforms and opacity. Never both on one
+          property.
+        </p>
+        <div class="files">
+          <code>hooks/usePanZoom.js</code><code>map/parallax.js</code>
+        </div>
+      </article>
+      <article class="pattern reveal">
+        <h3>Overlay choreography, not FLIP</h3>
+        <p>
+          React Router unmounts the source tree, so cross-route shared-element
+          FLIP is fragile. Instead <code>AtlasFrame</code> mounts once outside
+          <code>Routes</code> and owns the transition overlay — navigations
+          bridge without a flash.
+        </p>
+        <div class="files"><code>atlas/AtlasFrame.js</code></div>
+      </article>
+      <article class="pattern reveal">
+        <h3>One GSAP import point</h3>
+        <p>
+          GSAP is imported only through a single module, so tree-shaking and
+          chunk placement stay controlled — it lands in the lazy atlas chunk and
+          never the entry bundle.
+        </p>
+        <div class="files"><code>atlas/lib/gsap.js</code></div>
+      </article>
+      <article class="pattern reveal">
+        <h3>Accessibility mirror</h3>
+        <p>
+          The SVG hotspots are <code>aria-hidden</code>; an offscreen
+          <code>&lt;nav&gt;</code> of six real links is the single source of
+          truth for assistive tech. Roving tabindex, arrow keys walking the
+          geographic ring, Enter / Space / Escape.
+        </p>
+        <div class="files">
+          <code>map/WorldMap.js</code><code>RegionHotspot.js</code>
+        </div>
+      </article>
+      <article class="pattern reveal">
+        <h3>Day / night is a token swap</h3>
+        <p>
+          All art and UI colour comes only from <code>--atlas-*</code> custom
+          properties under <code>.atlas-root[data-time]</code>; flipping the
+          attribute repaints the whole scene — windows light up, stars appear.
+          Region accents live under <code>[data-region]</code>.
+        </p>
+        <div class="files"><code>theme/atlasTokens.css</code></div>
+      </article>
+      <article class="pattern reveal">
+        <h3>A zero-specificity reset</h3>
+        <p>
+          The <code>.atlas-root</code> reset wraps its element selectors in
+          <code>:where()</code> so bare-element defaults never out-specify the
+          Tailwind utilities on imported page content — pages look identical in
+          either shell.
+        </p>
+        <div class="files">
+          <code>theme/atlasTokens.css</code><code>styles/classic.css</code>
+        </div>
+      </article>
+      <article class="pattern reveal">
+        <h3>A pure, tested core</h3>
+        <p>
+          The quest engine is a pure evaluator over declarative definitions;
+          world state is an <code>atlas.v1</code> reducer with a debounced
+          writer and a tested migration that seeds your passport from the old
+          globe-visited key.
+        </p>
+        <div class="files">
+          <code>gamification/questEngine.js</code><code>world/migrate.js</code>
+        </div>
+      </article>
+      <article class="pattern reveal">
+        <h3>The repo owns its audio</h3>
+        <p>
+          The seven ambient beds and the SFX sprite are procedurally synthesised
+          at build time (filtered noise + sine partials) — no third-party audio,
+          and nothing loads until you turn sound on.
+        </p>
+        <div class="files"><code>scripts/generate-atlas-audio.mjs</code></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== CRAFT + GUARDRAILS -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Craft &amp; guardrails</p>
+      <h2>The details that sell it — and keep it honest</h2>
+      <p>
+        Atmosphere is layered in carefully, and every flourish has a guardrail:
+        a budget, a fallback, or an off-switch.
+      </p>
+    </div>
+    <div class="craft">
+      <div class="craft-item reveal">
+        <span class="ico">🏔️</span>
+        <div>
+          <h3>2.5D parallax</h3>
+          <p>
+            Sky and far ranges lag the camera, near props lead it, plus a little
+            pointer drift — all via <code>gsap.quickSetter</code> on transforms.
+          </p>
+        </div>
+      </div>
+      <div class="craft-item reveal">
+        <span class="ico">🕯️</span>
+        <div>
+          <h3>Idle life</h3>
+          <p>
+            Flag flutter, page-birds, workshop gears, waves, drifting clouds —
+            and a night state where windows glow, stars come out and fireflies
+            drift, all CSS-var driven.
+          </p>
+        </div>
+      </div>
+      <div class="craft-item reveal">
+        <span class="ico">📱</span>
+        <div>
+          <h3>Mobile as a tier</h3>
+          <p>
+            The same map fits all six regions in one window (the SVG letterboxes
+            into the sky on tall screens), with pan / pinch and the compass menu
+            as a text fallback.
+          </p>
+        </div>
+      </div>
+      <div class="craft-item reveal">
+        <span class="ico">🔊</span>
+        <div>
+          <h3>Opt-in audio</h3>
+          <p>
+            Off by default. Turn it on and a per-region ambient bed cross-fades
+            as you move — loading nothing until then.
+          </p>
+        </div>
+      </div>
+      <div class="craft-item reveal">
+        <span class="ico">🧑‍🎨</span>
+        <div>
+          <h3>The guide</h3>
+          <p>
+            A flat-vector mini Sanket pops in with one line at a time — a
+            welcome, a nudge to the passport, a hint that sound exists. Each
+            beat is acknowledged once, forever.
+          </p>
+        </div>
+      </div>
+      <div class="craft-item reveal">
+        <span class="ico">♿</span>
+        <div>
+          <h3>Reduced-motion first-class</h3>
+          <p>
+            Prefer reduced motion and you land straight in Classic; the map's
+            screen-reader nav and full keyboard model are always present
+            regardless.
+          </p>
+        </div>
+      </div>
+      <div class="craft-item reveal">
+        <span class="ico">📦</span>
+        <div>
+          <h3>On a budget</h3>
+          <p>
+            Dropping react-joyride (~40&nbsp;KB) roughly paid for GSAP
+            (~30&nbsp;KB, lazy). Deleting a 3,960-line vendored theme cut the
+            entry stylesheet 25.90 → 15.85&nbsp;KB gz. Per-biome art is capped
+            at 25&nbsp;KB.
+          </p>
+        </div>
+      </div>
+      <div class="craft-item reveal">
+        <span class="ico">💾</span>
+        <div>
+          <h3>Yours, and local</h3>
+          <p>
+            Passport, quests, eggs, preferences — everything is one localStorage
+            key. No accounts, no server round-trips, no tracking of your journey
+            off-device.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== BUILT WITH CLAUDE -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Made with Claude Code</p>
+      <h2>How the world got built</h2>
+      <p class="lede">
+        The Atlas was designed and implemented with <b>Claude Code</b> as the
+        build agent, working from an approved plan against the live codebase.
+        The method mattered as much as the map: decide first, build in phases,
+        and keep the branch shippable the whole way.
+      </p>
+    </div>
+
+    <div class="craft" style="margin-bottom: 2.4rem">
+      <div class="craft-item reveal">
+        <span class="ico">🧭</span>
+        <div>
+          <h3>Decisions before code</h3>
+          <p>
+            Sixteen creative decisions and four build-workflow decisions were
+            each confirmed one-by-one — direction, game depth, art style, sound,
+            chrome — before a line was written.
+          </p>
+        </div>
+      </div>
+      <div class="craft-item reveal">
+        <span class="ico">🖼️</span>
+        <div>
+          <h3>A cheap concept-board gate</h3>
+          <p>
+            Before any real biome art, a single rendered mockup — map
+            composition, one full biome, both day/night palettes, the HUD — was
+            approved once. Art is expensive to redo; a mockup isn't.
+          </p>
+        </div>
+      </div>
+      <div class="craft-item reveal">
+        <span class="ico">🌑</span>
+        <div>
+          <h3>The dark build</h3>
+          <p>
+            The changelog stayed deliberately silent through phases 0–14 — a
+            conscious exception to the always-update rule — so the flip could
+            land <em>one</em> comprehensive v11.0.0 entry telling the whole
+            story at once.
+          </p>
+        </div>
+      </div>
+      <div class="craft-item reveal">
+        <span class="ico">✅</span>
+        <div>
+          <h3>Green at every phase</h3>
+          <p>
+            Each phase left the branch passing <code>lint</code>,
+            <code>test</code> and <code>build</code>, hidden behind an
+            <code>ATLAS_LIVE</code> flag and a <code>/world</code> preview —
+            public-safe and shippable at any moment.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <p class="subhead reveal">
+      Sixteen phases · one long-running branch · flipped live at the end
+    </p>
+    <div class="phases">
+      <div class="phase reveal">
+        <span class="pn">0</span>
+        <div>
+          <span class="pname">Dead-CSS prune</span
+          ><span class="psize">groundwork · S</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">1</span>
+        <div>
+          <span class="pname"
+            >Foundation — world state, view modes, /world preview</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">2</span>
+        <div>
+          <span class="pname"
+            >Atlas frame — GSAP, tokens, HUD skeleton, day/night</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">3</span>
+        <div>
+          <span class="pname"
+            >Map hub — layers, pan/zoom, hotspots, keyboard &amp; ARIA</span
+          ><span class="psize">L</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">4</span>
+        <div>
+          <span class="pname">Intro — orbit stage, the GSAP dive, skip</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">5</span>
+        <div>
+          <span class="pname"
+            >First region — RegionShell + Book Forest, stamps</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">6</span>
+        <div>
+          <span class="pname">Game layer — quest engine, passport, eggs</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">7</span>
+        <div>
+          <span class="pname">Wave 2 — Coastal Road + Sahyadri Ridge</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">8</span>
+        <div>
+          <span class="pname">Wave 3 — the Scriptorium trio</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">9</span>
+        <div>
+          <span class="pname">Wave 4 — the Workshop</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">10</span>
+        <div>
+          <span class="pname"
+            >Wave 5 — Hometown Square, Observatory &amp; Gallery Trail</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">11</span>
+        <div>
+          <span class="pname"
+            >Art &amp; perf — final biomes, parallax, budgets</span
+          ><span class="psize">L</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">12</span>
+        <div>
+          <span class="pname">Audio — WebAudio manager, ambient beds</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">13</span>
+        <div>
+          <span class="pname">Guide — GuideAvatar replaces react-joyride</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal">
+        <span class="pn">14</span>
+        <div>
+          <span class="pname"
+            >Cleanup — delete the old theme, fix rounded-full</span
+          ><span class="psize">M</span>
+        </div>
+      </div>
+      <div class="phase reveal flip">
+        <span class="pn">15</span>
+        <div>
+          <span class="pname">The flip — atlas goes live at “/” · v11.0.0</span
+          ><span class="psize">merge → main · XS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== THE STORY -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Field note</p>
+      <h2>The story of a single fix</h2>
+      <p>
+        How <b>v11.1.0</b> — the change that put all six worlds in one window on
+        a phone — actually happened, prompts and all.
+      </p>
+    </div>
+
+    <div class="story reveal">
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said"
+          >“Mobile user should be able to see all worlds in single
+          window.”</span
+        >
+      </div>
+
+      <p>
+        The map is drawn <b>wide</b> — a 2000×1250 landscape with six biomes
+        spread corner to corner — but a phone is tall and narrow. The hub had
+        been resting zoomed onto the hometown square, so a phone only ever
+        showed the centre; the other five worlds were a drag away. The
+        diagnosis: the map's SVG was set to
+        <em>fill-and-crop</em> (<code>slice</code>), which on a portrait screen
+        quietly clips the left and right regions off-frame.
+      </p>
+
+      <p>
+        The fix was two moves: rest the camera on the <b>whole map</b> on every
+        viewport, and on phones only, switch the SVG to
+        <em>fit</em> (<code>meet</code>) so nothing is cropped — all six worlds
+        in one window. A twist surfaced mid-investigation: a
+        <b>second Claude Code session</b> was already working in the same
+        repository and had landed most of that change moments earlier. This
+        session reconciled the two — repairing a formatting pass that had
+        tripped the project's lint rules, and keeping the tests green.
+      </p>
+
+      <p>
+        The first attempt anchored the fitted map to the <em>bottom</em>, which
+        left a wall of empty sky above it. Feedback arrived as a screenshot and
+        a second sentence:
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said"
+          >“Fix only mobile view to put scene in the middle of screen. No change
+          for desktop view.”</span
+        >
+      </div>
+
+      <p>
+        One character did it — the vertical alignment moved from bottom
+        (<code>xMidYMax</code>) to centre (<code>xMidYMid</code>), with the
+        desktop's immersive full-bleed slice untouched. The change shipped as
+        <b>v11.1.0</b> alongside an on-screen zoom cluster for touch users, was
+        committed, pushed, and opened as a pull request. Then this dossier — its
+        colours borrowed from the Atlas's own design tokens — was written in the
+        same conversation.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== COLOPHON -->
+<footer class="colophon">
+  <div class="wrap">
+    <div>
+      <p class="mono">The Wanderer's Atlas · v11.1.0</p>
+      <p style="margin-top: 0.6rem">
+        A feature dossier for a React 18 + Vite personal site, redesigned as a
+        gamified illustrated world and shipped as sixteen phases on one branch.
+        Colours and surfaces on this page are drawn from the Atlas's own
+        <code>--atlas-*</code> design tokens; its day and night are the site's
+        own.
+      </p>
+    </div>
+    <p class="mono">◆ Fellow explorer, welcome.</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var toggle = document.getElementById("themeToggle");
+
+    function isDark() {
+      var t = root.getAttribute("data-theme");
+      if (t === "dark") return true;
+      if (t === "light") return false;
+      return (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      );
+    }
+    function syncIcon() {
+      toggle.textContent = isDark() ? "☀️" : "🌙";
+    }
+    toggle.addEventListener("click", function () {
+      root.setAttribute("data-theme", isDark() ? "light" : "dark");
+      syncIcon();
+    });
+    if (window.matchMedia) {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", syncIcon);
+    }
+    syncIcon();
+
+    // scatter hero stars (visible only in night via --star-op)
+    var stars = document.getElementById("stars");
+    if (stars) {
+      var n = 46,
+        html = "";
+      for (var i = 0; i < n; i++) {
+        var x = Math.random() * 100,
+          y = Math.random() * 82,
+          d = (Math.random() * 4).toFixed(2),
+          s = (0.6 + Math.random() * 1.4).toFixed(2);
+        html +=
+          '<span class="hero-star" style="left:' +
+          x.toFixed(2) +
+          "%;top:" +
+          y.toFixed(2) +
+          "%;transform:scale(" +
+          s +
+          ");animation-delay:" +
+          d +
+          's"></span>';
+      }
+      stars.innerHTML = html;
+    }
+
+    // reveal on scroll (respects reduced-motion via CSS)
+    var items = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) {
+      items.forEach(function (el) {
+        el.classList.add("in");
+      });
+    } else {
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          });
+        },
+        { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
+      );
+      items.forEach(function (el) {
+        io.observe(el);
+      });
+    }
+  })();
+</script>
