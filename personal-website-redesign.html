@@ -1,3 +1,4 @@
+<meta charset="utf-8" />
 <title>The Wanderer's Atlas — Feature Dossier</title>
 <style>
   /* ============================================================
@@ -2082,9 +2083,434 @@
         <span class="pn">15</span>
         <div>
           <span class="pname">The flip — atlas goes live at “/” · v11.0.0</span
-          ><span class="psize">merge → main · XS</span>
+          ><span class="psize">push branch · XS</span>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== GETTING STARTED -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Getting started</p>
+      <h2>How the Atlas began</h2>
+      <p>
+        Before the map, before the phases, there was a brief and a rule:
+        <em>ask everything, assume nothing</em>. These are the prompts that drew
+        the first outline.
+      </p>
+    </div>
+
+    <div class="story reveal">
+      <div class="prompt">
+        <span class="who">Brief</span
+        ><span class="said"
+          >“I want to completely redesign this website… an animated site where
+          the user navigates a gamified experience. The homepage should be a
+          bright experience where the user enters a personal world — first a
+          globe, then you zoom in and click to enter, and the world prompts you
+          to browse. Brainstorm, explore every creative idea, ask every possible
+          question for every small feature, and clarify everything — don't
+          assume.”</span
+        >
+      </div>
+
+      <p>
+        Rather than reach for code, the session first read the whole
+        <code>docs/</code> folder and mapped the existing site — the homepage
+        globe, the six content domains, the design tokens — then went looking
+        outward for reference.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said"
+          >“This should be a completely redesigned experience — explore the
+          ideas on the web for more detailed exploration.”</span
+        >
+      </div>
+
+      <p>
+        A research pass surveyed the state of the art in explorable web worlds —
+        Bruno Simon's drivable portfolio, Jordan Breton's floating island, cozy
+        Zelda-like navigators, Stripe's globe — and pulled out the guardrails
+        that separate a delightful world from a frustrating one: don't trap
+        goal-driven visitors, treat mobile as a first-class tier, keep the real
+        content crawlable beneath the spectacle, make sound strictly opt-in.
+      </p>
+
+      <p>
+        Then came the long part: a clarifying loop where <b>every</b> creative
+        decision was put as an explicit question and confirmed one at a time —
+        direction, game depth, breadth, the escape hatch, art style, the intro's
+        motion, sound, the guide, the site chrome, day versus night, the world's
+        very name. Twenty-odd choices, each answered before any of them was
+        assumed.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said"
+          >“Only export the detailed plan to an md file under the docs folder —
+          we'll build in phases.”</span
+        >
+      </div>
+
+      <p>
+        So the whole design was written down as a build bible — the vision, the
+        six regions, the architecture, the file map, the sixteen-phase plan, the
+        risks and the verification playbook — to be executed deliberately rather
+        than all at once. One more round of questions settled the workflow
+        itself:
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said">“Ask questions first.”</span>
+      </div>
+
+      <p>
+        Four answers set the rules of the build:
+        <b>one long-running branch</b> behind the <code>ATLAS_LIVE</code> flag;
+        a <b>silent changelog</b> until the flip, so the story could land in a
+        single entry; a cheap <b>concept-board gate</b> before any real art; and
+        audio sourced under permissive licences. With the map drawn and the
+        method agreed, one instruction remained.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said">“Start with phase 0.”</span>
+      </div>
+
+      <p>
+        And the sixteen phases began — the first of them clearing the ground by
+        deleting a decade-old vendored theme, so the new world had nothing to
+        fight.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said"
+          >“Study this plan and start implementation of phase 0.”</span
+        >
+      </div>
+
+      <p>
+        Phase 0 was demolition done carefully. The vendored stylesheet came out
+        partial by partial — but only after every rule was <em>proven</em> dead:
+        the CSS was compiled before and after and diffed by structure (the new
+        output a pure subset of the old, 424 rules removed and not one added),
+        and each of the 366 orphaned selectors was tested against the live pages
+        to confirm it matched nothing at all. The entry stylesheet shed roughly
+        a third of its weight, and the first green commit landed on the branch.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said"
+          >“Start implementation of phase 1 and phase 2.”</span
+        >
+      </div>
+
+      <p>
+        Phase 1 laid the foundation no visitor sees: one versioned
+        <code>localStorage</code> key for the whole world, a pure and
+        unit-tested migration that quietly carries a returning visitor's old
+        globe visits into the new passport, the view-mode resolver that decides
+        Atlas-or-Classic before the first paint, and a hidden,
+        <em>noindexed</em> <code>/world</code> route to preview it all. Phase 2
+        raised the frame on top: the day/night design tokens, the world HUD —
+        compass, passport, sun/moon, sound, return-to-map — and the one-way
+        switch that ties the scene's daylight to the site's dark mode, so the
+        two can never disagree.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said">“Finish phase 2 of plan.”</span>
+      </div>
+
+      <p>
+        The last pass drove every control by hand — the sun/moon flipping both
+        the sky and the theme in lockstep, the passport's Classic escape hatch
+        dissolving the whole frame, the compass listing all six regions — then
+        left the branch green: lint clean, sixty-odd tests passing, and the
+        build split so GSAP and the atlas chrome load only for visitors who
+        actually step into the world. Three phases down; the map itself was
+        next.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said"
+          >“Start with phase 3 of plan now, give me designs to approve.”</span
+        >
+      </div>
+
+      <p>
+        Phase 3 was the map itself — and the plan had placed a gate in front of
+        it. Before any real biome art, the build owed one cheap approval: a
+        rendered concept board showing the map's composition, a single
+        <em>fully</em> detailed biome, both day and night palettes, and the
+        world HUD. Art is expensive to redo; a mockup is not. So the session
+        drew the board rather than the map — the six regions laid out corner to
+        corner with the <b>Book Forest</b> worked up to full detail as the
+        benchmark, a working sun/moon that repainted the whole scene live, and
+        every colour pulled straight from the shipped
+        <code>--atlas-*</code> tokens, so what was approved was exactly what the
+        code would produce.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Approval</span><span class="said">“Approved.”</span>
+      </div>
+
+      <p>
+        The art direction locked in a single word, and the hub could be built
+        for real. The pan-zoom hook that once drove the mind map was promoted to
+        a shared home — a one-line re-export shim left at the old path so
+        nothing broke — the six biomes became inline-SVG components, and
+        <code>WorldMap</code> stacked them in the planned order: sky, far
+        ranges, the biome landmasses, foreground props, the interactive region
+        hotspots, the easter-egg layer, the name plaques. Activating a region
+        flies the camera to its framing and <em>then</em> navigates; returning
+        from a page reverses the very same read. Under the spectacle sat the
+        accessibility spine — an offscreen <code>&lt;nav&gt;</code> of six real
+        links as the single source of truth, a roving tabindex, arrow keys
+        walking the regions in geographic order, Escape resetting the zoom.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said">“Finish phase 3 — just commit code directly.”</span>
+      </div>
+
+      <p>
+        The map came up clean on the first drive: six hotspots correctly
+        labelled, the screen-reader nav mirroring every route, the scene
+        flipping day to night on command. The branch stayed green — lint clean,
+        eighty-nine tests passing with twenty new ones guarding the map's
+        geometry — and the entry bundle didn't move a byte: the whole map, all
+        six biomes and the pan-zoom hook landed in a lazy chunk that only a
+        visitor actually stepping into the world ever loads. Four phases down,
+        and the world finally had its map.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said">“Start with phase 4, 5, 6 simultaneously.”</span>
+      </div>
+
+      <p>
+        Three phases built in one sitting, each leaning on the last.
+        <b>Phase 4</b> put the arrival in front of the map: the homepage globe,
+        reused in a new <code>orbit</code> mode with its chrome stripped and a
+        slow auto-rotate, gained an imperative handle so the dive could plunge
+        its camera; <code>CloudBloom</code> and <code>DiveSequence</code> became
+        one GSAP timeline — plunge, whiteout, clouds parting over a map that
+        pulls out from its centre — and <code>AtlasHome</code> turned into the
+        <code>orbit → dive → map</code> state machine, the intro remembered
+        forever after, the whole sequence lazy so GSAP loads only for a visitor
+        who actually dives. <b>Phase 5</b> raised the first interior:
+        <code>RegionShell</code> wraps a page in a themed biome band — skip
+        link, shared meta, breadcrumb, a real <code>&lt;main&gt;</code> — while
+        leaving the page's own content untouched, and
+        <code>PageShell</code> became the single switch between the Atlas and
+        Classic shells. The Book Forest went first; arriving stamps the region
+        and the <code>RewardToaster</code> pops it with the reused confetti.
+        <b>Phase 6</b> added the game itself — a pure, unit-tested quest engine
+        over declarative quests and time / return achievements, the passport
+        grown to show them filling, and five easter eggs tucked into the map
+        art. The branch stayed green: lint clean, a hundred-and-one tests with
+        twelve new ones pinning the engine, the entry bundle still inside its
+        budget.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said">“Start with phase 7, 8, 9, 10.”</span>
+      </div>
+
+      <p>
+        Then the page waves — every remaining route rebuilt as its region's
+        interior, four phases in a row. Wave 2 opened the
+        <b>Coastal Road</b> and the <b>Sahyadri Ridge</b>; wave 3 the
+        <b>Scriptorium</b> trio of blogs, micro-posts and challenges; wave 4 the
+        <b>Workshop</b> of projects and résumé; wave 5 the
+        <b>Hometown Square</b>, carrying the Observatory and the Gallery Trail
+        at their same URLs. Each page changed by exactly one import and one
+        wrapper line, its content identical inside either shell — and each wave
+        brought its own collector quest, so the passport kept growing:
+        Roadrunner, Summiteer, Wordsmith, Tinkerer.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said">“Finish till phase 10 and verify.”</span>
+      </div>
+
+      <p>
+        The last two waves landed as their own green commits — and then, for the
+        first time, the world was driven in a live browser. A port collision had
+        been quietly serving a blank page; a dedicated preview pinned to a fixed
+        port put it right, and the whole arrival finally played through end to
+        end: the orbit's counting teasers, <em>Enter</em> into the dive, the map
+        waking at night with its windows lit and stars out, a deep-linked Book
+        Forest interior with its breadcrumb and its Return-to-Map, and the
+        passport filling with dated stamps and live quest progress. No console
+        errors, ten phases down — the final art, the audio, the guide and the
+        flip still ahead.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said">“Start with phase 11, 12 and 13.”</span>
+      </div>
+
+      <p>
+        Three more phases in one sitting, each a different kind of craft.
+        <b>Phase 11 — art &amp; perf</b> grew the five placeholder biomes up to
+        the Book Forest benchmark: a crenellated hill-fort and a switchback
+        summit trail on the Ridge; a START gantry, a medal monument and the
+        striped lighthouse on the Coast; a writing quill and a stamping press at
+        the Scriptorium; two meshing counter-rotating gears and a swinging crane
+        in the Workshop; bunting and a pulsing fountain on the Square. A
+        foreground <code>NearLayer</code> of waves and bushes went in, and a
+        <code>gsap.quickTo</code> parallax where the sky and far ranges lag the
+        camera while the near props lead it. A latent bug fell out along the way
+        — the region header bands reuse the biome art but had never loaded the
+        map's stylesheet, so their lanterns and beams burned at full daylight;
+        the day/night switches were lifted into a shared file the art itself
+        imports, and the headers healed. <b>Phase 12 — audio</b> added a
+        hand-rolled WebAudio manager, dynamically imported the first time a
+        visitor turns sound on (that click is the autoplay unlock), cross-fading
+        a per-region ambient bed as you move — and
+        <b
+          >every one of the seven beds and the SFX sprite was procedurally
+          synthesised</b
+        >
+        from filtered noise and sine partials, so the repo owns its audio
+        outright, licence-clean by construction and loading nothing until asked.
+        <b>Phase 13 — the guide</b> drew a flat-vector mini Sanket — red pheta,
+        moustache, cream bandi over a dark kurta — who speaks one line at a
+        time; a live test caught him greeting visitors over the orbit globe
+        before the map had even appeared, so he was gated to wait until the hub.
+        With him in place, <b>react-joyride was retired entirely</b> — its
+        92&nbsp;KB chunk gone, the entry bundle a touch lighter than before it
+        ever arrived.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said"
+          >“Add links for other pages in the map and add suitable icons for
+          all.”</span
+        >
+      </div>
+
+      <p>
+        The compass had only ever offered the six region landings — the other
+        ten pages, from Challenges and the Micro Blog to the Résumé, the
+        Observatory and the Gallery Trail, couldn't be reached from the map at
+        all. So the region registry became the
+        <b>single source of truth for navigation</b>: each region gained an
+        ordered list of its pages, and the compass grew into a full directory
+        grouped by region, every entry carrying a fitting Material Symbols icon.
+        A small gift fell out of grouping by <code>data-region</code> — each
+        group inherits its region's accent colour, so the whole menu reads
+        colour-coded without a line of extra styling.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said"
+          >“Fix menu bar CSS views. Rename these pages everywhere: Coastal Road
+          → Marathons, Sahyadri Ridge → Treks, Workshop → Projects.”</span
+        >
+      </div>
+
+      <p>
+        Two requests, arriving with a screenshot. The view-switcher tabs on the
+        Sports and Treks interiors had collapsed into run-together text: the
+        atlas's scoped reset — written to give <em>bare</em> chrome sane
+        defaults — was quietly out-specifying the Tailwind utilities on the
+        imported page content and stripping the buttons' padding, background and
+        colour. Wrapping the reset's element selectors in
+        <code>:where()</code> dropped its weight below the utilities, and the
+        tabs snapped back into proper pills, identical to the Classic shell.
+        Alongside it came a naming decision:
+        <b
+          >Coastal Road became Marathons, Sahyadri Ridge became Treks, and the
+          Workshop became Projects</b
+        >
+        — trading biome-poetry for plain labels on those three, while the
+        Scriptorium, Book Forest and Hometown Square kept theirs. The rename
+        rippled through the registry, the map plaques and screen-reader nav, the
+        collector-quest copy and an easter-egg hint — and surfaced one last
+        inconsistency: the passport had been reading its stamp names from the
+        globe's own table rather than the atlas registry, so it still said
+        “Creator” where the map now said “Projects.” Pointed at the registry, it
+        finally read in step with the rest of the world.
+      </p>
+
+      <div class="prompt">
+        <span class="who">Prompt</span
+        ><span class="said">“Start with phase 14 and finish phase 15.”</span>
+      </div>
+
+      <p>
+        The last two phases were the flip. <b>Phase 14 — cleanup</b> finally
+        deleted the decade-old vendored theme outright: twenty-eight SCSS
+        partials and the <code>sass</code> dependency gone, the entry stylesheet
+        dropping from 164&nbsp;KB to 102&nbsp;KB (25.9&nbsp;→&nbsp;15.9&nbsp;KB
+        gzipped), with a small scoped <code>classic.css</code> left in its place
+        for the escape-hatch shell. A quiet bug fell out with it —
+        <code>rounded-full</code> had been overridden to <code>0.75rem</code>,
+        which only looks round on short elements and had silently squared off
+        every avatar, icon button and tag pill; it was restored to a true
+        <code>9999px</code>. The changelog's own headings, force-uppercased by a
+        legacy global, healed the moment the theme left.
+        <b>Phase 15 — the flip</b> set <code>ATLAS_LIVE = true</code>: the Atlas
+        became the site's front door at <code>/</code>, the old
+        <code>/world</code> preview began redirecting home (a 301 at the edge),
+        and the deliberately silent changelog landed its single comprehensive
+        <b>v11.0.0</b> entry, telling the whole sixteen-phase story at once.
+      </p>
+
+      <p>
+        Two questions were put before the flip, and both answers steered it:
+      </p>
+
+      <div class="choice">
+        <span class="k">Naming</span
+        ><span class="v"
+          ><b>Keep the plain names.</b> The Classic nav stays “Mind Map” and
+          “Interactive Me”; the Atlas keeps its “Observatory” and “Gallery
+          Trail” flavour only internally — matching the earlier Marathons /
+          Treks / Projects rename rather than reversing it.</span
+        >
+      </div>
+
+      <div class="choice">
+        <span class="k">Rollout</span
+        ><span class="v"
+          ><b>Push the branch, don't merge.</b> The two phases were committed
+          and the branch pushed so the Cloudflare preview could rebuild with the
+          Atlas live — but <code>main</code> was left untouched, the final merge
+          kept as Sanket's own call after reviewing the preview.</span
+        >
+      </div>
+
+      <p>
+        One craft note: because the cleanup and the flip both touch
+        <code>App.js</code>, the two were staged apart — the theme-removal slice
+        committed first, the routing swap with the flip — so each commit
+        compiles on its own rather than only as a pair. Beyond the flip lay one
+        small mobile fix that put all six worlds in a single window — told next.
+      </p>
     </div>
   </div>
 </section>
