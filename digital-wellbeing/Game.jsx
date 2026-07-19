@@ -797,6 +797,7 @@ function HomePage({ onStart, hasSave, onInfo, theme, onToggleTheme }) {
 
   return (
     <div className={`home-screen${vis ? ' home-screen--vis' : ''}`}>
+      <a className="home-site-link" href="../index.html" title="Back to sanket's site">← Home</a>
       <button className="home-theme-btn" onClick={onToggleTheme} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
         {theme === 'dark' ? '☀️' : '🌙'}
       </button>

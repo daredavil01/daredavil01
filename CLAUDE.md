@@ -42,6 +42,9 @@ A page that isn't linked from the homepage is considered unfinished.
 
 ## Conventions
 
+- Every sub-page carries a small "← Home" link back to the hub
+  (`index.html` from root pages, `../index.html` one level down), styled to
+  match that page's own theme. Add one to any new page.
 - Keep new root-level files to a minimum; put projects in their own
   directory and design docs/decks in `docs/`.
 - Match the homepage's dark GitHub-style palette (`#0d1117` background,

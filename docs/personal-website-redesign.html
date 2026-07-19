@@ -415,6 +415,32 @@
     box-shadow: var(--shadow-lift);
   }
 
+  .home-link {
+    position: absolute;
+    top: clamp(1rem, 3vw, 1.6rem);
+    left: clamp(1rem, 4vw, 2.5rem);
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.5rem 1.05rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--card) 82%, transparent);
+    border: 1px solid var(--line-2);
+    color: var(--ink);
+    font-size: 0.85rem;
+    text-decoration: none;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(4px);
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .home-link:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lift);
+  }
+
   /* region legend row under the hero */
   .legend {
     display: flex;
@@ -1076,6 +1102,7 @@
   <div class="hero-sky"></div>
   <div class="hero-stars" id="stars" aria-hidden="true"></div>
   <div class="hero-sun" aria-hidden="true"></div>
+  <a class="home-link" href="../index.html" aria-label="Back to homepage">← Home</a>
   <button
     class="theme-toggle"
     id="themeToggle"
