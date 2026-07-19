@@ -22,6 +22,13 @@
       pointer-events: none;
     }
     .title-block { pointer-events: auto; }
+    .home-link {
+      display: inline-block; margin-bottom: 8px;
+      font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .home-link:hover { color: rgba(255,255,255,0.8); }
     .title-eyebrow {
       font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
       color: rgba(255,255,255,0.32); margin-bottom: 5px;
@@ -101,6 +108,7 @@
 
   <div class="panel title-bar">
     <div class="title-block">
+      <a class="home-link" href="../index.html">← Home</a>
       <div class="title-eyebrow">Three.js exploration · The Wanderer's Digital Escape</div>
       <div class="title-main">The Self</div>
       <div class="title-sub">Your four meters, given a body. Drag the sliders. Watch it change.</div>

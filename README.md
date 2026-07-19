@@ -109,8 +109,24 @@ I care deeply about the intersection of **technology, society, and public policy
 | 🏅 **RunLog** | *"Your digital wall of medals"* — marathon portfolio tracker for athletes | Next.js · Firebase · Express | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=vercel&logoColor=white)](https://run-folio.vercel.app) |
 | 🏃 **RunSmart** | *"Get me my Training Plan!"* — auto-generates FM/HM plans from time trials | React | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=netlify&logoColor=white)](https://runningplan1.netlify.app) |
 | 🌐 **Personal Website** | This portfolio — about, projects, books, sports, treks, now page & more | React · Tailwind · React Router | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://daredavil.pages.dev) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/personal-website) |
+| 🧘 **The Wanderer's Digital Escape** | Narrative browser game about digital wellbeing — 4 worlds, 4 meters, a personal Flourishing Score | React 18 · Web Audio API | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/digital-wellbeing) |
+| 📊 **Adivasi Survey Dashboard** | Bilingual (Marathi/English) dashboard of a 281-household Pawra community survey in Nandurbar | Chart.js · Vanilla JS | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/yung-data) |
 | 🐒 **Social-Ape** | Social media platform for human apes | React · Firebase | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/social-explorers-client) |
 | 💸 **Expense Manager** | Firebase-based expense tracking app for construction firms | React · Firebase | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/expense-mgmt-webapp) |
+
+---
+
+## 🗂️ In This Repo
+
+This profile repo doubles as a small static site — `index.html` is the hub that links to everything:
+
+| Page | What It Is |
+|------|-----------|
+| [`index.html`](./index.html) | Homepage hub — links to all content below |
+| [`about.html`](./about.html) | Interactive 12-slide **About Me** deck (engineering · research · running · trekking · writing · reading · now) |
+| [`digital-wellbeing/`](./digital-wellbeing) | **The Wanderer's Digital Escape** — narrative digital-wellbeing game + Three.js self-orb prototype |
+| [`yung-data/`](./yung-data) | **Adivasi Survey Dashboard** — bilingual data viz of a Nandurbar household survey |
+| [`docs/personal-website-redesign.html`](./docs/personal-website-redesign.html) | **The Wanderer's Atlas** — design dossier for the personal-website redesign |
 
 ---
 
