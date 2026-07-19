@@ -4,43 +4,182 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sanket Tambare</title>
+  <meta name="description" content="Sanket Tambare — Full-Stack Developer, Data Engineer, NAST Fellow. Interactive experiences, dashboards, decks, and more.">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0d1117; color: #c9d1d9; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
-    .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 2.5rem; max-width: 600px; width: 100%; text-align: center; }
-    h1 { font-size: 2rem; color: #e6edf3; margin-bottom: 0.5rem; }
-    .tagline { color: #8b949e; margin-bottom: 1.5rem; font-size: 0.95rem; }
-    .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-hover: #1c2129;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --heading: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --chip-bg: #21262d;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 3rem 1.5rem 4rem;
+      line-height: 1.55;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; }
+
+    /* ---- Hero ---- */
+    .hero { text-align: center; margin-bottom: 3rem; }
+    .hero h1 { font-size: 2.4rem; color: var(--heading); margin-bottom: 0.4rem; }
+    .tagline { color: var(--muted); margin-bottom: 1.4rem; font-size: 1rem; }
+    .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
     .badges a img { height: 28px; }
-    .nav { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
-    .nav a { background: #21262d; border: 1px solid #30363d; color: #58a6ff; text-decoration: none; padding: 0.5rem 1.1rem; border-radius: 6px; font-size: 0.9rem; transition: background 0.2s; }
-    .nav a:hover { background: #30363d; }
-    .quote { margin-top: 2rem; color: #8b949e; font-style: italic; font-size: 0.9rem; }
+
+    /* ---- Sections ---- */
+    section { margin-bottom: 3rem; }
+    .section-title {
+      font-size: 1.15rem; color: var(--heading);
+      margin-bottom: 0.35rem; letter-spacing: 0.01em;
+    }
+    .section-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
+
+    /* ---- Content cards ---- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      display: flex; flex-direction: column; gap: 0.55rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.35rem;
+      text-decoration: none;
+      color: var(--text);
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+    .card:hover { background: var(--surface-hover); border-color: #3d444d; transform: translateY(-2px); }
+    .card .icon { font-size: 1.6rem; line-height: 1; }
+    .card h3 { color: var(--accent); font-size: 1.02rem; font-weight: 600; }
+    .card p { font-size: 0.87rem; color: var(--muted); flex-grow: 1; }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
+    .tag {
+      background: var(--chip-bg); border: 1px solid var(--border);
+      color: var(--muted); border-radius: 999px;
+      font-size: 0.72rem; padding: 0.12rem 0.6rem;
+    }
+
+    /* ---- Link chips (external) ---- */
+    .chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .chips a {
+      background: var(--chip-bg); border: 1px solid var(--border);
+      color: var(--accent); text-decoration: none;
+      padding: 0.45rem 1rem; border-radius: 6px; font-size: 0.87rem;
+      transition: background 0.2s;
+    }
+    .chips a:hover { background: var(--border); }
+    .chip-group { margin-bottom: 1.1rem; }
+    .chip-group h4 { color: var(--heading); font-size: 0.85rem; font-weight: 600; margin-bottom: 0.55rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    footer { text-align: center; color: var(--muted); font-style: italic; font-size: 0.9rem; margin-top: 1rem; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Sanket Tambare</h1>
-    <p class="tagline">Full-Stack Developer &middot; Data Engineer &middot; NAST Fellow &middot; Marathoner &middot; Bookworm</p>
+  <div class="wrap">
 
-    <div class="badges">
-      <a href="https://daredavil.pages.dev"><img src="https://img.shields.io/badge/%F0%9F%8C%90_Portfolio-daredavil.pages.dev-4A90E2?style=for-the-badge" alt="Portfolio"></a>
-      <a href="https://www.linkedin.com/in/sankettambare/"><img src="https://img.shields.io/badge/LinkedIn-sankettambare-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
-      <a href="https://twitter.com/i_daredavil"><img src="https://img.shields.io/badge/Twitter-@i__daredavil-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter"></a>
-      <a href="mailto:sanket.tambare01@gmail.com"><img src="https://img.shields.io/badge/Email-sanket.tambare01@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
-      <a href="https://linktr.ee/daredavil"><img src="https://img.shields.io/badge/LinkTree-daredavil-39E09B?style=for-the-badge&logo=linktree&logoColor=white" alt="LinkTree"></a>
-    </div>
+    <header class="hero">
+      <h1>Sanket Tambare</h1>
+      <p class="tagline">Full-Stack Developer &middot; Data Engineer &middot; NAST Fellow &middot; Marathoner &middot; Bookworm</p>
+      <div class="badges">
+        <a href="https://daredavil.pages.dev"><img src="https://img.shields.io/badge/%F0%9F%8C%90_Portfolio-daredavil.pages.dev-4A90E2?style=for-the-badge" alt="Portfolio"></a>
+        <a href="https://www.linkedin.com/in/sankettambare/"><img src="https://img.shields.io/badge/LinkedIn-sankettambare-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
+        <a href="https://twitter.com/i_daredavil"><img src="https://img.shields.io/badge/Twitter-@i__daredavil-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter"></a>
+        <a href="mailto:sanket.tambare01@gmail.com"><img src="https://img.shields.io/badge/Email-sanket.tambare01@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
+        <a href="https://linktr.ee/daredavil"><img src="https://img.shields.io/badge/LinkTree-daredavil-39E09B?style=for-the-badge&logo=linktree&logoColor=white" alt="LinkTree"></a>
+      </div>
+    </header>
 
-    <nav class="nav">
-      <a href="about.html">About Me</a>
-      <a href="https://daredavil.pages.dev/projects">Projects</a>
-      <a href="https://daredavil.pages.dev/books">Books</a>
-      <a href="https://daredavil.pages.dev/sports">Sports</a>
-      <a href="https://daredavil.pages.dev/now">Now</a>
-      <a href="https://daredavil.pages.dev/contact">Contact</a>
-    </nav>
+    <section>
+      <h2 class="section-title">🧭 On this site</h2>
+      <p class="section-sub">Interactive experiences, dashboards, and decks — all built and hosted right here.</p>
+      <div class="grid">
 
-    <p class="quote">&ldquo;Critically engaging with the world, one commit at a time.&rdquo; &#127759;</p>
+        <a class="card" href="about.html">
+          <span class="icon">👤</span>
+          <h3>About Me — Interactive Deck</h3>
+          <p>A 12-slide visual deck covering who I am: engineering, AI-governance research, running, trekking, writing, reading, and what I'm doing now. Navigate with arrow keys.</p>
+          <span class="tags"><span class="tag">Deck</span><span class="tag">HTML</span><span class="tag">Keyboard nav</span></span>
+        </a>
+
+        <a class="card" href="digital-wellbeing/index.html">
+          <span class="icon">🧘</span>
+          <h3>The Wanderer's Digital Escape</h3>
+          <p>A ~15-minute narrative browser game about digital wellbeing. Travel four worlds, watch four inner meters shift with every choice, and earn a personalised Digital Flourishing Score.</p>
+          <span class="tags"><span class="tag">Game</span><span class="tag">React 18</span><span class="tag">Web Audio</span></span>
+        </a>
+
+        <a class="card" href="digital-wellbeing/three-orb-prototype.html">
+          <span class="icon">🔮</span>
+          <h3>The Self — Orb Prototype</h3>
+          <p>A Three.js experiment from the game's workshop: your inner state rendered as a living 3D orb that responds to the four wellbeing meters.</p>
+          <span class="tags"><span class="tag">Prototype</span><span class="tag">Three.js</span><span class="tag">WebGL</span></span>
+        </a>
+
+        <a class="card" href="yung-data/index.html">
+          <span class="icon">📊</span>
+          <h3>Adivasi Survey Dashboard</h3>
+          <p>A bilingual (Marathi ⇄ English) dashboard visualising a primary survey of 281 Pawra households across 7 villages in Nandurbar — 28 charts on schemes, education, income, and health.</p>
+          <span class="tags"><span class="tag">Data viz</span><span class="tag">Chart.js</span><span class="tag">मराठी / EN</span></span>
+        </a>
+
+        <a class="card" href="docs/personal-website-redesign.html">
+          <span class="icon">🗺️</span>
+          <h3>The Wanderer's Atlas — Design Dossier</h3>
+          <p>The feature dossier behind my personal-website redesign: one theme end to end, the navigation model from orbit to page, and the locked creative decisions that hold it together.</p>
+          <span class="tags"><span class="tag">Design doc</span><span class="tag">Deck</span></span>
+        </a>
+
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">🌐 Elsewhere</h2>
+      <p class="section-sub">My full portfolio and writing live off-site.</p>
+
+      <div class="chip-group">
+        <h4>Portfolio — daredavil.pages.dev</h4>
+        <div class="chips">
+          <a href="https://daredavil.pages.dev/about">About</a>
+          <a href="https://daredavil.pages.dev/projects">Projects</a>
+          <a href="https://daredavil.pages.dev/books">Books 📚</a>
+          <a href="https://daredavil.pages.dev/sports">Sports 🏃</a>
+          <a href="https://daredavil.pages.dev/treks">Treks 🏔️</a>
+          <a href="https://daredavil.pages.dev/now">Now</a>
+          <a href="https://daredavil.pages.dev/stats">Stats</a>
+          <a href="https://daredavil.pages.dev/challenges">Challenges</a>
+          <a href="https://daredavil.pages.dev/contact">Contact</a>
+        </div>
+      </div>
+
+      <div class="chip-group">
+        <h4>Writing &amp; Creating</h4>
+        <div class="chips">
+          <a href="https://sankettambare.substack.com/">Substack</a>
+          <a href="https://daredavil453624413.wordpress.com/">WordPress</a>
+          <a href="https://medium.com/@daredavil">Medium</a>
+          <a href="https://dev.to/daredavil">Dev.to</a>
+          <a href="https://hashnode.com/@daredavil">Hashnode</a>
+          <a href="https://behance.net/daredavil">Behance</a>
+          <a href="https://anchor.fm/daredavil">Podcast</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      &ldquo;Critically engaging with the world, one commit at a time.&rdquo; &#127759;
+    </footer>
+
   </div>
 </body>
 </html>
