@@ -111,6 +111,8 @@ I care deeply about the intersection of **technology, society, and public policy
 | 🌐 **Personal Website** | This portfolio — about, projects, books, sports, treks, now page & more | React · Tailwind · React Router | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://daredavil.pages.dev) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/personal-website) |
 | 🧘 **The Wanderer's Digital Escape** | Narrative browser game about digital wellbeing — 4 worlds, 4 meters, a personal Flourishing Score | React 18 · Web Audio API | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/digital-wellbeing) |
 | 📊 **Adivasi Survey Dashboard** | Bilingual (Marathi/English) dashboard of a 281-household Pawra community survey in Nandurbar | Chart.js · Vanilla JS | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/yung-data) |
+| 🌳 **Yung Foundation Website** | Bilingual (Marathi-default) NGO site — 15 routes, zero JavaScript on the public pages, staff-editable content | Astro 7 · Supabase | [![Overview](https://img.shields.io/badge/Overview-4CAF50?style=flat-square)](./docs/yung-foundation-site-overview.html) |
+| 🪶 **Antyodaya Website** | Marathi-first NGO site for a Gadchiroli foundation — 15 public routes plus a 23-screen staff CMS | Astro 7 · React 19 · Supabase · Cloudflare Workers | [![Spec](https://img.shields.io/badge/Spec-4CAF50?style=flat-square)](./docs/antyodaya-website-overview.html) |
 | 🐒 **Social-Ape** | Social media platform for human apes | React · Firebase | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/social-explorers-client) |
 | 💸 **Expense Manager** | Firebase-based expense tracking app for construction firms | React · Firebase | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/expense-mgmt-webapp) |
 
@@ -127,6 +129,8 @@ This profile repo doubles as a small static site — `index.html` is the hub tha
 | [`digital-wellbeing/`](./digital-wellbeing) | **The Wanderer's Digital Escape** — narrative digital-wellbeing game + Three.js self-orb prototype |
 | [`yung-data/`](./yung-data) | **Adivasi Survey Dashboard** — bilingual data viz of a Nandurbar household survey |
 | [`docs/personal-website-redesign.html`](./docs/personal-website-redesign.html) | **The Wanderer's Atlas** — design dossier for the personal-website redesign |
+| [`docs/yung-foundation-site-overview.html`](./docs/yung-foundation-site-overview.html) | **Yung Foundation website, end to end** — every route, every editable surface, and the architecture underneath |
+| [`docs/antyodaya-website-overview.html`](./docs/antyodaya-website-overview.html) | **Antyodaya website — features & technical specification** — public routes, admin CMS, data model, architecture |
 
 ---
 

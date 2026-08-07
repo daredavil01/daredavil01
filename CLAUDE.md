@@ -14,7 +14,9 @@ about.html                        Interactive 12-slide "About Me" deck
 CLAUDE.md                         This file
 README.md                         GitHub profile README
 docs/
-  personal-website-redesign.html  "The Wanderer's Atlas" design dossier (deck)
+  personal-website-redesign.html    "The Wanderer's Atlas" design dossier (deck)
+  yung-foundation-site-overview.html  Yung Foundation site: routes + architecture
+  antyodaya-website-overview.html   Antyodaya site: features + technical spec
 digital-wellbeing/                "The Wanderer's Digital Escape" browser game
   index.html                      Game entry point
   three-orb-prototype.html        Three.js self-orb prototype

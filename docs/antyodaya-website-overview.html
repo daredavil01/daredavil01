@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Antyodaya Website — Features & Technical Specification</title>
+<style>
+:root{
+  --primary:#0f766e;
+  --primary-dark:#115e59;
+  --accent:#f59e0b;
+  --accent-soft:#f8c766;
+  --urgent:#b91c1c;
+  --ink:#14201f;
+  --ink-soft:#1c2b29;
+  --paper:#fbfaf7;
+  --surface:#f4f6f3;
+  --canvas:#f2f1ec;
+  --body:#4d5754;
+  --muted:#606863;
+  --line:#e6e3db;
+  --line-strong:#dcd8ce;
+  --code-bg:#eceae3;
+
+  --serif:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --sans:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --mono:'SF Mono',Consolas,'Liberation Mono',Menlo,monospace;
+
+  --maxw:1180px;
+}
+
+@media (prefers-color-scheme:dark){
+  :root{
+    --ink:#f0f2f0; --ink-soft:#dfe4e1;
+    --paper:#1a2321; --surface:#161e1d; --canvas:#111817;
+    --body:#b3bdb9; --muted:#8d9995;
+    --line:#28332f; --line-strong:#35423e;
+    --code-bg:#1e2725;
+    --primary:#3fb8ab; --primary-dark:#5fd0c3;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#f0f2f0; --ink-soft:#dfe4e1;
+  --paper:#1a2321; --surface:#161e1d; --canvas:#111817;
+  --body:#b3bdb9; --muted:#8d9995;
+  --line:#28332f; --line-strong:#35423e;
+  --code-bg:#1e2725;
+  --primary:#3fb8ab; --primary-dark:#5fd0c3;
+}
+:root[data-theme="light"]{
+  --ink:#14201f; --ink-soft:#1c2b29;
+  --paper:#fbfaf7; --surface:#f4f6f3; --canvas:#f2f1ec;
+  --body:#4d5754; --muted:#606863;
+  --line:#e6e3db; --line-strong:#dcd8ce;
+  --code-bg:#eceae3;
+  --primary:#0f766e; --primary-dark:#115e59;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{
+  margin:0;background:var(--canvas);color:var(--body);
+  font-family:var(--sans);font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+h1,h2,h3,h4{font-family:var(--serif);color:var(--ink);line-height:1.15;margin:0}
+h1{font-size:clamp(34px,5.4vw,54px);font-weight:600;letter-spacing:-.02em}
+h2{font-size:clamp(24px,3.4vw,32px);font-weight:600;letter-spacing:-.015em}
+h3{font-size:19px;font-weight:600;margin-bottom:6px}
+h4{font-size:15px;font-weight:700;font-family:var(--sans);letter-spacing:.01em}
+p{margin:0 0 14px}
+a{color:var(--primary);text-underline-offset:3px}
+
+.eyebrow{
+  font-size:11.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--primary);margin-bottom:14px;
+}
+.lede{font-size:18px;line-height:1.65;max-width:74ch}
+.small{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+code,kbd{font-family:var(--mono);font-size:.88em;background:var(--code-bg);
+  padding:2px 5px;border-radius:4px;color:var(--ink)}
+
+/* ---------- header ---------- */
+header.hero{
+  background:var(--paper);border-bottom:1px solid var(--line-strong);
+  padding:64px 0 0;
+}
+.hero .home-link{
+  display:inline-block;font-size:13px;font-weight:600;letter-spacing:.02em;
+  color:var(--muted);text-decoration:none;
+  border:1px solid var(--line-strong);border-radius:999px;padding:5px 14px;
+  margin-bottom:20px;transition:color .15s,border-color .15s;
+}
+.hero .home-link:hover,.hero .home-link:focus-visible{
+  color:var(--primary);border-color:var(--primary);
+}
+.hero .tag{
+  display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;
+  border:1px solid var(--line-strong);border-radius:999px;padding:5px 12px;
+  color:var(--muted);margin-right:8px;margin-bottom:8px;
+}
+.hero .tag.on{border-color:var(--primary);color:var(--primary)}
+.statbar{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  border-top:1px solid var(--line);margin-top:40px;
+}
+.statbar div{padding:22px 0 26px;border-left:1px solid var(--line)}
+.statbar div:first-child{border-left:0}
+.statbar div:not(:first-child){padding-left:22px}
+.statbar .n{font-family:var(--serif);font-size:38px;font-weight:600;color:var(--ink);line-height:1}
+.statbar .n small{font-size:17px;color:var(--primary)}
+.statbar .l{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin-top:8px}
+
+/* ---------- sticky nav ---------- */
+nav.toc{
+  position:sticky;top:0;z-index:20;background:var(--canvas);
+  border-bottom:1px solid var(--line-strong);
+}
+nav.toc .inner{display:flex;gap:4px;overflow-x:auto;padding:10px 24px;
+  max-width:var(--maxw);margin:0 auto;scrollbar-width:thin}
+nav.toc a{
+  white-space:nowrap;font-size:12.5px;font-weight:600;text-decoration:none;
+  color:var(--body);padding:7px 12px;border-radius:6px;
+}
+nav.toc a:hover{background:var(--surface);color:var(--ink)}
+
+/* ---------- sections ---------- */
+section{padding:60px 0;border-bottom:1px solid var(--line)}
+section > .wrap > .eyebrow + h2{margin-bottom:14px}
+.sechead{max-width:76ch;margin-bottom:34px}
+
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:10px;
+  padding:20px 22px;
+}
+.card .route{font-family:var(--mono);font-size:13px;color:var(--primary);
+  font-weight:600;display:block;margin-bottom:8px}
+.card p{font-size:14px;line-height:1.6;margin:0}
+.card p + p{margin-top:8px}
+
+.kv{font-size:13px;color:var(--muted);margin-top:10px;
+  border-top:1px dashed var(--line-strong);padding-top:10px}
+.kv b{color:var(--body);font-weight:600}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);background:var(--surface);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td code{font-size:12.5px}
+td.r{font-family:var(--mono);white-space:nowrap;color:var(--primary);font-weight:600;font-size:12.5px}
+
+/* ---------- feature list ---------- */
+.feat{border-top:1px solid var(--line);padding-top:18px;margin-top:18px}
+.feat:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.feat h3{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.feat h3 .num{font-family:var(--mono);font-size:12px;color:var(--primary);font-weight:700}
+.feat p{font-size:14.5px;max-width:80ch}
+ul.tight{margin:8px 0 0;padding-left:20px;font-size:14px}
+ul.tight li{margin-bottom:5px}
+
+/* ---------- dark band ---------- */
+.band{background:var(--ink);color:#cfd8d4;border:0}
+.band h2,.band h3{color:#fff}
+.band .eyebrow{color:var(--accent-soft)}
+.band .card{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+.band .card p{color:#c3ccc8}
+.band code{background:rgba(255,255,255,.1);color:#fff}
+.band .kv{color:#98a5a0;border-color:rgba(255,255,255,.15)}
+.band .kv b{color:#dfe6e3}
+.band a{color:var(--accent-soft)}
+
+/* ---------- callout ---------- */
+.note{
+  border-left:3px solid var(--primary);background:var(--surface);
+  padding:14px 18px;border-radius:0 8px 8px 0;font-size:14px;margin:20px 0;
+}
+.note.warn{border-left-color:var(--accent)}
+.note b{color:var(--ink)}
+
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:3px 8px;border-radius:999px;
+  background:var(--surface);border:1px solid var(--line-strong);color:var(--muted)}
+.pill.ok{color:var(--primary);border-color:var(--primary)}
+.pill.open{color:var(--accent);border-color:var(--accent)}
+
+footer{padding:40px 0 60px;font-size:13px;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:640px){
+  section{padding:44px 0}
+  header.hero{padding-top:44px}
+  .statbar div:not(:first-child){padding-left:14px}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <a class="home-link" href="../index.html">← Home</a>
+    <div class="eyebrow">Antyodaya Rehabilitation Multipurpose Foundation · Gadchiroli</div>
+    <h1>Features &amp; technical<br>specification</h1>
+    <p class="lede" style="margin-top:18px">
+      A bilingual, Marathi-first public website with a 23-screen content management system behind it —
+      server-rendered at the edge on Cloudflare Workers, with Postgres row-level security as the
+      only thing standing between a visitor and staff content.
+    </p>
+    <div style="margin-top:20px">
+      <span class="tag on">v1.1.2 — launched</span>
+      <span class="tag">Astro 7</span>
+      <span class="tag">React 19 islands</span>
+      <span class="tag">Tailwind 4</span>
+      <span class="tag">Supabase</span>
+      <span class="tag">Cloudflare Workers</span>
+      <span class="tag">TypeScript</span>
+    </div>
+
+    <div class="statbar">
+      <div><div class="n">15</div><div class="l">Public routes</div></div>
+      <div><div class="n">23</div><div class="l">Admin screens</div></div>
+      <div><div class="n">39</div><div class="l">Postgres tables</div></div>
+      <div><div class="n">2</div><div class="l">Languages, one URL</div></div>
+      <div><div class="n">0 <small>KB</small></div><div class="l">JS on 11 of 12 pages</div></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="inner">
+    <a href="#public">Public pages</a>
+    <a href="#admin">Admin</a>
+    <a href="#features">Features</a>
+    <a href="#arch">Architecture</a>
+    <a href="#data">Data model</a>
+    <a href="#security">Security</a>
+    <a href="#i18n">Bilingual</a>
+    <a href="#media">Media</a>
+    <a href="#seo">SEO &amp; a11y</a>
+    <a href="#perf">Performance</a>
+    <a href="#build">Build &amp; deploy</a>
+    <a href="#state">Current state</a>
+  </div>
+</nav>
+
+<!-- ============ PUBLIC PAGES ============ -->
+<section id="public">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">The public surface</div>
+      <h2>Fifteen routes</h2>
+      <p class="lede">Twelve fixed routes and three dynamic ones. Every one of them reads its content
+      from the database — nothing on the public site is hard-coded copy.</p>
+    </div>
+
+    <div class="grid g3">
+      <div class="card">
+        <span class="route">/</span>
+        <p>Home. Hero panel, announcement strip, impact counters, programme cards, helpline.</p>
+        <div class="kv"><b>Reads</b> hero · announcements · impact_stats · programs · helplines</div>
+      </div>
+      <div class="card">
+        <span class="route">/about</span>
+        <p>Mission and story, core values, milestone timeline, registration details.</p>
+        <div class="kv"><b>Reads</b> about · core_values · milestones · registrations</div>
+      </div>
+      <div class="card">
+        <span class="route">/programs</span>
+        <p>Every published programme as a card, with its service count.</p>
+        <div class="kv"><b>Reads</b> programs · program_services</div>
+      </div>
+      <div class="card">
+        <span class="route">/programs/[slug]</span>
+        <p>One programme in full: description, the services it offers, and its own FAQ set.</p>
+        <div class="kv"><b>Reads</b> programs · program_services · program_faqs</div>
+      </div>
+      <div class="card">
+        <span class="route">/contact</span>
+        <p>Office locations and a five-field enquiry form. Requires an email <em>or</em> a phone number.</p>
+        <div class="kv"><b>Writes</b> contact_submissions</div>
+      </div>
+      <div class="card">
+        <span class="route">/donate</span>
+        <p>Suggested amounts, bank and UPI details, and a toggleable 80G note.</p>
+        <div class="kv"><b>Reads</b> donation_config · donation_options</div>
+      </div>
+      <div class="card">
+        <span class="route">/volunteer</span>
+        <p>Open roles and opportunities, plus an application form.</p>
+        <div class="kv"><b>Writes</b> volunteer_submissions</div>
+      </div>
+      <div class="card">
+        <span class="route">/gallery</span>
+        <p>Albums of photographs, each image carrying its own alt text.</p>
+        <div class="kv"><b>Reads</b> gallery_albums · gallery_media</div>
+      </div>
+      <div class="card">
+        <span class="route">/resources</span>
+        <p>Downloadable documents and links — awareness material, forms, reports.</p>
+        <div class="kv"><b>Reads</b> resources</div>
+      </div>
+      <div class="card">
+        <span class="route">/faq</span>
+        <p>Site-wide frequently asked questions, ordered and editable.</p>
+        <div class="kv"><b>Reads</b> faqs</div>
+      </div>
+      <div class="card">
+        <span class="route">/team</span>
+        <p>People, grouped into categories — trustees, staff, volunteers.</p>
+        <div class="kv"><b>Reads</b> team_categories · team_members</div>
+      </div>
+      <div class="card">
+        <span class="route">/blog</span>
+        <p>Published posts, newest first, filterable by category.</p>
+        <div class="kv"><b>Reads</b> blog_posts · blog_categories</div>
+      </div>
+      <div class="card">
+        <span class="route">/blog/[slug]</span>
+        <p>One post with its byline, dates, and Article structured data. 404s on an unpublished slug.</p>
+        <div class="kv"><b>Reads</b> blog_posts → team_members (author)</div>
+      </div>
+      <div class="card">
+        <span class="route">/events</span>
+        <p>Upcoming and past events with dates and locations.</p>
+        <div class="kv"><b>Reads</b> events</div>
+      </div>
+      <div class="card">
+        <span class="route">/events/[slug]</span>
+        <p>One event, with a registration form when registration is open.</p>
+        <div class="kv"><b>Writes</b> event_registrations</div>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:24px">
+      <b>Site chrome</b> is data too. The header navigation, footer links, social links, helpline
+      number and announcement banner all come from the database, so the foundation can change them
+      without a deploy. <code>Base.astro</code> runs eight chrome queries per request.
+    </div>
+  </div>
+</section>
+
+<!-- ============ ADMIN ============ -->
+<section id="admin">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">The admin surface</div>
+      <h2>Twenty-three screens</h2>
+      <p class="lede">React islands mounted inside Astro pages, all behind a server-side gate in
+      middleware. Nothing about the admin ships to the public site.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Route</th><th>Screen</th><th>What it edits</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="r">/admin</td><td>Dashboard</td><td>Landing page — links into every editor</td></tr>
+          <tr><td class="r">/admin/login</td><td>Sign in</td><td>Supabase email + password; the only ungated admin route</td></tr>
+          <tr><td class="r">/admin/settings</td><td>Site settings</td><td>Org name, logo, contact details, registration numbers</td></tr>
+          <tr><td class="r">/admin/hero</td><td>Home hero</td><td>Headline, sub-copy, image, call-to-action buttons</td></tr>
+          <tr><td class="r">/admin/about</td><td>About page</td><td>Mission text, core values, milestones</td></tr>
+          <tr><td class="r">/admin/impact</td><td>Our reach</td><td>Impact counters — null renders “Coming soon”, never 0</td></tr>
+          <tr><td class="r">/admin/programs</td><td>Programmes</td><td>List, reorder, publish</td></tr>
+          <tr><td class="r">/admin/programs/[id]</td><td>Programme editor</td><td>One programme plus its nested services and FAQs</td></tr>
+          <tr><td class="r">/admin/blog</td><td>Blog</td><td>Post list with draft/published state</td></tr>
+          <tr><td class="r">/admin/blog/[id]</td><td>Post editor</td><td>Rich text, author, category, SEO fields, both languages</td></tr>
+          <tr><td class="r">/admin/events</td><td>Events</td><td>Event list</td></tr>
+          <tr><td class="r">/admin/events/[id]</td><td>Event editor</td><td>Dates, location, registration window</td></tr>
+          <tr><td class="r">/admin/team</td><td>Team</td><td>Members, categories, author flag, photos</td></tr>
+          <tr><td class="r">/admin/testimonials</td><td>Testimonials</td><td>Quotes and attribution</td></tr>
+          <tr><td class="r">/admin/gallery</td><td>Gallery</td><td>Albums and images, with alt text</td></tr>
+          <tr><td class="r">/admin/media</td><td>Media library</td><td>Every uploaded file, with size and alt text</td></tr>
+          <tr><td class="r">/admin/resources</td><td>Resources</td><td>Documents and links</td></tr>
+          <tr><td class="r">/admin/faqs</td><td>FAQs</td><td>Site-wide question set</td></tr>
+          <tr><td class="r">/admin/donate</td><td>Donations</td><td>Amounts, bank details, 80G note toggle</td></tr>
+          <tr><td class="r">/admin/submissions</td><td>Contact inbox</td><td>Read-only — enquiries from <code>/contact</code></td></tr>
+          <tr><td class="r">/admin/volunteers</td><td>Volunteer inbox</td><td>Read-only — applications</td></tr>
+          <tr><td class="r">/admin/registrations</td><td>Registrations inbox</td><td>Read-only — event sign-ups</td></tr>
+          <tr><td class="r">/admin/audit</td><td>Audit log</td><td>Read-only — every write, recorded by trigger</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid g3" style="margin-top:26px">
+      <div class="card">
+        <h4>Shared editor components</h4>
+        <p class="small" style="margin-top:6px"><code>BilingualField</code> renders Marathi and English side by side for
+        every translatable value. <code>RichTextField</code> handles post bodies.
+        <code>SaveBar</code> gives every editor the same save and status behaviour.</p>
+      </div>
+      <div class="card">
+        <h4>Media picker, everywhere</h4>
+        <p class="small" style="margin-top:6px">Any screen that takes an image opens the same
+        <code>MediaPicker</code> against the shared library — no per-screen upload widgets, no
+        duplicate files.</p>
+      </div>
+      <div class="card">
+        <h4>Three roles</h4>
+        <p class="small" style="margin-top:6px"><code>admin</code>, <code>editor</code>,
+        <code>viewer</code> in <code>profiles</code>. The role decides which buttons appear;
+        it is <em>not</em> what enforces permission — RLS does that on every statement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section id="features">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">Salient features</div>
+      <h2>What the site actually does</h2>
+    </div>
+
+    <div class="feat">
+      <h3><span class="num">01</span> Bilingual by construction, not by translation layer</h3>
+      <p>Every translatable column is JSONB <code>{"mr": …, "en": …}</code> — one row holds both
+      languages, so a missing translation is a data state rather than a missing record. All reads go
+      through <code>t(field, lang)</code>, which keeps the fallback in exactly one place, and
+      <code>tWithFallback()</code> where the UI should show a quiet <em>(English)</em> marker.
+      Marathi is the default; English is the second language, not the source.</p>
+      <ul class="tight">
+        <li>Language resolves from the <code>ay_lang</code> cookie, then <code>Accept-Language</code>, then Marathi.</li>
+        <li>The toggle is a plain <code>&lt;a&gt;</code> — middleware handles <code>?lang=</code>, sets the cookie, and redirects to a clean URL. It works with JavaScript off.</li>
+        <li><code>lang</code> is bound to the element containing the text, so screen readers and the Devanagari font rules follow the text's actual language.</li>
+        <li>Interface labels live in a <code>ui_strings</code> table (149 rows), not in the code.</li>
+      </ul>
+    </div>
+
+    <div class="feat">
+      <h3><span class="num">02</span> Three public forms, no JavaScript</h3>
+      <p>Contact, volunteer application and event registration are plain HTML forms posting to Astro
+      endpoints. An earlier React version of the contact form cost 181 KB on the only public page
+      that had any JavaScript — for five fields. It was rewritten as markup.</p>
+      <ul class="tight">
+        <li>Honeypot field: a bot that fills it sees success and nothing is written.</li>
+        <li>Astro's CSRF origin check rejects a POST with no <code>Origin</code> header — 403.</li>
+        <li>Validation errors render inline and preserve what the visitor typed.</li>
+        <li>Inserts run under an anonymous RLS policy; the anon key cannot read any of these tables back.</li>
+      </ul>
+    </div>
+
+    <div class="feat">
+      <h3><span class="num">03</span> A centralised media library</h3>
+      <p>One <code>media</code> bucket and one <code>media_assets</code> table replaced seven
+      per-entity buckets and a scattering of <code>*_path</code> columns. Every upload is registered
+      once and can be reused anywhere.</p>
+      <ul class="tight">
+        <li>Images are resized <em>in the browser</em> before upload — longest edge 1600 px, encoded as WebP.</li>
+        <li>A quality ladder steps down until the file fits a hard <b>250 KB</b> cap; if it still doesn't, the editor is told to crop it rather than being silently served a huge file.</li>
+        <li>Files already under 150 KB and within bounds pass through untouched.</li>
+        <li>Alt text is captured next to the file, so it follows the image to every place it is used.</li>
+        <li>The 250 KB figure is derived from the free tier's 5 GB monthly <em>egress</em> — the binding quota, not the 1 GB of storage.</li>
+      </ul>
+    </div>
+
+    <div class="feat">
+      <h3><span class="num">04</span> Donations and 80G</h3>
+      <p>Suggested amounts, bank and UPI details and the 80G tax-exemption note are all editable.
+      The <code>receipts</code> bucket is private and deliberately absent from the storage URL
+      helper's bucket union — an 80G receipt needs a signed URL and must never be publicly linkable.
+      <code>donations</code> is editor-only with no public read policy.</p>
+    </div>
+
+    <div class="feat">
+      <h3><span class="num">05</span> A content model with real depth</h3>
+      <p>Programmes carry nested services and their own FAQ sets. Blog posts carry an author drawn
+      from the team table, a category, and per-post SEO fields. Events carry a date range and a
+      registration window. Team members are grouped into categories and can be flagged as authors.</p>
+    </div>
+
+    <div class="feat">
+      <h3><span class="num">06</span> Built for phones on patchy rural networks</h3>
+      <p>The audience is in Gadchiroli district, largely on mobile. Every interactive control is at
+      least 44 px tall — that is a constraint, not a target, and layouts are not allowed to shrink
+      controls to fit. A persistent “Call Now” bar puts the helpline one tap away.</p>
+    </div>
+
+    <div class="feat">
+      <h3><span class="num">07</span> Editors see their drafts on the live site</h3>
+      <p>Because the Supabase client is bound to the request's cookies, a signed-in editor's session
+      satisfies the <code>editor all</code> policy and unpublished rows render on public pages. This
+      is kept as a feature — free draft preview — with one consequence worth stating plainly:
+      “it looks fine to me” is not evidence about what visitors see. Check in a private window.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ARCHITECTURE ============ -->
+<section id="arch" class="band">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">Architecture</div>
+      <h2>How it is built</h2>
+      <p class="lede" style="color:#c3ccc8">Four layers, and one rule that shapes all of them:
+      the runtime is workerd, not Node.</p>
+    </div>
+
+    <div class="grid g4">
+      <div class="card">
+        <h4 style="color:var(--accent-soft)">Edge runtime</h4>
+        <p style="margin-top:8px"><b>Cloudflare Workers</b> via <code>@astrojs/cloudflare</code>.
+        <code>output: 'server'</code> — every page renders on demand.</p>
+        <div class="kv"><b>Why not static:</b> every page reads content from Supabase, so
+        prerendering would bake build-time content and make the CMS look broken.</div>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-soft)">Application</h4>
+        <p style="margin-top:8px"><b>Astro 7</b> with <b>React 19</b> islands, <b>Tailwind 4</b>
+        (CSS-first — no config file, tokens live in <code>@theme</code>).</p>
+        <div class="kv"><b>Island policy:</b> JavaScript only where interaction earns it. Public
+        pages get none; the admin gets all of it.</div>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-soft)">Data</h4>
+        <p style="margin-top:8px"><b>Supabase Postgres</b> over PostgREST, accessed with
+        <code>@supabase/ssr</code>. One client per request, bound to that request's cookies.</p>
+        <div class="kv"><b>Typed:</b> <code>types.ts</code> generated from the live schema by the
+        Supabase CLI.</div>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-soft)">Presentation</h4>
+        <p style="margin-top:8px">Self-hosted variable fonts — Source Serif 4, Plus Jakarta Sans,
+        Noto Sans Devanagari — <code>unicode-range</code> gated, <code>font-display: swap</code>.</p>
+        <div class="kv"><b>Script-aware:</b> <code>:lang(mr)</code> renders Devanagari at 18px/1.75
+        against Latin's 16px/1.7.</div>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:22px">
+      <div class="card">
+        <h4 style="color:var(--accent-soft)">Request lifecycle</h4>
+        <p style="margin-top:8px">Middleware runs first on every request: it creates the Supabase
+        client into <code>locals</code>, resolves the language, and — for any <code>/admin</code>
+        path other than login — calls <code>auth.getUser()</code>, which revalidates against
+        Supabase rather than trusting a cookie the client could have forged.</p>
+        <p style="margin-top:8px">The auth check is wrapped so it <b>fails closed</b>: if Supabase
+        is unreachable, the visitor is redirected to login, not shown a 500. A 500 on an auth check
+        is the kind of thing that gets "fixed" by removing the check.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-soft)">Query helpers</h4>
+        <p style="margin-top:8px">Twelve modules under <code>src/lib/queries/</code>, one per
+        content area. They share three conventions:</p>
+        <ul class="tight" style="color:#c3ccc8">
+          <li>Order by <code>sort_order</code> everywhere.</li>
+          <li>Return <code>null</code> or <code>[]</code> on error — one missing row degrades to an empty section, never a 500 on the whole page.</li>
+          <li>Never filter on <code>published</code>. That is RLS's job; a redundant filter would hide a broken policy.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note" style="background:rgba(255,255,255,.05);border-left-color:var(--accent-soft);color:#c3ccc8">
+      <b style="color:#fff">The runtime distinction is not pedantry.</b> <code>npm run dev</code>
+      runs on Node; production runs on workerd. The first real bug in this project was
+      <code>@supabase/ssr</code> throwing <code>cookies.getAll is not a function</code> — which
+      <code>astro dev</code> never surfaced. Anything touching middleware, auth, cookies or a server
+      endpoint is not considered verified until it has run under <code>wrangler dev</code>.
+    </div>
+  </div>
+</section>
+
+<!-- ============ DATA MODEL ============ -->
+<section id="data">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">Data model</div>
+      <h2>Thirty-nine tables</h2>
+      <p class="lede">Thirty-eight in the base schema, plus <code>media_assets</code> from the media
+      library migration. Grouped by what they serve.</p>
+    </div>
+
+    <div class="grid g3">
+      <div class="card">
+        <h4>Site chrome</h4>
+        <p class="small" style="margin-top:8px"><code>site_settings</code> · <code>navigation_items</code> ·
+        <code>social_links</code> · <code>announcements</code> · <code>ui_strings</code> ·
+        <code>helplines</code> · <code>office_locations</code> · <code>partners</code></p>
+      </div>
+      <div class="card">
+        <h4>Organisation</h4>
+        <p class="small" style="margin-top:8px"><code>about</code> · <code>hero</code> ·
+        <code>milestones</code> · <code>core_values</code> · <code>registrations</code> ·
+        <code>impact_stats</code> · <code>testimonials</code></p>
+      </div>
+      <div class="card">
+        <h4>Programmes</h4>
+        <p class="small" style="margin-top:8px"><code>programs</code> · <code>program_services</code> ·
+        <code>program_faqs</code></p>
+      </div>
+      <div class="card">
+        <h4>People</h4>
+        <p class="small" style="margin-top:8px"><code>profiles</code> · <code>team_categories</code> ·
+        <code>team_members</code> · <code>volunteer_roles</code> ·
+        <code>volunteer_opportunities</code></p>
+      </div>
+      <div class="card">
+        <h4>Content</h4>
+        <p class="small" style="margin-top:8px"><code>blog_posts</code> · <code>blog_categories</code> ·
+        <code>events</code> · <code>gallery_albums</code> · <code>gallery_media</code> ·
+        <code>resources</code> · <code>faqs</code> · <code>media_assets</code></p>
+      </div>
+      <div class="card">
+        <h4>Giving</h4>
+        <p class="small" style="margin-top:8px"><code>donation_config</code> ·
+        <code>donation_options</code> · <code>donations</code></p>
+      </div>
+      <div class="card">
+        <h4>Inbound (anon insert, editor read)</h4>
+        <p class="small" style="margin-top:8px"><code>contact_submissions</code> ·
+        <code>volunteer_submissions</code> · <code>event_registrations</code> ·
+        <code>newsletter_subscribers</code></p>
+      </div>
+      <div class="card">
+        <h4>System</h4>
+        <p class="small" style="margin-top:8px"><code>audit_log</code> — written by trigger on every
+        editor write, readable only by editors.</p>
+      </div>
+      <div class="card">
+        <h4>Storage buckets</h4>
+        <p class="small" style="margin-top:8px"><code>media</code> — public, everything editors upload.<br>
+        <code>receipts</code> — <b>private</b>, signed URLs only, unreachable from the public URL helper.</p>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:26px">
+      <b>Migrations are numbered and never edited.</b> <code>0001_schema_v2.sql</code> applies once
+      to a fresh project — its <code>create policy</code> statements throw on a re-run — so a
+      correction is always a new numbered file, never a change to an old one. Migrations carry
+      Devanagari seed data and must stay UTF-8 <em>without</em> a BOM; PowerShell's default encoding
+      mangled every Marathi string the first time this was done.
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECURITY ============ -->
+<section id="security">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">Security model</div>
+      <h2>The database is the access control</h2>
+      <p class="lede">Not the query code, not the UI, not the router. Four layers, in the order a
+      request meets them.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Layer</th><th>Mechanism</th><th>What it stops</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Row-level security</b></td>
+            <td>Policies on every table. Public reads use the anon key and see only
+                <code>published = true</code> rows because the policy says so.</td>
+            <td>A leaked anon key reads nothing it shouldn't. Insert into <code>programs</code> as
+                anon → 401.</td>
+          </tr>
+          <tr>
+            <td><b>Server-side admin gate</b></td>
+            <td>Astro middleware, before any HTML is produced. <code>auth.getUser()</code>
+                revalidates with Supabase.</td>
+            <td>A forged session cookie. All 22 gated admin routes redirect to
+                <code>/admin/login?next=…</code>.</td>
+          </tr>
+          <tr>
+            <td><b>Service-role key boundary</b></td>
+            <td>Declared in <code>astro.config.mjs</code> as
+                <code>context: 'server', access: 'secret'</code>.</td>
+            <td>Importing it from a client component is a <b>build error</b>, not a lint rule
+                someone has to remember. Nothing in the codebase uses it.</td>
+          </tr>
+          <tr>
+            <td><b>CI secret scan</b></td>
+            <td>Greps <code>dist/</code> for a leaked key in both the legacy JWT and current
+                <code>sb_secret_</code> formats.</td>
+            <td>A key reaching the deployed bundle by any route the first three miss.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid g2" style="margin-top:22px">
+      <div class="card">
+        <h4>Verified at the database layer</h4>
+        <ul class="tight" style="margin-top:8px">
+          <li>Simulated admin JWT: <code>is_admin()</code> / <code>is_editor()</code> true; writes succeed; <code>audit_log</code> readable.</li>
+          <li>Simulated non-editor JWT: both predicates false; an update to <code>programs</code> affects <b>0 rows</b>; <code>audit_log</code> returns nothing.</li>
+          <li>Anon key: <code>contact_submissions</code> → <code>[]</code>, <code>donations</code> → <code>[]</code>, <code>event_registrations</code> → <code>[]</code>.</li>
+          <li>Audit triggers confirmed firing. Both runs rolled back.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Other hardening</h4>
+        <ul class="tight" style="margin-top:8px">
+          <li><code>noindex</code> on every <code>/admin/*</code> page including login.</li>
+          <li><code>robots.txt</code> disallows <code>/admin</code> and <code>/api/</code>.</li>
+          <li>The sitemap is generated from the database, not from the route table — it publishes 18 content URLs and <b>zero</b> admin paths.</li>
+          <li>CSRF origin check on every POST.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <b>If you think you need the service-role key, you almost certainly need a policy instead.</b>
+      That rule has held for the whole project: there is still no service-role code path.
+    </div>
+  </div>
+</section>
+
+<!-- ============ I18N ============ -->
+<section id="i18n">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">Bilingual</div>
+      <h2>Marathi first, English second</h2>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <h4>Storage</h4>
+        <p class="small" style="margin-top:8px">JSONB <code>{"mr": …, "en": …}</code> on every
+        translatable column. Never indexed directly — always through <code>t()</code>, so the
+        missing-translation fallback lives in one place.</p>
+      </div>
+      <div class="card">
+        <h4>Resolution</h4>
+        <p class="small" style="margin-top:8px"><code>ay_lang</code> cookie → <code>Accept-Language</code>
+        header → Marathi. Middleware consumes <code>?lang=</code>, sets the cookie, and 303s to a
+        clean URL so the choice persists and the address bar stays tidy.</p>
+      </div>
+      <div class="card">
+        <h4>One URL, two languages</h4>
+        <p class="small" style="margin-top:8px">Deliberate. Splitting every route into
+        <code>/mr</code> and <code>/en</code> would double the URL surface and split inbound links
+        for a weak signal. <code>x-default</code> names the canonical URL.</p>
+      </div>
+      <div class="card">
+        <h4>Typography follows the script</h4>
+        <p class="small" style="margin-top:8px"><code>:lang(mr)</code> sets 18px/1.75 for Devanagari
+        against Latin's 16px/1.7. The 121 KB Devanagari face is <code>unicode-range</code> gated and
+        <code>font-display: swap</code>.</p>
+      </div>
+      <div class="card">
+        <h4>Interface strings are data</h4>
+        <p class="small" style="margin-top:8px">149 rows in <code>ui_strings</code>. An audit across
+        125 literal call sites found <b>zero</b> missing keys. An unresolved key renders as the key
+        itself — a designed fallback, visible rather than silent.</p>
+      </div>
+      <div class="card">
+        <h4>Honest about gaps</h4>
+        <p class="small" style="margin-top:8px"><code>tWithFallback()</code> shows a quiet
+        <em>(English)</em> marker where a Marathi translation is missing, rather than pretending the
+        English text is Marathi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SEO / A11Y ============ -->
+<section id="seo">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">Discoverability &amp; accessibility</div>
+      <h2>Measured, not assumed</h2>
+      <p class="lede">Three of the six findings in the accessibility pass were invisible to both
+      typechecking and code review. They only appeared when someone computed the numbers in a real
+      browser.</p>
+    </div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h4>SEO</h4>
+        <ul class="tight" style="margin-top:8px">
+          <li>Canonical tags, <code>robots.txt</code> and the sitemap all derive from <code>SITE_URL</code>.</li>
+          <li>Sitemap queries the database — dynamic programme, post and event URLs included; admin paths excluded.</li>
+          <li>JSON-LD: <code>NGO</code> on every page, <code>Article</code> on posts with author and both dates, <code>Event</code> gated on a start date.</li>
+          <li>Per-post SEO title and description fields in the editor.</li>
+          <li>Open Graph tags, with <code>og:type=article</code> on posts.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Accessibility — audit results</h4>
+        <ul class="tight" style="margin-top:8px">
+          <li><b>0</b> colour-contrast failures across body, muted and subtle text on all three surfaces. Was <b>6</b> — two design <em>tokens</em> failed AA, so every page inherited it.</li>
+          <li><b>0</b> controls under 44 px. Was 2.</li>
+          <li><b>0</b> skipped heading levels across twelve pages. <code>/programs</code> went <code>h1 → h3</code>.</li>
+          <li><b>0</b> missing <code>alt</code>, <b>0</b> unnamed links, <b>0</b> unlabelled inputs.</li>
+          <li>Keyboard-only focus ring via <code>:focus-visible</code>, with a white variant on dark panels.</li>
+          <li>Skip link to main content, in both languages.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PERFORMANCE ============ -->
+<section id="perf">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">Performance</div>
+      <h2>What the visitor actually downloads</h2>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Measure</th><th>Result</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>Executable JavaScript, public pages</td><td><b>0 bytes</b> on 11 of 12</td>
+              <td>The homepage carries one 602-byte inlined counter animation. Each page also has one <code>&lt;script&gt;</code> of JSON-LD, which is data.</td></tr>
+          <tr><td>Page weight, English home</td><td><b>213 KB</b> over 5 requests</td>
+              <td>3.8 KB HTML, 10.4 KB CSS, 199 KB fonts. Every face is <code>font-display: swap</code>, so none blocks first paint.</td></tr>
+          <tr><td>Admin island sizes</td><td>1–5 KB each</td>
+              <td>The React runtime loads only on admin and login — behind the gate.</td></tr>
+          <tr><td>Image cap</td><td>250 KB, longest edge 1600 px</td>
+              <td>Enforced in the browser at upload, as WebP.</td></tr>
+          <tr><td>TTFB, measured locally</td><td>~1.1 s</td>
+              <td><code>Base.astro</code> runs 8 chrome queries per request before the page's own. This is the largest remaining latency lever.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note warn" style="margin-top:22px">
+      <b>Known and accepted.</b> Rendering on demand means every request hits Supabase with no static
+      caching — deliberate, because prerendering would make the CMS look broken. The 121 KB
+      Devanagari font loads on English pages too, because the language toggle renders
+      <span lang="mr">मराठी</span> in its own script; that convention was chosen on purpose and the
+      font blocks nothing. List pages still serve full-size images into small boxes — a second
+      ~400 px variant at upload time is the next real win, worth roughly 80% of list-page egress.
+    </div>
+  </div>
+</section>
+
+<!-- ============ BUILD ============ -->
+<section id="build" class="band">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">Build &amp; deploy</div>
+      <h2>Toolchain</h2>
+    </div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h4 style="color:var(--accent-soft)">Scripts</h4>
+        <ul class="tight" style="color:#c3ccc8;margin-top:8px">
+          <li><code>npm run dev</code> — Astro dev server, on Node. Fast, but not the deploy runtime.</li>
+          <li><code>npm run build &amp;&amp; npm run preview</code> — <code>wrangler dev</code>. <b>This is the real runtime.</b></li>
+          <li><code>npm run check</code> — <code>astro check</code>; the project holds at 0 errors, 0 warnings.</li>
+          <li><code>npm run deploy</code> — build then <code>wrangler deploy</code>.</li>
+          <li><code>npm run types</code> — regenerate <code>types.ts</code> from the live schema.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-soft)">Continuous integration</h4>
+        <p style="margin-top:8px"><code>npm ci</code> → typecheck → build → secret scan. Green.</p>
+        <p style="margin-top:8px">CI deliberately does <b>not</b> deploy — the project uses
+        dashboard-driven Cloudflare Workers Builds, which trigger on push to <code>main</code>.</p>
+        <div class="kv"><b>Windows note:</b> <code>wrangler dev</code> holds a lock on
+        <code>dist/</code>. Stop preview before rebuilding or the build fails with
+        <code>EPERM</code>.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h4 style="color:var(--accent-soft)">Dependencies — the whole list</h4>
+      <p style="margin-top:8px"><b>Runtime:</b> <code>astro</code> ·
+      <code>@astrojs/cloudflare</code> · <code>@astrojs/react</code> · <code>react</code> ·
+      <code>react-dom</code> · <code>@supabase/supabase-js</code> · <code>@supabase/ssr</code></p>
+      <p style="margin-top:8px"><b>Build:</b> <code>typescript</code> · <code>tailwindcss</code> ·
+      <code>@tailwindcss/vite</code> · <code>@astrojs/check</code> · <code>wrangler</code> ·
+      three <code>@fontsource-variable</code> packages</p>
+      <div class="kv">Seven runtime dependencies. No UI library, no state manager, no form library,
+      no CSS-in-JS, no analytics.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATE ============ -->
+<section id="state">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="eyebrow">Current state</div>
+      <h2>Where the project stands</h2>
+      <p class="lede">Version 1.1.2. Phases 0–6 complete; Phase 7 is the post-launch backlog.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Phase</th><th>Scope</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>Foundations &amp; environment</td><td><span class="pill ok">Complete</span></td></tr>
+          <tr><td>1</td><td>Public site MVP</td><td><span class="pill ok">Complete</span></td></tr>
+          <tr><td>2</td><td>Admin core</td><td><span class="pill ok">Complete</span></td></tr>
+          <tr><td>3</td><td>Engagement — volunteer, donate, gallery, resources, FAQ</td><td><span class="pill ok">Complete</span></td></tr>
+          <tr><td>4</td><td>Content — blog, team, impact, testimonials, events</td><td><span class="pill ok">Complete</span></td></tr>
+          <tr><td>5</td><td>SEO, i18n completeness, accessibility, performance</td><td><span class="pill ok">Complete</span></td></tr>
+          <tr><td>6</td><td>Launch &amp; handover</td><td><span class="pill ok">Complete</span></td></tr>
+          <tr><td>7</td><td>Backlog — payments, 80G receipts, newsletter, analytics</td><td><span class="pill open">Current</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid g2" style="margin-top:24px">
+      <div class="card">
+        <h4>Open before the next deploy</h4>
+        <ul class="tight" style="margin-top:8px">
+          <li>Migrations <code>0007</code>–<code>0010</code> are written but not yet applied. Until they run, <b>Donations → Save</b> and <b>Our reach → Save</b> fail, because PostgREST rejects an entire update when a column is missing.</li>
+          <li><code>0010</code> (media library) must go last, and must be applied before the media-library code reaches production. It aborts on its own if any legacy bucket still holds a file.</li>
+          <li>Event registration has never been submitted end to end — the last unexercised code path. Everything it depends on is verified; the round trip is not.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>On the backlog</h4>
+        <ul class="tight" style="margin-top:8px">
+          <li><b>Analytics</b> — a privacy-respecting counter. Cheapest item, highest information gain.</li>
+          <li><b>Newsletter</b> — the table and its policies already exist; no form is wired to it.</li>
+          <li><b>Razorpay + 80G receipt PDFs</b> — the largest item, with real-world obligations attached.</li>
+          <li><b>Thumbnails</b> — a second ~400 px variant for cards and gallery tiles.</li>
+          <li><b>Content revisions</b> — an audit log exists; a revision history does not.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <b>Content rule, still in force.</b> The design mockup contained invented placeholder copy — a
+      2014–2025 milestone timeline, a testimonial attributed to a beneficiary, blog headlines. None
+      of it came from the foundation. Anything in that category stays <code>published = false</code>
+      until the organisation signs off, and social links other than WhatsApp are seeded unpublished
+      with empty URLs: a guessed profile link would be a dead link in a real charity's footer.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>Antyodaya Rehabilitation Multipurpose Foundation, Gadchiroli — internal reference.</div>
+    <div>v1.1.2 · generated from the repository</div>
+  </div>
+</footer>
+
+</body>
+</html>
