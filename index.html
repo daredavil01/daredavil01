@@ -1,185 +1,378 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanket Tambare</title>
-  <meta name="description" content="Sanket Tambare — Full-Stack Developer, Data Engineer, NAST Fellow. Interactive experiences, dashboards, decks, and more.">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0d1117;
-      --surface: #161b22;
-      --surface-hover: #1c2129;
-      --border: #30363d;
-      --text: #c9d1d9;
-      --heading: #e6edf3;
-      --muted: #8b949e;
-      --accent: #58a6ff;
-      --chip-bg: #21262d;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 3rem 1.5rem 4rem;
-      line-height: 1.55;
-    }
-    .wrap { max-width: 960px; margin: 0 auto; }
-
-    /* ---- Hero ---- */
-    .hero { text-align: center; margin-bottom: 3rem; }
-    .hero h1 { font-size: 2.4rem; color: var(--heading); margin-bottom: 0.4rem; }
-    .tagline { color: var(--muted); margin-bottom: 1.4rem; font-size: 1rem; }
-    .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
-    .badges a img { height: 28px; }
-
-    /* ---- Sections ---- */
-    section { margin-bottom: 3rem; }
-    .section-title {
-      font-size: 1.15rem; color: var(--heading);
-      margin-bottom: 0.35rem; letter-spacing: 0.01em;
-    }
-    .section-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
-
-    /* ---- Content cards ---- */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1rem;
-    }
-    .card {
-      display: flex; flex-direction: column; gap: 0.55rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.25rem 1.35rem;
-      text-decoration: none;
-      color: var(--text);
-      transition: background 0.2s, border-color 0.2s, transform 0.15s;
-    }
-    .card:hover { background: var(--surface-hover); border-color: #3d444d; transform: translateY(-2px); }
-    .card .icon { font-size: 1.6rem; line-height: 1; }
-    .card h3 { color: var(--accent); font-size: 1.02rem; font-weight: 600; }
-    .card p { font-size: 0.87rem; color: var(--muted); flex-grow: 1; }
-    .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
-    .tag {
-      background: var(--chip-bg); border: 1px solid var(--border);
-      color: var(--muted); border-radius: 999px;
-      font-size: 0.72rem; padding: 0.12rem 0.6rem;
-    }
-
-    /* ---- Link chips (external) ---- */
-    .chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-    .chips a {
-      background: var(--chip-bg); border: 1px solid var(--border);
-      color: var(--accent); text-decoration: none;
-      padding: 0.45rem 1rem; border-radius: 6px; font-size: 0.87rem;
-      transition: background 0.2s;
-    }
-    .chips a:hover { background: var(--border); }
-    .chip-group { margin-bottom: 1.1rem; }
-    .chip-group h4 { color: var(--heading); font-size: 0.85rem; font-weight: 600; margin-bottom: 0.55rem; text-transform: uppercase; letter-spacing: 0.06em; }
-
-    footer { text-align: center; color: var(--muted); font-style: italic; font-size: 0.9rem; margin-top: 1rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanket Tambare</title>
+<meta name="description" content="Sanket Tambare — a developer who runs at dawn and reads past midnight. A field almanac of one ordinary, full day: data pipelines, AI-governance research, running, trekking, reading and writing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Caveat:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#e6dcc4;font-family:"Newsreader",Georgia,serif;color:#2b2620;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  a.tlink{color:#2f6f92}
+  a.tlink:hover{text-decoration:underline;text-underline-offset:3px}
+  @keyframes dash{to{stroke-dashoffset:-32}}
+  .navlink{cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6a5d49;padding-bottom:3px;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+  .navlink:hover{color:#c4642f;border-color:#c4642f}
+  .idx-card{display:block;background:#faf3e3;border:1px solid rgba(43,38,32,.15);border-radius:6px;padding:16px 18px;transition:transform .15s,box-shadow .15s,border-color .15s;cursor:pointer}
+  .idx-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(43,38,32,.12);border-color:rgba(196,100,47,.5)}
+  .sec-card{background:#faf3e3;border:1px solid rgba(43,38,32,.15);border-radius:8px;transition:transform .2s,box-shadow .2s;overflow:hidden}
+  .sec-card:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(43,38,32,.14)}
+  [data-nav]:focus-visible{outline:2px solid #c4642f;outline-offset:2px}
+  .view.hidden{display:none}
+  .stack-group + .stack-group{margin-top:16px}
+  .stack-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6a5d49;margin-bottom:8px}
+  .stack-badges{display:flex;flex-wrap:wrap;gap:6px}
+  .stack-badges img{height:24px;display:block}
+</style>
 </head>
 <body>
-  <div class="wrap">
+<div style="max-width:1180px;margin:0 auto;background:#f4ecda;min-height:100vh;box-shadow:0 0 60px rgba(43,38,32,.12)">
 
-    <header class="hero">
-      <h1>Sanket Tambare</h1>
-      <p class="tagline">Full-Stack Developer &middot; Data Engineer &middot; NAST Fellow &middot; Marathoner &middot; Bookworm</p>
-      <div class="badges">
-        <a href="https://daredavil.pages.dev"><img src="https://img.shields.io/badge/%F0%9F%8C%90_Portfolio-daredavil.pages.dev-4A90E2?style=for-the-badge" alt="Portfolio"></a>
-        <a href="https://www.linkedin.com/in/sankettambare/"><img src="https://img.shields.io/badge/LinkedIn-sankettambare-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
-        <a href="https://twitter.com/i_daredavil"><img src="https://img.shields.io/badge/Twitter-@i__daredavil-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter"></a>
-        <a href="mailto:sanket.tambare01@gmail.com"><img src="https://img.shields.io/badge/Email-sanket.tambare01@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
-        <a href="https://linktr.ee/daredavil"><img src="https://img.shields.io/badge/LinkTree-daredavil-39E09B?style=for-the-badge&logo=linktree&logoColor=white" alt="LinkTree"></a>
-      </div>
-    </header>
-
-    <section>
-      <h2 class="section-title">🧭 On this site</h2>
-      <p class="section-sub">Interactive experiences, dashboards, and decks — all built and hosted right here.</p>
-      <div class="grid">
-
-        <a class="card" href="about.html">
-          <span class="icon">👤</span>
-          <h3>About Me — Interactive Deck</h3>
-          <p>A 12-slide visual deck covering who I am: engineering, AI-governance research, running, trekking, writing, reading, and what I'm doing now. Navigate with arrow keys.</p>
-          <span class="tags"><span class="tag">Deck</span><span class="tag">HTML</span><span class="tag">Keyboard nav</span></span>
-        </a>
-
-        <a class="card" href="digital-wellbeing/index.html">
-          <span class="icon">🧘</span>
-          <h3>The Wanderer's Digital Escape</h3>
-          <p>A ~15-minute narrative browser game about digital wellbeing. Travel four worlds, watch four inner meters shift with every choice, and earn a personalised Digital Flourishing Score.</p>
-          <span class="tags"><span class="tag">Game</span><span class="tag">React 18</span><span class="tag">Web Audio</span></span>
-        </a>
-
-        <a class="card" href="digital-wellbeing/three-orb-prototype.html">
-          <span class="icon">🔮</span>
-          <h3>The Self — Orb Prototype</h3>
-          <p>A Three.js experiment from the game's workshop: your inner state rendered as a living 3D orb that responds to the four wellbeing meters.</p>
-          <span class="tags"><span class="tag">Prototype</span><span class="tag">Three.js</span><span class="tag">WebGL</span></span>
-        </a>
-
-        <a class="card" href="yung-data/index.html">
-          <span class="icon">📊</span>
-          <h3>Adivasi Survey Dashboard</h3>
-          <p>A bilingual (Marathi ⇄ English) dashboard visualising a primary survey of 281 Pawra households across 7 villages in Nandurbar — 28 charts on schemes, education, income, and health.</p>
-          <span class="tags"><span class="tag">Data viz</span><span class="tag">Chart.js</span><span class="tag">मराठी / EN</span></span>
-        </a>
-
-        <a class="card" href="docs/personal-website-redesign.html">
-          <span class="icon">🗺️</span>
-          <h3>The Wanderer's Atlas — Design Dossier</h3>
-          <p>The feature dossier behind my personal-website redesign: one theme end to end, the navigation model from orbit to page, and the locked creative decisions that hold it together.</p>
-          <span class="tags"><span class="tag">Design doc</span><span class="tag">Deck</span></span>
-        </a>
-
-      </div>
-    </section>
-
-    <section>
-      <h2 class="section-title">🌐 Elsewhere</h2>
-      <p class="section-sub">My full portfolio and writing live off-site.</p>
-
-      <div class="chip-group">
-        <h4>Portfolio — daredavil.pages.dev</h4>
-        <div class="chips">
-          <a href="https://daredavil.pages.dev/about">About</a>
-          <a href="https://daredavil.pages.dev/projects">Projects</a>
-          <a href="https://daredavil.pages.dev/books">Books 📚</a>
-          <a href="https://daredavil.pages.dev/sports">Sports 🏃</a>
-          <a href="https://daredavil.pages.dev/treks">Treks 🏔️</a>
-          <a href="https://daredavil.pages.dev/now">Now</a>
-          <a href="https://daredavil.pages.dev/stats">Stats</a>
-          <a href="https://daredavil.pages.dev/challenges">Challenges</a>
-          <a href="https://daredavil.pages.dev/contact">Contact</a>
-        </div>
-      </div>
-
-      <div class="chip-group">
-        <h4>Writing &amp; Creating</h4>
-        <div class="chips">
-          <a href="https://sankettambare.substack.com/">Substack</a>
-          <a href="https://daredavil453624413.wordpress.com/">WordPress</a>
-          <a href="https://medium.com/@daredavil">Medium</a>
-          <a href="https://dev.to/daredavil">Dev.to</a>
-          <a href="https://hashnode.com/@daredavil">Hashnode</a>
-          <a href="https://behance.net/daredavil">Behance</a>
-          <a href="https://anchor.fm/daredavil">Podcast</a>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      &ldquo;Critically engaging with the world, one commit at a time.&rdquo; &#127759;
-    </footer>
-
+  <!-- HEADER -->
+  <div style="position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:16px 40px;background:rgba(244,236,218,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(43,38,32,.15)">
+    <div data-nav="home" tabindex="0" role="button" style="cursor:pointer;font-family:'Instrument Serif',serif;font-size:22px;letter-spacing:.01em">Sanket Tambare</div>
+    <div style="display:flex;gap:22px;align-items:center">
+      <span class="navlink" data-nav="home" tabindex="0" role="button">The Day</span>
+      <span class="navlink" data-nav="about" tabindex="0" role="button">About</span>
+      <span class="navlink" data-nav="miles" tabindex="0" role="button">Miles</span>
+      <span class="navlink" data-nav="shelf" tabindex="0" role="button">Shelf</span>
+      <span class="navlink" data-nav="treks" tabindex="0" role="button">Treks</span>
+      <span class="navlink" data-nav="notes" tabindex="0" role="button">Notes</span>
+      <span class="navlink" data-nav="stats" tabindex="0" role="button">Stats</span>
+      <span class="navlink" data-nav="now" tabindex="0" role="button" style="color:#c4642f;border-color:transparent">Now ●</span>
+    </div>
   </div>
+
+  <!-- ============ HOME / THE DAY ============ -->
+  <section id="view-home" class="view">
+    <div style="position:relative;padding:66px 40px 52px;background:radial-gradient(120% 90% at 85% 0%,rgba(196,100,47,.12),transparent 60%),repeating-linear-gradient(0deg,transparent 0 43px,rgba(43,38,32,.045) 43px 44px)">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#c4642f;margin-bottom:18px">◆ Pune, India · 18°34′N · local time <span id="clock">00:00</span></div>
+      <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:80px;line-height:.98;letter-spacing:-.01em;margin:0;max-width:16ch">A developer who runs at dawn and reads past midnight.</h1>
+      <p style="font-size:20px;line-height:1.55;color:#4a4237;max-width:52ch;margin:24px 0 0">I build data pipelines by day, research how citizens keep agency in an AI world, log the miles, and write it all down. This is a field almanac of one ordinary, full day.</p>
+      <div style="display:flex;gap:14px;margin-top:30px">
+        <span data-nav="about" tabindex="0" role="button" style="cursor:pointer;background:#2b2620;color:#f4ecda;padding:13px 24px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.06em">Meet me →</span>
+        <span data-nav="notes" tabindex="0" role="button" style="cursor:pointer;border:1px solid rgba(43,38,32,.35);padding:13px 24px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.06em">Read the notes</span>
+      </div>
+      <div style="position:absolute;top:128px;right:44px;font-family:'Caveat',cursive;font-size:26px;color:#c4642f;transform:rotate(-6deg);line-height:1.1;text-align:right">still training<br>5 days a week ↝</div>
+    </div>
+
+    <div style="padding:34px 40px 6px;border-top:1px solid rgba(43,38,32,.15)">
+      <div style="font-family:'Caveat',cursive;font-size:24px;color:#3d7d44;margin:0 0 14px">Things I built you can play with</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <a class="idx-card tlink" href="about.html"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#c4642f">DECK · HTML</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin:4px 0 6px;color:#2b2620">About Me — Interactive Deck</div><div style="font-size:13px;color:#6a5d49">A 12-slide visual deck of who I am — engineering, research, running, trekking, writing. Arrow-key navigable.</div></a>
+        <a class="idx-card tlink" href="digital-wellbeing/index.html"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#3d7d44">GAME · REACT 18</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin:4px 0 6px;color:#2b2620">The Wanderer's Digital Escape</div><div style="font-size:13px;color:#6a5d49">A ~15-min narrative browser game on digital wellbeing — four worlds, four meters, a Flourishing Score.</div></a>
+        <a class="idx-card tlink" href="digital-wellbeing/three-orb-prototype.html"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#9333ea">PROTOTYPE · THREE.JS</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin:4px 0 6px;color:#2b2620">The Self — Orb Prototype</div><div style="font-size:13px;color:#6a5d49">A Three.js experiment: your inner state as a living 3D orb responding to four wellbeing meters.</div></a>
+        <a class="idx-card tlink" href="yung-data/index.html"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#2f6f92">DATA VIZ · CHART.JS</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin:4px 0 6px;color:#2b2620">Adivasi Survey Dashboard</div><div style="font-size:13px;color:#6a5d49">Bilingual (मराठी ⇄ EN) dashboard of a 281-household Pawra survey across 7 Nandurbar villages — 28 charts.</div></a>
+        <a class="idx-card tlink" href="docs/personal-website-redesign.html"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#d6357f">DESIGN DOC · DECK</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin:4px 0 6px;color:#2b2620">The Wanderer's Atlas — Dossier</div><div style="font-size:13px;color:#6a5d49">The feature dossier behind my site redesign: one theme end to end, orbit-to-page navigation, locked decisions.</div></a>
+      </div>
+    </div>
+
+    <div style="padding:8px 40px 40px;border-top:1px solid rgba(43,38,32,.15)">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#6a5d49;margin:28px 0 6px">A day, in five stops</div>
+      <div style="position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:26px">
+        <svg viewBox="0 0 1000 40" preserveAspectRatio="none" style="position:absolute;top:9px;left:5%;width:90%;height:40px;overflow:visible"><path d="M0 20 C 120 -6 200 40 320 18 S 520 -8 640 20 S 840 40 1000 14" fill="none" stroke="#c4642f" stroke-width="2.5" stroke-dasharray="7 7" style="animation:dash 1.4s linear infinite"/></svg>
+        <div style="text-align:center;padding:0 10px"><div style="width:20px;height:20px;border-radius:50%;background:#f4ecda;border:2.5px solid #c4642f;margin:0 auto 14px;position:relative;z-index:1"></div><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#c4642f">05:30</div><div style="font-weight:600;margin-top:4px">Dawn run</div><div style="font-size:14px;color:#6a5d49">8 km along the river before the city wakes.</div></div>
+        <div style="text-align:center;padding:0 10px"><div style="width:20px;height:20px;border-radius:50%;background:#f4ecda;border:2.5px solid #3d7d44;margin:0 auto 14px;position:relative;z-index:1"></div><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3d7d44">09:00</div><div style="font-weight:600;margin-top:4px">Build</div><div style="font-size:14px;color:#6a5d49">DORA metrics, ETL, Databricks at Bridgenext.</div></div>
+        <div style="text-align:center;padding:0 10px"><div style="width:20px;height:20px;border-radius:50%;background:#f4ecda;border:2.5px solid #2f6f92;margin:0 auto 14px;position:relative;z-index:1"></div><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2f6f92">13:00</div><div style="font-weight:600;margin-top:4px">Read</div><div style="font-size:14px;color:#6a5d49">A chapter over lunch. 43 books and counting.</div></div>
+        <div style="text-align:center;padding:0 10px"><div style="width:20px;height:20px;border-radius:50%;background:#f4ecda;border:2.5px solid #9333ea;margin:0 auto 14px;position:relative;z-index:1"></div><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#9333ea">18:00</div><div style="font-weight:600;margin-top:4px">Research</div><div style="font-size:14px;color:#6a5d49">NAST fellowship: citizen agency in AI governance.</div></div>
+        <div style="text-align:center;padding:0 10px"><div style="width:20px;height:20px;border-radius:50%;background:#f4ecda;border:2.5px solid #d6357f;margin:0 auto 14px;position:relative;z-index:1"></div><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#d6357f">22:00</div><div style="font-weight:600;margin-top:4px">Write</div><div style="font-size:14px;color:#6a5d49">One more micro-post before lights out.</div></div>
+      </div>
+    </div>
+
+    <div style="padding:36px 40px;background:#efe6d1;border-top:1px solid rgba(43,38,32,.15);border-bottom:1px solid rgba(43,38,32,.15)">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0">
+        <div style="border-right:1px solid rgba(43,38,32,.15);padding-right:24px"><div style="font-family:'Instrument Serif',serif;font-size:52px;line-height:1;color:#c4642f">20<span style="font-size:22px;color:#6a5d49">+</span></div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6a5d49;margin-top:8px">Races run · incl. a 50K ultra</div></div>
+        <div style="border-right:1px solid rgba(43,38,32,.15);padding:0 24px"><div style="font-family:'Instrument Serif',serif;font-size:52px;line-height:1;color:#3d7d44">43<span style="font-size:22px;color:#6a5d49">+</span></div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6a5d49;margin-top:8px">Books finished</div></div>
+        <div style="border-right:1px solid rgba(43,38,32,.15);padding:0 24px"><div style="font-family:'Instrument Serif',serif;font-size:52px;line-height:1;color:#2f6f92">15<span style="font-size:22px;color:#6a5d49">+</span></div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6a5d49;margin-top:8px">Treks & summit forts</div></div>
+        <div style="padding-left:24px"><div style="font-family:'Instrument Serif',serif;font-size:52px;line-height:1;color:#d6357f">1.6<span style="font-size:22px;color:#6a5d49">k+</span></div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6a5d49;margin-top:8px">Micro-posts written</div></div>
+      </div>
+    </div>
+
+    <!-- CHAPTERS: full index -->
+    <div style="padding:48px 40px 20px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#6a5d49;margin-bottom:6px">Chapters of the almanac</div>
+      <p style="font-size:16px;color:#6a5d49;margin:0 0 26px;max-width:60ch">Every page and every place I keep — the whole map of this site and everywhere else I write.</p>
+
+      <div style="font-family:'Caveat',cursive;font-size:24px;color:#c4642f;margin:0 0 12px">The pages</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:30px">
+        <div class="idx-card" data-nav="about" tabindex="0" role="button"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#c4642f">/ABOUT</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px">About me</div><div style="font-size:13px;color:#6a5d49">The whole person</div></div>
+        <div class="idx-card" data-nav="miles" tabindex="0" role="button"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#2f6f92">/SPORTS</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px">Miles & races</div><div style="font-size:13px;color:#6a5d49">20+ races</div></div>
+        <div class="idx-card" data-nav="shelf" tabindex="0" role="button"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#e26a0a">/BOOKS</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px">The shelf</div><div style="font-size:13px;color:#6a5d49">43+ books</div></div>
+        <div class="idx-card" data-nav="treks" tabindex="0" role="button"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#3d7d44">/TREKS</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px">Treks & forts</div><div style="font-size:13px;color:#6a5d49">15+ summits</div></div>
+        <div class="idx-card" data-nav="notes" tabindex="0" role="button"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#d6357f">/WRITING</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px">Notes & essays</div><div style="font-size:13px;color:#6a5d49">1,600+ posts</div></div>
+        <div class="idx-card" data-nav="now" tabindex="0" role="button"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#9333ea">/NOW</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px">Now</div><div style="font-size:13px;color:#6a5d49">What I'm doing</div></div>
+        <div class="idx-card" data-nav="stats" tabindex="0" role="button"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#2f6f92">/STATS</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px">Life stats</div><div style="font-size:13px;color:#6a5d49">Metrics of intent</div></div>
+        <a class="idx-card tlink" href="https://daredavil.pages.dev/projects"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#9333ea">/PROJECTS</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px;color:#2b2620">Projects</div><div style="font-size:13px;color:#6a5d49">RunLog, RunSmart…</div></a>
+        <a class="idx-card tlink" href="https://daredavil.pages.dev/resume"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#6a5d49">/RESUME</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px;color:#2b2620">Résumé</div><div style="font-size:13px;color:#6a5d49">The CV</div></a>
+        <a class="idx-card tlink" href="https://daredavil.pages.dev/challenges"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#c4642f">/CHALLENGES</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px;color:#2b2620">Challenges</div><div style="font-size:13px;color:#6a5d49">Goals I set</div></a>
+        <a class="idx-card tlink" href="https://daredavil.pages.dev/changelog"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#6a5d49">/CHANGELOG</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px;color:#2b2620">Changelog</div><div style="font-size:13px;color:#6a5d49">Site history</div></a>
+        <a class="idx-card tlink" href="https://daredavil.pages.dev/contact"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#2f6f92">/CONTACT</div><div style="font-family:'Instrument Serif',serif;font-size:20px;margin-top:4px;color:#2b2620">Contact</div><div style="font-size:13px;color:#6a5d49">Say hello</div></a>
+      </div>
+
+      <div style="font-family:'Caveat',cursive;font-size:24px;color:#d6357f;margin:0 0 12px">Where I write & where to find me</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+        <a class="tlink" href="https://sankettambare.substack.com/" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">Substack</a>
+        <a class="tlink" href="https://daredavil453624413.wordpress.com/" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">WordPress</a>
+        <a class="tlink" href="https://medium.com/@daredavil" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">Medium</a>
+        <a class="tlink" href="https://dev.to/daredavil" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">Dev.to</a>
+        <a class="tlink" href="https://hashnode.com/@daredavil" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">Hashnode</a>
+        <a class="tlink" href="https://behance.net/daredavil" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">Behance</a>
+        <a class="tlink" href="https://anchor.fm/daredavil" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">Podcast</a>
+        <a class="tlink" href="https://www.linkedin.com/in/sankettambare/" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">LinkedIn</a>
+        <a class="tlink" href="https://twitter.com/i_daredavil" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">Twitter</a>
+        <a class="tlink" href="https://github.com/daredavil01" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">GitHub</a>
+        <a class="tlink" href="https://linktr.ee/daredavil" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">LinkTree</a>
+        <a class="tlink" href="mailto:sanket.tambare01@gmail.com" style="background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620">Email</a>
+      </div>
+    </div>
+
+    <div style="padding:34px 40px 46px;border-top:1px solid rgba(43,38,32,.15);margin-top:24px"><p style="font-family:'Caveat',cursive;font-size:30px;color:#c4642f;margin:0;transform:rotate(-2deg)">"Critically engaging with the world, one commit at a time."</p><p style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#6a5d49;margin:18px 0 0">© Sanket Tambare, intentionally designed with Claude Design</p></div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section id="view-about" class="view hidden">
+  <div style="padding:56px 40px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#c4642f;margin-bottom:16px">◆ About · the whole person</div>
+    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:62px;line-height:1;margin:0;max-width:18ch">I'm Sanket — a software developer from Pune who never stops moving.</h1>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:44px;margin-top:40px">
+      <div style="font-size:19px;line-height:1.65;color:#4a4237">
+        <p style="margin:0 0 20px">By trade I'm a full-stack developer and data engineer — right now at <b>Bridgenext</b>, building DORA-metric pipelines and ETL flows across the GitLab API, AWS Lambda, Databricks and Tableau.</p>
+        <p style="margin:0 0 20px">Beyond the code I'm a <b>NAST Fellow</b> at The Takshashila Institution, researching citizen agency in AI governance for public deployments. I care about the intersection of technology, society and public policy — not just building things, but thinking hard about what we build and why.</p>
+        <p style="margin:0 0 20px">Outside work I run five days a week, chase Sahyadri summits on weekends, and read obsessively. I write it all down — essays, micro-posts, reflections — because keeping a record is how I stay honest with myself.</p>
+        <p style="font-family:'Caveat',cursive;font-size:28px;color:#c4642f;margin:6px 0 0">"Critically engaging with the world, one commit at a time."</p>
+      </div>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6a5d49;margin-bottom:14px">The record</div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;padding:14px 0;border-top:1px solid rgba(43,38,32,.15)"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#c4642f;white-space:nowrap">2024 →</span><div><b>Software Developer</b> · Bridgenext<br><span style="font-size:14px;color:#6a5d49">DORA · ETL · Databricks · Tableau</span></div></div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;padding:14px 0;border-top:1px solid rgba(43,38,32,.15)"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#c4642f;white-space:nowrap">2024–25</span><div><b>NAST Fellow</b> · Takshashila<br><span style="font-size:14px;color:#6a5d49">Citizen agency in AI governance</span></div></div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;padding:14px 0;border-top:1px solid rgba(43,38,32,.15)"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#c4642f;white-space:nowrap">2021–24</span><div><b>Software Engineer</b> · Emtec Inc.<br><span style="font-size:14px;color:#6a5d49">Next.js · GraphQL · Spring Boot · FastAPI</span></div></div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:16px;padding:14px 0;border-top:1px solid rgba(43,38,32,.15)"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#c4642f;white-space:nowrap">2021</span><div><b>B.Tech, Computer Science</b><br><span style="font-size:14px;color:#6a5d49">Rajarambapu Institute of Technology</span></div></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:24px;align-items:center;margin-top:40px"><span data-nav="home" tabindex="0" role="button" style="cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:#2f6f92">← back to the day</span><a class="tlink" href="https://daredavil.pages.dev/about" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em">Open the full About page →</a></div>
+  </div>
+  </section>
+
+  <!-- ============ MILES ============ -->
+  <section id="view-miles" class="view hidden">
+  <div style="padding:56px 40px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#c4642f;margin-bottom:16px">◆ Miles · the running log</div>
+    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:62px;line-height:1;margin:0;max-width:16ch">From a first nervous 5K to a 50K ultra.</h1>
+    <p style="font-size:19px;line-height:1.6;color:#4a4237;max-width:56ch;margin:22px 0 36px">Twenty-plus races and counting. Running five days a week isn't training for a number — it's how the day gets its shape.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#efe6d1;border:1px solid rgba(43,38,32,.15);border-radius:8px;overflow:hidden;margin-bottom:36px">
+      <div style="padding:22px 24px;border-right:1px solid rgba(43,38,32,.15)"><div style="font-family:'Instrument Serif',serif;font-size:44px;color:#c4642f;line-height:1">50K</div><div style="font-size:13px;color:#6a5d49;margin-top:6px">Longest — Tata Ultra</div></div>
+      <div style="padding:22px 24px;border-right:1px solid rgba(43,38,32,.15)"><div style="font-family:'Instrument Serif',serif;font-size:44px;color:#3d7d44;line-height:1">20<span style="font-size:20px">+</span></div><div style="font-size:13px;color:#6a5d49;margin-top:6px">Races finished</div></div>
+      <div style="padding:22px 24px;border-right:1px solid rgba(43,38,32,.15)"><div style="font-family:'Instrument Serif',serif;font-size:44px;color:#2f6f92;line-height:1">5<span style="font-size:20px">×</span></div><div style="font-size:13px;color:#6a5d49;margin-top:6px">Runs per week</div></div>
+      <div style="padding:22px 24px"><div style="font-family:'Instrument Serif',serif;font-size:44px;color:#d6357f;line-height:1">FM</div><div style="font-size:13px;color:#6a5d49;margin-top:6px">Full & half marathons</div></div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6a5d49;margin-bottom:14px">Selected races</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="sec-card" style="padding:18px 22px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:17px">Tata Ultra Marathon</b><div style="font-size:14px;color:#6a5d49">Lonavala · the big one</div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#c4642f">50 KM</span></div>
+      <div class="sec-card" style="padding:18px 22px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:17px">Full Marathon</b><div style="font-size:14px;color:#6a5d49">The classic distance</div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#3d7d44">42.2 KM</span></div>
+      <div class="sec-card" style="padding:18px 22px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:17px">Half Marathons</b><div style="font-size:14px;color:#6a5d49">The bread and butter</div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2f6f92">21.1 KM</span></div>
+      <div class="sec-card" style="padding:18px 22px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:17px">10K & 5K series</b><div style="font-size:14px;color:#6a5d49">Where it all started</div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#d6357f">SHORT</span></div>
+    </div>
+    <a class="tlink" href="https://daredavil.pages.dev/sports" style="font-family:'Caveat',cursive;font-size:26px;color:#c4642f;margin-top:28px;transform:rotate(-1.5deg);display:inline-block">— see every race on the live log →</a>
+    <div data-nav="home" tabindex="0" role="button" style="cursor:pointer;display:inline-block;margin-top:34px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:#2f6f92">← back to the day</div>
+  </div>
+  </section>
+
+  <!-- ============ SHELF ============ -->
+  <section id="view-shelf" class="view hidden">
+  <div style="padding:56px 40px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#e26a0a;margin-bottom:16px">◆ Shelf · books, annotated</div>
+    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:62px;line-height:1;margin:0;max-width:16ch">43+ books, and the lines that stayed with me.</h1>
+    <p style="font-size:19px;line-height:1.6;color:#4a4237;max-width:56ch;margin:22px 0 36px">A wall of spines you can pull. Each one carries a margin note — the sentence I underlined, not a summary.</p>
+    <div style="display:flex;gap:6px;align-items:flex-end;background:#efe6d1;border:1px solid rgba(43,38,32,.15);border-radius:8px;padding:28px 24px 20px;margin-bottom:34px;overflow:hidden">
+      <div style="width:34px;height:150px;background:#c4642f;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:180px;background:#3d7d44;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:130px;background:#2f6f92;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:168px;background:#9333ea;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:144px;background:#d6357f;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:160px;background:#a5620d;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:120px;background:#2b2620;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:176px;background:#c4642f;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:138px;background:#3d7d44;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:158px;background:#2f6f92;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:128px;background:#9333ea;border-radius:3px 3px 0 0"></div>
+      <div style="width:34px;height:170px;background:#d6357f;border-radius:3px 3px 0 0"></div>
+      <div style="flex:1;text-align:right;font-family:'Caveat',cursive;font-size:26px;color:#e26a0a;align-self:center">43 and counting →</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div class="sec-card" style="padding:20px 22px"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#e26a0a">CURRENTLY</div><div style="font-family:'Instrument Serif',serif;font-size:22px;margin:4px 0 6px">On the nightstand</div><div style="font-size:14px;color:#6a5d49;font-style:italic">The one I'm mid-way through — pulled straight from the reading log.</div></div>
+      <div class="sec-card" style="padding:20px 22px"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#3d7d44">FAVOURITE</div><div style="font-family:'Instrument Serif',serif;font-size:22px;margin:4px 0 6px">The one I re-read</div><div style="font-size:14px;color:#6a5d49;font-style:italic">Every shelf has one book that keeps calling you back.</div></div>
+      <div class="sec-card" style="padding:20px 22px"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#2f6f92">GENRE MIX</div><div style="font-family:'Instrument Serif',serif;font-size:22px;margin:4px 0 6px">Tech, policy & fiction</div><div style="font-size:14px;color:#6a5d49;font-style:italic">A deliberate diet of ideas and stories in equal measure.</div></div>
+    </div>
+    <a class="tlink" href="https://daredavil.pages.dev/books" style="font-family:'Caveat',cursive;font-size:26px;color:#e26a0a;margin-top:26px;transform:rotate(-1deg);display:inline-block">— open the full 43+ list & reviews →</a>
+    <div data-nav="home" tabindex="0" role="button" style="cursor:pointer;display:inline-block;margin-top:30px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:#2f6f92">← back to the day</div>
+  </div>
+  </section>
+
+  <!-- ============ TREKS ============ -->
+  <section id="view-treks" class="view hidden">
+  <div style="padding:56px 40px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#3d7d44;margin-bottom:16px">◆ Treks · the ridge</div>
+    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:62px;line-height:1;margin:0;max-width:16ch">15+ summits, and one 22-hour night march.</h1>
+    <p style="font-size:19px;line-height:1.6;color:#4a4237;max-width:56ch;margin:22px 0 36px">Weekends belong to the Sahyadris — forts, ridgelines, and the long historic routes that ask for everything you've got.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px">
+      <div class="sec-card" style="padding:22px 24px"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#3d7d44">THE BIG ONE · NIGHT</div><div style="font-family:'Instrument Serif',serif;font-size:26px;margin:4px 0 6px">Panhala → Pawankhind</div><div style="font-size:15px;color:#6a5d49">The 22-hour historic night trek retracing Baji Prabhu's stand. The one every trekker measures the rest against.</div></div>
+      <div class="sec-card" style="padding:22px 24px"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#c4642f">SUMMIT FORTS</div><div style="font-family:'Instrument Serif',serif;font-size:26px;margin:4px 0 6px">Sahyadri forts</div><div style="font-size:15px;color:#6a5d49">A running collection of hill forts — each with its own approach, ruins and view worth the climb.</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:#efe6d1;border:1px solid rgba(43,38,32,.15);border-radius:8px;overflow:hidden">
+      <div style="padding:22px 24px;border-right:1px solid rgba(43,38,32,.15)"><div style="font-family:'Instrument Serif',serif;font-size:44px;color:#3d7d44;line-height:1">15<span style="font-size:20px">+</span></div><div style="font-size:13px;color:#6a5d49;margin-top:6px">Treks completed</div></div>
+      <div style="padding:22px 24px;border-right:1px solid rgba(43,38,32,.15)"><div style="font-family:'Instrument Serif',serif;font-size:44px;color:#c4642f;line-height:1">22<span style="font-size:20px">h</span></div><div style="font-size:13px;color:#6a5d49;margin-top:6px">Longest single trek</div></div>
+      <div style="padding:22px 24px"><div style="font-family:'Instrument Serif',serif;font-size:44px;color:#2f6f92;line-height:1">∞</div><div style="font-size:13px;color:#6a5d49;margin-top:6px">Forts still on the list</div></div>
+    </div>
+    <a class="tlink" href="https://daredavil.pages.dev/treks" style="font-family:'Caveat',cursive;font-size:26px;color:#3d7d44;margin-top:26px;transform:rotate(-1deg);display:inline-block">— see photos & route maps on the live page →</a>
+    <div data-nav="home" tabindex="0" role="button" style="cursor:pointer;display:inline-block;margin-top:30px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:#2f6f92">← back to the day</div>
+  </div>
+  </section>
+
+  <!-- ============ NOTES / WRITING ============ -->
+  <section id="view-notes" class="view hidden">
+  <div style="padding:56px 40px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#d6357f;margin-bottom:16px">◆ Notes · writing & essays</div>
+    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:62px;line-height:1;margin:0;max-width:16ch">1,600+ posts, and I'm not done writing.</h1>
+    <p style="font-size:19px;line-height:1.6;color:#4a4237;max-width:56ch;margin:22px 0 36px">Long essays on tech, society and policy; short daily micro-posts; developer deep-dives. I write across platforms because different thoughts want different rooms.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px">
+      <a class="sec-card tlink" href="https://sankettambare.substack.com/" style="padding:22px 24px;display:block"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#d6357f">SUBSTACK · LONG-FORM</div><div style="font-family:'Instrument Serif',serif;font-size:26px;margin:4px 0 6px;color:#2b2620">The Wanderer</div><div style="font-size:15px;color:#6a5d49">Essays on tech, AI, society & policy — the newsletter home.</div></a>
+      <a class="sec-card tlink" href="https://medium.com/@daredavil" style="padding:22px 24px;display:block"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#2b2620">MEDIUM · DEV.TO · HASHNODE</div><div style="font-family:'Instrument Serif',serif;font-size:26px;margin:4px 0 6px;color:#2b2620">Developer writing</div><div style="font-size:15px;color:#6a5d49">Tutorials, tech articles and deep-dives for other builders.</div></a>
+    </div>
+    <div style="background:#efe6d1;border:1px solid rgba(43,38,32,.15);border-radius:8px;padding:24px 26px;display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-family:'Instrument Serif',serif;font-size:26px">100 Days to Offload · Micro-blog</div><div style="font-size:15px;color:#6a5d49">The daily habit — 1,600+ small posts and challenges.</div></div>
+      <a class="tlink" href="https://daredavil.pages.dev/100-days-to-offload" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2f6f92;white-space:nowrap">Read the stream →</a>
+    </div>
+    <div data-nav="home" tabindex="0" role="button" style="cursor:pointer;display:inline-block;margin-top:34px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:#2f6f92">← back to the day</div>
+  </div>
+  </section>
+
+  <!-- ============ NOW ============ -->
+  <section id="view-now" class="view hidden">
+  <div style="padding:56px 40px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#9333ea;margin-bottom:16px">◆ Now · updated as life moves</div>
+    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:62px;line-height:1;margin:0;max-width:15ch">What I'm doing right now.</h1>
+    <p style="font-size:16px;color:#6a5d49;margin:14px 0 36px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em">A <a class="tlink" href="https://nownownow.com/about" style="color:#2f6f92">now page</a> — a snapshot of this season, not a résumé. · <a class="tlink" href="https://daredavil.pages.dev/now" style="color:#2f6f92">view the live Now page →</a></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="sec-card" style="padding:24px 26px"><div style="font-size:26px;margin-bottom:8px">🤖</div><div style="font-family:'Instrument Serif',serif;font-size:24px">Building a blog & talk on AI tools for students and teachers.</div></div>
+      <div class="sec-card" style="padding:24px 26px"><div style="font-size:26px;margin-bottom:8px">🏃</div><div style="font-family:'Instrument Serif',serif;font-size:24px">Training five days a week — chasing the next race.</div></div>
+      <div class="sec-card" style="padding:24px 26px"><div style="font-size:26px;margin-bottom:8px">🎓</div><div style="font-family:'Instrument Serif',serif;font-size:24px">Wrapping the NAST fellowship on AI governance.</div></div>
+      <div class="sec-card" style="padding:24px 26px"><div style="font-size:26px;margin-bottom:8px">📚</div><div style="font-family:'Instrument Serif',serif;font-size:24px">Reading toward book #44, always mid-chapter.</div></div>
+    </div>
+    <div data-nav="home" tabindex="0" role="button" style="cursor:pointer;display:inline-block;margin-top:34px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:#2f6f92">← back to the day</div>
+  </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <section id="view-stats" class="view hidden">
+  <div style="padding:56px 40px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#2f6f92;margin-bottom:16px">◆ Stats · metrics of intent</div>
+    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:62px;line-height:1;margin:0;max-width:16ch">A year, measured in the things I kept doing.</h1>
+    <p style="font-size:19px;line-height:1.6;color:#4a4237;max-width:56ch;margin:22px 0 36px">Not vanity numbers — a quantitative diary of consistent output across code, miles and pages.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <div class="sec-card" style="padding:26px 28px"><div style="font-family:'Instrument Serif',serif;font-size:58px;line-height:1;color:#c4642f">20+</div><div style="font-size:14px;color:#6a5d49;margin-top:8px">races · incl. a 50K ultra</div></div>
+      <div class="sec-card" style="padding:26px 28px"><div style="font-family:'Instrument Serif',serif;font-size:58px;line-height:1;color:#3d7d44">43+</div><div style="font-size:14px;color:#6a5d49;margin-top:8px">books read</div></div>
+      <div class="sec-card" style="padding:26px 28px"><div style="font-family:'Instrument Serif',serif;font-size:58px;line-height:1;color:#2f6f92">15+</div><div style="font-size:14px;color:#6a5d49;margin-top:8px">treks summited</div></div>
+      <div class="sec-card" style="padding:26px 28px"><div style="font-family:'Instrument Serif',serif;font-size:58px;line-height:1;color:#d6357f">1.6k+</div><div style="font-size:14px;color:#6a5d49;margin-top:8px">micro-posts written</div></div>
+      <div class="sec-card" style="padding:26px 28px"><div style="font-family:'Instrument Serif',serif;font-size:58px;line-height:1;color:#9333ea">5×</div><div style="font-size:14px;color:#6a5d49;margin-top:8px">runs per week</div></div>
+      <div class="sec-card" style="padding:26px 28px"><div style="font-family:'Instrument Serif',serif;font-size:58px;line-height:1;color:#a5620d">7</div><div style="font-size:14px;color:#6a5d49;margin-top:8px">writing platforms</div></div>
+    </div>
+
+    <div style="font-family:'Caveat',cursive;font-size:24px;color:#6a5d49;margin:34px 0 12px">The stack</div>
+    <div class="sec-card" style="padding:24px 26px">
+      <div class="stack-group">
+        <div class="stack-label">Languages</div>
+        <div class="stack-badges">
+          <img src="https://img.shields.io/badge/Python-%E2%98%85%E2%98%85%E2%98%85%E2%98%85%E2%98%85-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
+          <img src="https://img.shields.io/badge/JavaScript-%E2%98%85%E2%98%85%E2%98%85%E2%98%85%E2%98%86-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="JavaScript">
+          <img src="https://img.shields.io/badge/SQL-%E2%98%85%E2%98%85%E2%98%85%E2%98%85%E2%98%86-336791?style=flat-square&logo=postgresql&logoColor=white" alt="SQL">
+          <img src="https://img.shields.io/badge/TypeScript-%E2%98%85%E2%98%85%E2%98%86%E2%98%86%E2%98%86-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript">
+          <img src="https://img.shields.io/badge/Java-%E2%98%85%E2%98%85%E2%98%86%E2%98%86%E2%98%86-ED8B00?style=flat-square&logo=openjdk&logoColor=white" alt="Java">
+          <img src="https://img.shields.io/badge/C-%E2%98%85%E2%98%85%E2%98%86%E2%98%86%E2%98%86-A8B9CC?style=flat-square&logo=c&logoColor=white" alt="C">
+        </div>
+      </div>
+      <div class="stack-group">
+        <div class="stack-label">Web & Frameworks</div>
+        <div class="stack-badges">
+          <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React">
+          <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white" alt="Next.js">
+          <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js">
+          <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI">
+          <img src="https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white" alt="Express">
+          <img src="https://img.shields.io/badge/GraphQL-E10098?style=flat-square&logo=graphql&logoColor=white" alt="GraphQL">
+          <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot">
+          <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS">
+        </div>
+      </div>
+      <div class="stack-group">
+        <div class="stack-label">Cloud & DevOps</div>
+        <div class="stack-badges">
+          <img src="https://img.shields.io/badge/AWS-%E2%98%85%E2%98%85%E2%98%85%E2%98%85%E2%98%86-FF9900?style=flat-square&logo=amazonaws&logoColor=white" alt="AWS">
+          <img src="https://img.shields.io/badge/Terraform-%E2%98%85%E2%98%85%E2%98%85%E2%98%86%E2%98%86-844FBA?style=flat-square&logo=terraform&logoColor=white" alt="Terraform">
+          <img src="https://img.shields.io/badge/Kubernetes-%E2%98%85%E2%98%85%E2%98%86%E2%98%86%E2%98%86-326CE5?style=flat-square&logo=kubernetes&logoColor=white" alt="Kubernetes">
+          <img src="https://img.shields.io/badge/Cloudflare-F38020?style=flat-square&logo=cloudflare&logoColor=white" alt="Cloudflare">
+        </div>
+      </div>
+      <div class="stack-group">
+        <div class="stack-label">Data Engineering & Analytics</div>
+        <div class="stack-badges">
+          <img src="https://img.shields.io/badge/Snowflake-%E2%98%85%E2%98%85%E2%98%85%E2%98%85%E2%98%86-29B5E8?style=flat-square&logo=snowflake&logoColor=white" alt="Snowflake">
+          <img src="https://img.shields.io/badge/Databricks-%E2%98%85%E2%98%85%E2%98%85%E2%98%86%E2%98%86-FF3621?style=flat-square&logo=databricks&logoColor=white" alt="Databricks">
+          <img src="https://img.shields.io/badge/Kafka-%E2%98%85%E2%98%85%E2%98%85%E2%98%86%E2%98%86-231F20?style=flat-square&logo=apachekafka&logoColor=white" alt="Apache Kafka">
+          <img src="https://img.shields.io/badge/Tableau-%E2%98%85%E2%98%85%E2%98%85%E2%98%86%E2%98%86-E97627?style=flat-square&logo=tableau&logoColor=white" alt="Tableau">
+          <img src="https://img.shields.io/badge/Pandas-%E2%98%85%E2%98%85%E2%98%85%E2%98%85%E2%98%85-150458?style=flat-square&logo=pandas&logoColor=white" alt="Pandas">
+          <img src="https://img.shields.io/badge/NumPy-%E2%98%85%E2%98%85%E2%98%85%E2%98%86%E2%98%86-013243?style=flat-square&logo=numpy&logoColor=white" alt="NumPy">
+        </div>
+      </div>
+      <div class="stack-group">
+        <div class="stack-label">AI & Dev Tools</div>
+        <div class="stack-badges">
+          <img src="https://img.shields.io/badge/Cursor-%E2%98%85%E2%98%85%E2%98%85%E2%98%85%E2%98%86-000000?style=flat-square" alt="Cursor">
+          <img src="https://img.shields.io/badge/Google_Gemini-%E2%98%85%E2%98%85%E2%98%85%E2%98%86%E2%98%86-4285F4?style=flat-square&logo=google&logoColor=white" alt="Google Gemini">
+          <img src="https://img.shields.io/badge/MCP_(Model_Context_Protocol)-%E2%98%85%E2%98%85%E2%98%85%E2%98%86%E2%98%86-7B68EE?style=flat-square" alt="MCP">
+          <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white" alt="Git">
+        </div>
+      </div>
+    </div>
+
+    <a class="tlink" href="https://daredavil.pages.dev/stats" style="font-family:'Caveat',cursive;font-size:26px;color:#2f6f92;margin-top:26px;transform:rotate(-1deg);display:inline-block">— open the live charts on /stats →</a>
+    <div data-nav="home" tabindex="0" role="button" style="cursor:pointer;display:inline-block;margin-top:30px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:#2f6f92">← back to the day</div>
+  </div>
+  </section>
+
+</div>
+<script>
+(function () {
+  function updateClock() {
+    var now = new Date();
+    var h = String(now.getHours()).padStart(2, '0');
+    var m = String(now.getMinutes()).padStart(2, '0');
+    var el = document.getElementById('clock');
+    if (el) el.textContent = h + ':' + m;
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  function go(view) {
+    document.querySelectorAll('.view').forEach(function (v) {
+      v.classList.toggle('hidden', v.id !== 'view-' + view);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-nav]');
+    if (el) go(el.dataset.nav);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var el = e.target.closest('[data-nav]');
+    if (el) { e.preventDefault(); go(el.dataset.nav); }
+  });
+})();
+</script>
 </body>
 </html>
