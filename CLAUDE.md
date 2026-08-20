@@ -19,6 +19,10 @@ CLAUDE.md                         This file
 README.md                         GitHub profile README
 docs/
   personal-website-redesign.html  "The Wanderer's Atlas" design dossier (deck)
+developer-infographic/
+  index.html                      "A Developer, Measured" — scroll-through
+                                   infographic (career gantt, rated stack,
+                                   writing ledger, counterweight charts)
 digital-wellbeing/                "The Wanderer's Digital Escape" browser game
   index.html                      Game entry point
   three-orb-prototype.html        Three.js self-orb prototype

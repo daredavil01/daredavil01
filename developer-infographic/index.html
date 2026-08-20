@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Developer, Measured &mdash; Sanket Tambare</title>
+<meta name="description" content="A field-almanac infographic of Sanket Tambare as a developer: nine years of roles, a rated stack, the things that shipped, and the miles, books and 86,789 words that share the same hours.">
+<meta property="og:title" content="A Developer, Measured &mdash; Sanket Tambare">
+<meta property="og:description" content="Nine years of roles, a rated stack, the things that shipped &mdash; and the miles, books and words that share the same hours.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Caveat:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:#e6dcc4;font-family:"Newsreader",Georgia,serif;color:#2b2620;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img,svg{max-width:100%}
+  a{color:inherit;text-decoration:none}
+  a.tlink{color:#2f6f92}
+  a.tlink:hover{text-decoration:underline;text-underline-offset:3px}
+  .wrap{max-width:1180px;margin:0 auto;background:#f4ecda;min-height:100vh;box-shadow:0 0 60px rgba(43,38,32,.12)}
+  .band{padding:44px 40px;border-top:1px solid rgba(43,38,32,.15)}
+  .band:first-of-type{border-top:0}
+  .tint{background:#efe6d1}
+
+  /* --- type --- */
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#c4642f;margin-bottom:14px}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6a5d49}
+  h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:78px;line-height:.98;letter-spacing:-.01em;margin:0;max-width:15ch}
+  h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:46px;line-height:1.02;margin:0 0 10px;max-width:20ch}
+  h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:21px;margin:0 0 4px}
+  .lede{font-size:19px;line-height:1.6;color:#4a4237;max-width:62ch;margin:20px 0 0}
+  .note{font-size:15px;line-height:1.55;color:#6a5d49;max-width:66ch;margin:10px 0 0}
+  .scrawl{font-family:'Caveat',cursive;font-size:25px;line-height:1.2;color:#c4642f;margin:0 0 16px}
+  .src{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:#8b7d67;margin-top:14px}
+
+  /* --- home link (both ends of the scroll) --- */
+  .home-link{display:inline-block;font-weight:500;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#6a5d49;border-bottom:1px solid rgba(43,38,32,.28);padding-bottom:2px;transition:color .15s,border-color .15s}
+  .home-link:hover,.home-link:focus-visible{color:#c4642f;border-color:#c4642f}
+  a:focus-visible,summary:focus-visible{outline:2px solid #c4642f;outline-offset:3px}
+
+  /* --- stat tiles --- */
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+  .stat{border-right:1px solid rgba(43,38,32,.15);padding:0 22px}
+  .stat:first-child{padding-left:0}
+  .stat:last-child{border-right:0}
+  .fig{font-family:'Instrument Serif',serif;font-size:54px;line-height:1;color:#c4642f}
+  .fig .u{font-size:21px;color:#6a5d49}
+  .fig.b{color:#2a78d6}
+  .stat .cap{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#6a5d49;margin-top:9px;line-height:1.5}
+
+  /* --- cards --- */
+  .card{background:#faf3e3;border:1px solid rgba(43,38,32,.15);border-radius:8px;padding:20px 22px}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(400px,100%),1fr));gap:16px}
+  .proj .kick{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:#c4642f;margin-bottom:6px}
+  .proj p{font-size:14px;line-height:1.55;color:#6a5d49;margin:6px 0 12px}
+  .proj a{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#2f6f92}
+
+  /* --- career gantt: HTML/CSS so the labels stay real text at every width --- */
+  .gantt{margin-top:26px}
+  .grow{display:grid;grid-template-columns:210px 1fr;gap:18px;align-items:center;padding:9px 0;border-top:1px solid rgba(43,38,32,.12)}
+  .grow .who b{font-size:16px}
+  .grow .who span{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#6a5d49;margin-top:2px}
+  .track{position:relative;height:46px}
+  .track .rail{position:absolute;left:0;right:0;top:16px;height:1px;background:rgba(43,38,32,.10)}
+  .bar{position:absolute;top:9px;height:15px;border-radius:3px;background:#c4642f}
+  .bar.res{background:#2a78d6}
+  .bar span{position:absolute;left:0;top:20px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;color:#6a5d49;white-space:nowrap}
+  .bar span.r{left:auto;right:0}
+  .blurb{font-size:13.5px;line-height:1.5;color:#6a5d49;margin:0}
+  .axis{position:relative;height:34px;margin-top:6px;border-top:1px solid rgba(43,38,32,.18)}
+  .axis i{position:absolute;top:0;width:1px;height:5px;background:rgba(43,38,32,.28)}
+  .axis b{position:absolute;top:9px;transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:400;color:#6a5d49}
+  .edu{position:relative;height:46px}
+  .edu .pin{position:absolute;top:0;transform:translateX(-50%);text-align:center;width:190px}
+  .edu .dot{width:9px;height:9px;margin:0 auto 5px;background:#f4ecda;border:2px solid #c4642f;transform:rotate(45deg)}
+  .edu .pin b{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.04em;color:#2b2620}
+  .edu .pin span{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#6a5d49}
+  .legend{display:flex;gap:18px;align-items:center;margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:#6a5d49}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:7px;vertical-align:-1px}
+
+  /* --- proficiency: 5 segments, 2px surface gaps, one hue --- */
+  .stack-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 30px;margin-top:8px}
+  .skill{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:7px 0;border-top:1px solid rgba(43,38,32,.10)}
+  .skill .nm{font-size:15px}
+  .segs{display:flex;gap:2px}
+  .segs i{width:17px;height:9px;border-radius:2px;background:rgba(43,38,32,.13)}
+  .segs i.on{background:#c4642f}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .chips span{background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:6px 13px;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+
+  /* --- svg charts --- */
+  svg.chart{display:block;width:100%;height:auto;overflow:visible;margin-top:6px}
+  svg.chart .gridline{stroke:rgba(43,38,32,.13);stroke-width:1}
+  svg.chart .axline{stroke:rgba(43,38,32,.30);stroke-width:1}
+  svg.chart text{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+  svg.chart .tick{font-size:10px;fill:#8b7d67}
+  svg.chart .cat{font-size:10.5px;fill:#6a5d49}
+  svg.chart .dlabel{font-size:11.5px;font-weight:600;fill:#2b2620}
+  svg.chart .seglabel{font-size:12px;font-weight:600;fill:#faf3e3}
+  svg.chart .segpct{font-size:10.5px;fill:#6a5d49}
+  svg.chart .mark{transition:opacity .15s}
+  .chart-card:hover svg.chart .mark{opacity:.45}
+  svg.chart .mark:hover{opacity:1}
+
+  /* --- table twins --- */
+  .tbl{margin-top:12px;border-top:1px solid rgba(43,38,32,.12);padding-top:9px}
+  .tbl summary{cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#6a5d49}
+  .tbl summary:hover{color:#c4642f}
+  .tbl table{border-collapse:collapse;margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-variant-numeric:tabular-nums}
+  .tbl th{text-align:left;font-weight:500;color:#8b7d67;padding:3px 16px 3px 0;border-bottom:1px solid rgba(43,38,32,.15)}
+  .tbl td{padding:3px 16px 3px 0;border-bottom:1px solid rgba(43,38,32,.07)}
+
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .pills a{background:#faf3e3;border:1px solid rgba(43,38,32,.18);border-radius:999px;padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2b2620}
+  .rule{height:1px;background:rgba(43,38,32,.15);margin:26px 0}
+
+  @media (hover:none){.chart-card:hover svg.chart .mark{opacity:1}}
+
+  @media (max-width:1000px){
+    .band{padding:38px 26px}
+    h1{font-size:58px}
+    h2{font-size:38px}
+    .grid3{grid-template-columns:repeat(2,1fr)}
+    .grow{grid-template-columns:180px 1fr}
+  }
+  @media (max-width:760px){
+    .band{padding:32px 20px}
+    h1{font-size:42px;max-width:none}
+    h2{font-size:32px;max-width:none}
+    .lede{font-size:17px;max-width:none}
+    .grid2,.grid3,.stack-grid{grid-template-columns:1fr}
+    /* stat strip: 2 up, tiles instead of ruled cells */
+    .stat-row{grid-template-columns:1fr 1fr;gap:20px 16px}
+    .stat{border-right:0;padding:0}
+    .fig{font-size:42px}
+    /* the gantt stacks: label above, bar below, full width */
+    .grow{grid-template-columns:1fr;gap:8px;padding:14px 0}
+    .edu{height:auto;display:grid;gap:10px}
+    .edu .pin{position:static;transform:none;width:auto;text-align:left;display:grid;grid-template-columns:14px 1fr;align-items:start;gap:8px}
+    .edu .dot{margin:4px 0 0}
+    .axis b:nth-of-type(even){display:none}
+  }
+  @media (max-width:430px){
+    .band{padding:26px 16px}
+    h1{font-size:34px}
+    h2{font-size:27px}
+    .fig{font-size:38px}
+    .stat-row{grid-template-columns:1fr 1fr;gap:18px 12px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+
+  @media print{
+    body{background:#fff}
+    .wrap{box-shadow:none;max-width:none;background:#fff}
+    .band{break-inside:avoid;border-top:1px solid #ccc;padding:20px 0}
+    .card,.tint{background:#fff}
+    .chart-card{break-inside:avoid}
+    .tbl[open] table{display:table}
+    .tbl summary{display:none}
+    .tbl table{display:table}
+    .pills a{border-color:#bbb}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="band" style="background:radial-gradient(120% 90% at 85% 0%,rgba(196,100,47,.12),transparent 60%),repeating-linear-gradient(0deg,transparent 0 43px,rgba(43,38,32,.045) 43px 44px)">
+    <a class="home-link" href="../index.html" style="margin-bottom:26px">&larr; Home</a>
+    <div class="kicker">&#9670; Field notes &middot; Pune, India &middot; 18&deg;34&prime;N &middot; August 2026</div>
+    <h1>A developer, measured.</h1>
+    <p class="lede">Nine years of roles, a stack rated honestly, and the things that actually shipped &mdash; counted rather than claimed. The miles, the books and the words are in here too, because they come out of the same twenty-four hours.</p>
+    <p class="scrawl" style="margin-top:24px;transform:rotate(-2deg)">every number on this page comes from something I published &#8617;</p>
+  </div>
+  <div class="band tint">
+    <div class="eyebrow" style="margin-bottom:20px">The developer</div>
+    <div class="stat-row"><div class="stat"><div class="fig">9<span class="u"></span></div><div class="cap">Years in roles &middot; since 2017</div></div><div class="stat"><div class="fig">5.5<span class="u"></span></div><div class="cap">Years shipping software full time</div></div><div class="stat"><div class="fig">2<span class="u"></span></div><div class="cap">Degrees &middot; B.Tech CS + Tech &amp; Policy</div></div><div class="stat"><div class="fig">11<span class="u"></span></div><div class="cap">Certifications earned</div></div></div>
+    <div class="rule"></div>
+    <div class="eyebrow" style="margin-bottom:20px">The same person, off the clock</div>
+    <div class="stat-row"><div class="stat"><div class="fig b">21<span class="u"></span></div><div class="cap">Races run &middot; 10K to a 50K ultra</div></div><div class="stat"><div class="fig b">18<span class="u"></span></div><div class="cap">Forts &amp; summits trekked</div></div><div class="stat"><div class="fig b">48<span class="u"></span></div><div class="cap">Books finished &middot; EN + मराठी</div></div><div class="stat"><div class="fig b">86,789<span class="u"></span></div><div class="cap">Words published since Aug 2020</div></div></div>
+    <p class="src">Sources: repo README &middot; personal-site <code>src/data/atlasStats.js</code> (synced 2026-07-11) &middot; writing ledger generated 2026-07-31.</p>
+  </div>
+  <div class="band">
+    <div class="kicker">&#9670; The career spine</div>
+    <h2>Six roles, two degrees, one continuous line.</h2>
+    <p class="note">Design and media work at college overlapped the first engineering job; the AI-governance fellowship overlapped the current one. Bars are drawn to scale on a 2017&ndash;2026 axis.</p>
+    <div class="gantt">
+      <div class="grow"><div class="who"><b>Team Lead</b><span>RIT Media Cell</span></div><div><div class="track"><div class="rail"></div><div class="bar" style="left:6.77%;width:18.48%" title="RIT Media Cell &middot; Sep 2017 - Jun 2019"><span>Sep 2017 &ndash; Jun 2019</span></div></div><p class="blurb">Projects, events, workshops, design team</p></div></div>
+      <div class="grow"><div class="who"><b>Social Media Manager</b><span>VivekVahini</span></div><div><div class="track"><div class="rail"></div><div class="bar" style="left:13.43%;width:27.78%" title="VivekVahini &middot; May 2018 - Jan 2021"><span>May 2018 &ndash; Jan 2021</span></div></div><p class="blurb">Ran social media at RIT</p></div></div>
+      <div class="grow"><div class="who"><b>Designer</b><span>TEDxRajarambapuIT</span></div><div><div class="track"><div class="rail"></div><div class="bar" style="left:23.54%;width:6.67%" title="TEDxRajarambapuIT &middot; May 2019 - Dec 2019"><span>May 2019 &ndash; Dec 2019</span></div></div><p class="blurb">Lead designer for the event</p></div></div>
+      <div class="grow"><div class="who"><b>Software Engineer</b><span>Emtec Inc.</span></div><div><div class="track"><div class="rail"></div><div class="bar" style="left:40.40%;width:31.62%" title="Emtec Inc. &middot; Jan 2021 - Feb 2024"><span>Jan 2021 &ndash; Feb 2024</span></div></div><p class="blurb">Next.js &middot; GraphQL &middot; Spring Boot &middot; FastAPI</p></div></div>
+      <div class="grow"><div class="who"><b>Software Developer</b><span>Bridgenext</span></div><div><div class="track"><div class="rail"></div><div class="bar" style="left:72.02%;width:25.25%" title="Bridgenext &middot; Feb 2024 - now"><span class="r">Feb 2024 &ndash; now</span></div></div><p class="blurb">DORA metrics &middot; ETL &middot; GitLab API &middot; AWS Lambda &middot; Databricks &middot; Tableau</p></div></div>
+      <div class="grow"><div class="who"><b>NAST Fellow</b><span>Takshashila Institution</span></div><div><div class="track"><div class="rail"></div><div class="bar res" style="left:73.23%;width:11.82%" title="Takshashila Institution &middot; Apr 2024 - May 2025"><span class="r">Apr 2024 &ndash; May 2025</span></div></div><p class="blurb">Citizen agency in AI governance for public deployments</p></div></div>
+      <div class="axis"><i style="left:0.00%"></i><b style="left:0.00%">2017</b><i style="left:10.10%"></i><b style="left:10.10%">2018</b><i style="left:20.20%"></i><b style="left:20.20%">2019</b><i style="left:30.30%"></i><b style="left:30.30%">2020</b><i style="left:40.40%"></i><b style="left:40.40%">2021</b><i style="left:50.51%"></i><b style="left:50.51%">2022</b><i style="left:60.61%"></i><b style="left:60.61%">2023</b><i style="left:70.71%"></i><b style="left:70.71%">2024</b><i style="left:80.81%"></i><b style="left:80.81%">2025</b><i style="left:90.91%"></i><b style="left:90.91%">2026</b></div>
+      <div class="edu"><div class="pin" style="left:44.95%"><div class="dot"></div><b>B.Tech, Computer Science</b><span>RIT Sangli</span></div><div class="pin" style="left:76.26%"><div class="dot"></div><b>Grad. Certificate, Tech &amp; Policy</b><span>Takshashila</span></div></div>
+      <div class="legend"><span><i style="background:#c4642f"></i>Built &amp; shipped</span><span><i style="background:#2a78d6"></i>Researched</span><span><i style="background:#f4ecda;border:2px solid #c4642f;transform:rotate(45deg)"></i>Degree awarded</span></div>
+    </div>
+    <details class="tbl"><summary>Show the numbers</summary><table><thead><tr><th>Role</th><th>Organisation</th><th>Period</th><th>Kind</th></tr></thead><tbody><tr><td>Team Lead</td><td>RIT Media Cell</td><td>Sep 2017 &ndash; Jun 2019</td><td>Build</td></tr><tr><td>Social Media Manager</td><td>VivekVahini</td><td>May 2018 &ndash; Jan 2021</td><td>Build</td></tr><tr><td>Designer</td><td>TEDxRajarambapuIT</td><td>May 2019 &ndash; Dec 2019</td><td>Build</td></tr><tr><td>Software Engineer</td><td>Emtec Inc.</td><td>Jan 2021 &ndash; Feb 2024</td><td>Build</td></tr><tr><td>Software Developer</td><td>Bridgenext</td><td>Feb 2024 &ndash; now</td><td>Build</td></tr><tr><td>NAST Fellow</td><td>Takshashila Institution</td><td>Apr 2024 &ndash; May 2025</td><td>Research</td></tr></tbody></table></details>
+  </div>
+  <div class="band tint">
+    <div class="kicker">&#9670; The stack, rated honestly</div>
+    <h2>Five bars means I&rsquo;d teach it. Two means I&rsquo;ve shipped with it and would look things up.</h2>
+    <p class="note">Self-assessed, carried over verbatim from the star ratings on my GitHub profile &mdash; no rounding up. Bar length is the only encoding; there is one colour here because there is one series.</p>
+    <div class="stack-grid">
+      <div><div class="eyebrow" style="margin-bottom:6px">Languages</div>
+        <div class="skill"><span class="nm">Python</span><span class="segs" role="img" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="skill"><span class="nm">JavaScript</span><span class="segs" role="img" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">SQL</span><span class="segs" role="img" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">Java</span><span class="segs" role="img" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">C</span><span class="segs" role="img" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">TypeScript</span><span class="segs" role="img" aria-label="2 of 5"><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i></span></div>
+      </div>
+      <div><div class="eyebrow" style="margin-bottom:6px">Data &amp; analytics</div>
+        <div class="skill"><span class="nm">Pandas</span><span class="segs" role="img" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="skill"><span class="nm">Snowflake</span><span class="segs" role="img" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">Databricks</span><span class="segs" role="img" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">Apache Kafka</span><span class="segs" role="img" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">Tableau</span><span class="segs" role="img" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">NumPy</span><span class="segs" role="img" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span></div>
+      </div>
+      <div><div class="eyebrow" style="margin-bottom:6px">Cloud &amp; DevOps</div>
+        <div class="skill"><span class="nm">AWS</span><span class="segs" role="img" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">Terraform</span><span class="segs" role="img" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">Kubernetes</span><span class="segs" role="img" aria-label="2 of 5"><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i></span></div>
+      </div>
+      <div><div class="eyebrow" style="margin-bottom:6px">AI &amp; tooling</div>
+        <div class="skill"><span class="nm">Cursor</span><span class="segs" role="img" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">Google Gemini</span><span class="segs" role="img" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span></div>
+        <div class="skill"><span class="nm">MCP</span><span class="segs" role="img" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span></div>
+      </div>
+    </div>
+    <div class="rule"></div>
+    <div class="eyebrow">Also in daily use &mdash; shipped with, deliberately unrated</div>
+    <div class="chips"><span>React</span><span>Next.js</span><span>Node.js</span><span>FastAPI</span><span>Express</span><span>GraphQL</span><span>Spring Boot</span><span>Tailwind CSS</span><span>Cloudflare</span><span>Git</span><span>PostgreSQL</span><span>Supabase</span></div>
+    <details class="tbl"><summary>Show the numbers</summary><table><thead><tr><th>Tool</th><th>Level</th><th>Rating</th></tr></thead><tbody><tr><td>Python</td><td>&#9679;&#9679;&#9679;&#9679;&#9679;</td><td>5 / 5</td></tr><tr><td>JavaScript</td><td>&#9679;&#9679;&#9679;&#9679;&#9675;</td><td>4 / 5</td></tr><tr><td>SQL</td><td>&#9679;&#9679;&#9679;&#9679;&#9675;</td><td>4 / 5</td></tr><tr><td>Java</td><td>&#9679;&#9679;&#9679;&#9675;&#9675;</td><td>3 / 5</td></tr><tr><td>C</td><td>&#9679;&#9679;&#9679;&#9675;&#9675;</td><td>3 / 5</td></tr><tr><td>TypeScript</td><td>&#9679;&#9679;&#9675;&#9675;&#9675;</td><td>2 / 5</td></tr><tr><td>Pandas</td><td>&#9679;&#9679;&#9679;&#9679;&#9679;</td><td>5 / 5</td></tr><tr><td>Snowflake</td><td>&#9679;&#9679;&#9679;&#9679;&#9675;</td><td>4 / 5</td></tr><tr><td>Databricks</td><td>&#9679;&#9679;&#9679;&#9675;&#9675;</td><td>3 / 5</td></tr><tr><td>Apache Kafka</td><td>&#9679;&#9679;&#9679;&#9675;&#9675;</td><td>3 / 5</td></tr><tr><td>Tableau</td><td>&#9679;&#9679;&#9679;&#9675;&#9675;</td><td>3 / 5</td></tr><tr><td>NumPy</td><td>&#9679;&#9679;&#9679;&#9675;&#9675;</td><td>3 / 5</td></tr><tr><td>AWS</td><td>&#9679;&#9679;&#9679;&#9679;&#9675;</td><td>4 / 5</td></tr><tr><td>Terraform</td><td>&#9679;&#9679;&#9679;&#9675;&#9675;</td><td>3 / 5</td></tr><tr><td>Kubernetes</td><td>&#9679;&#9679;&#9675;&#9675;&#9675;</td><td>2 / 5</td></tr><tr><td>Cursor</td><td>&#9679;&#9679;&#9679;&#9679;&#9675;</td><td>4 / 5</td></tr><tr><td>Google Gemini</td><td>&#9679;&#9679;&#9679;&#9675;&#9675;</td><td>3 / 5</td></tr><tr><td>MCP</td><td>&#9679;&#9679;&#9679;&#9675;&#9675;</td><td>3 / 5</td></tr></tbody></table></details>
+  </div>
+  <div class="band">
+    <div class="kicker">&#9670; The writing ledger</div>
+    <h2>86,789 words, counted one post at a time.</h2>
+    <p class="note">Every long-form post published on Substack and WordPress since 17 August 2020, word-counted straight from both platforms&rsquo; APIs &mdash; 93 posts, averaging 933 words. Separate from the 1,631-post micro-blog archive. Words and posts are two different scales, so they get two charts rather than two axes on one.</p>
+    <div class="chart-grid" style="margin-top:22px">
+<div class="card chart-card"><h3>Words per year</h3><p class="note">2026 alone accounts for 62% of everything written.</p><svg class="chart" viewBox="0 0 460 212" role="img" aria-labelledby="cwt cwd">
+<title id="cwt">Words published per year, 2020 to 2026</title><desc id="cwd">Column chart. 2020: 6,251. 2021: 1,844. 2022: 2,277. 2023: 3,864. 2024: 3,070. 2025: 15,338. 2026: 54,145 words.</desc>
+<line class="axline" x1="46" x2="446" y1="174.0" y2="174.0"/>
+<text class="tick" x="37" y="177.5" text-anchor="end">0</text>
+<line class="gridline" x1="46" x2="446" y1="97.0" y2="97.0"/>
+<text class="tick" x="37" y="100.5" text-anchor="end">30,000</text>
+<line class="gridline" x1="46" x2="446" y1="20.0" y2="20.0"/>
+<text class="tick" x="37" y="23.5" text-anchor="end">60,000</text>
+<path class="mark" d="M57.4,174.0 L57.4,162.0 Q57.4,158.0 61.4,158.0 L87.7,158.0 Q91.7,158.0 91.7,162.0 L91.7,174.0 Z" fill="#c4642f"><title>2020: 6251 words</title></path>
+<text class="cat" x="74.6" y="198" text-anchor="middle">2020</text>
+<path class="mark" d="M114.6,174.0 L114.6,173.3 Q114.6,169.3 118.6,169.3 L144.9,169.3 Q148.9,169.3 148.9,173.3 L148.9,174.0 Z" fill="#c4642f"><title>2021: 1844 words</title></path>
+<text class="cat" x="131.7" y="198" text-anchor="middle">2021</text>
+<path class="mark" d="M171.7,174.0 L171.7,172.2 Q171.7,168.2 175.7,168.2 L202.0,168.2 Q206.0,168.2 206.0,172.2 L206.0,174.0 Z" fill="#c4642f"><title>2022: 2277 words</title></path>
+<text class="cat" x="188.9" y="198" text-anchor="middle">2022</text>
+<path class="mark" d="M228.9,174.0 L228.9,168.1 Q228.9,164.1 232.9,164.1 L259.1,164.1 Q263.1,164.1 263.1,168.1 L263.1,174.0 Z" fill="#c4642f"><title>2023: 3864 words</title></path>
+<text class="cat" x="246.0" y="198" text-anchor="middle">2023</text>
+<path class="mark" d="M286.0,174.0 L286.0,170.1 Q286.0,166.1 290.0,166.1 L316.3,166.1 Q320.3,166.1 320.3,170.1 L320.3,174.0 Z" fill="#c4642f"><title>2024: 3070 words</title></path>
+<text class="cat" x="303.1" y="198" text-anchor="middle">2024</text>
+<path class="mark" d="M343.1,174.0 L343.1,138.6 Q343.1,134.6 347.1,134.6 L373.4,134.6 Q377.4,134.6 377.4,138.6 L377.4,174.0 Z" fill="#c4642f"><title>2025: 15338 words</title></path>
+<text class="cat" x="360.3" y="198" text-anchor="middle">2025</text>
+<path class="mark" d="M400.3,174.0 L400.3,39.0 Q400.3,35.0 404.3,35.0 L430.6,35.0 Q434.6,35.0 434.6,39.0 L434.6,174.0 Z" fill="#c4642f"><title>2026: 54145 words</title></path>
+<text class="cat" x="417.4" y="198" text-anchor="middle">2026</text>
+<text class="dlabel" x="417.4" y="27.0" text-anchor="middle">54,145</text>
+</svg><details class="tbl"><summary>Show the numbers</summary><table><thead><tr><th>Year</th><th>Words</th></tr></thead><tbody><tr><td>2020</td><td>6,251</td></tr><tr><td>2021</td><td>1,844</td></tr><tr><td>2022</td><td>2,277</td></tr><tr><td>2023</td><td>3,864</td></tr><tr><td>2024</td><td>3,070</td></tr><tr><td>2025</td><td>15,338</td></tr><tr><td>2026</td><td>54,145</td></tr></tbody></table></details></div><div class="card chart-card"><h3>Posts per year</h3><p class="note">The 100 Days To Offload challenge is what 2026 looks like.</p><svg class="chart" viewBox="0 0 460 212" role="img" aria-labelledby="cpt cpd">
+<title id="cpt">Posts published per year, 2020 to 2026</title><desc id="cpd">Column chart. 2020: 7. 2021: 9. 2022: 5. 2023: 6. 2024: 4. 2025: 12. 2026: 50 posts.</desc>
+<line class="axline" x1="46" x2="446" y1="174.0" y2="174.0"/>
+<text class="tick" x="37" y="177.5" text-anchor="end">0</text>
+<line class="gridline" x1="46" x2="446" y1="97.0" y2="97.0"/>
+<text class="tick" x="37" y="100.5" text-anchor="end">25</text>
+<line class="gridline" x1="46" x2="446" y1="20.0" y2="20.0"/>
+<text class="tick" x="37" y="23.5" text-anchor="end">50</text>
+<path class="mark" d="M57.4,174.0 L57.4,156.4 Q57.4,152.4 61.4,152.4 L87.7,152.4 Q91.7,152.4 91.7,156.4 L91.7,174.0 Z" fill="#c4642f"><title>2020: 7 posts</title></path>
+<text class="cat" x="74.6" y="198" text-anchor="middle">2020</text>
+<path class="mark" d="M114.6,174.0 L114.6,150.3 Q114.6,146.3 118.6,146.3 L144.9,146.3 Q148.9,146.3 148.9,150.3 L148.9,174.0 Z" fill="#c4642f"><title>2021: 9 posts</title></path>
+<text class="cat" x="131.7" y="198" text-anchor="middle">2021</text>
+<path class="mark" d="M171.7,174.0 L171.7,162.6 Q171.7,158.6 175.7,158.6 L202.0,158.6 Q206.0,158.6 206.0,162.6 L206.0,174.0 Z" fill="#c4642f"><title>2022: 5 posts</title></path>
+<text class="cat" x="188.9" y="198" text-anchor="middle">2022</text>
+<path class="mark" d="M228.9,174.0 L228.9,159.5 Q228.9,155.5 232.9,155.5 L259.1,155.5 Q263.1,155.5 263.1,159.5 L263.1,174.0 Z" fill="#c4642f"><title>2023: 6 posts</title></path>
+<text class="cat" x="246.0" y="198" text-anchor="middle">2023</text>
+<path class="mark" d="M286.0,174.0 L286.0,165.7 Q286.0,161.7 290.0,161.7 L316.3,161.7 Q320.3,161.7 320.3,165.7 L320.3,174.0 Z" fill="#c4642f"><title>2024: 4 posts</title></path>
+<text class="cat" x="303.1" y="198" text-anchor="middle">2024</text>
+<path class="mark" d="M343.1,174.0 L343.1,141.0 Q343.1,137.0 347.1,137.0 L373.4,137.0 Q377.4,137.0 377.4,141.0 L377.4,174.0 Z" fill="#c4642f"><title>2025: 12 posts</title></path>
+<text class="cat" x="360.3" y="198" text-anchor="middle">2025</text>
+<path class="mark" d="M400.3,174.0 L400.3,24.0 Q400.3,20.0 404.3,20.0 L430.6,20.0 Q434.6,20.0 434.6,24.0 L434.6,174.0 Z" fill="#c4642f"><title>2026: 50 posts</title></path>
+<text class="cat" x="417.4" y="198" text-anchor="middle">2026</text>
+<text class="dlabel" x="417.4" y="12.0" text-anchor="middle">50</text>
+</svg><details class="tbl"><summary>Show the numbers</summary><table><thead><tr><th>Year</th><th>Posts</th></tr></thead><tbody><tr><td>2020</td><td>7</td></tr><tr><td>2021</td><td>9</td></tr><tr><td>2022</td><td>5</td></tr><tr><td>2023</td><td>6</td></tr><tr><td>2024</td><td>4</td></tr><tr><td>2025</td><td>12</td></tr><tr><td>2026</td><td>50</td></tr></tbody></table></details></div><div class="card chart-card"><h3>Where the words went</h3><p class="note">Substack carries three quarters of the volume; the WordPress blog is the older, looser half.</p><svg class="chart" viewBox="0 0 460 104" role="img" aria-labelledby="cplt cpld">
+<title id="cplt">Words by publishing platform</title><desc id="cpld">Stacked bar. Substack: 65,366 words across 68 posts, 75%. WordPress: 21,423 words across 25 posts, 25%.</desc>
+<rect x="4.0" y="12" width="10" height="10" rx="2" fill="#c4642f"/>
+<text class="cat" x="19.0" y="21">Substack &middot; 68 posts</text>
+<rect x="199.6" y="12" width="10" height="10" rx="2" fill="#2a78d6"/>
+<text class="cat" x="214.6" y="21">WordPress &middot; 25 posts</text>
+<rect class="mark" x="4.0" y="46" width="338.4" height="30" rx="3" fill="#c4642f"><title>Substack &middot; 68 posts: 65,366 words</title></rect>
+<text class="seglabel" x="13.0" y="66">65,366 words</text>
+<text class="segpct" x="13.0" y="96">75%</text>
+<rect class="mark" x="344.4" y="46" width="111.6" height="30" rx="3" fill="#2a78d6"><title>WordPress &middot; 25 posts: 21,423 words</title></rect>
+<text class="seglabel" x="353.4" y="66">21,423 words</text>
+<text class="segpct" x="353.4" y="96">25%</text>
+</svg><details class="tbl"><summary>Show the numbers</summary><table><thead><tr><th>Platform</th><th>Posts</th><th>Words</th></tr></thead><tbody><tr><td>Substack</td><td>68</td><td>65,366</td></tr><tr><td>WordPress</td><td>25</td><td>21,423</td></tr></tbody></table></details></div><div class="card chart-card"><h3>How long a post runs</h3><p class="note">The house length is 500&ndash;1,500 words. The longest ran 3,504.</p><svg class="chart" viewBox="0 0 460 212" role="img" aria-labelledby="clt cld">
+<title id="clt">Distribution of post length</title><desc id="cld">Column chart of posts by word count band. Under 250: 10. 250 to 499: 4. 500 to 999: 41. 1,000 to 1,499: 30. 1,500 to 1,999: 7. 2,000 plus: 1.</desc>
+<line class="axline" x1="46" x2="446" y1="174.0" y2="174.0"/>
+<text class="tick" x="37" y="177.5" text-anchor="end">0</text>
+<line class="gridline" x1="46" x2="446" y1="97.0" y2="97.0"/>
+<text class="tick" x="37" y="100.5" text-anchor="end">25</text>
+<line class="gridline" x1="46" x2="446" y1="20.0" y2="20.0"/>
+<text class="tick" x="37" y="23.5" text-anchor="end">50</text>
+<path class="mark" d="M59.3,174.0 L59.3,147.2 Q59.3,143.2 63.3,143.2 L95.3,143.2 Q99.3,143.2 99.3,147.2 L99.3,174.0 Z" fill="#c4642f"><title><250: 10 posts</title></path>
+<text class="cat" x="79.3" y="198" text-anchor="middle">&lt;250</text>
+<path class="mark" d="M126.0,174.0 L126.0,165.7 Q126.0,161.7 130.0,161.7 L162.0,161.7 Q166.0,161.7 166.0,165.7 L166.0,174.0 Z" fill="#c4642f"><title>250–499: 4 posts</title></path>
+<text class="cat" x="146.0" y="198" text-anchor="middle">250–499</text>
+<path class="mark" d="M192.7,174.0 L192.7,51.7 Q192.7,47.7 196.7,47.7 L228.7,47.7 Q232.7,47.7 232.7,51.7 L232.7,174.0 Z" fill="#c4642f"><title>500–999: 41 posts</title></path>
+<text class="cat" x="212.7" y="198" text-anchor="middle">500–999</text>
+<text class="dlabel" x="212.7" y="39.7" text-anchor="middle">41</text>
+<path class="mark" d="M259.3,174.0 L259.3,85.6 Q259.3,81.6 263.3,81.6 L295.3,81.6 Q299.3,81.6 299.3,85.6 L299.3,174.0 Z" fill="#c4642f"><title>1k–1.5k: 30 posts</title></path>
+<text class="cat" x="279.3" y="198" text-anchor="middle">1k–1.5k</text>
+<path class="mark" d="M326.0,174.0 L326.0,156.4 Q326.0,152.4 330.0,152.4 L362.0,152.4 Q366.0,152.4 366.0,156.4 L366.0,174.0 Z" fill="#c4642f"><title>1.5k–2k: 7 posts</title></path>
+<text class="cat" x="346.0" y="198" text-anchor="middle">1.5k–2k</text>
+<path class="mark" d="M392.7,174.0 L392.7,174.0 Q392.7,170.9 395.7,170.9 L429.6,170.9 Q432.7,170.9 432.7,174.0 L432.7,174.0 Z" fill="#c4642f"><title>2k+: 1 posts</title></path>
+<text class="cat" x="412.7" y="198" text-anchor="middle">2k+</text>
+</svg><details class="tbl"><summary>Show the numbers</summary><table><thead><tr><th>Words</th><th>Posts</th></tr></thead><tbody><tr><td>&lt;250</td><td>10</td></tr><tr><td>250–499</td><td>4</td></tr><tr><td>500–999</td><td>41</td></tr><tr><td>1k–1.5k</td><td>30</td></tr><tr><td>1.5k–2k</td><td>7</td></tr><tr><td>2k+</td><td>1</td></tr></tbody></table></details></div>    </div>
+    <p class="src">Generated 2026-07-31 from the Substack archive API and the WordPress.com REST API.</p>
+  </div>
+  <div class="band tint">
+    <div class="kicker">&#9670; What actually shipped</div>
+    <h2>Eight things that went live, and what each one really is.</h2>
+    <div class="grid2" style="margin-top:22px">
+      <div class="card proj"><div class="kick">React 18 &middot; Vite &middot; Supabase &middot; Cloudflare Pages</div><h3>Personal site &middot; v11.2.0</h3><p>A living digital garden, not a portfolio: ~24 public routes over 12 Postgres tables, with two interchangeable front doors sharing one content source.</p><a class="tlink" href="https://daredavil.pages.dev">Visit the site &rarr;</a></div>
+      <div class="card proj"><div class="kick">SVG world map &middot; GSAP &middot; WebAudio</div><h3>The Wanderer&rsquo;s Atlas</h3><p>The site&rsquo;s gamified front door — an illustrated 2.5D world of six regions, seven quests, three achievements and five easter eggs, shipped as sixteen phases behind a feature flag.</p><a class="tlink" href="https://daredavil.pages.dev">Enter the world &rarr;</a></div>
+      <div class="card proj"><div class="kick">React 18 &middot; Web Audio API</div><h3>The Wanderer&rsquo;s Digital Escape</h3><p>A ~15-minute narrative browser game about digital wellbeing: four worlds, four meters, and a personal Flourishing Score at the end.</p><a class="tlink" href="../digital-wellbeing/index.html">Play it &rarr;</a></div>
+      <div class="card proj"><div class="kick">Chart.js &middot; vanilla JS</div><h3>Adivasi Survey Dashboard</h3><p>Bilingual (मराठी ⇄ EN) dashboard of a 281-household Pawra community survey across seven Nandurbar villages — 28 charts.</p><a class="tlink" href="../yung-data/index.html">Open the dashboard &rarr;</a></div>
+      <div class="card proj"><div class="kick">Next.js &middot; Firebase &middot; Express</div><h3>RunLog</h3><p>&ldquo;Your digital wall of medals&rdquo; — a marathon portfolio tracker for athletes who want their races in one place.</p><a class="tlink" href="https://run-folio.vercel.app">Live &rarr;</a></div>
+      <div class="card proj"><div class="kick">React</div><h3>RunSmart</h3><p>Generates full- and half-marathon training plans from a runner&rsquo;s time trial, so the plan fits the runner rather than the other way round.</p><a class="tlink" href="https://runningplan1.netlify.app">Live &rarr;</a></div>
+      <div class="card proj"><div class="kick">Static HTML &middot; hand-built SVG</div><h3>The Writing Ledger</h3><p>Six years of blog posts counted word by word from the Substack and WordPress APIs, rolled up by month, year, platform and post length.</p><a class="tlink" href="https://daredavil.pages.dev/writing-ledger.html">Read the ledger &rarr;</a></div>
+      <div class="card proj"><div class="kick">React &middot; Firebase</div><h3>Social-Ape &amp; Expense Manager</h3><p>Earlier builds: a social platform for human apes, and a Firebase expense tracker written for a construction firm&rsquo;s day-to-day books.</p><a class="tlink" href="https://github.com/daredavil01">GitHub &rarr;</a></div>
+    </div>
+  </div>
+  <div class="band">
+    <div class="kicker">&#9670; The counterweight</div>
+    <h2>The hours that aren&rsquo;t spent at a keyboard.</h2>
+    <p class="note">Endurance, altitude and reading are not a hobbies footnote here &mdash; they are where the discipline that shows up in the work gets built, and they are measured just as carefully.</p>
+    <div class="chart-grid" style="margin-top:22px">
+<div class="card chart-card"><h3>Races per year</h3><p class="note">2024 was the peak year: eight races, including the step up to the ultra distance.</p><svg class="chart" viewBox="0 0 460 212" role="img" aria-labelledby="crt crd">
+<title id="crt">Races run per year, 2023 to 2026</title><desc id="crd">Column chart. 2023: 1 race. 2024: 8. 2025: 7. 2026: 4 races so far.</desc>
+<line class="axline" x1="46" x2="446" y1="174.0" y2="174.0"/>
+<text class="tick" x="37" y="177.5" text-anchor="end">0</text>
+<line class="gridline" x1="46" x2="446" y1="97.0" y2="97.0"/>
+<text class="tick" x="37" y="100.5" text-anchor="end">4</text>
+<line class="gridline" x1="46" x2="446" y1="20.0" y2="20.0"/>
+<text class="tick" x="37" y="23.5" text-anchor="end">8</text>
+<path class="mark" d="M74.0,174.0 L74.0,158.8 Q74.0,154.8 78.0,154.8 L114.0,154.8 Q118.0,154.8 118.0,158.8 L118.0,174.0 Z" fill="#2a78d6"><title>2023: 1 races</title></path>
+<text class="cat" x="96.0" y="198" text-anchor="middle">2023</text>
+<path class="mark" d="M174.0,174.0 L174.0,24.0 Q174.0,20.0 178.0,20.0 L214.0,20.0 Q218.0,20.0 218.0,24.0 L218.0,174.0 Z" fill="#2a78d6"><title>2024: 8 races</title></path>
+<text class="cat" x="196.0" y="198" text-anchor="middle">2024</text>
+<text class="dlabel" x="196.0" y="12.0" text-anchor="middle">8</text>
+<path class="mark" d="M274.0,174.0 L274.0,43.2 Q274.0,39.2 278.0,39.2 L314.0,39.2 Q318.0,39.2 318.0,43.2 L318.0,174.0 Z" fill="#2a78d6"><title>2025: 7 races</title></path>
+<text class="cat" x="296.0" y="198" text-anchor="middle">2025</text>
+<path class="mark" d="M374.0,174.0 L374.0,101.0 Q374.0,97.0 378.0,97.0 L414.0,97.0 Q418.0,97.0 418.0,101.0 L418.0,174.0 Z" fill="#2a78d6"><title>2026: 4 races</title></path>
+<text class="cat" x="396.0" y="198" text-anchor="middle">2026</text>
+</svg><details class="tbl"><summary>Show the numbers</summary><table><thead><tr><th>Year</th><th>Races</th></tr></thead><tbody><tr><td>2023</td><td>1</td></tr><tr><td>2024</td><td>8</td></tr><tr><td>2025</td><td>7</td></tr><tr><td>2026</td><td>4</td></tr></tbody></table></details></div><div class="card chart-card"><h3>48 books, by genre</h3><p class="note">Technology and AI together are the largest block, but they don&rsquo;t have the shelf to themselves.</p><svg class="chart" viewBox="0 0 460 228" role="img" aria-labelledby="cgt cgd">
+<title id="cgt">Books read by genre</title><desc id="cgd">Horizontal bar chart. Technology 18, Social 11, AI 10, Fiction 10, Politics 7, Philosophy 6, Non-fiction 6, Psychology 5.</desc>
+<line class="axline" x1="92" x2="92" y1="6" y2="222"/>
+<path class="mark" d="M92.0,13.0 L416.0,13.0 Q420.0,13.0 420.0,17.0 L420.0,22.0 Q420.0,26.0 416.0,26.0 L92.0,26.0 Z" fill="#c4642f"><title>Technology: 18 books</title></path>
+<text class="cat" x="83" y="23.0" text-anchor="end">Technology</text>
+<text class="dlabel" x="428.0" y="23.0">18</text>
+<path class="mark" d="M92.0,40.0 L288.4,40.0 Q292.4,40.0 292.4,44.0 L292.4,49.0 Q292.4,53.0 288.4,53.0 L92.0,53.0 Z" fill="#c4642f"><title>Social: 11 books</title></path>
+<text class="cat" x="83" y="50.0" text-anchor="end">Social</text>
+<text class="dlabel" x="300.4" y="50.0">11</text>
+<path class="mark" d="M92.0,67.0 L270.2,67.0 Q274.2,67.0 274.2,71.0 L274.2,76.0 Q274.2,80.0 270.2,80.0 L92.0,80.0 Z" fill="#c4642f"><title>AI: 10 books</title></path>
+<text class="cat" x="83" y="77.0" text-anchor="end">AI</text>
+<text class="dlabel" x="282.2" y="77.0">10</text>
+<path class="mark" d="M92.0,94.0 L270.2,94.0 Q274.2,94.0 274.2,98.0 L274.2,103.0 Q274.2,107.0 270.2,107.0 L92.0,107.0 Z" fill="#c4642f"><title>Fiction: 10 books</title></path>
+<text class="cat" x="83" y="104.0" text-anchor="end">Fiction</text>
+<text class="dlabel" x="282.2" y="104.0">10</text>
+<path class="mark" d="M92.0,121.0 L215.6,121.0 Q219.6,121.0 219.6,125.0 L219.6,130.0 Q219.6,134.0 215.6,134.0 L92.0,134.0 Z" fill="#c4642f"><title>Politics: 7 books</title></path>
+<text class="cat" x="83" y="131.0" text-anchor="end">Politics</text>
+<text class="dlabel" x="227.6" y="131.0">7</text>
+<path class="mark" d="M92.0,148.0 L197.3,148.0 Q201.3,148.0 201.3,152.0 L201.3,157.0 Q201.3,161.0 197.3,161.0 L92.0,161.0 Z" fill="#c4642f"><title>Philosophy: 6 books</title></path>
+<text class="cat" x="83" y="158.0" text-anchor="end">Philosophy</text>
+<text class="dlabel" x="209.3" y="158.0">6</text>
+<path class="mark" d="M92.0,175.0 L197.3,175.0 Q201.3,175.0 201.3,179.0 L201.3,184.0 Q201.3,188.0 197.3,188.0 L92.0,188.0 Z" fill="#c4642f"><title>Non-fiction: 6 books</title></path>
+<text class="cat" x="83" y="185.0" text-anchor="end">Non-fiction</text>
+<text class="dlabel" x="209.3" y="185.0">6</text>
+<path class="mark" d="M92.0,202.0 L179.1,202.0 Q183.1,202.0 183.1,206.0 L183.1,211.0 Q183.1,215.0 179.1,215.0 L92.0,215.0 Z" fill="#c4642f"><title>Psychology: 5 books</title></path>
+<text class="cat" x="83" y="212.0" text-anchor="end">Psychology</text>
+<text class="dlabel" x="191.1" y="212.0">5</text>
+</svg><details class="tbl"><summary>Show the numbers</summary><table><thead><tr><th>Genre</th><th>Books</th></tr></thead><tbody><tr><td>Technology</td><td>18</td></tr><tr><td>Social</td><td>11</td></tr><tr><td>AI</td><td>10</td></tr><tr><td>Fiction</td><td>10</td></tr><tr><td>Politics</td><td>7</td></tr><tr><td>Philosophy</td><td>6</td></tr><tr><td>Non-fiction</td><td>6</td></tr><tr><td>Psychology</td><td>5</td></tr></tbody></table></details></div>    </div>
+    <div class="grid3" style="margin-top:16px">
+      <div class="card"><div class="eyebrow">Personal bests</div><div style="margin-top:10px"><div class="fig b" style="font-size:38px">5:05<span class="u"> hrs</span></div><div class="cap" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6a5d49;margin-top:6px">Full marathon &middot; Tata Mumbai 2026</div></div><div style="margin-top:14px"><div class="fig b" style="font-size:38px">1:59<span class="u"> hrs</span></div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6a5d49;margin-top:6px">Half marathon &middot; Hyderabad 2025</div></div><div style="margin-top:14px"><div class="fig b" style="font-size:38px">0:55<span class="u"> min</span></div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6a5d49;margin-top:6px">10K &middot; IPA Neerathon 2026</div></div></div>
+      <div class="card"><div class="eyebrow">On foot, at altitude</div><div class="fig" style="margin-top:10px">18</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6a5d49;margin-top:6px">Sahyadri forts &amp; summits</div><p class="blurb" style="margin-top:14px">The hardest was <b>Panhala to Pawankhind</b> &mdash; a 22-hour overnight traverse. Then Katraj to Sinhgad (6 hrs, hard), Kalavantin Durga, Jivdhan, and Bhimashankar to Padarwadi.</p></div>
+      <div class="card"><div class="eyebrow">Five cities, five years</div><div class="fig b" style="margin-top:10px">21</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6a5d49;margin-top:6px">Races, 10K to 50K ultra</div><p class="blurb" style="margin-top:14px">Pune &middot; Mumbai &middot; Hyderabad &middot; Satara &middot; Lonavala. Five mornings a week of training, whatever the release calendar says.</p></div>
+    </div>
+  </div>
+  <div class="band tint">
+    <div class="kicker">&#9670; Research &amp; credentials</div>
+    <h2>Building things, and thinking about what gets built.</h2>
+    <div class="grid2" style="margin-top:22px">
+      <div class="card"><h3>NAST Fellow &middot; Takshashila Institution</h3><p class="note" style="margin-top:8px">Apr 2024 &ndash; May 2025. Research on <b>citizen agency in AI governance</b> for public deployments &mdash; how people keep meaningful say over automated systems that are rolled out to them rather than chosen by them. The Network for Advanced Study of Technology &amp; Geopolitics fellowship sits alongside the day job, not instead of it.</p></div>
+      <div class="card"><h3>Education</h3><p class="note" style="margin-top:8px"><b>Graduate Certificate in Technology &amp; Policy</b> &mdash; The Takshashila Institution, 2024.<br><b>B.Tech, Computer Science</b> &mdash; Rajarambapu Institute of Technology, Sangli, 2021.</p><div class="rule" style="margin:16px 0"></div><p class="note"><b>11 certifications</b> to date, including the Politics &amp; Policy of Artificial Intelligence.</p></div>
+    </div>
+    <p class="scrawl" style="margin-top:26px;transform:rotate(-1.5deg)">not just building things &mdash; thinking hard about what we build, and why &#8617;</p>
+  </div>
+  <div class="band">
+    <div class="eyebrow">Where I write, and where to find me</div>
+    <div class="pills"><a class="tlink" href="https://sankettambare.substack.com/">Substack</a><a class="tlink" href="https://daredavil453624413.wordpress.com/">WordPress</a><a class="tlink" href="https://medium.com/@daredavil">Medium</a><a class="tlink" href="https://dev.to/daredavil">Dev.to</a><a class="tlink" href="https://hashnode.com/@daredavil">Hashnode</a><a class="tlink" href="https://behance.net/daredavil">Behance</a><a class="tlink" href="https://www.linkedin.com/in/sankettambare/">LinkedIn</a><a class="tlink" href="https://twitter.com/i_daredavil">Twitter</a><a class="tlink" href="https://github.com/daredavil01">GitHub</a><a class="tlink" href="https://linktr.ee/daredavil">LinkTree</a><a class="tlink" href="mailto:sanket.tambare01@gmail.com">Email</a></div>
+    <div class="rule"></div>
+    <p class="scrawl" style="font-size:29px;transform:rotate(-2deg);margin-bottom:20px">&ldquo;Critically engaging with the world, one commit at a time.&rdquo;</p>
+    <div style="margin-top:4px"><a class="home-link" href="../index.html">&larr; Back to the almanac</a></div>
+    <p class="src" style="margin-top:22px">One hand-written HTML file &mdash; no build step, no framework, no charting library. Every chart is inline SVG on a two-colour palette checked for colour-vision deficiency; every chart carries its own table of numbers. &copy; Sanket Tambare, intentionally designed with Claude Design.</p>
+  </div>
+</div>
+</body>
+</html>
