@@ -107,6 +107,7 @@ I care deeply about the intersection of **technology, society, and public policy
 | Project | Description | Tech | Links |
 |---------|-------------|------|-------|
 | 🏅 **RunLog** | *"Your digital wall of medals"* — marathon portfolio tracker for athletes | Next.js · Firebase · Express | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=vercel&logoColor=white)](https://run-folio.vercel.app) |
+| 🏅 **RunFolio** | *"Every finish, framed"* — race portfolio for runners: photo-first race pages, one shareable link, and four free calculators | Astro 7 · Cloudflare Workers · Supabase · R2 | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://runfolio.sankettambare.in) [![Overview](https://img.shields.io/badge/Overview-4CAF50?style=flat-square)](./docs/runfolio-overview.html) |
 | 🏃 **RunSmart** | *"Get me my Training Plan!"* — auto-generates FM/HM plans from time trials | React | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=netlify&logoColor=white)](https://runningplan1.netlify.app) |
 | 🌐 **Personal Website** | This portfolio — about, projects, books, sports, treks, now page & more | React · Tailwind · React Router | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://daredavil.pages.dev) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/personal-website) |
 | 🧘 **The Wanderer's Digital Escape** | Narrative browser game about digital wellbeing — 4 worlds, 4 meters, a personal Flourishing Score | React 18 · Web Audio API | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/digital-wellbeing) |
@@ -128,6 +129,7 @@ This profile repo doubles as a small static site — `index.html` is the hub tha
 | [`about.html`](./about.html) | Interactive 12-slide **About Me** deck (engineering · research · running · trekking · writing · reading · now) |
 | [`digital-wellbeing/`](./digital-wellbeing) | **The Wanderer's Digital Escape** — narrative digital-wellbeing game + Three.js self-orb prototype |
 | [`yung-data/`](./yung-data) | **Adivasi Survey Dashboard** — bilingual data viz of a Nandurbar household survey |
+| [`docs/runfolio-overview.html`](./docs/runfolio-overview.html) | **RunFolio — every finish, framed** — six-panel intro deck for the race portfolio, with hand-drawn SVG illustrations |
 | [`docs/personal-website-redesign.html`](./docs/personal-website-redesign.html) | **The Wanderer's Atlas** — design dossier for the personal-website redesign |
 | [`docs/yung-foundation-site-overview.html`](./docs/yung-foundation-site-overview.html) | **Yung Foundation website, end to end** — every route, every editable surface, and the architecture underneath |
 | [`docs/antyodaya-website-overview.html`](./docs/antyodaya-website-overview.html) | **Antyodaya website — features & technical specification** — public routes, admin CMS, data model, architecture |
