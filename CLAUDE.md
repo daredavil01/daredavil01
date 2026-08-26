@@ -41,13 +41,20 @@ page, deck, game, dashboard, prototype, or project directory — update
 
 Specifically:
 
-1. Add (or update/remove) a card in the **"Things I built you can play with"**
-   grid on the Home view of `index.html` (`<section id="view-home">`), with a
-   small mono kicker (format · tech), a title, and a one-sentence description,
-   matching the existing `.idx-card` markup.
+1. Add (or update/remove) a card in the right band on the Home view of
+   `index.html` (`<section id="view-home">`), with a small mono kicker
+   (format · tech), a title, and a one-sentence description, matching the
+   existing `.idx-card` markup. There are two bands:
+   - **"Things I built you can play with"** — apps, games, dashboards and
+     decks you can open and use (repo-hosted first, then off-repo work).
+   - **"Websites I've designed & built"** — whole sites and the dossiers,
+     specs and architecture write-ups behind them.
 2. Link directly to the entry file with a relative path (e.g.
    `new-project/index.html`, not `new-project/`), so links work on any host.
-3. Mirror the change in `README.md` — the **Projects** table and the
+   Off-repo work links to its live URL or GitHub repo instead, with a
+   trailing `↗` in the kicker to mark it as leaving the site.
+3. Mirror the change in `README.md` — the matching **Projects** sub-table
+   (*Apps, games & data* or *Websites I've designed & built*) and the
    **In This Repo** section — and in the directory tree above.
 
 A page that isn't linked from the homepage is considered unfinished.
@@ -73,9 +80,13 @@ A page that isn't linked from the homepage is considered unfinished.
   `digital-wellbeing/index.html`, `yung-data/index.html`) without updating
   every internal link and noting the break in the commit message — external
   links may point at them.
-- The Home view's "Chapters of the almanac" section and the Stats view's
-  in-page sub-nav (About/Miles/Shelf/Treks/Notes/Now/Stats) route via
+- The Home view's "Chapters of the almanac" section is split in two: "The
+  pages, here in the almanac" holds everything served from this repo (the
+  `data-nav` views plus repo pages), and "Out on the live site ↗" holds
+  links that leave it. Those, the Stats view's in-page sub-nav
+  (About/Miles/Shelf/Treks/Notes/Now/Stats) and the Home bands route via
   `data-nav`; everything else not hosted in this repo (Projects, Résumé,
   Challenges, Changelog, Contact, and each view's "open the full page"
-  link) points out to the live site at `daredavil.pages.dev` — keep new
-  off-repo content wired the same way rather than building it here.
+  link) points out to the live site at `sankettambare.in` — keep new
+  off-repo content wired the same way rather than building it here, and add
+  it under the "Out on the live site" group.

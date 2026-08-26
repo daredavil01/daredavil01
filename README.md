@@ -6,7 +6,7 @@
 
 <br/>
 
-[![Portfolio](https://img.shields.io/badge/🌐_Portfolio-daredavil.pages.dev-4A90E2?style=for-the-badge)](https://daredavil.pages.dev)
+[![Portfolio](https://img.shields.io/badge/🌐_Portfolio-sankettambare.in-4A90E2?style=for-the-badge)](https://sankettambare.in)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-sankettambare-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sankettambare/)
 [![Twitter](https://img.shields.io/badge/Twitter-@i__daredavil-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/i_daredavil)
 [![Email](https://img.shields.io/badge/Email-sanket.tambare01@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:sanket.tambare01@gmail.com)
@@ -104,19 +104,25 @@ I care deeply about the intersection of **technology, society, and public policy
 
 ## 🚀 Projects
 
+### 🛠️ Apps, games & data
+
 | Project | Description | Tech | Links |
 |---------|-------------|------|-------|
-| 🏅 **RunLog** | *"Your digital wall of medals"* — marathon portfolio tracker for athletes | Next.js · Firebase · Express | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=vercel&logoColor=white)](https://run-folio.vercel.app) |
-| 🏅 **RunFolio** | *"Every finish, framed"* — race portfolio for runners: photo-first race pages, one shareable link, and four free calculators | Astro 7 · Cloudflare Workers · Supabase · R2 | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://runfolio.sankettambare.in) [![Overview](https://img.shields.io/badge/Overview-4CAF50?style=flat-square)](./docs/runfolio-overview.html) |
 | 🏃 **RunSmart** | *"Get me my Training Plan!"* — auto-generates FM/HM plans from time trials | React | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=netlify&logoColor=white)](https://runningplan1.netlify.app) |
-| 🌐 **Personal Website** | This portfolio — about, projects, books, sports, treks, now page & more | React · Tailwind · React Router | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://daredavil.pages.dev) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/personal-website) |
 | 🧘 **The Wanderer's Digital Escape** | Narrative browser game about digital wellbeing — 4 worlds, 4 meters, a personal Flourishing Score | React 18 · Web Audio API | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/digital-wellbeing) |
 | 📈 **A Developer, Measured** | Scroll-through infographic of my developer story — roles, rated stack, shipped work, and the miles/books/words that share the same hours | Static HTML · inline SVG | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/developer-infographic) |
 | 📊 **Adivasi Survey Dashboard** | Bilingual (Marathi/English) dashboard of a 281-household Pawra community survey in Nandurbar | Chart.js · Vanilla JS | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/yung-data) |
-| 🌳 **Yung Foundation Website** | Bilingual (Marathi-default) NGO site — 15 routes, zero JavaScript on the public pages, staff-editable content | Astro 7 · Supabase | [![Overview](https://img.shields.io/badge/Overview-4CAF50?style=flat-square)](./docs/yung-foundation-site-overview.html) |
-| 🪶 **Antyodaya Website** | Marathi-first NGO site for a Gadchiroli foundation — 15 public routes plus a 23-screen staff CMS | Astro 7 · React 19 · Supabase · Cloudflare Workers | [![Spec](https://img.shields.io/badge/Spec-4CAF50?style=flat-square)](./docs/antyodaya-website-overview.html) |
 | 🐒 **Social-Ape** | Social media platform for human apes | React · Firebase | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/social-explorers-client) |
 | 💸 **Expense Manager** | Firebase-based expense tracking app for construction firms | React · Firebase | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/expense-mgmt-webapp) |
+
+### 🌐 Websites I've designed & built
+
+| Website | Description | Tech | Links |
+|---------|-------------|------|-------|
+| 🌐 **Personal Website** | This portfolio — about, projects, books, sports, treks, now page & more | React · Tailwind · React Router | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://sankettambare.in) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/personal-website) [![Dossier](https://img.shields.io/badge/Dossier-4CAF50?style=flat-square)](./docs/personal-website-redesign.html) |
+| 🏅 **RunFolio** | *"Every finish, framed"* — race portfolio for runners: photo-first race pages read as a grid, ledger or statistics, Strava import, one shareable link, and four free calculators | Astro 7 · Cloudflare Workers · Supabase · R2 | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://runfolio.sankettambare.in) [![Overview](https://img.shields.io/badge/Overview-4CAF50?style=flat-square)](./docs/runfolio-overview.html) |
+| 🌳 **Yung Foundation Website** | Bilingual (Marathi-default) NGO site — 15 routes, zero JavaScript on the public pages, staff-editable content | Astro 7 · Supabase | [![Overview](https://img.shields.io/badge/Overview-4CAF50?style=flat-square)](./docs/yung-foundation-site-overview.html) |
+| 🪶 **Antyodaya Website** | Marathi-first NGO site for a Gadchiroli foundation — 15 public routes plus a 23-screen staff CMS | Astro 7 · React 19 · Supabase · Cloudflare Workers | [![Spec](https://img.shields.io/badge/Spec-4CAF50?style=flat-square)](./docs/antyodaya-website-overview.html) |
 
 ---
 
@@ -140,21 +146,21 @@ This profile repo doubles as a small static site — `index.html` is the hub tha
 
 ## 🌐 Explore My Personal Site
 
-> **[daredavil.pages.dev](https://daredavil.pages.dev)** — Built with React 18 · Tailwind CSS · Cloudflare Pages
+> **[sankettambare.in](https://sankettambare.in)** — Built with React 18 · Tailwind CSS · Cloudflare Pages
 
 <div>
 
-[![About](https://img.shields.io/badge/👤_About_Me-4A90E2?style=for-the-badge)](https://daredavil.pages.dev/about)
-[![Resume](https://img.shields.io/badge/📄_Resume-6C757D?style=for-the-badge)](https://daredavil.pages.dev/resume)
-[![Projects](https://img.shields.io/badge/🚀_Projects-28A745?style=for-the-badge)](https://daredavil.pages.dev/projects)
-[![Books](https://img.shields.io/badge/📚_Books_(43+)-E97627?style=for-the-badge)](https://daredavil.pages.dev/books)
-[![Sports](https://img.shields.io/badge/🏃_Sports_(20+_Races)-FF5733?style=for-the-badge)](https://daredavil.pages.dev/sports)
-[![Treks](https://img.shields.io/badge/🏔️_Treks_(15+)-4CAF50?style=for-the-badge)](https://daredavil.pages.dev/treks)
-[![Now](https://img.shields.io/badge/📍_What_I'm_Doing_Now-9B59B6?style=for-the-badge)](https://daredavil.pages.dev/now)
-[![Stats](https://img.shields.io/badge/📊_Life_Stats-17A2B8?style=for-the-badge)](https://daredavil.pages.dev/stats)
-[![Challenges](https://img.shields.io/badge/🎯_Challenges-DC3545?style=for-the-badge)](https://daredavil.pages.dev/challenges)
-[![Changelog](https://img.shields.io/badge/📝_Changelog-FFC107?style=for-the-badge)](https://daredavil.pages.dev/changelog)
-[![Contact](https://img.shields.io/badge/✉️_Contact-0D6EFD?style=for-the-badge)](https://daredavil.pages.dev/contact)
+[![About](https://img.shields.io/badge/👤_About_Me-4A90E2?style=for-the-badge)](https://sankettambare.in/about)
+[![Resume](https://img.shields.io/badge/📄_Resume-6C757D?style=for-the-badge)](https://sankettambare.in/resume)
+[![Projects](https://img.shields.io/badge/🚀_Projects-28A745?style=for-the-badge)](https://sankettambare.in/projects)
+[![Books](https://img.shields.io/badge/📚_Books_(43+)-E97627?style=for-the-badge)](https://sankettambare.in/books)
+[![Sports](https://img.shields.io/badge/🏃_Sports_(20+_Races)-FF5733?style=for-the-badge)](https://sankettambare.in/sports)
+[![Treks](https://img.shields.io/badge/🏔️_Treks_(15+)-4CAF50?style=for-the-badge)](https://sankettambare.in/treks)
+[![Now](https://img.shields.io/badge/📍_What_I'm_Doing_Now-9B59B6?style=for-the-badge)](https://sankettambare.in/now)
+[![Stats](https://img.shields.io/badge/📊_Life_Stats-17A2B8?style=for-the-badge)](https://sankettambare.in/stats)
+[![Challenges](https://img.shields.io/badge/🎯_Challenges-DC3545?style=for-the-badge)](https://sankettambare.in/challenges)
+[![Changelog](https://img.shields.io/badge/📝_Changelog-FFC107?style=for-the-badge)](https://sankettambare.in/changelog)
+[![Contact](https://img.shields.io/badge/✉️_Contact-0D6EFD?style=for-the-badge)](https://sankettambare.in/contact)
 
 </div>
 
