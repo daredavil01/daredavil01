@@ -108,7 +108,6 @@ I care deeply about the intersection of **technology, society, and public policy
 
 | Project | Description | Tech | Links |
 |---------|-------------|------|-------|
-| 🏅 **RunLog** | *"Your digital wall of medals"* — marathon portfolio tracker for athletes | Next.js · Firebase · Express | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=vercel&logoColor=white)](https://run-folio.vercel.app) |
 | 🏃 **RunSmart** | *"Get me my Training Plan!"* — auto-generates FM/HM plans from time trials | React | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=netlify&logoColor=white)](https://runningplan1.netlify.app) |
 | 🧘 **The Wanderer's Digital Escape** | Narrative browser game about digital wellbeing — 4 worlds, 4 meters, a personal Flourishing Score | React 18 · Web Audio API | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/digital-wellbeing) |
 | 📈 **A Developer, Measured** | Scroll-through infographic of my developer story — roles, rated stack, shipped work, and the miles/books/words that share the same hours | Static HTML · inline SVG | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/developer-infographic) |
