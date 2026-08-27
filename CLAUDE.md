@@ -22,6 +22,9 @@ docs/
   yung-foundation-site-overview.html  Yung Foundation site: routes + architecture
   antyodaya-website-overview.html Antyodaya site: features + technical spec
   runfolio-overview.html          RunFolio: the race-portfolio intro deck
+presentations/
+  e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
+                                   ethanol/sugar trade-off and how the site was built
 developer-infographic/
   index.html                      "A Developer, Measured" — scroll-through
                                    infographic (career gantt, rated stack,

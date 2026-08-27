@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A 12-slide deck on E20 ka Chakravyuha: India’s 20% ethanol blending milestone, the 2026 sugar price surge, and how the data story behind it was built.">
+<title>E20 ka Chakravyuha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+
+<style>
+/* ---------------------------------------------------------------------------
+ * Tokens lifted from the project's own src/styles/tokens.css, so the deck and
+ * the site it describes speak the same visual language.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#fbfaf7; --surface:#fffdf8; --surface-alt:#f5f2e8; --surface-sunk:#efebdf;
+  --rule:#e3dfd2; --rule-soft:#efebdf;
+  --text:#16150f; --text-prose:#3b372c; --text-secondary:#4a463a;
+  --text-muted:#625d4e; --text-faint:#6f6857;
+  --inverse-bg:#16150f; --inverse-text:#cfc9b8; --inverse-heading:#fbfaf7; --inverse-accent:#e39b5f;
+  --sugar:#1170aa; --sugar-ink:#0e5480;
+  --ethanol:#c85200; --ethanol-ink:#8f3b00;
+  --grain:#529d6b; --grain-ink:#2e7d4f;
+  --water:#4e79a7;
+  --conflict:#c03434; --conflict-bg:#fbedec; --conflict-border:#f2cfcd;
+  --warn-bg:#fdf0e4; --warn-border:#f0d7bc; --warn-ink:#8f3b00;
+  --focus:#2563eb; --trackline:#dad5c7;
+  --grid:#e8e4d8;
+
+  --font-display:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --font-body:'Source Sans 3',system-ui,-apple-system,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#16150f; --surface:#1e1c15; --surface-alt:#26241b; --surface-sunk:#2a2720;
+    --rule:#3a362b; --rule-soft:#2e2b22;
+    --text:#f2efe6; --text-prose:#ded9cb; --text-secondary:#cfc9b8;
+    --text-muted:#b3ad9c; --text-faint:#9a9484;
+    --inverse-bg:#0d0c08; --inverse-text:#cfc9b8; --inverse-heading:#fbfaf7; --inverse-accent:#e39b5f;
+    --sugar:#5ca8dc; --sugar-ink:#8fc6ea;
+    --ethanol:#e07b32; --ethanol-ink:#e39b5f;
+    --grain:#79c293; --grain-ink:#9bd4b0;
+    --water:#86b0d6;
+    --conflict:#f08a8a; --conflict-bg:#2c1917; --conflict-border:#56302d;
+    --warn-bg:#2a1d10; --warn-border:#573c22; --warn-ink:#e39b5f;
+    --focus:#7aa7ff; --trackline:#3a362b;
+    --grid:#2e2b22;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#16150f; --surface:#1e1c15; --surface-alt:#26241b; --surface-sunk:#2a2720;
+  --rule:#3a362b; --rule-soft:#2e2b22;
+  --text:#f2efe6; --text-prose:#ded9cb; --text-secondary:#cfc9b8;
+  --text-muted:#b3ad9c; --text-faint:#9a9484;
+  --inverse-bg:#0d0c08; --inverse-text:#cfc9b8; --inverse-heading:#fbfaf7; --inverse-accent:#e39b5f;
+  --sugar:#5ca8dc; --sugar-ink:#8fc6ea;
+  --ethanol:#e07b32; --ethanol-ink:#e39b5f;
+  --grain:#79c293; --grain-ink:#9bd4b0;
+  --water:#86b0d6;
+  --conflict:#f08a8a; --conflict-bg:#2c1917; --conflict-border:#56302d;
+  --warn-bg:#2a1d10; --warn-border:#573c22; --warn-ink:#e39b5f;
+  --focus:#7aa7ff; --trackline:#3a362b;
+  --grid:#2e2b22;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  height:100dvh;
+  scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+@media (prefers-reduced-motion: reduce){ .track{scroll-behavior:auto;} }
+
+.slide{
+  flex:0 0 100%;
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+  height:100dvh;
+  overflow-y:auto;
+  padding:clamp(1.4rem,3.4vw,3.2rem) clamp(1.1rem,4vw,4rem) 5.2rem;
+  display:flex;
+  flex-direction:column;
+  gap:clamp(.8rem,1.6vw,1.4rem);
+}
+.inner{width:100%;max-width:1120px;margin:0 auto;}
+.slide > .inner{flex:1 1 auto;display:flex;flex-direction:column;gap:clamp(.7rem,1.5vw,1.3rem);justify-content:center;}
+
+/* --- Slide furniture ----------------------------------------------------- */
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:.66rem;
+  font-weight:500;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+}
+.eyebrow .num{color:var(--ethanol-ink);}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--rule);}
+
+h1{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:clamp(2.4rem,6.4vw,4.6rem);
+  line-height:1.02;
+  letter-spacing:-.015em;
+  margin:0;
+  text-wrap:balance;
+}
+h2{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:clamp(1.6rem,3.6vw,2.6rem);
+  line-height:1.12;
+  letter-spacing:-.01em;
+  margin:0;
+  text-wrap:balance;
+}
+h3{
+  font-family:var(--font-mono);
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  margin:0 0 .55rem;
+}
+p{margin:0;color:var(--text-prose);}
+.lead{
+  font-size:clamp(1.02rem,1.55vw,1.28rem);
+  line-height:1.5;
+  color:var(--text-prose);
+  max-width:62ch;
+}
+.note{font-size:.82rem;color:var(--text-muted);max-width:70ch;}
+strong{font-weight:600;color:var(--text);}
+em{font-style:italic;}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+
+/* --- Title slide --------------------------------------------------------- */
+.title-slide{justify-content:center;}
+.title-slide .inner{gap:1.6rem;}
+.title-rule{height:3px;background:var(--ethanol);width:88px;border-radius:1px;}
+.title-meta{
+  display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;
+  color:var(--text-muted);text-transform:uppercase;
+}
+.title-meta a{color:var(--ethanol-ink);text-decoration:none;border-bottom:1px solid currentColor;}
+.title-meta a:hover{color:var(--ethanol);}
+
+/* --- Grids --------------------------------------------------------------- */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1rem,2.6vw,2.4rem);align-items:start;}
+.two-wide{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.7rem,1.6vw,1.3rem);}
+@media (max-width:860px){
+  .two,.two-wide,.three{grid-template-columns:minmax(0,1fr);}
+}
+
+/* --- Stat blocks --------------------------------------------------------- */
+.stats{display:flex;flex-wrap:wrap;gap:clamp(1rem,3vw,2.6rem);}
+.stat{min-width:0;}
+.stat .v{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:clamp(1.9rem,4.2vw,3rem);
+  line-height:1;
+  letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;
+  display:block;
+}
+.stat .k{
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-muted);display:block;margin-top:.45rem;max-width:22ch;line-height:1.45;
+}
+.v.sugar{color:var(--sugar-ink);}
+.v.ethanol{color:var(--ethanol-ink);}
+.v.grain{color:var(--grain-ink);}
+.v.ink{color:var(--text);}
+
+/* --- Cards / panels ------------------------------------------------------ */
+.panel{
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-radius:2px;
+  padding:clamp(.85rem,1.7vw,1.25rem);
+}
+.panel.sunk{background:var(--surface-alt);border-color:var(--rule-soft);}
+
+.ledger{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;}
+.ledger li{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:.7rem;
+  padding:.5rem 0;border-top:1px solid var(--rule-soft);
+  font-size:.9rem;color:var(--text-prose);
+}
+.ledger li:first-child{border-top:0;}
+.ledger .tag{
+  font-family:var(--font-mono);font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--text-faint);padding-top:.22rem;white-space:nowrap;
+}
+
+/* Argument columns — the site's own two-sided device */
+.arg{border-top:2px solid var(--rule);padding-top:.8rem;}
+.arg.govt{border-top-color:var(--sugar);}
+.arg.crit{border-top-color:var(--ethanol);}
+.arg h3{margin-bottom:.15rem;}
+.arg .who{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.08em;color:var(--text-faint);text-transform:uppercase;display:block;margin-bottom:.7rem;}
+.arg ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem;}
+.arg li{font-size:.9rem;line-height:1.45;color:var(--text-prose);padding-left:.9rem;position:relative;}
+.arg li::before{content:"";position:absolute;left:0;top:.58em;width:5px;height:1px;background:var(--text-faint);}
+
+.flag{
+  display:inline-flex;align-items:baseline;gap:.4rem;
+  background:var(--conflict-bg);border:1px solid var(--conflict-border);
+  color:var(--conflict);border-radius:2px;padding:.12rem .4rem;
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;
+}
+.callout{
+  background:var(--warn-bg);border-left:2px solid var(--warn-border);
+  padding:.6rem .85rem;font-size:.85rem;color:var(--warn-ink);
+}
+
+/* --- Figures ------------------------------------------------------------- */
+figure{margin:0;display:flex;flex-direction:column;gap:.5rem;min-width:0;}
+figure svg{width:100%;height:auto;display:block;}
+figcaption{font-size:.76rem;color:var(--text-muted);line-height:1.45;}
+.legend{display:flex;flex-wrap:wrap;gap:.4rem 1rem;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);}
+.legend span{display:inline-flex;align-items:center;gap:.35rem;}
+.swatch{width:10px;height:10px;border-radius:1px;display:inline-block;}
+.sw-sugar{background:var(--sugar);} .sw-ethanol{background:var(--ethanol);} .sw-grain{background:var(--grain);}
+.sw-hollow{background:var(--paper);border:1.5px solid var(--ethanol);border-radius:50%;}
+
+/* SVG paint via classes so both themes resolve from the same token set. */
+.f-sugar{fill:var(--sugar);} .f-ethanol{fill:var(--ethanol);} .f-grain{fill:var(--grain);}
+.f-paper{fill:var(--paper);} .f-none{fill:none;}
+.k-sugar{stroke:var(--sugar);} .k-ethanol{stroke:var(--ethanol);}
+.k-grid{stroke:var(--grid);} .k-rule{stroke:var(--rule);}
+.t-lab{fill:var(--text-muted);font-family:var(--font-mono);font-size:7px;letter-spacing:.05em;}
+.t-val{fill:var(--text);font-family:var(--font-mono);font-size:8.5px;font-weight:500;}
+.t-val.up{fill:var(--ethanol-ink);}
+.t-note{fill:var(--text-faint);font-family:var(--font-mono);font-size:6.5px;letter-spacing:.05em;}
+
+/* --- Route comparison (sugar vs fuel per tonne of cane) ------------------- */
+.routes{display:flex;flex-direction:column;gap:.9rem;}
+.route{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:.9rem;align-items:center;}
+@media (max-width:560px){ .route{grid-template-columns:minmax(0,1fr);gap:.3rem;} }
+.route .name{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-secondary);}
+.bars{display:flex;flex-direction:column;gap:.28rem;min-width:0;}
+.bar{display:flex;align-items:center;gap:.5rem;}
+.bar .fill{height:11px;border-radius:1px;flex:0 0 auto;}
+.bar .fill.sugar{background:var(--sugar);}
+.bar .fill.fuel{
+  background:repeating-linear-gradient(45deg,var(--ethanol) 0 3px,transparent 3px 6px),var(--warn-bg);
+  border:1px solid var(--ethanol);
+}
+.bar .n{font-family:var(--font-mono);font-size:.68rem;color:var(--text-muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
+
+/* --- Feature and stack lists --------------------------------------------- */
+.feat{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem;}
+.feat li{font-size:.88rem;line-height:1.45;color:var(--text-prose);padding-left:1.1rem;position:relative;}
+.feat li::before{content:"";position:absolute;left:0;top:.55em;width:7px;height:7px;border:1.5px solid var(--ethanol);border-radius:50%;}
+.feat li b{font-weight:600;color:var(--text);}
+
+.stack{display:flex;flex-direction:column;gap:.75rem;}
+.stack .row{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:.9rem;align-items:baseline;padding-bottom:.7rem;border-bottom:1px solid var(--rule-soft);}
+.stack .row:last-child{border-bottom:0;padding-bottom:0;}
+@media (max-width:560px){ .stack .row{grid-template-columns:minmax(0,1fr);gap:.25rem;} }
+.stack .role{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;}
+.chip{
+  font-family:var(--font-mono);font-size:.7rem;
+  background:var(--surface-alt);border:1px solid var(--rule);
+  border-radius:2px;padding:.14rem .45rem;color:var(--text-secondary);white-space:nowrap;
+}
+.chip.hero{background:var(--warn-bg);border-color:var(--warn-border);color:var(--warn-ink);font-weight:500;}
+
+/* --- Pipeline ------------------------------------------------------------ */
+.pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:.5rem;}
+.pipe .box{
+  flex:1 1 8.5rem;min-width:8.5rem;
+  border:1px solid var(--rule);background:var(--surface);border-radius:2px;
+  padding:.6rem .7rem;display:flex;flex-direction:column;gap:.25rem;
+}
+.pipe .box.src{border-color:var(--sugar);}
+.pipe .box.out{border-color:var(--ethanol);}
+.pipe .box .t{font-family:var(--font-mono);font-size:.68rem;color:var(--text);font-weight:500;word-break:break-word;}
+.pipe .box .d{font-size:.7rem;color:var(--text-muted);line-height:1.35;}
+.pipe .arrow{display:flex;align-items:center;color:var(--text-faint);font-size:1rem;flex:0 0 auto;}
+@media (max-width:640px){ .pipe .arrow{transform:rotate(90deg);width:100%;justify-content:center;} .pipe .box{flex-basis:100%;} }
+
+/* --- Dial / simulator sketch --------------------------------------------- */
+.dials{display:flex;flex-direction:column;gap:.5rem;}
+.dial{display:grid;grid-template-columns:9.5rem minmax(0,1fr) 3.2rem;gap:.7rem;align-items:center;}
+@media (max-width:560px){ .dial{grid-template-columns:minmax(0,1fr) 3.2rem;} .dial .dname{grid-column:1/-1;} }
+.dname{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;color:var(--text-secondary);}
+.slot{height:4px;background:var(--trackline);border-radius:2px;position:relative;}
+.slot i{position:absolute;top:-4px;width:4px;height:12px;background:var(--text);border-radius:1px;}
+.dval{font-family:var(--font-mono);font-size:.72rem;color:var(--ethanol-ink);text-align:right;font-variant-numeric:tabular-nums;}
+.outs{display:flex;flex-wrap:wrap;gap:.35rem;}
+
+@media (max-width:560px){
+  .slide{padding:1.1rem 1.1rem 4.4rem;gap:.6rem;}
+  .slide > .inner{gap:.7rem;justify-content:flex-start;}
+  h2{font-size:1.42rem;}
+  .lead{font-size:1rem;}
+  .feat li,.arg li,.ledger li{font-size:.84rem;}
+  .stat .v{font-size:1.75rem;}
+  .stats{gap:.9rem 1.4rem;}
+  .two,.two-wide,.three{gap:.9rem;}
+}
+
+/* --- Bottom rail --------------------------------------------------------- */
+.rail{
+  position:fixed;left:0;right:0;bottom:0;
+  display:flex;align-items:center;gap:.75rem;
+  padding:.5rem clamp(1.1rem,4vw,4rem);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:blur(8px);
+  border-top:1px solid var(--rule);
+  z-index:10;
+}
+.rail button{
+  font-family:var(--font-mono);font-size:.72rem;
+  background:transparent;border:1px solid var(--rule);color:var(--text-secondary);
+  border-radius:2px;padding:.22rem .5rem;cursor:pointer;line-height:1.4;
+}
+.rail button:hover:not(:disabled){border-color:var(--text-muted);color:var(--text);}
+.rail button:disabled{opacity:.35;cursor:default;}
+.ticks{display:flex;gap:3px;flex:1;min-width:0;}
+.ticks button{
+  flex:1 1 0;min-width:0;height:16px;padding:0;border:0;background:transparent;cursor:pointer;
+  display:flex;align-items:center;
+}
+.ticks button::after{content:"";display:block;width:100%;height:2px;background:var(--trackline);border-radius:1px;}
+.ticks button[aria-current="true"]::after{background:var(--ethanol);height:3px;}
+.ticks button:hover::after{background:var(--text-muted);}
+.counter{font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
+
+/* --- Print --------------------------------------------------------------- */
+@media print{
+  .rail{display:none;}
+  .track{display:block;overflow:visible;height:auto;}
+  .slide{height:auto;min-height:auto;page-break-after:always;break-after:page;padding:1.5rem;overflow:visible;}
+}
+</style>
+</head>
+<body>
+<div class="track" id="track" tabindex="-1">
+
+  <!-- 01 ------------------------------------------------------------------ -->
+  <section class="slide title-slide" aria-label="Slide 1: Title">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">01</span><span>Independent data story · 2026</span></div>
+      <h1>E20 ka<br>Chakravyuha</h1>
+      <div class="title-rule"></div>
+      <p class="lead">India&rsquo;s 20% ethanol blending milestone, the sugar shortfall that arrived in
+      the same season, and how much the two have to do with each other.</p>
+      <div class="title-meta">
+        <span>Astro · React islands · TypeScript</span>
+        <span>10 routes · 9 charts · 51 sources</span>
+        <a href="https://e20-story.sankettambare.in">e20-story.sankettambare.in</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 2: Two facts, one season">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">02</span><span>The story</span></div>
+      <h2>Two facts landed in the same season</h2>
+      <div class="two two-wide">
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <p class="lead">India hit 20% ethanol blending <strong>five years early</strong>. In the same
+          season sugar production fell to a five-year low and retail price jumped from
+          &#8377;48 to &#8377;56 a kilo in a single month.</p>
+          <p class="note">The site exists to ask whether those two facts are connected &mdash; and how
+          much. It does not answer the question for you.</p>
+          <div class="stats">
+            <div class="stat"><span class="v ethanol">+&#8377;7.52</span><span class="k">Retail sugar, 20 Jul &rarr; 20 Aug 2026</span></div>
+            <div class="stat"><span class="v ink">+16%</span><span class="k">World price, Jun &rarr; Aug 2026</span></div>
+          </div>
+        </div>
+        <figure>
+          <svg viewBox="0 0 320 150" role="img" aria-label="All-India average retail sugar price: flat near 45 to 48 rupees a kilo from August 2024 to July 2026, then rising sharply to 55.70 rupees by 20 August 2026.">
+            <line x1="34" y1="118" x2="300" y2="118" class="k-rule" stroke-width="1"/>
+            <line x1="34" y1="24" x2="300" y2="24" class="k-grid" stroke-width="1" stroke-dasharray="2 3"/>
+            <path d="M34,108.6 L167,99.5 L288.7,89.9" class="f-none k-ethanol" stroke-width="1.6" stroke-dasharray="4 3"/>
+            <path d="M288.7,89.9 L300,39.4" class="f-none k-ethanol" stroke-width="2.4"/>
+            <circle cx="34" cy="108.6" r="3.2" class="f-paper k-ethanol" stroke-width="1.6"/>
+            <circle cx="167" cy="99.5" r="3.2" class="f-paper k-ethanol" stroke-width="1.6"/>
+            <circle cx="288.7" cy="89.9" r="3" class="f-ethanol"/>
+            <circle cx="300" cy="39.4" r="3.6" class="f-ethanol"/>
+            <text x="30" y="101" class="t-val">&#8377;45.40</text>
+            <text x="283" y="95" class="t-val" text-anchor="end">&#8377;48.18</text>
+            <text x="296" y="34" class="t-val up" text-anchor="end">&#8377;55.70</text>
+            <text x="34" y="132" class="t-lab">AUG 2024</text>
+            <text x="300" y="132" class="t-lab" text-anchor="end">AUG 2026</text>
+            <text x="167" y="143" class="t-note" text-anchor="middle">TWO YEARS AT ABOUT +3% A YEAR</text>
+          </svg>
+          <div class="legend">
+            <span><span class="swatch sw-hollow"></span>Back-cast, not observed</span>
+            <span><span class="swatch sw-ethanol"></span>Ministry series</span>
+          </div>
+          <figcaption>Ex-mill moved first: &#8377;47.50 to &#8377;62.00 in a fortnight, which the Food
+          Secretary called &ldquo;not based on fundamentals&rdquo;.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 3: Sugar">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">03</span><span>The story &middot; sugar</span></div>
+      <h2>Record exporter to importer in four seasons</h2>
+      <div class="two two-wide">
+        <figure>
+          <svg viewBox="0 0 320 152" role="img" aria-label="Indian sugar exports in lakh metric tonnes by season: 59.6, 70, a record 109.8 in 2021-22, 61, zero in 2023-24, 9, and 8 in 2025-26, alongside a 10 LMT import quota in 2025-26.">
+            <line x1="26" y1="104" x2="306" y2="104" class="k-rule" stroke-width="1"/>
+            <rect x="34"  y="64.9"  width="24" height="39.1" class="f-sugar"/>
+            <rect x="74"  y="58.1"  width="24" height="45.9" class="f-sugar"/>
+            <rect x="114" y="32"    width="24" height="72"   class="f-sugar"/>
+            <rect x="154" y="64"    width="24" height="40"   class="f-sugar"/>
+            <rect x="194" y="102.5" width="24" height="1.5"  class="f-sugar" opacity=".35"/>
+            <rect x="234" y="98.1"  width="24" height="5.9"  class="f-sugar"/>
+            <rect x="274" y="98.8"  width="24" height="5.2"  class="f-sugar"/>
+            <rect x="274" y="104"   width="24" height="6.6"  class="f-ethanol"/>
+            <text x="126" y="27"  class="t-val" text-anchor="middle">109.8</text>
+            <text x="206" y="99"  class="t-lab" text-anchor="middle">0</text>
+            <text x="286" y="122" class="t-note" text-anchor="middle">10 LMT IN</text>
+            <text x="46"  y="138" class="t-lab" text-anchor="middle">19-20</text>
+            <text x="86"  y="138" class="t-lab" text-anchor="middle">20-21</text>
+            <text x="126" y="138" class="t-lab" text-anchor="middle">21-22</text>
+            <text x="166" y="138" class="t-lab" text-anchor="middle">22-23</text>
+            <text x="206" y="138" class="t-lab" text-anchor="middle">23-24</text>
+            <text x="246" y="138" class="t-lab" text-anchor="middle">24-25</text>
+            <text x="286" y="138" class="t-lab" text-anchor="middle">25-26</text>
+            <text x="26" y="150" class="t-note">LMT EXPORTED</text>
+          </svg>
+          <figcaption>The August 2026 duty-free tariff-rate quota was the first import window since 2017.</figcaption>
+        </figure>
+        <div style="display:flex;flex-direction:column;gap:.9rem;">
+          <p>Red rot in Uttar Pradesh, top borer and waterlogging in Maharashtra cut gross
+          production to <strong>306 LMT</strong> against domestic consumption of about 285 &mdash; a
+          margin thin enough that a bad month matters.</p>
+          <p class="flag">&#9888; 306 LMT (Ministry) vs 343.5 LMT (ISMA) &mdash; both still circulating</p>
+          <div class="panel sunk">
+            <h3>Nine interventions</h3>
+            <p class="note" style="color:var(--text-prose);">Stock verification at mills, a dealer stock
+            limit, a bulk-consumer cap, a duty-free import quota, a customs exemption to give it
+            effect, a processing-deadline relaxation, an early crushing season &mdash;
+            <strong>five of the nine land between 19 and 21 August</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 4: The blending climb">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">04</span><span>The story &middot; ethanol</span></div>
+      <h2>A decade of nothing, then five years early</h2>
+      <div class="two two-wide">
+        <figure>
+          <svg viewBox="0 0 320 152" role="img" aria-label="Ethanol blending percentage by supply year: 1.5 percent in 2013-14, falling to 1.14, then climbing to 5 percent by 2018-19, 10 percent in 2021-22, and 20 percent in 2025-26.">
+            <line x1="30" y1="118" x2="300" y2="118" class="k-rule" stroke-width="1"/>
+            <line x1="30" y1="70"  x2="300" y2="70"  class="k-grid" stroke-width="1" stroke-dasharray="2 3"/>
+            <line x1="30" y1="22"  x2="300" y2="22"  class="k-grid" stroke-width="1" stroke-dasharray="2 3"/>
+            <path d="M30,110.8 L52.5,112.5" class="f-none k-ethanol" stroke-width="2"/>
+            <path d="M52.5,112.5 L142.5,94" class="f-none k-ethanol" stroke-width="1.6" stroke-dasharray="4 3"/>
+            <path d="M142.5,94 L187.5,79.1 L210,70 L232.5,60.1 L255,47.9 L277.5,26.6 L300,22" class="f-none k-ethanol" stroke-width="2.4" stroke-linejoin="round"/>
+            <circle cx="30" cy="110.8" r="2.6" class="f-ethanol"/>
+            <circle cx="210" cy="70" r="2.6" class="f-ethanol"/>
+            <circle cx="300" cy="22" r="4" class="f-ethanol"/>
+            <text x="300" y="15" class="t-val up" text-anchor="end">E20</text>
+            <text x="30" y="66" class="t-note">E10 &middot; JUN 2022, FIVE MONTHS EARLY</text>
+            <text x="30" y="104" class="t-val">1.5%</text>
+            <text x="30" y="132" class="t-lab">2013-14</text>
+            <text x="142.5" y="132" class="t-lab" text-anchor="middle">2018-19</text>
+            <text x="300" y="132" class="t-lab" text-anchor="end">2025-26</text>
+            <text x="97" y="146" class="t-note" text-anchor="middle">NO PUBLISHED SERIES</text>
+          </svg>
+          <figcaption>The dashed stretch is interpolated: our sources publish no annual series for
+          2015&ndash;2018.</figcaption>
+        </figure>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <p>For its first decade the programme barely moved &mdash; supply was unreliable and
+          administered prices too low to justify building a distillery. Interest-subvention
+          schemes financed <strong>368 new projects</strong>, and differential pricing made the
+          B-heavy and juice routes worth taking.</p>
+          <div class="stats">
+            <div class="stat"><span class="v ethanol">1,200</span><span class="k">Crore litres procured, ESY 2025-26 (from 38 in 2013-14)</span></div>
+            <div class="stat"><span class="v ink">2,019</span><span class="k">Crore litres of capacity across 478 units &mdash; about double what E20 needs</span></div>
+          </div>
+          <p class="note">From 1 April 2026, E20 is the sole standard petrol grade
+          (S.O. 860(E), 17 February 2026).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 5: The feedstock flip">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">05</span><span>The story &middot; ethanol</span></div>
+      <h2>The programme quietly stopped running on sugarcane</h2>
+      <div class="two two-wide">
+        <figure>
+          <svg viewBox="0 0 320 152" role="img" aria-label="Share of ethanol feedstock by supply year. Cane falls from 90.8 percent in 2019-20 to 33.1 percent in 2025-26, while grain rises from 9.2 percent to 66.9 percent, crossing over between 2022-23 and 2023-24.">
+            <rect x="34"  y="24" width="24" height="8.8"  class="f-grain"/><rect x="34"  y="32.8" width="24" height="87.2" class="f-ethanol"/>
+            <rect x="74"  y="24" width="24" height="13.2" class="f-grain"/><rect x="74"  y="37.2" width="24" height="82.8" class="f-ethanol"/>
+            <rect x="114" y="24" width="24" height="16"   class="f-grain"/><rect x="114" y="40"   width="24" height="80"   class="f-ethanol"/>
+            <rect x="154" y="24" width="24" height="26"   class="f-grain"/><rect x="154" y="50"   width="24" height="70"   class="f-ethanol"/>
+            <rect x="194" y="24" width="24" height="57.4" class="f-grain"/><rect x="194" y="81.4" width="24" height="38.6" class="f-ethanol"/>
+            <rect x="234" y="24" width="24" height="66.3" class="f-grain"/><rect x="234" y="90.3" width="24" height="29.7" class="f-ethanol"/>
+            <rect x="274" y="24" width="24" height="64.2" class="f-grain"/><rect x="274" y="88.2" width="24" height="31.8" class="f-ethanol"/>
+            <line x1="34" y1="72" x2="298" y2="72" class="k-grid" stroke-width="1" stroke-dasharray="3 3"/>
+            <line x1="186" y1="118" x2="186" y2="128" class="k-rule" stroke-width="1"/>
+            <text x="46"  y="132" class="t-lab" text-anchor="middle">19-20</text>
+            <text x="126" y="132" class="t-lab" text-anchor="middle">21-22</text>
+            <text x="206" y="132" class="t-lab" text-anchor="middle">23-24</text>
+            <text x="286" y="132" class="t-lab" text-anchor="middle">25-26</text>
+            <text x="186" y="146" class="t-note" text-anchor="middle">GRAIN OVERTAKES CANE</text>
+          </svg>
+          <div class="legend">
+            <span><span class="swatch sw-grain"></span>Grain feedstock</span>
+            <span><span class="swatch sw-ethanol"></span>Cane feedstock</span>
+            <span>Dashed rule marks 50%</span>
+          </div>
+        </figure>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <p class="lead">In 2019-20, nine litres in ten came from sugarcane. By ESY 2024-25,
+          grain supplied <strong>69%</strong> of the ethanol reaching oil marketing companies &mdash;
+          718 crore litres against 321 from cane.</p>
+          <p>It relieved pressure on sugar and transferred it onto maize, damaged foodgrain
+          and surplus FCI rice. India became a <strong>net maize importer in 2024</strong> for the
+          first time in decades, and 52 LMT of FCI rice went to ethanol in each of the last
+          two supply years.</p>
+          <div class="callout">This is the single most consequential fact about E20 &mdash; and the
+          least discussed.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 6: The trade-off">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">06</span><span>The story &middot; how they connect</span></div>
+      <h2>Every tonne of cane can be sugar or fuel. Not both.</h2>
+      <div class="two two-wide">
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <p>The mill&rsquo;s first decision is chemical, not political: how much sucrose to
+          crystallise, and how much to leave for the distillery next door. Three routes,
+          three very different prices.</p>
+          <div class="routes">
+            <div class="route">
+              <span class="name">C-heavy molasses</span>
+              <div class="bars">
+                <div class="bar"><span class="fill sugar" style="width:62%"></span><span class="n">115 kg sugar</span></div>
+                <div class="bar"><span class="fill fuel" style="width:13%"></span><span class="n">10.8 L ethanol &middot; nothing forgone</span></div>
+              </div>
+            </div>
+            <div class="route">
+              <span class="name">B-heavy molasses</span>
+              <div class="bars">
+                <div class="bar"><span class="fill sugar" style="width:51%"></span><span class="n">95 kg sugar</span></div>
+                <div class="bar"><span class="fill fuel" style="width:26%"></span><span class="n">21.75 L &middot; ~20 kg forgone</span></div>
+              </div>
+            </div>
+            <div class="route">
+              <span class="name">Direct cane juice</span>
+              <div class="bars">
+                <div class="bar"><span class="fill sugar" style="width:1%"></span><span class="n">no crystal at all</span></div>
+                <div class="bar"><span class="fill fuel" style="width:100%"></span><span class="n">84 L &middot; 115 kg forgone</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="note">Per tonne of cane. Every 100 kg of fermentable sugar yields about 60 litres
+          of ethanol.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="stats">
+            <div class="stat"><span class="v ethanol">~32 LMT</span><span class="k">Sugar forgone to ethanol, 2025-26</span></div>
+          </div>
+          <p>Which is roughly the size of the shortfall that opened the import window. That
+          is the critics&rsquo; central arithmetic &mdash; and it is arithmetic, not proof of cause.</p>
+          <div class="panel">
+            <h3>The ledger nobody prices</h3>
+            <p class="note" style="color:var(--text-prose);">A litre of cane ethanol carries about
+            <strong>3,000 litres</strong> of embedded irrigation water. Maize carries about
+            <strong>4,670</strong>; FCI rice more than <strong>10,000</strong>. Per hectare the ranking
+            reverses &mdash; which is why both framings keep appearing in the same argument.</p>
+          </div>
+          <p class="note">The prototype for this site showed grain as the water-cheap option. On the
+          sourced coefficients, it is not. The sources won.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 7: Both columns">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">07</span><span>The stance</span></div>
+      <h2>Both columns are sourced. Neither is our conclusion.</h2>
+      <div class="two">
+        <div class="arg govt">
+          <h3>The government&rsquo;s case</h3>
+          <span class="who">MoPNG &middot; DFPD &middot; NITI Aayog</span>
+          <ul>
+            <li>E20 arrived five years ahead of target, saving <strong>&#8377;1.97 lakh crore</strong> in
+            foreign exchange and substituting 316 lakh tonnes of crude.</li>
+            <li>Ethanol payments reach cane farmers directly &mdash; <strong>&#8377;1.66 lakh crore</strong>
+            so far &mdash; and have cleared long-standing mill arrears.</li>
+            <li>Diversion is capped season by season and lowered when sugar tightens, as it
+            was after the 2023-24 drought.</li>
+            <li>The 2026 price rise reflects disease and weather losses, not blending.</li>
+          </ul>
+        </div>
+        <div class="arg crit">
+          <h3>The critics&rsquo; case</h3>
+          <span class="who">Independent researchers &middot; consumer groups</span>
+          <ul>
+            <li>About <strong>32 LMT</strong> of sugar forgone is roughly the size of the shortfall
+            that opened the import window.</li>
+            <li>Cane and rice ethanol carry heavy water footprints in districts already
+            classified over-exploited.</li>
+            <li>Grain ethanol pushed India into maize imports for the first time in decades,
+            and DDGS dragged soybean meal below its own support price.</li>
+            <li>The official lifecycle CO&#8322; figure excludes land-use change and irrigation
+            pumping.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note" style="max-width:74ch;">We take no position on whether E20 was worth it. The job
+      is narrower: put the government&rsquo;s numbers and its critics&rsquo; numbers side by side, mark
+      every place they disagree, and cite all of it. Every chart has a data table. Every figure
+      has a source. Where two credible bodies publish different values, you see a &#9888; and both
+      numbers &mdash; nothing is averaged and no side is chosen for the reader.</p>
+    </div>
+  </section>
+
+  <!-- 08 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 8: Features">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">08</span><span>The build &middot; features</span></div>
+      <h2>What the site actually does</h2>
+      <div class="two">
+        <ul class="feat">
+          <li><b>Three scrollytelling sections.</b> Sugar, ethanol, and how they connect &mdash;
+          charts pinned while the argument steps through them, driven by Scrollama.</li>
+          <li><b>Nine charts, every one with a data table.</b> A toggle under each figure reveals
+          the exact rows behind it, with confidence and source per row.</li>
+          <li><b>An interactive simulator.</b> Five dials, live outputs, four presets.</li>
+          <li><b>Conflict flags.</b> Where two credible authorities publish different values, a
+          &#9888; shows both with their sources rather than averaging them.</li>
+          <li><b>A 51-entry citation ledger.</b> Issuing authority, publication date and Wayback
+          capture date, generated from one JSON file so <span class="mono">/sources</span> and
+          <span class="mono">SOURCES.md</span> cannot drift apart.</li>
+        </ul>
+        <ul class="feat">
+          <li><b>Inline glossary.</b> <span class="mono">[[Term]]</span> in the copy becomes a
+          link into a slide-out panel &mdash; and survives translation.</li>
+          <li><b>A chart-reading primer.</b> Four conventions explained once: colour, the
+          diagonal hatch on every fuel stream, the conflict marker, and Indian units.</li>
+          <li><b>Colour-blind safe by construction.</b> Colour never carries information alone;
+          hatch, dash and hollow markers double every encoding.</li>
+          <li><b>Light and dark, keyboard-navigable, reduced-motion aware</b> &mdash; all of it
+          shipped by the chrome without a byte of JavaScript framework.</li>
+          <li><b>No cookies, no analytics, no third-party scripts.</b> Rendered share cards are
+          generated from the site&rsquo;s own design tokens.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 9: The simulator">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">09</span><span>The build &middot; features</span></div>
+      <h2>A toy model you turn yourself</h2>
+      <div class="two two-wide">
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <p>Rather than argue the trade-off, the last section hands over the dials. Move any
+          one and every downstream number recomputes from published coefficients &mdash; sugar
+          forgone, closing stock, import need, forex saved, crude substituted, CO&#8322; avoided,
+          and the water bill.</p>
+          <div class="panel">
+            <div class="dials">
+              <div class="dial"><span class="dname">Blending target</span><span class="slot"><i style="left:60%"></i></span><span class="dval">20%</span></div>
+              <div class="dial"><span class="dname">Grain share</span><span class="slot"><i style="left:67%"></i></span><span class="dval">65%</span></div>
+              <div class="dial"><span class="dname">B-heavy route</span><span class="slot"><i style="left:34%"></i></span><span class="dval">35%</span></div>
+              <div class="dial"><span class="dname">Cane-juice route</span><span class="slot"><i style="left:60%"></i></span><span class="dval">60%</span></div>
+              <div class="dial"><span class="dname">Sugar production</span><span class="slot"><i style="left:47%"></i></span><span class="dval">306</span></div>
+            </div>
+            <div style="margin-top:.85rem;border-top:1px solid var(--rule-soft);padding-top:.7rem;">
+              <h3>Presets</h3>
+              <div class="outs">
+                <span class="chip">E10</span><span class="chip hero">E20 &middot; CURRENT</span>
+                <span class="chip">E30</span><span class="chip">MAX CANE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <h3>What it computes</h3>
+          <ul class="ledger">
+            <li><span class="tag">Sugar</span><span>Forgone LMT by route, closing stock against the comfortable-stock norm, and the import gap that opens below it</span></li>
+            <li><span class="tag">Fuel</span><span>Forex saved, crude substituted and CO&#8322; avoided &mdash; each carried as a published <em>range</em>, not a point estimate</span></li>
+            <li><span class="tag">Water</span><span>Cane, grain and distillery draw in billion litres, weighted by the real feedstock split</span></li>
+            <li><span class="tag">Price</span><span>A direction dial &mdash; down, flat, up, up-strong &mdash; never a number</span></li>
+          </ul>
+          <div class="callout"><strong>This is a toy, not a forecast.</strong> Simple arithmetic on
+          published coefficients. Directional only &mdash; and the interface says so before you
+          touch it.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 10: Tech stack">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">10</span><span>The build &middot; stack</span></div>
+      <h2>Tech stack</h2>
+      <div class="stack">
+        <div class="row">
+          <span class="role">Framework</span>
+          <div class="chips">
+            <span class="chip hero">Astro 7 &middot; static output</span><span class="chip">React 19 islands</span>
+            <span class="chip">TypeScript 7</span><span class="chip">Node 22</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="role">Data</span>
+          <div class="chips">
+            <span class="chip hero">Zod 4 schemas</span><span class="chip">csv-parse</span>
+            <span class="chip">tsx build script</span><span class="chip">SHA checksums</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="role">Charts</span>
+          <div class="chips">
+            <span class="chip hero">Server-rendered SVG</span><span class="chip">Chart.js 4</span>
+            <span class="chip">d3-scale</span><span class="chip">d3-shape</span>
+            <span class="chip">d3-array</span><span class="chip">d3-axis</span><span class="chip">d3-sankey</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="role">Interaction</span>
+          <div class="chips">
+            <span class="chip">Scrollama</span><span class="chip">lucide-react</span>
+            <span class="chip">Vanilla CSS custom properties</span><span class="chip">Self-hosted font subsets</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="role">Quality</span>
+          <div class="chips">
+            <span class="chip hero">axe-core + Playwright</span><span class="chip">node:test</span>
+            <span class="chip">contrast gate</span><span class="chip">JS budget gate</span>
+            <span class="chip">interaction walkthrough</span><span class="chip">link checker</span>
+            <span class="chip">Lighthouse CI</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="role">Delivery</span>
+          <div class="chips">
+            <span class="chip">Cloudflare Pages</span><span class="chip hero">Hash-locked CSP</span>
+            <span class="chip">Wayback archiver</span><span class="chip">Rendered OG cards</span>
+          </div>
+        </div>
+      </div>
+      <p class="note">No backend, no database, no runtime API. The whole site is files on a CDN.</p>
+    </div>
+  </section>
+
+  <!-- 11 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 11: Architecture">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">11</span><span>The build &middot; architecture</span></div>
+      <h2>Data is the source of truth, not the charts</h2>
+      <div class="pipe">
+        <div class="box src">
+          <span class="t">data/*.csv</span>
+          <span class="d">Six CSVs, a coefficient set and the citation ledger. Version-controlled, hand-edited.</span>
+        </div>
+        <span class="arrow" aria-hidden="true">&rarr;</span>
+        <div class="box">
+          <span class="t">build-data.ts</span>
+          <span class="d">Zod validates every row. A bad cell fails the build with the file, row and field named.</span>
+        </div>
+        <span class="arrow" aria-hidden="true">&rarr;</span>
+        <div class="box">
+          <span class="t">src/data/*.json</span>
+          <span class="d">Typed, gitignored, regenerated. Plus checksums and a generated SOURCES.md.</span>
+        </div>
+        <span class="arrow" aria-hidden="true">&rarr;</span>
+        <div class="box out">
+          <span class="t">pages &amp; charts</span>
+          <span class="d">Astro renders the chrome and every SVG chart at build time. Three islands hydrate on visibility.</span>
+        </div>
+      </div>
+      <div class="two" style="margin-top:.4rem;">
+        <div>
+          <h3>The islands rule</h3>
+          <p class="note" style="color:var(--text-prose);">Site chrome and every SVG chart ship
+          <strong>zero JavaScript</strong>. Only three things hydrate, all on visibility: two
+          Chart.js canvases, the simulator, and the scrollytelling binding. The theme toggle,
+          share button, glossary panel and disclaimer modal were pulled out of React
+          entirely &mdash; react-dom alone is 56 KB gzipped.</p>
+        </div>
+        <div>
+          <h3>Gates, not aspirations</h3>
+          <p class="note" style="color:var(--text-prose);">Values that are derived rather than
+          published carry a <span class="mono">confidence</span> field and are drawn hollow or
+          dashed wherever they appear. Accessibility failures block the build; the performance
+          score warns. Every gate runs in CI.</p>
+        </div>
+      </div>
+      <div class="stats" style="margin-top:.4rem;">
+        <div class="stat"><span class="v ethanol">0.4&ndash;3.9 KB</span><span class="k">Initial JS per route, against a 50 KB budget</span></div>
+        <div class="stat"><span class="v sugar">40</span><span class="k">axe-core runs: 10 routes &times; 2 themes &times; 2 widths</span></div>
+        <div class="stat"><span class="v grain">86</span><span class="k">Colour-contrast token pairs checked</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 12: Standing">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">12</span><span>Standing</span></div>
+      <h2>What it claims, and what it doesn&rsquo;t</h2>
+      <div class="two two-wide">
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <p class="lead">Representational and educational use only. Not official data. Not
+          affiliated with any government department, industry body or company named in it.</p>
+          <ul class="ledger">
+            <li><span class="tag">Sourced</span><span>Every figure traces to a row in the ledger, with the issuing authority and publication date</span></li>
+            <li><span class="tag">Archived</span><span>34 of 51 rows carry a Wayback capture taken <em>after</em> the figure was published &mdash; earlier snapshots are not accepted as evidence</span></li>
+            <li><span class="tag">Open</span><span>Nine citation gaps are listed on the site rather than papered over. A gap closes only on a primary source; corroboration is never promoted into one</span></li>
+            <li><span class="tag">Derived</span><span>Nothing computed is presented as an observation</span></li>
+          </ul>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem;justify-content:center;">
+          <div class="panel" style="border-color:var(--ethanol);">
+            <h3>See it live</h3>
+            <p style="font-family:var(--font-mono);font-size:.9rem;word-break:break-all;">
+              <a href="https://e20-story.sankettambare.in" style="color:var(--ethanol-ink);">e20-story.sankettambare.in</a>
+            </p>
+            <p class="note" style="margin-top:.5rem;">10 routes &middot; 9 charts &middot; 51 sources &middot;
+            data as of 27 August 2026</p>
+          </div>
+          <p class="note">Where the design and the sources disagreed, the sources won. Where the
+          specification contradicted itself, the user-facing guarantee won. Both are written down.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <div class="ticks" id="ticks"></div>
+  <span class="counter" id="counter">01 / 12</span>
+</nav>
+
+<script>
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var counter = document.getElementById('counter');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var current = 0;
+
+  var TITLES = ['Title', 'Two facts', 'Sugar', 'The climb', 'Feedstock flip', 'Trade-off',
+                'Both columns', 'Features', 'Simulator', 'Tech stack', 'Architecture', 'Standing'];
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  slides.forEach(function (slide, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Slide ' + (i + 1) + ': ' + (TITLES[i] || ''));
+    b.addEventListener('click', function () { go(i); });
+    ticks.appendChild(b);
+  });
+  var tickButtons = Array.prototype.slice.call(ticks.children);
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    tickButtons.forEach(function (b, i) {
+      b.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+    paint();
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  // A resize changes what offsetLeft means; stay on the slide the reader was on.
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' });
+    }, 120);
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>
