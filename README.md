@@ -22,17 +22,17 @@ I'm a software developer from **Pune, Maharashtra 🇮🇳**, specialising in fu
 
 I care deeply about the intersection of **technology, society, and public policy** — not just building things, but thinking critically about what we build and why.
 
-> *Currently: Building a blog & presentation on AI tools for students and teachers 🤖📖*
+> _Currently: Building a blog & presentation on AI tools for students and teachers 🤖📖_
 
 ---
 
 ## 🔭 What I'm Working On
 
-| Role | Organisation | Focus |
-|------|-------------|-------|
-| 🧑‍💼 Software Developer | **Bridgenext** | DORA metrics · ETL pipelines · GitLab API · Databricks |
-| 🎓 NAST Fellow | **Takshashila Institution** | Citizen Agency in AI governance for public deployments |
-| 🏃 Marathon Training | Self | 5 days/week · 20+ races completed |
+| Role                  | Organisation                | Focus                                                  |
+| --------------------- | --------------------------- | ------------------------------------------------------ |
+| 🧑‍💼 Software Developer | **Bridgenext**              | DORA metrics · ETL pipelines · GitLab API · Databricks |
+| 🎓 NAST Fellow        | **Takshashila Institution** | Citizen Agency in AI governance for public deployments |
+| 🏃 Marathon Training  | Self                        | 5 days/week · 20+ races completed                      |
 
 ---
 
@@ -42,27 +42,27 @@ I care deeply about the intersection of **technology, society, and public policy
 
 ### 📰 Long-form & Newsletters
 
-| Platform | Focus | Link |
-|----------|-------|------|
-| 📬 **Substack** | Tech, AI, society & policy essays | [![Substack](https://img.shields.io/badge/Subscribe_on_Substack-FF6719?style=for-the-badge&logo=substack&logoColor=white)](https://sankettambare.substack.com/) |
+| Platform              | Focus                                | Link                                                                                                                                                                |
+| --------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 📬 **Substack**       | Tech, AI, society & policy essays    | [![Substack](https://img.shields.io/badge/Subscribe_on_Substack-FF6719?style=for-the-badge&logo=substack&logoColor=white)](https://sankettambare.substack.com/)     |
 | 📝 **WordPress Blog** | Personal writing, reflections & more | [![WordPress](https://img.shields.io/badge/Read_on_WordPress-21759B?style=for-the-badge&logo=wordpress&logoColor=white)](https://daredavil453624413.wordpress.com/) |
-| ✏️ **Medium** | Tech articles & tutorials | [![Medium](https://img.shields.io/badge/Read_on_Medium-12100E?style=for-the-badge&logo=medium&logoColor=white)](https://medium.com/@daredavil) |
-| 💻 **Dev.to** | Developer-focused posts | [![Dev.to](https://img.shields.io/badge/Read_on_Dev.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white)](https://dev.to/daredavil) |
-| 🔵 **Hashnode** | Tech blogs & deep-dives | [![Hashnode](https://img.shields.io/badge/Read_on_Hashnode-2962FF?style=for-the-badge&logo=hashnode&logoColor=white)](https://hashnode.com/@daredavil) |
+| ✏️ **Medium**         | Tech articles & tutorials            | [![Medium](https://img.shields.io/badge/Read_on_Medium-12100E?style=for-the-badge&logo=medium&logoColor=white)](https://medium.com/@daredavil)                      |
+| 💻 **Dev.to**         | Developer-focused posts              | [![Dev.to](https://img.shields.io/badge/Read_on_Dev.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white)](https://dev.to/daredavil)                           |
+| 🔵 **Hashnode**       | Tech blogs & deep-dives              | [![Hashnode](https://img.shields.io/badge/Read_on_Hashnode-2962FF?style=for-the-badge&logo=hashnode&logoColor=white)](https://hashnode.com/@daredavil)              |
 
 ### 🎨 Design & Visual
 
-| Platform | Link |
-|----------|------|
-| 🖼️ **Behance** | [![Behance](https://img.shields.io/badge/View_Portfolio-1769FF?style=for-the-badge&logo=behance&logoColor=white)](https://behance.net/daredavil) |
+| Platform               | Link                                                                                                                                              |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🖼️ **Behance**         | [![Behance](https://img.shields.io/badge/View_Portfolio-1769FF?style=for-the-badge&logo=behance&logoColor=white)](https://behance.net/daredavil)  |
 | 🎙️ **Anchor Podcasts** | [![Podcasts](https://img.shields.io/badge/Listen_on_Anchor-8940FA?style=for-the-badge&logo=spotify&logoColor=white)](https://anchor.fm/daredavil) |
-
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### 🐍 Languages
+
 ![Python](https://img.shields.io/badge/Python-★★★★★-3776AB?style=flat-square&logo=python&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-★★★★☆-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 ![SQL](https://img.shields.io/badge/SQL-★★★★☆-336791?style=flat-square&logo=postgresql&logoColor=white)
@@ -71,6 +71,7 @@ I care deeply about the intersection of **technology, society, and public policy
 ![C](https://img.shields.io/badge/C-★★★☆☆-A8B9CC?style=flat-square&logo=c&logoColor=white)
 
 ### 🌐 Web & Frameworks
+
 ![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
@@ -81,12 +82,14 @@ I care deeply about the intersection of **technology, society, and public policy
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
 
 ### ☁️ Cloud & DevOps
+
 ![AWS](https://img.shields.io/badge/AWS-★★★★☆-FF9900?style=flat-square&logo=amazonaws&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-★★★☆☆-844FBA?style=flat-square&logo=terraform&logoColor=white)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-★★☆☆☆-326CE5?style=flat-square&logo=kubernetes&logoColor=white)
 ![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=flat-square&logo=cloudflare&logoColor=white)
 
 ### 📊 Data Engineering & Analytics
+
 ![Snowflake](https://img.shields.io/badge/Snowflake-★★★★☆-29B5E8?style=flat-square&logo=snowflake&logoColor=white)
 ![Databricks](https://img.shields.io/badge/Databricks-★★★☆☆-FF3621?style=flat-square&logo=databricks&logoColor=white)
 ![Apache Kafka](https://img.shields.io/badge/Kafka-★★★☆☆-231F20?style=flat-square&logo=apachekafka&logoColor=white)
@@ -95,9 +98,10 @@ I care deeply about the intersection of **technology, society, and public policy
 ![NumPy](https://img.shields.io/badge/NumPy-★★★☆☆-013243?style=flat-square&logo=numpy&logoColor=white)
 
 ### 🤖 AI & Dev Tools
+
 ![Cursor](https://img.shields.io/badge/Cursor-★★★★☆-000000?style=flat-square)
 ![Google Gemini](https://img.shields.io/badge/Google_Gemini-★★★☆☆-4285F4?style=flat-square&logo=google&logoColor=white)
-![MCP](https://img.shields.io/badge/MCP_(Model_Context_Protocol)-★★★☆☆-7B68EE?style=flat-square)
+![MCP](<https://img.shields.io/badge/MCP_(Model_Context_Protocol)-★★★☆☆-7B68EE?style=flat-square>)
 ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
 
 ---
@@ -106,24 +110,24 @@ I care deeply about the intersection of **technology, society, and public policy
 
 ### 🛠️ Apps, games & data
 
-| Project | Description | Tech | Links |
-|---------|-------------|------|-------|
-| 🏃 **RunSmart** | *"Get me my Training Plan!"* — auto-generates FM/HM plans from time trials | React | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=netlify&logoColor=white)](https://runningplan1.netlify.app) |
-| 🧘 **The Wanderer's Digital Escape** | Narrative browser game about digital wellbeing — 4 worlds, 4 meters, a personal Flourishing Score | React 18 · Web Audio API | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/digital-wellbeing) |
-| 📈 **A Developer, Measured** | Scroll-through infographic of my developer story — roles, rated stack, shipped work, and the miles/books/words that share the same hours | Static HTML · inline SVG | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/developer-infographic) |
-| 📊 **Adivasi Survey Dashboard** | Bilingual (Marathi/English) dashboard of a 281-household Pawra community survey in Nandurbar | Chart.js · Vanilla JS | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/yung-data) |
-| 🐒 **Social-Ape** | Social media platform for human apes | React · Firebase | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/social-explorers-client) |
-| 💸 **Expense Manager** | Firebase-based expense tracking app for construction firms | React · Firebase | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/expense-mgmt-webapp) |
+| Project                              | Description                                                                                                                              | Tech                     | Links                                                                                                                                                             |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🏃 **RunSmart**                      | _"Get me my Training Plan!"_ — auto-generates FM/HM plans from time trials                                                               | React                    | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=netlify&logoColor=white)](https://runningplan1.netlify.app)                              |
+| 🧘 **The Wanderer's Digital Escape** | Narrative browser game about digital wellbeing — 4 worlds, 4 meters, a personal Flourishing Score                                        | React 18 · Web Audio API | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/digital-wellbeing)     |
+| 📈 **A Developer, Measured**         | Scroll-through infographic of my developer story — roles, rated stack, shipped work, and the miles/books/words that share the same hours | Static HTML · inline SVG | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/developer-infographic) |
+| 📊 **Adivasi Survey Dashboard**      | Bilingual (Marathi/English) dashboard of a 281-household Pawra community survey in Nandurbar                                             | Chart.js · Vanilla JS    | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/daredavil01/tree/main/yung-data)             |
+| 🐒 **Social-Ape**                    | Social media platform for human apes                                                                                                     | React · Firebase         | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/social-explorers-client)                     |
+| 💸 **Expense Manager**               | Firebase-based expense tracking app for construction firms                                                                               | React · Firebase         | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/expense-mgmt-webapp)                         |
 
 ### 🌐 Websites I've designed & built
 
-| Website | Description | Tech | Links |
-|---------|-------------|------|-------|
-| 🌐 **Personal Website** | This portfolio — about, projects, books, sports, treks, now page & more | React · Tailwind · React Router | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://sankettambare.in) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/personal-website) [![Dossier](https://img.shields.io/badge/Dossier-4CAF50?style=flat-square)](./docs/personal-website-redesign.html) |
-| 🏅 **RunFolio** | *"Every finish, framed"* — race portfolio for runners: photo-first race pages read as a grid, ledger or statistics, Strava import, one shareable link, and four free calculators | Astro 7 · Cloudflare Workers · Supabase · R2 | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://runfolio.sankettambare.in) [![Overview](https://img.shields.io/badge/Overview-4CAF50?style=flat-square)](./docs/runfolio-overview.html) |
-| 🌳 **Yung Foundation Website** | Bilingual (Marathi-default) NGO site — 15 routes, zero JavaScript on the public pages, staff-editable content | Astro 7 · Supabase | [![Overview](https://img.shields.io/badge/Overview-4CAF50?style=flat-square)](./docs/yung-foundation-site-overview.html) |
-| 🪶 **Antyodaya Website** | Marathi-first NGO site for a Gadchiroli foundation — 15 public routes plus a 23-screen staff CMS | Astro 7 · React 19 · Supabase · Cloudflare Workers | [![Spec](https://img.shields.io/badge/Spec-4CAF50?style=flat-square)](./docs/antyodaya-website-overview.html) |
-| ⛽ **E20 ka Chakravyuha** | Independent data story on India's E20 ethanol blending programme and the 2026 sugar price surge — every chart carries its data table, and where the government and the industry publish different numbers both are shown side by side | Astro 7 · Cloudflare Pages | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://e20-story.sankettambare.in) [![Deck](https://img.shields.io/badge/Deck-4CAF50?style=flat-square)](./presentations/e20-ka-chakravyuha.html) |
+| Website                        | Description                                                                                                                                                                                                                           | Tech                                               | Links                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🌐 **Personal Website**        | This portfolio — about, projects, books, sports, treks, now page & more                                                                                                                                                               | React · Tailwind · React Router                    | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://sankettambare.in) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/daredavil01/personal-website) [![Dossier](https://img.shields.io/badge/Dossier-4CAF50?style=flat-square)](./docs/personal-website-redesign.html) |
+| 🏅 **RunFolio**                | _"Every finish, framed"_ — race portfolio for runners: photo-first race pages read as a grid, ledger or statistics, Strava import, one shareable link, and four free calculators                                                      | Astro 7 · Cloudflare Workers · Supabase · R2       | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://runfolio.in) [![Overview](https://img.shields.io/badge/Overview-4CAF50?style=flat-square)](./docs/runfolio-overview.html)                                                                                                                                                   |
+| 🌳 **Yung Foundation Website** | Bilingual (Marathi-default) NGO site — 15 routes, zero JavaScript on the public pages, staff-editable content                                                                                                                         | Astro 7 · Supabase                                 | [![Overview](https://img.shields.io/badge/Overview-4CAF50?style=flat-square)](./docs/yung-foundation-site-overview.html)                                                                                                                                                                                                                                                                  |
+| 🪶 **Antyodaya Website**       | Marathi-first NGO site for a Gadchiroli foundation — 15 public routes plus a 23-screen staff CMS                                                                                                                                      | Astro 7 · React 19 · Supabase · Cloudflare Workers | [![Spec](https://img.shields.io/badge/Spec-4CAF50?style=flat-square)](./docs/antyodaya-website-overview.html)                                                                                                                                                                                                                                                                             |
+| ⛽ **E20 ka Chakravyuha**      | Independent data story on India's E20 ethanol blending programme and the 2026 sugar price surge — every chart carries its data table, and where the government and the industry publish different numbers both are shown side by side | Astro 7 · Cloudflare Pages                         | [![Live](https://img.shields.io/badge/Live-4CAF50?style=flat-square&logo=cloudflare&logoColor=white)](https://e20-story.sankettambare.in) [![Deck](https://img.shields.io/badge/Deck-4CAF50?style=flat-square)](./presentations/e20-ka-chakravyuha.html)                                                                                                                                  |
 
 ---
 
@@ -131,18 +135,18 @@ I care deeply about the intersection of **technology, society, and public policy
 
 This profile repo doubles as a small static site — `index.html` is the hub that links to everything:
 
-| Page | What It Is |
-|------|-----------|
-| [`index.html`](./index.html) | Homepage hub — links to all content below |
-| [`about.html`](./about.html) | Interactive 12-slide **About Me** deck (engineering · research · running · trekking · writing · reading · now) |
-| [`developer-infographic/`](./developer-infographic) | **A Developer, Measured** — scroll-through infographic: career gantt, rated stack, writing ledger, and the counterweight (races, forts, books) |
-| [`digital-wellbeing/`](./digital-wellbeing) | **The Wanderer's Digital Escape** — narrative digital-wellbeing game + Three.js self-orb prototype |
-| [`yung-data/`](./yung-data) | **Adivasi Survey Dashboard** — bilingual data viz of a Nandurbar household survey |
-| [`presentations/e20-ka-chakravyuha.html`](./presentations/e20-ka-chakravyuha.html) | **E20 ka Chakravyuha — the deck** — twelve slides on India's ethanol-versus-sugar trade-off and the data story built around it |
-| [`docs/runfolio-overview.html`](./docs/runfolio-overview.html) | **RunFolio — every finish, framed** — six-panel intro deck for the race portfolio, with hand-drawn SVG illustrations |
-| [`docs/personal-website-redesign.html`](./docs/personal-website-redesign.html) | **The Wanderer's Atlas** — design dossier for the personal-website redesign |
-| [`docs/yung-foundation-site-overview.html`](./docs/yung-foundation-site-overview.html) | **Yung Foundation website, end to end** — every route, every editable surface, and the architecture underneath |
-| [`docs/antyodaya-website-overview.html`](./docs/antyodaya-website-overview.html) | **Antyodaya website — features & technical specification** — public routes, admin CMS, data model, architecture |
+| Page                                                                                   | What It Is                                                                                                                                     |
+| -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`index.html`](./index.html)                                                           | Homepage hub — links to all content below                                                                                                      |
+| [`about.html`](./about.html)                                                           | Interactive 12-slide **About Me** deck (engineering · research · running · trekking · writing · reading · now)                                 |
+| [`developer-infographic/`](./developer-infographic)                                    | **A Developer, Measured** — scroll-through infographic: career gantt, rated stack, writing ledger, and the counterweight (races, forts, books) |
+| [`digital-wellbeing/`](./digital-wellbeing)                                            | **The Wanderer's Digital Escape** — narrative digital-wellbeing game + Three.js self-orb prototype                                             |
+| [`yung-data/`](./yung-data)                                                            | **Adivasi Survey Dashboard** — bilingual data viz of a Nandurbar household survey                                                              |
+| [`presentations/e20-ka-chakravyuha.html`](./presentations/e20-ka-chakravyuha.html)     | **E20 ka Chakravyuha — the deck** — twelve slides on India's ethanol-versus-sugar trade-off and the data story built around it                 |
+| [`docs/runfolio-overview.html`](./docs/runfolio-overview.html)                         | **RunFolio — every finish, framed** — six-panel intro deck for the race portfolio, with hand-drawn SVG illustrations                           |
+| [`docs/personal-website-redesign.html`](./docs/personal-website-redesign.html)         | **The Wanderer's Atlas** — design dossier for the personal-website redesign                                                                    |
+| [`docs/yung-foundation-site-overview.html`](./docs/yung-foundation-site-overview.html) | **Yung Foundation website, end to end** — every route, every editable surface, and the architecture underneath                                 |
+| [`docs/antyodaya-website-overview.html`](./docs/antyodaya-website-overview.html)       | **Antyodaya website — features & technical specification** — public routes, admin CMS, data model, architecture                                |
 
 ---
 
@@ -155,9 +159,9 @@ This profile repo doubles as a small static site — `index.html` is the hub tha
 [![About](https://img.shields.io/badge/👤_About_Me-4A90E2?style=for-the-badge)](https://sankettambare.in/about)
 [![Resume](https://img.shields.io/badge/📄_Resume-6C757D?style=for-the-badge)](https://sankettambare.in/resume)
 [![Projects](https://img.shields.io/badge/🚀_Projects-28A745?style=for-the-badge)](https://sankettambare.in/projects)
-[![Books](https://img.shields.io/badge/📚_Books_(43+)-E97627?style=for-the-badge)](https://sankettambare.in/books)
-[![Sports](https://img.shields.io/badge/🏃_Sports_(20+_Races)-FF5733?style=for-the-badge)](https://sankettambare.in/sports)
-[![Treks](https://img.shields.io/badge/🏔️_Treks_(15+)-4CAF50?style=for-the-badge)](https://sankettambare.in/treks)
+[![Books](<https://img.shields.io/badge/📚_Books_(43+)-E97627?style=for-the-badge>)](https://sankettambare.in/books)
+[![Sports](<https://img.shields.io/badge/🏃_Sports_(20+_Races)-FF5733?style=for-the-badge>)](https://sankettambare.in/sports)
+[![Treks](<https://img.shields.io/badge/🏔️_Treks_(15+)-4CAF50?style=for-the-badge>)](https://sankettambare.in/treks)
 [![Now](https://img.shields.io/badge/📍_What_I'm_Doing_Now-9B59B6?style=for-the-badge)](https://sankettambare.in/now)
 [![Stats](https://img.shields.io/badge/📊_Life_Stats-17A2B8?style=for-the-badge)](https://sankettambare.in/stats)
 [![Challenges](https://img.shields.io/badge/🎯_Challenges-DC3545?style=for-the-badge)](https://sankettambare.in/challenges)
@@ -194,16 +198,16 @@ This profile repo doubles as a small static site — `index.html` is the hub tha
 
 ## 🎓 Education
 
-🏛️ **Graduate Certificate in Technology & Policy** — The Takshashila Institution *(2024)*  
-🎓 **B.Tech. Computer Science** — Rajarambapu Institute of Technology, Sangli *(2021)*
+🏛️ **Graduate Certificate in Technology & Policy** — The Takshashila Institution _(2024)_  
+🎓 **B.Tech. Computer Science** — Rajarambapu Institute of Technology, Sangli _(2021)_
 
 ---
 
 ## 📈 By the Numbers
 
 | 📚 Books Read | 🏃 Races Run | 🏔️ Treks Done |
-|:---:|:---:|:---:|
-| **43+** | **20+** | **15+** |
+| :-----------: | :----------: | :-----------: |
+|    **43+**    |   **20+**    |    **15+**    |
 
 ---
 
@@ -218,6 +222,6 @@ This profile repo doubles as a small static site — `index.html` is the hub tha
 
 <div align="center">
 
-*"Critically engaging with the world, one commit at a time."* 🌏
+_"Critically engaging with the world, one commit at a time."_ 🌏
 
 </div>

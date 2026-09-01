@@ -1,16 +1,22 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RunFolio — Every Finish, Framed</title>
-<meta name="description" content="A six-panel introduction to RunFolio: a race portfolio for runners, built on Astro, Cloudflare Workers and Supabase.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Inter:wght@400;500&family=Space+Mono:wght@400;700&display=swap">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RunFolio — Every Finish, Framed</title>
+    <meta
+      name="description"
+      content="A six-panel introduction to RunFolio: a race portfolio for runners, built on Astro, Cloudflare Workers and Supabase."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Inter:wght@400;500&family=Space+Mono:wght@400;700&display=swap"
+    />
 
-<style>
-  /* ==========================================================================
+    <style>
+      /* ==========================================================================
      Palette, type and scale are RunFolio's own design system, carried over
      verbatim from src/styles/global.css. Two rules from that file are
      load-bearing and are kept here:
@@ -28,1046 +34,1776 @@
      and the antenna ball is the only part of Blip that carries the accent.
      ====================================================================== */
 
-  :root {
-    --bg: #f3efe6;
-    --surface: #faf8f2;
-    --surface-sunk: #ece7db;
-    --line: #e2dccf;
-    --line-strong: #cec7b6;
+      :root {
+        --bg: #f3efe6;
+        --surface: #faf8f2;
+        --surface-sunk: #ece7db;
+        --line: #e2dccf;
+        --line-strong: #cec7b6;
 
-    --ink: #17150f;
-    --muted: #6f6a5e;
+        --ink: #17150f;
+        --muted: #6f6a5e;
 
-    --accent: #ff3a1d;
-    --accent-fg: #17150f;
-    --accent-ink: #c42a10;
+        --accent: #ff3a1d;
+        --accent-fg: #17150f;
+        --accent-ink: #c42a10;
 
-    --band: #17150f;
-    --band-ink: #f4f1e8;
-    --band-mut: #8c877b;
+        --band: #17150f;
+        --band-ink: #f4f1e8;
+        --band-mut: #8c877b;
 
-    /* Blip: light palette — light body, structure-ink screen, never pure black. */
-    --blip-body: #faf8f2;
-    --blip-screen: #17150f;
+        /* Blip: light palette — light body, structure-ink screen, never pure black. */
+        --blip-body: #faf8f2;
+        --blip-screen: #17150f;
 
-    --grain: 0.055;
+        --grain: 0.055;
 
-    --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
-    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+        --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        --font-mono:
+          "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-    color-scheme: light;
-  }
+        color-scheme: light;
+      }
 
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #100f0c;
-      --surface: #1a1915;
-      --surface-sunk: #0b0a08;
-      --line: #26251f;
-      --line-strong: #3a382f;
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #100f0c;
+          --surface: #1a1915;
+          --surface-sunk: #0b0a08;
+          --line: #26251f;
+          --line-strong: #3a382f;
 
-      --ink: #f4f1e8;
-      --muted: #98938a;
+          --ink: #f4f1e8;
+          --muted: #98938a;
 
-      --accent: #ff5a3c;
-      --accent-fg: #100f0c;
-      --accent-ink: #ff5a3c;
+          --accent: #ff5a3c;
+          --accent-fg: #100f0c;
+          --accent-ink: #ff5a3c;
 
-      --band: #f4f1e8;
-      --band-ink: #100f0c;
-      --band-mut: #6f6a60;
+          --band: #f4f1e8;
+          --band-ink: #100f0c;
+          --band-mut: #6f6a60;
 
-      /* Dark palette — the body may read dark, so long as the screen stays
+          /* Dark palette — the body may read dark, so long as the screen stays
          the deepest value on the panel. */
-      --blip-body: #2b2924;
-      --blip-screen: #080806;
+          --blip-body: #2b2924;
+          --blip-screen: #080806;
 
-      --grain: 0.09;
+          --grain: 0.09;
 
-      color-scheme: dark;
-    }
-  }
+          color-scheme: dark;
+        }
+      }
 
-  :root[data-theme="dark"] {
-    --bg: #100f0c;
-    --surface: #1a1915;
-    --surface-sunk: #0b0a08;
-    --line: #26251f;
-    --line-strong: #3a382f;
+      :root[data-theme="dark"] {
+        --bg: #100f0c;
+        --surface: #1a1915;
+        --surface-sunk: #0b0a08;
+        --line: #26251f;
+        --line-strong: #3a382f;
 
-    --ink: #f4f1e8;
-    --muted: #98938a;
+        --ink: #f4f1e8;
+        --muted: #98938a;
 
-    --accent: #ff5a3c;
-    --accent-fg: #100f0c;
-    --accent-ink: #ff5a3c;
+        --accent: #ff5a3c;
+        --accent-fg: #100f0c;
+        --accent-ink: #ff5a3c;
 
-    --band: #f4f1e8;
-    --band-ink: #100f0c;
-    --band-mut: #6f6a60;
+        --band: #f4f1e8;
+        --band-ink: #100f0c;
+        --band-mut: #6f6a60;
 
-    --blip-body: #2b2924;
-    --blip-screen: #080806;
+        --blip-body: #2b2924;
+        --blip-screen: #080806;
 
-    --grain: 0.09;
+        --grain: 0.09;
 
-    color-scheme: dark;
-  }
+        color-scheme: dark;
+      }
 
-  * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
 
-  html {
-    scroll-snap-type: y proximity;
-    scroll-behavior: smooth;
-  }
+      html {
+        scroll-snap-type: y proximity;
+        scroll-behavior: smooth;
+      }
 
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-body);
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
 
-  .grain {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: var(--grain);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
+      .grain {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        opacity: var(--grain);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
 
-  .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+      .defs {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      }
 
-  /* --- The kilometre rail ------------------------------------------------ */
+      /* --- The kilometre rail ------------------------------------------------ */
 
-  .rail {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 76px;
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    border-right: 1px solid var(--line);
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter: blur(6px);
-  }
+      .rail {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 76px;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        border-right: 1px solid var(--line);
+        background: color-mix(in srgb, var(--bg) 88%, transparent);
+        backdrop-filter: blur(6px);
+      }
 
-  .rail a {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    text-decoration: none;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--muted);
-    border: 1px solid transparent;
-    transition: color 160ms ease;
-  }
+      .rail a {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        text-decoration: none;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--muted);
+        border: 1px solid transparent;
+        transition: color 160ms ease;
+      }
 
-  .rail a::after {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: var(--accent);
-    opacity: 0;
-    transform: translateY(15px);
-    transition: opacity 200ms ease;
-  }
+      .rail a::after {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        background: var(--accent);
+        opacity: 0;
+        transform: translateY(15px);
+        transition: opacity 200ms ease;
+      }
 
-  .rail a:hover { color: var(--ink); }
-  .rail a:focus-visible {
-    outline: 2px solid var(--accent-ink);
-    outline-offset: 2px;
-  }
-  .rail a[aria-current="true"] { color: var(--accent-ink); font-weight: 700; }
-  .rail a[aria-current="true"]::after { opacity: 1; }
+      .rail a:hover {
+        color: var(--ink);
+      }
+      .rail a:focus-visible {
+        outline: 2px solid var(--accent-ink);
+        outline-offset: 2px;
+      }
+      .rail a[aria-current="true"] {
+        color: var(--accent-ink);
+        font-weight: 700;
+      }
+      .rail a[aria-current="true"]::after {
+        opacity: 1;
+      }
 
-  .rail-tick { width: 1px; height: 18px; background: var(--line-strong); }
+      .rail-tick {
+        width: 1px;
+        height: 18px;
+        background: var(--line-strong);
+      }
 
-  /* Sits in its own absolute slot so it cannot shift the centred numbers.
+      /* Sits in its own absolute slot so it cannot shift the centred numbers.
      44px, because the product's own spec sets that floor and its shipped
      toggle is one of the places that misses it. */
-  .theme-toggle {
-    position: absolute;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 44px;
-    height: 44px;
-    display: grid;
-    place-items: center;
-    padding: 0;
-    background: transparent;
-    border: 1px solid var(--line-strong);
-    border-radius: 2px;
-    color: var(--muted);
-    cursor: pointer;
-    transition: color 160ms ease, border-color 160ms ease;
-  }
+      .theme-toggle {
+        position: absolute;
+        top: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        background: transparent;
+        border: 1px solid var(--line-strong);
+        border-radius: 2px;
+        color: var(--muted);
+        cursor: pointer;
+        transition:
+          color 160ms ease,
+          border-color 160ms ease;
+      }
 
-  .theme-toggle:hover { color: var(--ink); border-color: var(--ink); }
-  .theme-toggle:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
-  .theme-toggle svg { width: 19px; height: 19px; display: block; }
-  .theme-toggle[data-shows="light"] .i-moon { display: none; }
-  .theme-toggle[data-shows="dark"] .i-sun { display: none; }
+      .theme-toggle:hover {
+        color: var(--ink);
+        border-color: var(--ink);
+      }
+      .theme-toggle:focus-visible {
+        outline: 2px solid var(--accent-ink);
+        outline-offset: 2px;
+      }
+      .theme-toggle svg {
+        width: 19px;
+        height: 19px;
+        display: block;
+      }
+      .theme-toggle[data-shows="light"] .i-moon {
+        display: none;
+      }
+      .theme-toggle[data-shows="dark"] .i-sun {
+        display: none;
+      }
 
-  /* Back to the hub. Styled in this page's own tokens rather than the
+      /* Back to the hub. Styled in this page's own tokens rather than the
      homepage's palette, per the repo convention. Sits clear of the rail. */
-  .home-link {
-    position: fixed;
-    top: 18px;
-    left: calc(76px + 22px);
-    z-index: 6;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-    padding: 9px 15px;
-    border-radius: 2px;
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
-    border: 1px solid var(--line-strong);
-    color: var(--ink);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    text-decoration: none;
-    backdrop-filter: blur(4px);
-    transition: border-color 160ms ease, color 160ms ease;
-  }
-  .home-link:hover { border-color: var(--ink); color: var(--accent-ink); }
-  .home-link:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+      .home-link {
+        position: fixed;
+        top: 18px;
+        left: calc(76px + 22px);
+        z-index: 6;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+        padding: 9px 15px;
+        border-radius: 2px;
+        background: color-mix(in srgb, var(--surface) 88%, transparent);
+        border: 1px solid var(--line-strong);
+        color: var(--ink);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        text-decoration: none;
+        backdrop-filter: blur(4px);
+        transition:
+          border-color 160ms ease,
+          color 160ms ease;
+      }
+      .home-link:hover {
+        border-color: var(--ink);
+        color: var(--accent-ink);
+      }
+      .home-link:focus-visible {
+        outline: 2px solid var(--accent-ink);
+        outline-offset: 2px;
+      }
 
-  .rail-cap {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.14em;
-    color: var(--muted);
-    writing-mode: vertical-rl;
-    margin: 18px 0;
-  }
+      .rail-cap {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        color: var(--muted);
+        writing-mode: vertical-rl;
+        margin: 18px 0;
+      }
 
-  /* --- Panels ------------------------------------------------------------ */
+      /* --- Panels ------------------------------------------------------------ */
 
-  main { position: relative; z-index: 1; padding-left: 76px; }
+      main {
+        position: relative;
+        z-index: 1;
+        padding-left: 76px;
+      }
 
-  .panel {
-    min-height: 100svh;
-    scroll-snap-align: start;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    gap: clamp(32px, 5vw, 72px);
-    padding: clamp(40px, 6vh, 88px) clamp(28px, 5vw, 80px);
-    border-bottom: 1px solid var(--line);
-  }
+      .panel {
+        min-height: 100svh;
+        scroll-snap-align: start;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        gap: clamp(32px, 5vw, 72px);
+        padding: clamp(40px, 6vh, 88px) clamp(28px, 5vw, 80px);
+        border-bottom: 1px solid var(--line);
+      }
 
-  .panel:nth-child(even) .art { order: 2; }
+      .panel:nth-child(even) .art {
+        order: 2;
+      }
 
-  .copy { max-width: 60ch; display: flex; flex-direction: column; gap: 18px; }
+      .copy {
+        max-width: 60ch;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
 
-  .eyebrow {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--accent-ink);
-    margin: 0;
-  }
+      .eyebrow {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent-ink);
+        margin: 0;
+      }
 
-  h1, h2 {
-    font-family: var(--font-display);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.02;
-    text-wrap: balance;
-    margin: 0;
-  }
+      h1,
+      h2 {
+        font-family: var(--font-display);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.02;
+        text-wrap: balance;
+        margin: 0;
+      }
 
-  h1 { font-size: clamp(48px, 7.4vw, 104px); }
-  h2 { font-size: clamp(32px, 4.2vw, 56px); }
+      h1 {
+        font-size: clamp(48px, 7.4vw, 104px);
+      }
+      h2 {
+        font-size: clamp(32px, 4.2vw, 56px);
+      }
 
-  h3 {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 17px;
-    letter-spacing: -0.01em;
-    margin: 0 0 4px;
-  }
+      h3 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 17px;
+        letter-spacing: -0.01em;
+        margin: 0 0 4px;
+      }
 
-  p { margin: 0; }
-  .lede { font-size: clamp(17px, 1.5vw, 20px); color: var(--ink); }
-  .sub { color: var(--muted); }
+      p {
+        margin: 0;
+      }
+      .lede {
+        font-size: clamp(17px, 1.5vw, 20px);
+        color: var(--ink);
+      }
+      .sub {
+        color: var(--muted);
+      }
 
-  strong { font-weight: 500; color: var(--ink); }
+      strong {
+        font-weight: 500;
+        color: var(--ink);
+      }
 
-  .band {
-    display: flex;
-    flex-wrap: wrap;
-    background: var(--band);
-    color: var(--band-ink);
-    border-radius: 2px;
-  }
+      .band {
+        display: flex;
+        flex-wrap: wrap;
+        background: var(--band);
+        color: var(--band-ink);
+        border-radius: 2px;
+      }
 
-  .band > div {
-    flex: 1 1 110px;
-    padding: 14px 18px;
-    border-right: 1px solid color-mix(in srgb, var(--band-ink) 18%, transparent);
-  }
-  .band > div:last-child { border-right: 0; }
+      .band > div {
+        flex: 1 1 110px;
+        padding: 14px 18px;
+        border-right: 1px solid
+          color-mix(in srgb, var(--band-ink) 18%, transparent);
+      }
+      .band > div:last-child {
+        border-right: 0;
+      }
 
-  .band dt {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--band-mut);
-    margin: 0 0 4px;
-  }
+      .band dt {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--band-mut);
+        margin: 0 0 4px;
+      }
 
-  .band dd {
-    font-family: var(--font-mono);
-    font-weight: 700;
-    font-size: clamp(19px, 2vw, 25px);
-    font-variant-numeric: tabular-nums;
-    margin: 0;
-  }
+      .band dd {
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: clamp(19px, 2vw, 25px);
+        font-variant-numeric: tabular-nums;
+        margin: 0;
+      }
 
-  /* Numbered, because the order is the order a runner does them in. */
-  .steps { display: flex; flex-direction: column; gap: 18px; margin: 0; padding: 0; list-style: none; }
+      /* Numbered, because the order is the order a runner does them in. */
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
 
-  .steps li {
-    display: grid;
-    grid-template-columns: 34px 1fr;
-    gap: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--line);
-  }
+      .steps li {
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        gap: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
 
-  .steps .n {
-    font-family: var(--font-mono);
-    font-weight: 700;
-    font-size: 12px;
-    color: var(--accent-ink);
-    padding-top: 3px;
-  }
+      .steps .n {
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: 12px;
+        color: var(--accent-ink);
+        padding-top: 3px;
+      }
 
-  .steps p { color: var(--muted); font-size: 15px; }
+      .steps p {
+        color: var(--muted);
+        font-size: 15px;
+      }
 
-  /* Unnumbered, because these are a set and no order is claimed. */
-  .rows { display: flex; flex-direction: column; gap: 16px; margin: 0; padding: 0; list-style: none; }
-  .rows li { padding-top: 14px; border-top: 1px solid var(--line); }
-  .rows p { color: var(--muted); font-size: 15px; }
+      /* Unnumbered, because these are a set and no order is claimed. */
+      .rows {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .rows li {
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+      .rows p {
+        color: var(--muted);
+        font-size: 15px;
+      }
 
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
 
-  .chip {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    padding: 7px 11px;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    color: var(--muted);
-  }
+      .chip {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        padding: 7px 11px;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        color: var(--muted);
+      }
 
-  .note {
-    border-left: 2px solid var(--accent);
-    padding-left: 14px;
-    font-size: 15px;
-    color: var(--muted);
-  }
+      .note {
+        border-left: 2px solid var(--accent);
+        padding-left: 14px;
+        font-size: 15px;
+        color: var(--muted);
+      }
 
-  .cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    align-self: flex-start;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    font-size: clamp(15px, 2.1vw, 24px);
-    letter-spacing: -0.01em;
-    text-decoration: none;
-    color: var(--accent-fg);
-    background: var(--accent);
-    padding: 14px 20px;
-    border-radius: 2px;
-    white-space: nowrap;
-    transition: transform 160ms ease;
-  }
-  .cta:hover { transform: translateY(-2px); }
-  .cta:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        align-self: flex-start;
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: clamp(15px, 2.1vw, 24px);
+        letter-spacing: -0.01em;
+        text-decoration: none;
+        color: var(--accent-fg);
+        background: var(--accent);
+        padding: 14px 20px;
+        border-radius: 2px;
+        white-space: nowrap;
+        transition: transform 160ms ease;
+      }
+      .cta:hover {
+        transform: translateY(-2px);
+      }
+      .cta:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 3px;
+      }
 
-  .tries { display: flex; flex-direction: column; gap: 8px; font-size: 15px; }
-  .tries a, .colophon a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 3px; }
-  .tries code, .colophon code { font-family: var(--font-mono); font-size: 13px; }
+      .tries {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 15px;
+      }
+      .tries a,
+      .colophon a {
+        color: var(--accent-ink);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+      .tries code,
+      .colophon code {
+        font-family: var(--font-mono);
+        font-size: 13px;
+      }
 
-  .colophon {
-    font-size: 13px;
-    color: var(--muted);
-    padding-top: 14px;
-    border-top: 1px solid var(--line);
-  }
+      .colophon {
+        font-size: 13px;
+        color: var(--muted);
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
 
-  /* --- Illustration ------------------------------------------------------ */
+      /* --- Illustration ------------------------------------------------------ */
 
-  .art { display: grid; place-items: center; }
-  .art svg { width: 100%; max-width: 470px; height: auto; }
+      .art {
+        display: grid;
+        place-items: center;
+      }
+      .art svg {
+        width: 100%;
+        max-width: 470px;
+        height: auto;
+      }
 
-  .ink {
-    fill: none;
-    stroke: var(--ink);
-    stroke-width: 2.2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  .ink-thin { stroke-width: 1.4; }
-  .pop { fill: var(--accent); stroke: none; }
-  .pop-line { fill: none; stroke: var(--accent); stroke-width: 2.6; stroke-linecap: round; }
-  .faint { fill: none; stroke: var(--line-strong); stroke-width: 1.4; stroke-linecap: round; }
-  .plate { fill: var(--surface); stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
-  .label { font-family: var(--font-mono); font-size: 11px; fill: var(--muted); }
-  .label-ink { font-family: var(--font-mono); font-size: 11px; font-weight: 700; fill: var(--accent-ink); }
+      .ink {
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: 2.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .ink-thin {
+        stroke-width: 1.4;
+      }
+      .pop {
+        fill: var(--accent);
+        stroke: none;
+      }
+      .pop-line {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 2.6;
+        stroke-linecap: round;
+      }
+      .faint {
+        fill: none;
+        stroke: var(--line-strong);
+        stroke-width: 1.4;
+        stroke-linecap: round;
+      }
+      .plate {
+        fill: var(--surface);
+        stroke: var(--ink);
+        stroke-width: 2.2;
+        stroke-linejoin: round;
+      }
+      .label {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        fill: var(--muted);
+      }
+      .label-ink {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 700;
+        fill: var(--accent-ink);
+      }
 
-  /* Blip. The outline is one weight throughout — the riso look has a single
+      /* Blip. The outline is one weight throughout — the riso look has a single
      bold rounded contour, not a hierarchy of strokes. */
-  .blip-body {
-    fill: var(--blip-body);
-    stroke: var(--ink);
-    stroke-width: 3.2;
-    stroke-linejoin: round;
-    stroke-linecap: round;
-  }
-  .blip-screen { fill: var(--blip-screen); stroke: none; }
-  .blip-eye { fill: #f4f1e8; stroke: none; }
-  .blip-ant { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; }
-  .blip-ball { fill: var(--accent); stroke: var(--ink); stroke-width: 3.2; }
-  /* The misregistered second ink pass — riso's signature, one layer off. */
-  .blip-offset { fill: var(--accent); opacity: 0.32; }
+      .blip-body {
+        fill: var(--blip-body);
+        stroke: var(--ink);
+        stroke-width: 3.2;
+        stroke-linejoin: round;
+        stroke-linecap: round;
+      }
+      .blip-screen {
+        fill: var(--blip-screen);
+        stroke: none;
+      }
+      .blip-eye {
+        fill: #f4f1e8;
+        stroke: none;
+      }
+      .blip-ant {
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: 3.2;
+        stroke-linecap: round;
+      }
+      .blip-ball {
+        fill: var(--accent);
+        stroke: var(--ink);
+        stroke-width: 3.2;
+      }
+      /* The misregistered second ink pass — riso's signature, one layer off. */
+      .blip-offset {
+        fill: var(--accent);
+        opacity: 0.32;
+      }
 
-  /* The line draws itself in. pathLength="1" makes one dash length work for
+      /* The line draws itself in. pathLength="1" makes one dash length work for
      every path regardless of its real geometry. */
-  .panel .ink, .panel .pop-line, .panel .faint {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-  }
-  .panel .pop, .panel .label, .panel .label-ink, .panel .plate, .panel .blip { opacity: 0; }
+      .panel .ink,
+      .panel .pop-line,
+      .panel .faint {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+      }
+      .panel .pop,
+      .panel .label,
+      .panel .label-ink,
+      .panel .plate,
+      .panel .blip {
+        opacity: 0;
+      }
 
-  .panel.seen .ink, .panel.seen .pop-line, .panel.seen .faint {
-    animation: draw 1100ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
-  }
-  .panel.seen .pop, .panel.seen .label, .panel.seen .label-ink, .panel.seen .plate {
-    animation: fade 500ms ease 620ms forwards;
-  }
-  /* Blip arrives last and lands, because he is the one doing the thing. */
-  .panel.seen .blip { animation: land 620ms cubic-bezier(0.2, 0.8, 0.3, 1) 520ms forwards; }
+      .panel.seen .ink,
+      .panel.seen .pop-line,
+      .panel.seen .faint {
+        animation: draw 1100ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+      }
+      .panel.seen .pop,
+      .panel.seen .label,
+      .panel.seen .label-ink,
+      .panel.seen .plate {
+        animation: fade 500ms ease 620ms forwards;
+      }
+      /* Blip arrives last and lands, because he is the one doing the thing. */
+      .panel.seen .blip {
+        animation: land 620ms cubic-bezier(0.2, 0.8, 0.3, 1) 520ms forwards;
+      }
 
-  @keyframes draw { to { stroke-dashoffset: 0; } }
-  @keyframes fade { to { opacity: 1; } }
-  @keyframes land {
-    from { opacity: 0; transform: translateY(-14px); }
-    to { opacity: 1; transform: none; }
-  }
+      @keyframes draw {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes fade {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes land {
+        from {
+          opacity: 0;
+          transform: translateY(-14px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
 
-  .panel .copy > * { opacity: 0; transform: translateY(12px); }
-  .panel.seen .copy > * { animation: rise 620ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
-  .panel.seen .copy > *:nth-child(2) { animation-delay: 70ms; }
-  .panel.seen .copy > *:nth-child(3) { animation-delay: 140ms; }
-  .panel.seen .copy > *:nth-child(4) { animation-delay: 210ms; }
-  .panel.seen .copy > *:nth-child(5) { animation-delay: 280ms; }
-  .panel.seen .copy > *:nth-child(6) { animation-delay: 350ms; }
+      .panel .copy > * {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      .panel.seen .copy > * {
+        animation: rise 620ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+      }
+      .panel.seen .copy > *:nth-child(2) {
+        animation-delay: 70ms;
+      }
+      .panel.seen .copy > *:nth-child(3) {
+        animation-delay: 140ms;
+      }
+      .panel.seen .copy > *:nth-child(4) {
+        animation-delay: 210ms;
+      }
+      .panel.seen .copy > *:nth-child(5) {
+        animation-delay: 280ms;
+      }
+      .panel.seen .copy > *:nth-child(6) {
+        animation-delay: 350ms;
+      }
 
-  @keyframes rise { to { opacity: 1; transform: none; } }
+      @keyframes rise {
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
 
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    .panel .ink, .panel .pop-line, .panel .faint { stroke-dasharray: none; stroke-dashoffset: 0; }
-    .panel .pop, .panel .label, .panel .label-ink, .panel .plate, .panel .blip { opacity: 1; }
-    .panel.seen .ink, .panel.seen .pop-line, .panel.seen .faint,
-    .panel.seen .pop, .panel.seen .label, .panel.seen .label-ink,
-    .panel.seen .plate, .panel.seen .blip,
-    .panel.seen .copy > * { animation: none; }
-    .panel .copy > * { opacity: 1; transform: none; }
-    .cta { transition: none; }
-  }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .panel .ink,
+        .panel .pop-line,
+        .panel .faint {
+          stroke-dasharray: none;
+          stroke-dashoffset: 0;
+        }
+        .panel .pop,
+        .panel .label,
+        .panel .label-ink,
+        .panel .plate,
+        .panel .blip {
+          opacity: 1;
+        }
+        .panel.seen .ink,
+        .panel.seen .pop-line,
+        .panel.seen .faint,
+        .panel.seen .pop,
+        .panel.seen .label,
+        .panel.seen .label-ink,
+        .panel.seen .plate,
+        .panel.seen .blip,
+        .panel.seen .copy > * {
+          animation: none;
+        }
+        .panel .copy > * {
+          opacity: 1;
+          transform: none;
+        }
+        .cta {
+          transition: none;
+        }
+      }
 
-  @media (max-width: 900px) {
-    main { padding-left: 0; padding-bottom: 60px; }
-    .panel {
-      grid-template-columns: 1fr;
-      min-height: auto;
-      padding: 56px 22px 64px;
-      gap: 32px;
-    }
-    .panel:nth-child(even) .art { order: 0; }
-    .art svg { max-width: 350px; }
-    .rail {
-      top: auto;
-      right: 0;
-      bottom: 0;
-      width: auto;
-      height: 56px;
-      flex-direction: row;
-      border-right: 0;
-      border-top: 1px solid var(--line);
-      justify-content: center;
-    }
-    .rail-cap, .rail-tick { display: none; }
-    .home-link { left: 16px; top: 14px; }
-    .theme-toggle {
-      top: 50%;
-      left: auto;
-      right: 10px;
-      transform: translateY(-50%);
-    }
-    .cta { white-space: normal; font-size: 15px; }
-  }
-</style>
+      @media (max-width: 900px) {
+        main {
+          padding-left: 0;
+          padding-bottom: 60px;
+        }
+        .panel {
+          grid-template-columns: 1fr;
+          min-height: auto;
+          padding: 56px 22px 64px;
+          gap: 32px;
+        }
+        .panel:nth-child(even) .art {
+          order: 0;
+        }
+        .art svg {
+          max-width: 350px;
+        }
+        .rail {
+          top: auto;
+          right: 0;
+          bottom: 0;
+          width: auto;
+          height: 56px;
+          flex-direction: row;
+          border-right: 0;
+          border-top: 1px solid var(--line);
+          justify-content: center;
+        }
+        .rail-cap,
+        .rail-tick {
+          display: none;
+        }
+        .home-link {
+          left: 16px;
+          top: 14px;
+        }
+        .theme-toggle {
+          top: 50%;
+          left: auto;
+          right: 10px;
+          transform: translateY(-50%);
+        }
+        .cta {
+          white-space: normal;
+          font-size: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="home-link" href="../index.html" aria-label="Back to homepage"
+      >← Home</a
+    >
 
-</head>
-<body>
+    <div class="grain" aria-hidden="true"></div>
 
-<a class="home-link" href="../index.html" aria-label="Back to homepage">← Home</a>
-
-<div class="grain" aria-hidden="true"></div>
-
-<svg class="defs" aria-hidden="true" focusable="false">
-  <!-- feTurbulence + feDisplacementMap is what gives an otherwise exact vector
+    <svg class="defs" aria-hidden="true" focusable="false">
+      <!-- feTurbulence + feDisplacementMap is what gives an otherwise exact vector
        stroke a hand-drawn waver, so the lines read as drawn rather than
        plotted. Blip gets the gentler one: the deadpan face has to stay clean. -->
-  <filter id="wobble" x="-12%" y="-12%" width="124%" height="124%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="3" seed="7" result="noise"/>
-    <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>
-  <filter id="wobble2" x="-12%" y="-12%" width="124%" height="124%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="19" result="noise"/>
-    <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.1" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>
-  <filter id="wobbleSoft" x="-14%" y="-14%" width="128%" height="128%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="3" result="noise"/>
-    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>
+      <filter id="wobble" x="-12%" y="-12%" width="124%" height="124%">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.021"
+          numOctaves="3"
+          seed="7"
+          result="noise"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="noise"
+          scale="2.6"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+      <filter id="wobble2" x="-12%" y="-12%" width="124%" height="124%">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.03"
+          numOctaves="2"
+          seed="19"
+          result="noise"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="noise"
+          scale="2.1"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+      <filter id="wobbleSoft" x="-14%" y="-14%" width="128%" height="128%">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.016"
+          numOctaves="2"
+          seed="3"
+          result="noise"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="noise"
+          scale="1.2"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
 
-  <!-- Blip's head, drawn once and reused in every panel. Consistency of the
+      <!-- Blip's head, drawn once and reused in every panel. Consistency of the
        head IS the character lock; only the limbs change pose. Origin sits at
        the centre of the screen. Never add a mouth, eyebrows, or screen
        content beyond the two dot eyes. -->
-  <g id="blipHead">
-    <path class="blip-offset" d="M -41 -33 Q -41 -39 -35 -39 L 35 -39 Q 41 -39 41 -33 L 41 30 Q 41 36 35 36 L -35 36 Q -41 36 -41 30 Z" transform="translate(-4,4)"/>
-    <path class="blip-ant" d="M -22 -36 C -27 -48, -30 -52, -32 -58"/>
-    <circle class="blip-ball" cx="-33" cy="-64" r="8"/>
-    <rect class="blip-body" x="-40" y="-38" width="80" height="74" rx="17"/>
-    <rect class="blip-screen" x="-29" y="-27" width="58" height="52" rx="13"/>
-    <ellipse class="blip-eye" cx="-12" cy="-2" rx="4.2" ry="5.4"/>
-    <ellipse class="blip-eye" cx="12" cy="-2" rx="4.2" ry="5.4"/>
-  </g>
+      <g id="blipHead">
+        <path
+          class="blip-offset"
+          d="M -41 -33 Q -41 -39 -35 -39 L 35 -39 Q 41 -39 41 -33 L 41 30 Q 41 36 35 36 L -35 36 Q -41 36 -41 30 Z"
+          transform="translate(-4,4)"
+        />
+        <path class="blip-ant" d="M -22 -36 C -27 -48, -30 -52, -32 -58" />
+        <circle class="blip-ball" cx="-33" cy="-64" r="8" />
+        <rect
+          class="blip-body"
+          x="-40"
+          y="-38"
+          width="80"
+          height="74"
+          rx="17"
+        />
+        <rect
+          class="blip-screen"
+          x="-29"
+          y="-27"
+          width="58"
+          height="52"
+          rx="13"
+        />
+        <ellipse class="blip-eye" cx="-12" cy="-2" rx="4.2" ry="5.4" />
+        <ellipse class="blip-eye" cx="12" cy="-2" rx="4.2" ry="5.4" />
+      </g>
 
-  <!-- Standing body: torso, two stubby arms, two stubby feet. Arms end in
+      <!-- Standing body: torso, two stubby arms, two stubby feet. Arms end in
        rounded tips — Blip presses and carries, it never grasps. -->
-  <g id="blipStand">
-    <path class="blip-body" d="M -22 62 Q -22 46 -12 44 L 12 44 Q 22 46 22 62 L 22 78 Q 22 86 12 86 L -12 86 Q -22 86 -22 78 Z"/>
-    <path class="blip-body" d="M -22 50 Q -34 52 -35 64 Q -35 72 -28 72 Q -22 71 -22 62 Z"/>
-    <path class="blip-body" d="M 22 50 Q 34 52 35 64 Q 35 72 28 72 Q 22 71 22 62 Z"/>
-    <path class="blip-body" d="M -16 86 L -3 86 L -3 100 Q -3 106 -9.5 106 Q -16 106 -16 100 Z"/>
-    <path class="blip-body" d="M 3 86 L 16 86 L 16 100 Q 16 106 9.5 106 Q 3 106 3 100 Z"/>
-  </g>
-</svg>
-
-<nav class="rail" aria-label="Panels">
-  <button class="theme-toggle" type="button" data-shows="light" aria-label="Switch to dark theme">
-    <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="4.6"/>
-      <path d="M12 2.4v2.4M12 19.2v2.4M2.4 12h2.4M19.2 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/>
+      <g id="blipStand">
+        <path
+          class="blip-body"
+          d="M -22 62 Q -22 46 -12 44 L 12 44 Q 22 46 22 62 L 22 78 Q 22 86 12 86 L -12 86 Q -22 86 -22 78 Z"
+        />
+        <path
+          class="blip-body"
+          d="M -22 50 Q -34 52 -35 64 Q -35 72 -28 72 Q -22 71 -22 62 Z"
+        />
+        <path
+          class="blip-body"
+          d="M 22 50 Q 34 52 35 64 Q 35 72 28 72 Q 22 71 22 62 Z"
+        />
+        <path
+          class="blip-body"
+          d="M -16 86 L -3 86 L -3 100 Q -3 106 -9.5 106 Q -16 106 -16 100 Z"
+        />
+        <path
+          class="blip-body"
+          d="M 3 86 L 16 86 L 16 100 Q 16 106 9.5 106 Q 3 106 3 100 Z"
+        />
+      </g>
     </svg>
-    <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M20.4 14.2A8.6 8.6 0 0 1 9.8 3.6a8.6 8.6 0 1 0 10.6 10.6Z"/>
-    </svg>
-  </button>
-  <span class="rail-cap">RUNFOLIO</span>
-  <a href="#p1" aria-current="true">01</a>
-  <span class="rail-tick" aria-hidden="true"></span>
-  <a href="#p2">02</a>
-  <span class="rail-tick" aria-hidden="true"></span>
-  <a href="#p3">03</a>
-  <span class="rail-tick" aria-hidden="true"></span>
-  <a href="#p4">04</a>
-  <span class="rail-tick" aria-hidden="true"></span>
-  <a href="#p5">05</a>
-  <span class="rail-tick" aria-hidden="true"></span>
-  <a href="#p6">06</a>
-  <span class="rail-cap">SCROLL</span>
-</nav>
 
-<main>
+    <nav class="rail" aria-label="Panels">
+      <button
+        class="theme-toggle"
+        type="button"
+        data-shows="light"
+        aria-label="Switch to dark theme"
+      >
+        <svg
+          class="i-sun"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.9"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="4.6" />
+          <path
+            d="M12 2.4v2.4M12 19.2v2.4M2.4 12h2.4M19.2 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"
+          />
+        </svg>
+        <svg
+          class="i-moon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.9"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M20.4 14.2A8.6 8.6 0 0 1 9.8 3.6a8.6 8.6 0 1 0 10.6 10.6Z" />
+        </svg>
+      </button>
+      <span class="rail-cap">RUNFOLIO</span>
+      <a href="#p1" aria-current="true">01</a>
+      <span class="rail-tick" aria-hidden="true"></span>
+      <a href="#p2">02</a>
+      <span class="rail-tick" aria-hidden="true"></span>
+      <a href="#p3">03</a>
+      <span class="rail-tick" aria-hidden="true"></span>
+      <a href="#p4">04</a>
+      <span class="rail-tick" aria-hidden="true"></span>
+      <a href="#p5">05</a>
+      <span class="rail-tick" aria-hidden="true"></span>
+      <a href="#p6">06</a>
+      <span class="rail-cap">SCROLL</span>
+    </nav>
 
-  <!-- 01 — Blip breaks the tape. The move: torso through the tape, feet
+    <main>
+      <!-- 01 — Blip breaks the tape. The move: torso through the tape, feet
        driving. No grasp required, which is the whole point of staging it
        chest-first. ================================================== -->
-  <section class="panel" id="p1">
-    <div class="art">
-      <svg viewBox="0 0 400 340" role="img" aria-label="Blip, a small screen-faced robot, running chest-first through a finish tape, with a race bib and a stopwatch on the ground behind.">
-        <g filter="url(#wobble)">
-          <path class="faint" pathLength="1" d="M20 290 L 380 290"/>
-          <path class="ink" pathLength="1" d="M52 234 L 118 228 L 123 282 L 57 288 Z"/>
-          <circle class="pop" cx="58" cy="240" r="3.2"/>
-          <circle class="pop" cx="115" cy="235" r="3.2"/>
-          <text class="label-ink" x="68" y="266">2317</text>
-          <circle class="ink" pathLength="1" cx="338" cy="258" r="26"/>
-          <path class="ink ink-thin" pathLength="1" d="M338 258 L 338 242"/>
-          <path class="ink ink-thin" pathLength="1" d="M338 258 L 351 265"/>
-          <path class="ink" pathLength="1" d="M332 230 L 344 230"/>
-          <path class="ink" pathLength="1" d="M338 230 L 338 223"/>
-        </g>
-        <g class="blip" filter="url(#wobbleSoft)">
-          <g transform="translate(196,186) scale(0.94)">
-            <use href="#blipStand"/>
-            <use href="#blipHead"/>
-          </g>
-        </g>
-        <g filter="url(#wobble)">
-          <!-- the tape, drawn over Blip and broken at his chest so it reads as
+      <section class="panel" id="p1">
+        <div class="art">
+          <svg
+            viewBox="0 0 400 340"
+            role="img"
+            aria-label="Blip, a small screen-faced robot, running chest-first through a finish tape, with a race bib and a stopwatch on the ground behind."
+          >
+            <g filter="url(#wobble)">
+              <path class="faint" pathLength="1" d="M20 290 L 380 290" />
+              <path
+                class="ink"
+                pathLength="1"
+                d="M52 234 L 118 228 L 123 282 L 57 288 Z"
+              />
+              <circle class="pop" cx="58" cy="240" r="3.2" />
+              <circle class="pop" cx="115" cy="235" r="3.2" />
+              <text class="label-ink" x="68" y="266">2317</text>
+              <circle class="ink" pathLength="1" cx="338" cy="258" r="26" />
+              <path
+                class="ink ink-thin"
+                pathLength="1"
+                d="M338 258 L 338 242"
+              />
+              <path
+                class="ink ink-thin"
+                pathLength="1"
+                d="M338 258 L 351 265"
+              />
+              <path class="ink" pathLength="1" d="M332 230 L 344 230" />
+              <path class="ink" pathLength="1" d="M338 230 L 338 223" />
+            </g>
+            <g class="blip" filter="url(#wobbleSoft)">
+              <g transform="translate(196,186) scale(0.94)">
+                <use href="#blipStand" />
+                <use href="#blipHead" />
+              </g>
+            </g>
+            <g filter="url(#wobble)">
+              <!-- the tape, drawn over Blip and broken at his chest so it reads as
                giving way rather than passing behind him -->
-          <path class="pop-line" pathLength="1" d="M12 232 C 70 224, 118 238, 152 242"/>
-          <path class="pop-line" pathLength="1" d="M240 242 C 292 238, 340 222, 388 230"/>
-        </g>
-      </svg>
-    </div>
-    <div class="copy">
-      <p class="eyebrow">01 — RunFolio</p>
-      <h1>Every finish, framed.</h1>
-      <p class="lede">A race portfolio, not a training tracker. One page that proves what you have run — and one link that carries it.</p>
-      <dl class="band">
-        <div><dt>Races logged</dt><dd>23</dd></div>
-        <div><dt>Distance</dt><dd>537 km</dd></div>
-        <div><dt>Marathon PB</dt><dd>5:05:53</dd></div>
-      </dl>
-      <p class="sub">Those figures are read from one real runner&rsquo;s races when the site builds. Nothing on this page is a placeholder.</p>
-    </div>
-  </section>
+              <path
+                class="pop-line"
+                pathLength="1"
+                d="M12 232 C 70 224, 118 238, 152 242"
+              />
+              <path
+                class="pop-line"
+                pathLength="1"
+                d="M240 242 C 292 238, 340 222, 388 230"
+              />
+            </g>
+          </svg>
+        </div>
+        <div class="copy">
+          <p class="eyebrow">01 — RunFolio</p>
+          <h1>Every finish, framed.</h1>
+          <p class="lede">
+            A race portfolio, not a training tracker. One page that proves what
+            you have run — and one link that carries it.
+          </p>
+          <dl class="band">
+            <div>
+              <dt>Races logged</dt>
+              <dd>23</dd>
+            </div>
+            <div>
+              <dt>Distance</dt>
+              <dd>537 km</dd>
+            </div>
+            <div>
+              <dt>Marathon PB</dt>
+              <dd>5:05:53</dd>
+            </div>
+          </dl>
+          <p class="sub">
+            Those figures are read from one real runner&rsquo;s races when the
+            site builds. Nothing on this page is a placeholder.
+          </p>
+        </div>
+      </section>
 
-  <!-- 02 — Blip reaches, and the pieces are all further away than his arms
+      <!-- 02 — Blip reaches, and the pieces are all further away than his arms
        go. His stubby reach is the argument. ========================== -->
-  <section class="panel" id="p2">
-    <div class="art">
-      <svg viewBox="0 0 400 340" role="img" aria-label="Blip standing in the middle with both stubby arms out, unable to reach four scattered fragments — a phone, a certificate, a photograph and a spreadsheet — that sit outside a dashed circle marking how far he can stretch.">
-        <g filter="url(#wobble2)">
-          <g transform="rotate(-12 74 74)">
-            <rect class="plate" x="46" y="30" width="56" height="90" rx="6"/>
-            <path class="faint" pathLength="1" d="M58 52 L 90 52"/>
-            <path class="faint" pathLength="1" d="M58 66 L 84 66"/>
-            <path class="faint" pathLength="1" d="M58 80 L 88 80"/>
-          </g>
-          <g transform="rotate(10 326 74)">
-            <rect class="plate" x="298" y="30" width="56" height="88"/>
-            <path class="faint" pathLength="1" d="M310 50 L 342 50"/>
-            <path class="faint" pathLength="1" d="M310 64 L 342 64"/>
-            <path class="faint" pathLength="1" d="M310 78 L 330 78"/>
-            <circle class="pop" cx="338" cy="98" r="6.5"/>
-          </g>
-          <g transform="rotate(-7 74 274)">
-            <rect class="plate" x="40" y="238" width="70" height="66"/>
-            <path class="ink ink-thin" pathLength="1" d="M46 288 L 64 266 L 78 282 L 90 270 L 104 288"/>
-            <circle class="pop" cx="94" cy="254" r="5.5"/>
-          </g>
-          <g transform="rotate(8 326 274)">
-            <rect class="plate" x="292" y="238" width="70" height="66"/>
-            <path class="faint" pathLength="1" d="M292 260 L 362 260"/>
-            <path class="faint" pathLength="1" d="M292 282 L 362 282"/>
-            <path class="faint" pathLength="1" d="M316 238 L 316 304"/>
-            <path class="faint" pathLength="1" d="M340 238 L 340 304"/>
-          </g>
-          <circle class="faint" pathLength="1" cx="200" cy="176" r="74" stroke-dasharray="5 8"/>
-          <text class="label" x="163" y="290">as far as he gets</text>
-        </g>
-        <g class="blip" filter="url(#wobbleSoft)">
-          <g transform="translate(200,150) scale(0.8)">
-            <!-- arms raised outward: the reach, and its limit -->
-            <path class="blip-body" d="M -22 62 Q -22 46 -12 44 L 12 44 Q 22 46 22 62 L 22 78 Q 22 86 12 86 L -12 86 Q -22 86 -22 78 Z"/>
-            <path class="blip-body" d="M -22 54 Q -38 44 -48 38 Q -55 34 -58 40 Q -60 47 -52 51 Q -38 58 -22 63 Z"/>
-            <path class="blip-body" d="M 22 54 Q 38 44 48 38 Q 55 34 58 40 Q 60 47 52 51 Q 38 58 22 63 Z"/>
-            <path class="blip-body" d="M -16 86 L -3 86 L -3 100 Q -3 106 -9.5 106 Q -16 106 -16 100 Z"/>
-            <path class="blip-body" d="M 3 86 L 16 86 L 16 100 Q 16 106 9.5 106 Q 3 106 3 100 Z"/>
-            <use href="#blipHead"/>
-          </g>
-        </g>
-      </svg>
-    </div>
-    <div class="copy">
-      <p class="eyebrow">02 — The problem</p>
-      <h2>The finish line is where the record falls apart</h2>
-      <p class="lede">You cross the line and the race scatters. An activity buried in a feed. A timing certificate in your downloads folder. Two hundred photographs in the camera roll. Maybe a spreadsheet.</p>
-      <p class="sub">Every running app tracks what you are <em>going</em> to run. Almost nothing holds what you actually did — and the races you finished are the part worth keeping.</p>
-      <p class="note">RunFolio is a race portfolio. Not a training tracker, not another dashboard.</p>
-    </div>
-  </section>
+      <section class="panel" id="p2">
+        <div class="art">
+          <svg
+            viewBox="0 0 400 340"
+            role="img"
+            aria-label="Blip standing in the middle with both stubby arms out, unable to reach four scattered fragments — a phone, a certificate, a photograph and a spreadsheet — that sit outside a dashed circle marking how far he can stretch."
+          >
+            <g filter="url(#wobble2)">
+              <g transform="rotate(-12 74 74)">
+                <rect
+                  class="plate"
+                  x="46"
+                  y="30"
+                  width="56"
+                  height="90"
+                  rx="6"
+                />
+                <path class="faint" pathLength="1" d="M58 52 L 90 52" />
+                <path class="faint" pathLength="1" d="M58 66 L 84 66" />
+                <path class="faint" pathLength="1" d="M58 80 L 88 80" />
+              </g>
+              <g transform="rotate(10 326 74)">
+                <rect class="plate" x="298" y="30" width="56" height="88" />
+                <path class="faint" pathLength="1" d="M310 50 L 342 50" />
+                <path class="faint" pathLength="1" d="M310 64 L 342 64" />
+                <path class="faint" pathLength="1" d="M310 78 L 330 78" />
+                <circle class="pop" cx="338" cy="98" r="6.5" />
+              </g>
+              <g transform="rotate(-7 74 274)">
+                <rect class="plate" x="40" y="238" width="70" height="66" />
+                <path
+                  class="ink ink-thin"
+                  pathLength="1"
+                  d="M46 288 L 64 266 L 78 282 L 90 270 L 104 288"
+                />
+                <circle class="pop" cx="94" cy="254" r="5.5" />
+              </g>
+              <g transform="rotate(8 326 274)">
+                <rect class="plate" x="292" y="238" width="70" height="66" />
+                <path class="faint" pathLength="1" d="M292 260 L 362 260" />
+                <path class="faint" pathLength="1" d="M292 282 L 362 282" />
+                <path class="faint" pathLength="1" d="M316 238 L 316 304" />
+                <path class="faint" pathLength="1" d="M340 238 L 340 304" />
+              </g>
+              <circle
+                class="faint"
+                pathLength="1"
+                cx="200"
+                cy="176"
+                r="74"
+                stroke-dasharray="5 8"
+              />
+              <text class="label" x="163" y="290">as far as he gets</text>
+            </g>
+            <g class="blip" filter="url(#wobbleSoft)">
+              <g transform="translate(200,150) scale(0.8)">
+                <!-- arms raised outward: the reach, and its limit -->
+                <path
+                  class="blip-body"
+                  d="M -22 62 Q -22 46 -12 44 L 12 44 Q 22 46 22 62 L 22 78 Q 22 86 12 86 L -12 86 Q -22 86 -22 78 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M -22 54 Q -38 44 -48 38 Q -55 34 -58 40 Q -60 47 -52 51 Q -38 58 -22 63 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M 22 54 Q 38 44 48 38 Q 55 34 58 40 Q 60 47 52 51 Q 38 58 22 63 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M -16 86 L -3 86 L -3 100 Q -3 106 -9.5 106 Q -16 106 -16 100 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M 3 86 L 16 86 L 16 100 Q 16 106 9.5 106 Q 3 106 3 100 Z"
+                />
+                <use href="#blipHead" />
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="copy">
+          <p class="eyebrow">02 — The problem</p>
+          <h2>The finish line is where the record falls apart</h2>
+          <p class="lede">
+            You cross the line and the race scatters. An activity buried in a
+            feed. A timing certificate in your downloads folder. Two hundred
+            photographs in the camera roll. Maybe a spreadsheet.
+          </p>
+          <p class="sub">
+            Every running app tracks what you are <em>going</em> to run. Almost
+            nothing holds what you actually did — and the races you finished are
+            the part worth keeping.
+          </p>
+          <p class="note">
+            RunFolio is a race portfolio. Not a training tracker, not another
+            dashboard.
+          </p>
+        </div>
+      </section>
 
-  <!-- 03 — Blip presses one button and the finished race card comes up.
+      <!-- 03 — Blip presses one button and the finished race card comes up.
        Contact, not grasp: an arm tip on a key. =================== -->
-  <section class="panel" id="p3">
-    <div class="art">
-      <svg viewBox="0 0 400 340" role="img" aria-label="Blip pressing one large accent key; above it a finished race card showing a photograph with the finish time laid across the bottom.">
-        <g filter="url(#wobble)">
-          <rect class="plate" x="150" y="24" width="216" height="132"/>
-          <path class="ink ink-thin" pathLength="1" d="M158 128 L 196 88 L 226 118 L 254 86 L 300 132"/>
-          <circle class="pop" cx="330" cy="58" r="11"/>
-          <rect class="pop" x="150" y="124" width="216" height="32"/>
-          <text class="label-ink" x="162" y="145" style="fill: var(--accent-fg)">03:58:04 · 42.2 KM · DELHI</text>
-          <path class="faint" pathLength="1" d="M150 176 L 366 176"/>
-          <text class="label" x="150" y="196">one tap, and the page exists</text>
-        </g>
-        <g filter="url(#wobble2)">
-          <rect class="pop" x="112" y="210" width="118" height="34" rx="17"/>
-          <path class="faint" pathLength="1" d="M30 250 L 256 250"/>
-        </g>
-        <g class="blip" filter="url(#wobbleSoft)">
-          <g transform="translate(76,168) scale(0.72)">
-            <path class="blip-body" d="M -22 62 Q -22 46 -12 44 L 12 44 Q 22 46 22 62 L 22 78 Q 22 86 12 86 L -12 86 Q -22 86 -22 78 Z"/>
-            <path class="blip-body" d="M -22 50 Q -34 52 -35 64 Q -35 72 -28 72 Q -22 71 -22 62 Z"/>
-            <!-- right arm out and down: the tip lands on the key -->
-            <path class="blip-body" d="M 22 52 Q 42 58 58 72 Q 65 78 60 85 Q 54 91 47 85 Q 34 72 22 64 Z"/>
-            <path class="blip-body" d="M -16 86 L -3 86 L -3 100 Q -3 106 -9.5 106 Q -16 106 -16 100 Z"/>
-            <path class="blip-body" d="M 3 86 L 16 86 L 16 100 Q 16 106 9.5 106 Q 3 106 3 100 Z"/>
-            <use href="#blipHead"/>
-          </g>
-        </g>
-      </svg>
-    </div>
-    <div class="copy">
-      <p class="eyebrow">03 — What you do</p>
-      <h2>Three things, in the order they happen</h2>
-      <ol class="steps">
-        <li>
-          <span class="n">01</span>
-          <div>
-            <h3>Log a race in under a minute</h3>
-            <p>Event, date, distance, finish time. Preset chips for the distances you actually run, so a marathon is one tap. Bib number and a certificate link if you want the receipt, and a free-text box if the race deserves a story.</p>
-          </div>
-        </li>
-        <li>
-          <span class="n">02</span>
-          <div>
-            <h3>Put the photographs first</h3>
-            <p>Every race is a photograph with the numbers laid over it, not a row in a table. Drop in whatever your phone took — portrait, landscape, any mix — and it is compressed in your browser on the way up, so a gallery still opens on a bad connection.</p>
-          </div>
-        </li>
-        <li>
-          <span class="n">03</span>
-          <div>
-            <h3>Share exactly one link</h3>
-            <p>One address, and it is yours. Send it, put it in a bio, print it on something.</p>
-          </div>
-        </li>
-      </ol>
-    </div>
-  </section>
+      <section class="panel" id="p3">
+        <div class="art">
+          <svg
+            viewBox="0 0 400 340"
+            role="img"
+            aria-label="Blip pressing one large accent key; above it a finished race card showing a photograph with the finish time laid across the bottom."
+          >
+            <g filter="url(#wobble)">
+              <rect class="plate" x="150" y="24" width="216" height="132" />
+              <path
+                class="ink ink-thin"
+                pathLength="1"
+                d="M158 128 L 196 88 L 226 118 L 254 86 L 300 132"
+              />
+              <circle class="pop" cx="330" cy="58" r="11" />
+              <rect class="pop" x="150" y="124" width="216" height="32" />
+              <text
+                class="label-ink"
+                x="162"
+                y="145"
+                style="fill: var(--accent-fg)"
+              >
+                03:58:04 · 42.2 KM · DELHI
+              </text>
+              <path class="faint" pathLength="1" d="M150 176 L 366 176" />
+              <text class="label" x="150" y="196">
+                one tap, and the page exists
+              </text>
+            </g>
+            <g filter="url(#wobble2)">
+              <rect
+                class="pop"
+                x="112"
+                y="210"
+                width="118"
+                height="34"
+                rx="17"
+              />
+              <path class="faint" pathLength="1" d="M30 250 L 256 250" />
+            </g>
+            <g class="blip" filter="url(#wobbleSoft)">
+              <g transform="translate(76,168) scale(0.72)">
+                <path
+                  class="blip-body"
+                  d="M -22 62 Q -22 46 -12 44 L 12 44 Q 22 46 22 62 L 22 78 Q 22 86 12 86 L -12 86 Q -22 86 -22 78 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M -22 50 Q -34 52 -35 64 Q -35 72 -28 72 Q -22 71 -22 62 Z"
+                />
+                <!-- right arm out and down: the tip lands on the key -->
+                <path
+                  class="blip-body"
+                  d="M 22 52 Q 42 58 58 72 Q 65 78 60 85 Q 54 91 47 85 Q 34 72 22 64 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M -16 86 L -3 86 L -3 100 Q -3 106 -9.5 106 Q -16 106 -16 100 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M 3 86 L 16 86 L 16 100 Q 16 106 9.5 106 Q 3 106 3 100 Z"
+                />
+                <use href="#blipHead" />
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="copy">
+          <p class="eyebrow">03 — What you do</p>
+          <h2>Three things, in the order they happen</h2>
+          <ol class="steps">
+            <li>
+              <span class="n">01</span>
+              <div>
+                <h3>Log a race in under a minute</h3>
+                <p>
+                  Event, date, distance, finish time. Preset chips for the
+                  distances you actually run, so a marathon is one tap. Bib
+                  number and a certificate link if you want the receipt, and a
+                  free-text box if the race deserves a story.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span class="n">02</span>
+              <div>
+                <h3>Put the photographs first</h3>
+                <p>
+                  Every race is a photograph with the numbers laid over it, not
+                  a row in a table. Drop in whatever your phone took — portrait,
+                  landscape, any mix — and it is compressed in your browser on
+                  the way up, so a gallery still opens on a bad connection.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span class="n">03</span>
+              <div>
+                <h3>Share exactly one link</h3>
+                <p>
+                  One address, and it is yours. Send it, put it in a bio, print
+                  it on something.
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
 
-  <!-- 04 — Explainer register: the structure IS the idea. Blip stands at the
+      <!-- 04 — Explainer register: the structure IS the idea. Blip stands at the
        switch; three boards, one address. ============================ -->
-  <section class="panel" id="p4">
-    <div class="art">
-      <svg viewBox="0 0 400 340" role="img" aria-label="Three boards showing the same races as a photo grid, a ruled ledger and a bar chart, all wired down to one address, with Blip pressing the switch that selects between them.">
-        <g filter="url(#wobble2)">
-          <rect class="plate" x="16" y="20" width="104" height="128" rx="4"/>
-          <rect class="pop" x="28" y="34" width="36" height="34"/>
-          <rect class="pop" x="72" y="34" width="36" height="34" fill-opacity="0.45"/>
-          <rect class="pop" x="28" y="76" width="36" height="34" fill-opacity="0.45"/>
-          <rect class="pop" x="72" y="76" width="36" height="34"/>
-          <rect class="pop" x="28" y="118" width="36" height="18" fill-opacity="0.6"/>
-          <rect class="pop" x="72" y="118" width="36" height="18" fill-opacity="0.3"/>
-          <text class="label" x="16" y="166">grid</text>
+      <section class="panel" id="p4">
+        <div class="art">
+          <svg
+            viewBox="0 0 400 340"
+            role="img"
+            aria-label="Three boards showing the same races as a photo grid, a ruled ledger and a bar chart, all wired down to one address, with Blip pressing the switch that selects between them."
+          >
+            <g filter="url(#wobble2)">
+              <rect
+                class="plate"
+                x="16"
+                y="20"
+                width="104"
+                height="128"
+                rx="4"
+              />
+              <rect class="pop" x="28" y="34" width="36" height="34" />
+              <rect
+                class="pop"
+                x="72"
+                y="34"
+                width="36"
+                height="34"
+                fill-opacity="0.45"
+              />
+              <rect
+                class="pop"
+                x="28"
+                y="76"
+                width="36"
+                height="34"
+                fill-opacity="0.45"
+              />
+              <rect class="pop" x="72" y="76" width="36" height="34" />
+              <rect
+                class="pop"
+                x="28"
+                y="118"
+                width="36"
+                height="18"
+                fill-opacity="0.6"
+              />
+              <rect
+                class="pop"
+                x="72"
+                y="118"
+                width="36"
+                height="18"
+                fill-opacity="0.3"
+              />
+              <text class="label" x="16" y="166">grid</text>
 
-          <rect class="plate" x="148" y="20" width="104" height="128" rx="4"/>
-          <path class="faint" pathLength="1" d="M160 42 L 240 42"/>
-          <path class="faint" pathLength="1" d="M160 62 L 240 62"/>
-          <path class="faint" pathLength="1" d="M160 82 L 240 82"/>
-          <path class="faint" pathLength="1" d="M160 102 L 240 102"/>
-          <path class="faint" pathLength="1" d="M160 122 L 240 122"/>
-          <path class="pop-line" pathLength="1" d="M160 72 L 206 72"/>
-          <text class="label" x="148" y="166">ledger</text>
+              <rect
+                class="plate"
+                x="148"
+                y="20"
+                width="104"
+                height="128"
+                rx="4"
+              />
+              <path class="faint" pathLength="1" d="M160 42 L 240 42" />
+              <path class="faint" pathLength="1" d="M160 62 L 240 62" />
+              <path class="faint" pathLength="1" d="M160 82 L 240 82" />
+              <path class="faint" pathLength="1" d="M160 102 L 240 102" />
+              <path class="faint" pathLength="1" d="M160 122 L 240 122" />
+              <path class="pop-line" pathLength="1" d="M160 72 L 206 72" />
+              <text class="label" x="148" y="166">ledger</text>
 
-          <rect class="plate" x="280" y="20" width="104" height="128" rx="4"/>
-          <rect class="pop" x="294" y="98" width="15" height="36"/>
-          <rect class="pop" x="316" y="72" width="15" height="62"/>
-          <rect class="pop" x="338" y="86" width="15" height="48"/>
-          <rect class="pop" x="360" y="48" width="12" height="86"/>
-          <path class="faint" pathLength="1" d="M292 134 L 378 134"/>
-          <text class="label" x="280" y="166">statistics</text>
+              <rect
+                class="plate"
+                x="280"
+                y="20"
+                width="104"
+                height="128"
+                rx="4"
+              />
+              <rect class="pop" x="294" y="98" width="15" height="36" />
+              <rect class="pop" x="316" y="72" width="15" height="62" />
+              <rect class="pop" x="338" y="86" width="15" height="48" />
+              <rect class="pop" x="360" y="48" width="12" height="86" />
+              <path class="faint" pathLength="1" d="M292 134 L 378 134" />
+              <text class="label" x="280" y="166">statistics</text>
 
-          <path class="ink" pathLength="1" d="M68 182 L 68 200 L 332 200 L 332 182"/>
-          <path class="ink" pathLength="1" d="M200 200 L 200 216"/>
-          <rect class="pop" x="106" y="218" width="188" height="30" rx="2"/>
-          <text class="label-ink" x="120" y="238" style="fill: var(--accent-fg)">/runner/you?view=</text>
-        </g>
-        <g class="blip" filter="url(#wobbleSoft)">
-          <g transform="translate(310,232) scale(0.62)">
-            <path class="blip-body" d="M -22 62 Q -22 46 -12 44 L 12 44 Q 22 46 22 62 L 22 78 Q 22 86 12 86 L -12 86 Q -22 86 -22 78 Z"/>
-            <!-- left arm reaching back to the address bar he just set -->
-            <path class="blip-body" d="M -22 52 Q -42 54 -58 48 Q -66 45 -63 37 Q -60 30 -52 34 Q -38 42 -22 44 Z"/>
-            <path class="blip-body" d="M 22 50 Q 34 52 35 64 Q 35 72 28 72 Q 22 71 22 62 Z"/>
-            <path class="blip-body" d="M -16 86 L -3 86 L -3 100 Q -3 106 -9.5 106 Q -16 106 -16 100 Z"/>
-            <path class="blip-body" d="M 3 86 L 16 86 L 16 100 Q 16 106 9.5 106 Q 3 106 3 100 Z"/>
-            <use href="#blipHead"/>
-          </g>
-        </g>
-      </svg>
-    </div>
-    <div class="copy">
-      <p class="eyebrow">04 — Your page</p>
-      <h2>One page, three ways to read it</h2>
-      <p class="lede">The same races seen as a <strong>grid</strong> for the photographs, a <strong>ledger</strong> for the record, or <strong>statistics</strong> for the numbers.</p>
-      <ul class="rows">
-        <li>
-          <h3>The view is part of the address</h3>
-          <p>What you are looking at is what you send. And every view renders on the server, so all three work with JavaScript switched off.</p>
-        </li>
-        <li>
-          <h3>Share cards are drawn when you save</h3>
-          <p>Not when someone clicks. A pasted link carries a card with your name and your numbers already on it.</p>
-        </li>
-        <li>
-          <h3>No sign-up wall for visitors</h3>
-          <p>Whoever opens your link gets a page that reads like a magazine spread and ships almost no JavaScript — two component scripts on a profile, three if a race has a gallery.</p>
-        </li>
-      </ul>
-    </div>
-  </section>
+              <path
+                class="ink"
+                pathLength="1"
+                d="M68 182 L 68 200 L 332 200 L 332 182"
+              />
+              <path class="ink" pathLength="1" d="M200 200 L 200 216" />
+              <rect
+                class="pop"
+                x="106"
+                y="218"
+                width="188"
+                height="30"
+                rx="2"
+              />
+              <text
+                class="label-ink"
+                x="120"
+                y="238"
+                style="fill: var(--accent-fg)"
+              >
+                /runner/you?view=
+              </text>
+            </g>
+            <g class="blip" filter="url(#wobbleSoft)">
+              <g transform="translate(310,232) scale(0.62)">
+                <path
+                  class="blip-body"
+                  d="M -22 62 Q -22 46 -12 44 L 12 44 Q 22 46 22 62 L 22 78 Q 22 86 12 86 L -12 86 Q -22 86 -22 78 Z"
+                />
+                <!-- left arm reaching back to the address bar he just set -->
+                <path
+                  class="blip-body"
+                  d="M -22 52 Q -42 54 -58 48 Q -66 45 -63 37 Q -60 30 -52 34 Q -38 42 -22 44 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M 22 50 Q 34 52 35 64 Q 35 72 28 72 Q 22 71 22 62 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M -16 86 L -3 86 L -3 100 Q -3 106 -9.5 106 Q -16 106 -16 100 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M 3 86 L 16 86 L 16 100 Q 16 106 9.5 106 Q 3 106 3 100 Z"
+                />
+                <use href="#blipHead" />
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="copy">
+          <p class="eyebrow">04 — Your page</p>
+          <h2>One page, three ways to read it</h2>
+          <p class="lede">
+            The same races seen as a <strong>grid</strong> for the photographs,
+            a <strong>ledger</strong> for the record, or
+            <strong>statistics</strong> for the numbers.
+          </p>
+          <ul class="rows">
+            <li>
+              <h3>The view is part of the address</h3>
+              <p>
+                What you are looking at is what you send. And every view renders
+                on the server, so all three work with JavaScript switched off.
+              </p>
+            </li>
+            <li>
+              <h3>Share cards are drawn when you save</h3>
+              <p>
+                Not when someone clicks. A pasted link carries a card with your
+                name and your numbers already on it.
+              </p>
+            </li>
+            <li>
+              <h3>No sign-up wall for visitors</h3>
+              <p>
+                Whoever opens your link gets a page that reads like a magazine
+                spread and ships almost no JavaScript — two component scripts on
+                a profile, three if a race has a gallery.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </section>
 
-  <!-- 05 — Blip carries the extras. Carry = contact against the body, which
+      <!-- 05 — Blip carries the extras. Carry = contact against the body, which
        is exactly what stubby arms and no grip can do. ============ -->
-  <section class="panel" id="p5">
-    <div class="art">
-      <svg viewBox="0 0 400 340" role="img" aria-label="Blip walking while balancing a stack of three plates against his body — a bar chart of personal bests, a route being ticked, and a calculator.">
-        <g filter="url(#wobble)">
-          <path class="faint" pathLength="1" d="M24 308 L 376 308"/>
-        </g>
-        <g class="blip" filter="url(#wobbleSoft)">
-          <g transform="translate(112,213) scale(0.86)">
-            <path class="blip-body" d="M -22 62 Q -22 46 -12 44 L 12 44 Q 22 46 22 62 L 22 78 Q 22 86 12 86 L -12 86 Q -22 86 -22 78 Z"/>
-            <path class="blip-body" d="M -22 50 Q -34 52 -35 64 Q -35 72 -28 72 Q -22 71 -22 62 Z"/>
-            <!-- right arm out, tip pressed flat to the stack: it steadies it,
+      <section class="panel" id="p5">
+        <div class="art">
+          <svg
+            viewBox="0 0 400 340"
+            role="img"
+            aria-label="Blip walking while balancing a stack of three plates against his body — a bar chart of personal bests, a route being ticked, and a calculator."
+          >
+            <g filter="url(#wobble)">
+              <path class="faint" pathLength="1" d="M24 308 L 376 308" />
+            </g>
+            <g class="blip" filter="url(#wobbleSoft)">
+              <g transform="translate(112,213) scale(0.86)">
+                <path
+                  class="blip-body"
+                  d="M -22 62 Q -22 46 -12 44 L 12 44 Q 22 46 22 62 L 22 78 Q 22 86 12 86 L -12 86 Q -22 86 -22 78 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M -22 50 Q -34 52 -35 64 Q -35 72 -28 72 Q -22 71 -22 62 Z"
+                />
+                <!-- right arm out, tip pressed flat to the stack: it steadies it,
                  it does not grip it -->
-            <path class="blip-body" d="M 22 56 Q 42 54 58 44 Q 68 38 72 46 Q 75 55 66 60 Q 46 68 22 68 Z"/>
-            <path class="blip-body" d="M -18 86 L -5 86 L -7 100 Q -8 106 -14 105 Q -20 104 -19 98 Z"/>
-            <path class="blip-body" d="M 5 86 L 18 86 L 20 100 Q 21 106 15 106 Q 8 106 7 100 Z"/>
-            <use href="#blipHead"/>
-          </g>
-        </g>
-        <g filter="url(#wobble2)">
-          <!-- the steadied stack, tilting the way a real stack tilts -->
-          <g transform="rotate(-4 250 138)">
-            <rect class="plate" x="188" y="104" width="124" height="68" rx="3"/>
-            <path class="faint" pathLength="1" d="M200 160 L 302 160"/>
-            <rect class="pop" x="206" y="138" width="16" height="22"/>
-            <rect class="pop" x="230" y="122" width="16" height="38"/>
-            <rect class="pop" x="254" y="130" width="16" height="30"/>
-            <rect class="pop" x="278" y="112" width="16" height="48"/>
-            <text class="label" x="188" y="96">pb at every distance</text>
-          </g>
-          <g transform="rotate(3 250 212)">
-            <rect class="plate" x="188" y="180" width="124" height="64" rx="3"/>
-            <path class="ink ink-thin" pathLength="1" d="M202 230 C 224 216, 212 204, 234 196 C 256 188, 250 196, 296 192"/>
-            <circle class="pop" cx="202" cy="230" r="4.5"/>
-            <circle class="pop" cx="296" cy="192" r="4.5"/>
-            <path class="pop-line" pathLength="1" d="M226 212 L 231 218 L 241 206"/>
-          </g>
-          <g transform="rotate(-3 250 279)">
-            <rect class="plate" x="196" y="252" width="108" height="54" rx="3"/>
-            <rect class="pop" x="206" y="260" width="88" height="14"/>
-            <circle class="ink ink-thin" pathLength="1" cx="216" cy="290" r="6"/>
-            <circle class="ink ink-thin" pathLength="1" cx="240" cy="290" r="6"/>
-            <circle class="ink ink-thin" pathLength="1" cx="264" cy="290" r="6"/>
-            <circle class="pop" cx="288" cy="290" r="6"/>
-          </g>
-          <text class="label" x="322" y="212">every</text>
-          <text class="label" x="322" y="228">result is</text>
-          <text class="label" x="322" y="244">a link</text>
-        </g>
-      </svg>
-    </div>
-    <div class="copy">
-      <p class="eyebrow">05 — Beyond the log</p>
-      <h2>Numbers you never had to keep</h2>
-      <ul class="rows">
-        <li>
-          <h3>Statistics, computed not entered</h3>
-          <p>Personal best at every distance, total distance, races per year, cities run in, average pace. Derived from your races, so they cannot go stale.</p>
-        </li>
-        <li>
-          <h3>Import from Strava</h3>
-          <p>Connect once, see your run activities, tick the ones that were races. Importing the same activity twice does not create a second race.</p>
-        </li>
-        <li>
-          <h3>Four free tools, no account</h3>
-          <p>A training plan generator, a pace calculator, a race time predictor and a split planner. Each is a pure function of the query string, so every result is a link you can send to whoever coaches you.</p>
-        </li>
-      </ul>
-      <div class="chips">
-        <span class="chip">training plan</span>
-        <span class="chip">pace</span>
-        <span class="chip">predictor</span>
-        <span class="chip">splits</span>
-      </div>
-    </div>
-  </section>
+                <path
+                  class="blip-body"
+                  d="M 22 56 Q 42 54 58 44 Q 68 38 72 46 Q 75 55 66 60 Q 46 68 22 68 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M -18 86 L -5 86 L -7 100 Q -8 106 -14 105 Q -20 104 -19 98 Z"
+                />
+                <path
+                  class="blip-body"
+                  d="M 5 86 L 18 86 L 20 100 Q 21 106 15 106 Q 8 106 7 100 Z"
+                />
+                <use href="#blipHead" />
+              </g>
+            </g>
+            <g filter="url(#wobble2)">
+              <!-- the steadied stack, tilting the way a real stack tilts -->
+              <g transform="rotate(-4 250 138)">
+                <rect
+                  class="plate"
+                  x="188"
+                  y="104"
+                  width="124"
+                  height="68"
+                  rx="3"
+                />
+                <path class="faint" pathLength="1" d="M200 160 L 302 160" />
+                <rect class="pop" x="206" y="138" width="16" height="22" />
+                <rect class="pop" x="230" y="122" width="16" height="38" />
+                <rect class="pop" x="254" y="130" width="16" height="30" />
+                <rect class="pop" x="278" y="112" width="16" height="48" />
+                <text class="label" x="188" y="96">pb at every distance</text>
+              </g>
+              <g transform="rotate(3 250 212)">
+                <rect
+                  class="plate"
+                  x="188"
+                  y="180"
+                  width="124"
+                  height="64"
+                  rx="3"
+                />
+                <path
+                  class="ink ink-thin"
+                  pathLength="1"
+                  d="M202 230 C 224 216, 212 204, 234 196 C 256 188, 250 196, 296 192"
+                />
+                <circle class="pop" cx="202" cy="230" r="4.5" />
+                <circle class="pop" cx="296" cy="192" r="4.5" />
+                <path
+                  class="pop-line"
+                  pathLength="1"
+                  d="M226 212 L 231 218 L 241 206"
+                />
+              </g>
+              <g transform="rotate(-3 250 279)">
+                <rect
+                  class="plate"
+                  x="196"
+                  y="252"
+                  width="108"
+                  height="54"
+                  rx="3"
+                />
+                <rect class="pop" x="206" y="260" width="88" height="14" />
+                <circle
+                  class="ink ink-thin"
+                  pathLength="1"
+                  cx="216"
+                  cy="290"
+                  r="6"
+                />
+                <circle
+                  class="ink ink-thin"
+                  pathLength="1"
+                  cx="240"
+                  cy="290"
+                  r="6"
+                />
+                <circle
+                  class="ink ink-thin"
+                  pathLength="1"
+                  cx="264"
+                  cy="290"
+                  r="6"
+                />
+                <circle class="pop" cx="288" cy="290" r="6" />
+              </g>
+              <text class="label" x="322" y="212">every</text>
+              <text class="label" x="322" y="228">result is</text>
+              <text class="label" x="322" y="244">a link</text>
+            </g>
+          </svg>
+        </div>
+        <div class="copy">
+          <p class="eyebrow">05 — Beyond the log</p>
+          <h2>Numbers you never had to keep</h2>
+          <ul class="rows">
+            <li>
+              <h3>Statistics, computed not entered</h3>
+              <p>
+                Personal best at every distance, total distance, races per year,
+                cities run in, average pace. Derived from your races, so they
+                cannot go stale.
+              </p>
+            </li>
+            <li>
+              <h3>Import from Strava</h3>
+              <p>
+                Connect once, see your run activities, tick the ones that were
+                races. Importing the same activity twice does not create a
+                second race.
+              </p>
+            </li>
+            <li>
+              <h3>Four free tools, no account</h3>
+              <p>
+                A training plan generator, a pace calculator, a race time
+                predictor and a split planner. Each is a pure function of the
+                query string, so every result is a link you can send to whoever
+                coaches you.
+              </p>
+            </li>
+          </ul>
+          <div class="chips">
+            <span class="chip">training plan</span>
+            <span class="chip">pace</span>
+            <span class="chip">predictor</span>
+            <span class="chip">splits</span>
+          </div>
+        </div>
+      </section>
 
-  <!-- 06 — Explainer: the stack, with Blip standing on top of it. Feet
+      <!-- 06 — Explainer: the stack, with Blip standing on top of it. Feet
        braced on the thing that holds him up. ==================== -->
-  <section class="panel" id="p6">
-    <div class="art">
-      <svg viewBox="0 0 400 340" role="img" aria-label="Blip standing on top of a stack of four labelled slabs — Astro on Workers, Supabase with row-level security, R2 photos and Tailwind — holding steady.">
-        <g filter="url(#wobble2)">
-          <path class="ink" pathLength="1" d="M200 88 L 330 118 L 200 148 L 70 118 Z"/>
-          <text class="label" x="152" y="122">Astro · Workers</text>
-          <path class="ink" pathLength="1" d="M200 142 L 330 172 L 200 202 L 70 172 Z"/>
-          <text class="label" x="148" y="176">Supabase · RLS</text>
-          <path class="ink" pathLength="1" d="M200 196 L 330 226 L 200 256 L 70 226 Z"/>
-          <text class="label" x="168" y="230">R2 photos</text>
-          <path class="ink" pathLength="1" d="M200 250 L 330 280 L 200 310 L 70 280 Z"/>
-          <text class="label" x="164" y="284">Tailwind v4</text>
-          <circle class="pop" cx="330" cy="118" r="4.5"/>
-          <circle class="pop" cx="330" cy="172" r="4.5"/>
-          <circle class="pop" cx="330" cy="226" r="4.5"/>
-          <circle class="pop" cx="330" cy="280" r="4.5"/>
-        </g>
-        <g class="blip" filter="url(#wobbleSoft)">
-          <g transform="translate(200,50) scale(0.6)">
-            <use href="#blipStand"/>
-            <use href="#blipHead"/>
-          </g>
-        </g>
-      </svg>
-    </div>
-    <div class="copy">
-      <p class="eyebrow">06 — Under the hood</p>
-      <h2>Built to be checked, not just claimed</h2>
-      <p class="lede">Astro on Cloudflare Workers. Supabase for authentication and Postgres, with row-level security on every table. Cloudflare R2 for photographs. Tailwind v4.</p>
-      <p class="sub"><strong>251 tests</strong> passing, type-checking clean across <strong>162 files</strong>, and an accessibility pass where contrast was measured rather than eyeballed.</p>
-      <p class="note">Next: custom email delivery, Strava connect verified end to end, and a seeded demo profile with real photography.</p>
-      <a class="cta" href="https://runfolio.sankettambare.in/">runfolio.sankettambare.in →</a>
-      <div class="tries">
-        <span>A real profile, no account: <a href="https://runfolio.sankettambare.in/runner/sankettambare"><code>/runner/sankettambare</code></a></span>
-        <span>All four calculators, no sign-up: <a href="https://runfolio.sankettambare.in/tools"><code>/tools</code></a></span>
-      </div>
-      <p class="colophon">Built by Sanket Tambare —
-        <a href="https://sankettambare.in">sankettambare.in</a> ·
-        <a href="https://www.linkedin.com/in/sankettambare/">LinkedIn</a> ·
-        <a href="https://github.com/daredavil01">GitHub</a>
-        <br>Mascot: Blip by Trevin Chow.
-      </p>
-    </div>
-  </section>
+      <section class="panel" id="p6">
+        <div class="art">
+          <svg
+            viewBox="0 0 400 340"
+            role="img"
+            aria-label="Blip standing on top of a stack of four labelled slabs — Astro on Workers, Supabase with row-level security, R2 photos and Tailwind — holding steady."
+          >
+            <g filter="url(#wobble2)">
+              <path
+                class="ink"
+                pathLength="1"
+                d="M200 88 L 330 118 L 200 148 L 70 118 Z"
+              />
+              <text class="label" x="152" y="122">Astro · Workers</text>
+              <path
+                class="ink"
+                pathLength="1"
+                d="M200 142 L 330 172 L 200 202 L 70 172 Z"
+              />
+              <text class="label" x="148" y="176">Supabase · RLS</text>
+              <path
+                class="ink"
+                pathLength="1"
+                d="M200 196 L 330 226 L 200 256 L 70 226 Z"
+              />
+              <text class="label" x="168" y="230">R2 photos</text>
+              <path
+                class="ink"
+                pathLength="1"
+                d="M200 250 L 330 280 L 200 310 L 70 280 Z"
+              />
+              <text class="label" x="164" y="284">Tailwind v4</text>
+              <circle class="pop" cx="330" cy="118" r="4.5" />
+              <circle class="pop" cx="330" cy="172" r="4.5" />
+              <circle class="pop" cx="330" cy="226" r="4.5" />
+              <circle class="pop" cx="330" cy="280" r="4.5" />
+            </g>
+            <g class="blip" filter="url(#wobbleSoft)">
+              <g transform="translate(200,50) scale(0.6)">
+                <use href="#blipStand" />
+                <use href="#blipHead" />
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="copy">
+          <p class="eyebrow">06 — Under the hood</p>
+          <h2>Built to be checked, not just claimed</h2>
+          <p class="lede">
+            Astro on Cloudflare Workers. Supabase for authentication and
+            Postgres, with row-level security on every table. Cloudflare R2 for
+            photographs. Tailwind v4.
+          </p>
+          <p class="sub">
+            <strong>251 tests</strong> passing, type-checking clean across
+            <strong>162 files</strong>, and an accessibility pass where contrast
+            was measured rather than eyeballed.
+          </p>
+          <p class="note">
+            Next: custom email delivery, Strava connect verified end to end, and
+            a seeded demo profile with real photography.
+          </p>
+          <a class="cta" href="https://runfolio.in/"
+            >runfolio.sankettambare.in →</a
+          >
+          <div class="tries">
+            <span
+              >A real profile, no account:
+              <a href="https://runfolio.in/runner/sankettambare"
+                ><code>/runner/sankettambare</code></a
+              ></span
+            >
+            <span
+              >All four calculators, no sign-up:
+              <a href="https://runfolio.in/tools"><code>/tools</code></a></span
+            >
+          </div>
+          <p class="colophon">
+            Built by Sanket Tambare —
+            <a href="https://sankettambare.in">sankettambare.in</a> ·
+            <a href="https://www.linkedin.com/in/sankettambare/">LinkedIn</a> ·
+            <a href="https://github.com/daredavil01">GitHub</a>
+            <br />Mascot: Blip by Trevin Chow.
+          </p>
+        </div>
+      </section>
+    </main>
 
-</main>
+    <script>
+      (function () {
+        // --- Theme -----------------------------------------------------------
+        // Three states, not two: an explicit choice stamps data-theme on the root,
+        // and the unstamped state follows the OS. The button reads whichever is
+        // currently in effect and flips it, so it works from either starting point.
+        var root = document.documentElement;
+        var toggle = document.querySelector(".theme-toggle");
+        var dark = window.matchMedia("(prefers-color-scheme: dark)");
+        var KEY = "runfolio-deck-theme";
 
-<script>
-  (function () {
-    // --- Theme -----------------------------------------------------------
-    // Three states, not two: an explicit choice stamps data-theme on the root,
-    // and the unstamped state follows the OS. The button reads whichever is
-    // currently in effect and flips it, so it works from either starting point.
-    var root = document.documentElement;
-    var toggle = document.querySelector(".theme-toggle");
-    var dark = window.matchMedia("(prefers-color-scheme: dark)");
-    var KEY = "runfolio-deck-theme";
+        function effectiveTheme() {
+          var stamped = root.getAttribute("data-theme");
+          if (stamped === "dark" || stamped === "light") return stamped;
+          return dark.matches ? "dark" : "light";
+        }
 
-    function effectiveTheme() {
-      var stamped = root.getAttribute("data-theme");
-      if (stamped === "dark" || stamped === "light") return stamped;
-      return dark.matches ? "dark" : "light";
-    }
+        function syncToggle() {
+          var t = effectiveTheme();
+          toggle.setAttribute("data-shows", t);
+          toggle.setAttribute(
+            "aria-label",
+            t === "dark" ? "Switch to light theme" : "Switch to dark theme",
+          );
+        }
 
-    function syncToggle() {
-      var t = effectiveTheme();
-      toggle.setAttribute("data-shows", t);
-      toggle.setAttribute(
-        "aria-label",
-        t === "dark" ? "Switch to light theme" : "Switch to dark theme"
-      );
-    }
+        try {
+          var saved = localStorage.getItem(KEY);
+          if (saved === "light" || saved === "dark")
+            root.setAttribute("data-theme", saved);
+        } catch (err) {
+          /* storage unavailable; the OS preference still applies */
+        }
 
-    try {
-      var saved = localStorage.getItem(KEY);
-      if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
-    } catch (err) { /* storage unavailable; the OS preference still applies */ }
-
-    toggle.addEventListener("click", function () {
-      var next = effectiveTheme() === "dark" ? "light" : "dark";
-      root.setAttribute("data-theme", next);
-      try { localStorage.setItem(KEY, next); } catch (err) {}
-      syncToggle();
-    });
-
-    // Follow the OS while no explicit choice is in effect, and re-read the
-    // icon if the host restamps the root theme underneath us.
-    if (dark.addEventListener) dark.addEventListener("change", syncToggle);
-    new MutationObserver(syncToggle).observe(root, {
-      attributes: true,
-      attributeFilter: ["data-theme"]
-    });
-
-    syncToggle();
-
-    // --- Panels ----------------------------------------------------------
-    var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
-    var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
-
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) entry.target.classList.add("seen");
-      });
-    }, { threshold: 0.22 });
-
-    var spy = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        var id = entry.target.id;
-        links.forEach(function (a) {
-          if (a.getAttribute("href") === "#" + id) {
-            a.setAttribute("aria-current", "true");
-          } else {
-            a.removeAttribute("aria-current");
-          }
+        toggle.addEventListener("click", function () {
+          var next = effectiveTheme() === "dark" ? "light" : "dark";
+          root.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem(KEY, next);
+          } catch (err) {}
+          syncToggle();
         });
-      });
-    }, { threshold: 0.5 });
 
-    panels.forEach(function (p) { io.observe(p); spy.observe(p); });
+        // Follow the OS while no explicit choice is in effect, and re-read the
+        // icon if the host restamps the root theme underneath us.
+        if (dark.addEventListener) dark.addEventListener("change", syncToggle);
+        new MutationObserver(syncToggle).observe(root, {
+          attributes: true,
+          attributeFilter: ["data-theme"],
+        });
 
-    // The first panel is already on screen at load; observers can fire a frame
-    // late, so seed it directly.
-    if (panels.length) panels[0].classList.add("seen");
+        syncToggle();
 
-    document.addEventListener("keydown", function (e) {
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      var forward = e.key === "ArrowDown" || e.key === "PageDown";
-      var back = e.key === "ArrowUp" || e.key === "PageUp";
-      if (!forward && !back) return;
+        // --- Panels ----------------------------------------------------------
+        var panels = Array.prototype.slice.call(
+          document.querySelectorAll(".panel"),
+        );
+        var links = Array.prototype.slice.call(
+          document.querySelectorAll(".rail a"),
+        );
 
-      var mid = window.innerHeight / 2;
-      var current = 0;
-      panels.forEach(function (p, i) {
-        var r = p.getBoundingClientRect();
-        if (r.top <= mid && r.bottom > mid) current = i;
-      });
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) entry.target.classList.add("seen");
+            });
+          },
+          { threshold: 0.22 },
+        );
 
-      var next = current + (forward ? 1 : -1);
-      if (next < 0 || next >= panels.length) return;
-      e.preventDefault();
-      panels[next].scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  })();
-</script>
+        var spy = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (!entry.isIntersecting) return;
+              var id = entry.target.id;
+              links.forEach(function (a) {
+                if (a.getAttribute("href") === "#" + id) {
+                  a.setAttribute("aria-current", "true");
+                } else {
+                  a.removeAttribute("aria-current");
+                }
+              });
+            });
+          },
+          { threshold: 0.5 },
+        );
 
-</body>
+        panels.forEach(function (p) {
+          io.observe(p);
+          spy.observe(p);
+        });
+
+        // The first panel is already on screen at load; observers can fire a frame
+        // late, so seed it directly.
+        if (panels.length) panels[0].classList.add("seen");
+
+        document.addEventListener("keydown", function (e) {
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+          var forward = e.key === "ArrowDown" || e.key === "PageDown";
+          var back = e.key === "ArrowUp" || e.key === "PageUp";
+          if (!forward && !back) return;
+
+          var mid = window.innerHeight / 2;
+          var current = 0;
+          panels.forEach(function (p, i) {
+            var r = p.getBoundingClientRect();
+            if (r.top <= mid && r.bottom > mid) current = i;
+          });
+
+          var next = current + (forward ? 1 : -1);
+          if (next < 0 || next >= panels.length) return;
+          e.preventDefault();
+          panels[next].scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      })();
+    </script>
+  </body>
 </html>
