@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A 12-slide deck on the /projects revamp at sankettambare.in: one rigid grid became four filterable views, free-text dates became real dates, and drafts became invisible at the database rather than in React.">
+<title>Projects, Reborn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+/* ---------------------------------------------------------------------------
+ * Tokens lifted from the site's own tailwind.config.js — the stone neutrals,
+ * the rust `secondary` (#b22200) and the Noto Serif / Inter / Plus Jakarta
+ * trio — so the deck and the page it describes speak the same visual language.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#f9f9f9; --surface:#ffffff; --surface-alt:#f3f3f3; --surface-sunk:#eeeeee;
+  --rule:#e2e2e2; --rule-soft:#eeeeee;
+  --text:#1a1c1c; --text-prose:#2f3131; --text-secondary:#444748;
+  --text-muted:#63676a; --text-faint:#747878;
+  --accent:#b22200; --accent-soft:#ffdad3; --accent-ink:#8c1800;
+  --ok:#2e7d4f; --ok-bg:#e7f3ec;
+  --warn:#8f5b00; --warn-bg:#fbf1de;
+  --bad:#ba1a1a; --bad-bg:#ffdad6;
+  --focus:#2563eb;
+
+  --font-display:'Noto Serif',Georgia,serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-label:'Plus Jakarta Sans',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#1a1c1c; --surface:#222525; --surface-alt:#2a2d2d; --surface-sunk:#2f3131;
+    --rule:#3a3e3e; --rule-soft:#2f3131;
+    --text:#f1f1f1; --text-prose:#dcdcdc; --text-secondary:#c4c7c7;
+    --text-muted:#a2a6a6; --text-faint:#8b8f8f;
+    --accent:#ffb4a4; --accent-soft:#4a1305; --accent-ink:#ffdad3;
+    --ok:#79c293; --ok-bg:#17291f;
+    --warn:#e0b25f; --warn-bg:#2c2312;
+    --bad:#f08a8a; --bad-bg:#2c1917;
+    --focus:#7aa7ff;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#1a1c1c; --surface:#222525; --surface-alt:#2a2d2d; --surface-sunk:#2f3131;
+  --rule:#3a3e3e; --rule-soft:#2f3131;
+  --text:#f1f1f1; --text-prose:#dcdcdc; --text-secondary:#c4c7c7;
+  --text-muted:#a2a6a6; --text-faint:#8b8f8f;
+  --accent:#ffb4a4; --accent-soft:#4a1305; --accent-ink:#ffdad3;
+  --ok:#79c293; --ok-bg:#17291f;
+  --warn:#e0b25f; --warn-bg:#2c2312;
+  --bad:#f08a8a; --bad-bg:#2c1917;
+  --focus:#7aa7ff;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--paper);color:var(--text);
+  font-family:var(--font-body);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  height:100dvh;scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100%;width:100%;height:100dvh;scroll-snap-align:start;
+  display:flex;align-items:center;justify-content:center;
+  padding:64px 24px 96px;overflow-y:auto;
+}
+.inner{width:100%;max-width:960px;}
+
+.eyebrow{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:18px;
+}
+.eyebrow .num{
+  font-weight:500;color:var(--accent);
+  border:1px solid var(--accent);border-radius:999px;padding:1px 8px;
+}
+h1{font-family:var(--font-display);font-weight:700;font-size:clamp(38px,7vw,68px);line-height:1.05;margin:0 0 18px;letter-spacing:-.02em;}
+h2{font-family:var(--font-display);font-weight:600;font-size:clamp(24px,4vw,38px);line-height:1.15;margin:0 0 14px;letter-spacing:-.01em;}
+h3{font-family:var(--font-label);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin:0 0 10px;}
+p{margin:0 0 12px;color:var(--text-prose);}
+.lead{font-size:clamp(16px,2.1vw,20px);color:var(--text-secondary);max-width:62ch;}
+.note{font-size:14px;color:var(--text-muted);}
+.mono{font-family:var(--font-mono);font-size:13px;}
+strong{color:var(--text);font-weight:600;}
+
+/* --- Title --------------------------------------------------------------- */
+.title-slide .inner{max-width:820px;}
+.title-rule{height:3px;width:110px;background:var(--accent);margin:0 0 22px;border-radius:2px;}
+.title-meta{
+  display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:28px;
+  font-family:var(--font-mono);font-size:12px;color:var(--text-muted);
+}
+.title-meta a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;}
+.title-meta a:hover{border-bottom-color:var(--accent);}
+
+/* --- Layout helpers ------------------------------------------------------ */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media (max-width:760px){
+  .two,.three,.four{grid-template-columns:1fr;}
+  .slide{padding:56px 18px 92px;}
+}
+
+.panel{
+  background:var(--surface);border:1px solid var(--rule);
+  border-radius:14px;padding:18px 20px;
+}
+.panel.sunk{background:var(--surface-alt);}
+.panel h3{margin-bottom:8px;}
+.panel p:last-child{margin-bottom:0;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px;}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--surface-alt);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;}
+.stat .v{font-family:var(--font-display);font-weight:700;font-size:30px;line-height:1;color:var(--text);}
+.stat .v.accent{color:var(--accent);}
+.stat .k{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-top:7px;}
+
+ul.plain{list-style:none;margin:0;padding:0;}
+ul.plain li{position:relative;padding-left:20px;margin-bottom:9px;color:var(--text-prose);font-size:15px;}
+ul.plain li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:50%;background:var(--accent);}
+ul.plain li:last-child{margin-bottom:0;}
+
+/* Before / after */
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:760px){.ba{grid-template-columns:1fr;}}
+.ba .col{border-radius:14px;padding:18px 20px;border:1px solid var(--rule);}
+.ba .was{background:var(--bad-bg);border-color:transparent;}
+.ba .now{background:var(--ok-bg);border-color:transparent;}
+.ba .col h3{color:var(--text-secondary);}
+.ba .col li::before{background:currentColor;opacity:.5;}
+.ba .was li,.ba .was p{color:var(--text-prose);}
+
+.tag{
+  display:inline-block;font-family:var(--font-mono);font-size:11px;
+  padding:3px 9px;border-radius:999px;border:1px solid var(--rule);
+  color:var(--text-muted);background:var(--surface);margin:0 5px 6px 0;
+}
+.tag.on{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink);}
+
+code{
+  font-family:var(--font-mono);font-size:.88em;background:var(--surface-sunk);
+  border:1px solid var(--rule-soft);border-radius:5px;padding:1px 5px;color:var(--text-secondary);
+}
+pre{
+  font-family:var(--font-mono);font-size:12.5px;line-height:1.65;
+  background:var(--surface-sunk);border:1px solid var(--rule);border-radius:12px;
+  padding:14px 16px;overflow-x:auto;margin:0;color:var(--text-secondary);
+}
+pre .hl{color:var(--accent);}
+
+.views{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media (max-width:760px){.views{grid-template-columns:1fr 1fr;}}
+.view{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px;}
+.view .ico{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.12em;}
+.view .nm{font-family:var(--font-display);font-weight:600;font-size:17px;margin:6px 0 5px;}
+.view p{font-size:13px;color:var(--text-muted);margin:0;}
+
+/* Bar chart rows */
+.bars{display:flex;flex-direction:column;gap:8px;}
+.bar{display:flex;align-items:center;gap:10px;font-size:13px;}
+.bar .lab{width:104px;flex:0 0 104px;color:var(--text-secondary);font-size:12.5px;}
+.bar .meter{flex:1;height:9px;border-radius:999px;background:var(--surface-sunk);overflow:hidden;}
+.bar .fill{display:block;height:100%;border-radius:999px;background:var(--accent);}
+.bar .n{width:22px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);}
+
+.flag{
+  border-left:3px solid var(--accent);background:var(--surface-alt);
+  border-radius:0 10px 10px 0;padding:12px 16px;margin-top:14px;
+}
+.flag p{margin:0;font-size:14px;color:var(--text-secondary);}
+
+/* --- Home link + rail ---------------------------------------------------- */
+.home{
+  position:fixed;top:14px;left:18px;z-index:30;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-muted);text-decoration:none;
+  background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;
+}
+.home:hover{color:var(--accent);border-color:var(--accent);}
+
+.rail{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;background:var(--surface);border-top:1px solid var(--rule);
+}
+.rail button{
+  font:inherit;font-size:15px;line-height:1;cursor:pointer;
+  background:var(--surface-alt);color:var(--text-secondary);
+  border:1px solid var(--rule);border-radius:8px;padding:7px 12px;
+}
+.rail button:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.rail button:disabled{opacity:.35;cursor:default;}
+.ticks{display:flex;gap:5px;flex:1;overflow:hidden;}
+.ticks button{flex:1;min-width:0;height:5px;padding:0;border-radius:999px;background:var(--rule);border:none;}
+.ticks button[aria-current="true"]{background:var(--accent);}
+.counter{font-family:var(--font-mono);font-size:11.5px;color:var(--text-muted);white-space:nowrap;}
+
+/* On a narrow screen a slide is taller than the viewport, so its content
+   scrolls up behind the floating Home pill and collides with it. Make the link
+   a full-width bar there instead: content passing underneath is then hidden
+   cleanly rather than half-legible through a floating chip. */
+@media (max-width:760px){
+  .home{
+    top:0;left:0;right:0;border-radius:0;
+    border-width:0 0 1px 0;padding:9px 18px;
+    background:var(--paper);
+  }
+  .slide{padding-top:64px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .track{scroll-behavior:auto;}
+}
+</style>
+</head>
+<body>
+
+<a class="home" href="../index.html">&larr; Home</a>
+
+<div class="track" id="track" tabindex="-1">
+
+  <!-- 01 ------------------------------------------------------------------ -->
+  <section class="slide title-slide" aria-label="Slide 1: Title">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">01</span><span>Portfolio rebuild &middot; 2026</span></div>
+      <h1>Projects,<br>Reborn</h1>
+      <div class="title-rule"></div>
+      <p class="lead">One rigid grid became four filterable views. Free text became real dates.
+      Drafts became invisible at the database rather than in React. A rebuild of
+      <code>/projects</code> on sankettambare.in, and the three bugs it uncovered on the way.</p>
+      <div class="title-meta">
+        <span>React 18 &middot; Vite &middot; Supabase &middot; Tailwind</span>
+        <span>3 migrations &middot; 13 new columns &middot; 4 views</span>
+        <a href="https://sankettambare.in/projects">sankettambare.in/projects</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 2: Where it started">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">02</span><span>The honest before</span></div>
+      <h2>A page that listed things, and nothing more</h2>
+      <p class="lead">The old <code>/projects</code> rendered its rows verbatim through a fixed
+      six-variant layout keyed off <code>index % 6</code>, in whatever order a hand-maintained
+      integer said.</p>
+      <div class="two" style="margin-top:18px;">
+        <div class="panel">
+          <h3>What was missing</h3>
+          <ul class="plain">
+            <li>No search, no filter, no sort &mdash; of any kind</li>
+            <li>Tags existed in the database and were <strong>never rendered</strong></li>
+            <li>No way to tell a live product from a 2020 college project</li>
+            <li>No record of what anything was built with</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>What was broken</h3>
+          <ul class="plain">
+            <li><code>sort_order</code> was <strong>0 on nine of thirteen rows</strong></li>
+            <li>Dates mixed <code>2020-10-20</code> with <code>August&nbsp;2026</code> &mdash; unsortable</li>
+            <li>A cover image was mandatory, so every project needed one</li>
+            <li>Card shape came from list position, so filtering would reshuffle it</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flag"><p>The page was not slow or ugly. It simply had no data worth querying,
+      so nothing could be asked of it.</p></div>
+    </div>
+  </section>
+
+  <!-- 03 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 3: The data model">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">03</span><span>Migration 0005</span></div>
+      <h2>Thirteen columns, one dropped</h2>
+      <p class="lead">The redesign was blocked on the schema, so the schema went first.</p>
+      <div style="margin:18px 0 14px;">
+        <span class="tag on">category</span><span class="tag on">status</span><span class="tag on">role</span>
+        <span class="tag on">org</span><span class="tag on">featured</span><span class="tag on">visible</span>
+        <span class="tag on">tech_stack</span><span class="tag on">highlights</span><span class="tag on">links</span>
+        <span class="tag on">slide_images</span><span class="tag on">problem</span><span class="tag on">solution</span>
+        <span class="tag on">outcome</span>
+      </div>
+      <div class="two">
+        <div class="panel sunk">
+          <h3>Dropped</h3>
+          <p><code>sort_order</code> &mdash; hand-maintained, mostly zero, and replaced by
+          ordering on a real date. Nothing reintroduces it.</p>
+        </div>
+        <div class="panel sunk">
+          <h3>Relaxed</h3>
+          <p><code>image</code> became nullable. A project now falls back to its first
+          screenshot, then to a placeholder.</p>
+        </div>
+      </div>
+      <div class="flag"><p><strong>Tech stack is a plain <code>text[]</code>, not tags.</strong>
+      The central tag RPC replaces an entity&rsquo;s <em>entire</em> tag set, so it cannot back two
+      independent tag fields on one row. Tags stay the topical axis; stack is the build axis.</p></div>
+    </div>
+  </section>
+
+  <!-- 04 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 4: Visibility in Postgres">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">04</span><span>Drafts</span></div>
+      <h2>Hidden means hidden, not filtered</h2>
+      <p class="lead">A project can be toggled to draft in the admin. Filtering that out in React
+      would be theatre &mdash; the row would still sit in the JSON payload, readable in devtools.</p>
+      <pre style="margin:16px 0 14px;">create policy "public read" on public.projects
+  for select using (<span class="hl">visible or public.is_owner()</span>);</pre>
+      <div class="three">
+        <div class="panel"><h3>Owner</h3><p class="mono" style="color:var(--ok);">13 rows &middot; sees drafts</p></div>
+        <div class="panel"><h3>Other signed-in user</h3><p class="mono">12 rows &middot; no drafts</p></div>
+        <div class="panel"><h3>Anonymous</h3><p class="mono">12 rows &middot; no drafts</p></div>
+      </div>
+      <div class="flag"><p>Verified three ways, including through the cross-entity tag RPC &mdash;
+      a hidden project also drops out of its <code>/tags</code> pages, its share card, and the
+      public project counts on the homepage. It is one policy, so it cannot be forgotten
+      at one call site.</p></div>
+    </div>
+  </section>
+
+  <!-- 05 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 5: Dates made real">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">05</span><span>The conversion</span></div>
+      <h2>From free text to a real date</h2>
+      <p class="lead">Thirteen rows held two formats. Sorting them meant normalising every value,
+      then changing the column&rsquo;s type underneath.</p>
+      <div class="ba" style="margin-top:16px;">
+        <div class="col was">
+          <h3>Before &middot; <code>text not null</code></h3>
+          <ul class="plain">
+            <li><code>2020-10-20</code></li>
+            <li><code>August 2026</code></li>
+            <li><code>July 2026</code></li>
+          </ul>
+          <p class="note" style="margin-top:10px;">Sorted alphabetically. &ldquo;August&rdquo; before &ldquo;July&rdquo;.</p>
+        </div>
+        <div class="col now">
+          <h3>After &middot; <code>date</code>, nullable</h3>
+          <ul class="plain">
+            <li><code>2020-10-20</code></li>
+            <li><code>2026-08-01</code></li>
+            <li><code>2026-07-01</code></li>
+          </ul>
+          <p class="note" style="margin-top:10px;">Sorted chronologically. Undated rows sink to the bottom, in both directions.</p>
+        </div>
+      </div>
+      <div class="flag"><p>Nullable on purpose: &ldquo;no date&rdquo; is missing information, not an
+      extreme value, so it never sorts as the oldest or the newest thing you own.</p></div>
+    </div>
+  </section>
+
+  <!-- 06 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 6: Four views">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">06</span><span>The page</span></div>
+      <h2>Four views over one list</h2>
+      <p class="lead">Tabs carried in the URL, the way the Treks and Sports pages already work.</p>
+      <div class="views" style="margin-top:18px;">
+        <div class="view">
+          <div class="ico">01</div><div class="nm">Showcase</div>
+          <p>Featured spotlight over a masonry grid. Cards size to their content instead of to their position.</p>
+        </div>
+        <div class="view">
+          <div class="ico">02</div><div class="nm">Timeline</div>
+          <p>A chronological spine grouped by year &mdash; only possible once the dates were real.</p>
+        </div>
+        <div class="view">
+          <div class="ico">03</div><div class="nm">Statistics</div>
+          <p>Per-year, per-stack, per-category and per-status breakdowns of whatever is filtered.</p>
+        </div>
+        <div class="view">
+          <div class="ico">04</div><div class="nm">Table</div>
+          <p>Dense and sortable. The fastest way to take in everything without scrolling a gallery.</p>
+        </div>
+      </div>
+      <div class="flag"><p>All four read from one filter hook, so a filter set in Showcase survives
+      a switch to Table &mdash; and both <code>?view=</code> and every filter live in the query string,
+      which makes any filtered view a shareable link.</p></div>
+    </div>
+  </section>
+
+  <!-- 07 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 7: The filter bar">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">07</span><span>Filtering</span></div>
+      <h2>OR inside an axis, AND across them</h2>
+      <p class="lead">Picking React <em>and</em> Supabase widens the stack axis. Adding a category
+      on top of that still narrows. It is the behaviour people expect and rarely get.</p>
+      <div class="two" style="margin-top:16px;">
+        <div class="panel">
+          <h3>Axes</h3>
+          <ul class="plain">
+            <li>Live text search &mdash; title, subtitle, description, organisation, role</li>
+            <li>Category, status and year &mdash; single-select</li>
+            <li>Tech stack and tags &mdash; multi-select chips</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Vocabulary the data produced</h3>
+          <div class="bars" style="margin-top:4px;">
+            <div class="bar"><span class="lab">Astro</span><span class="meter"><span class="fill" style="width:100%"></span></span><span class="n">4</span></div>
+            <div class="bar"><span class="lab">React</span><span class="meter"><span class="fill" style="width:100%"></span></span><span class="n">4</span></div>
+            <div class="bar"><span class="lab">Supabase</span><span class="meter"><span class="fill" style="width:100%"></span></span><span class="n">4</span></div>
+            <div class="bar"><span class="lab">Tailwind CSS</span><span class="meter"><span class="fill" style="width:100%"></span></span><span class="n">4</span></div>
+            <div class="bar"><span class="lab">Cloudflare</span><span class="meter"><span class="fill" style="width:75%"></span></span><span class="n">3</span></div>
+            <div class="bar"><span class="lab">Vite</span><span class="meter"><span class="fill" style="width:75%"></span></span><span class="n">3</span></div>
+          </div>
+          <p class="note" style="margin-top:10px;">15 chips across 12 public projects.</p>
+        </div>
+      </div>
+      <div class="flag"><p>Central tags finally appear here too. Projects had carried them for
+      a full version already &mdash; the old page simply never rendered them.</p></div>
+    </div>
+  </section>
+
+  <!-- 08 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 8: Spotlight and quick look">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">08</span><span>Interaction</span></div>
+      <h2>Browse without losing your place</h2>
+      <div class="two" style="margin-top:16px;">
+        <div class="panel">
+          <h3>Quick-look modal</h3>
+          <ul class="plain">
+            <li>Screenshots, stack, highlights, tags and links</li>
+            <li>Traps focus, closes on Escape</li>
+            <li>Returns focus to the card that opened it</li>
+            <li>A &ldquo;full case study&rdquo; link through to the detail page</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Cards</h3>
+          <ul class="plain">
+            <li>Hover cycles a project&rsquo;s screenshots</li>
+            <li>Held back on touch devices and under <code>prefers-reduced-motion</code></li>
+            <li>No cover image? The first screenshot stands in</li>
+            <li>Neither? A placeholder, never an empty tile</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flag"><p>That last one was a real bug in waiting: a falsy <code>src</code> does not
+      reliably fire <code>onError</code>, so the old fallback would have rendered an empty box the
+      moment cover images became optional.</p></div>
+    </div>
+  </section>
+
+  <!-- 09 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 9: The admin">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">09</span><span>Behind the form</span></div>
+      <h2>Three additions to the editor</h2>
+      <p class="lead">The admin is schema-driven, so new fields are usually declaration only.
+      Three things genuinely did not exist yet.</p>
+      <div class="three" style="margin-top:18px;">
+        <div class="panel">
+          <h3>linkList widget</h3>
+          <p>Repeatable <code>{label,&nbsp;url}</code> rows with reorder and delete &mdash; repo,
+          demo, write-up. Modelled on the existing image-slides widget.</p>
+        </div>
+        <div class="panel">
+          <h3>Pooled autocomplete</h3>
+          <p>A field can suggest from values already used on its <em>own</em> resource, so the
+          stack field proposes stacks you have used without touching the tag tables.</p>
+        </div>
+        <div class="panel">
+          <h3>Field defaults</h3>
+          <p>A field can declare a default. Without it, <code>visible</code> would start false
+          and every new project would be <strong>born hidden</strong>.</p>
+        </div>
+      </div>
+      <div class="flag"><p>That third one is the kind of bug that ships quietly and is blamed on
+      the database three weeks later.</p></div>
+    </div>
+  </section>
+
+  <!-- 10 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 10: Metadata from the field">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">10</span><span>Migration 0006</span></div>
+      <h2>Filled in by visiting every one</h2>
+      <p class="lead">New columns are worthless empty. Every project&rsquo;s live site and repository
+      was opened and read, and the stacks were taken from evidence rather than memory.</p>
+      <div class="two" style="margin-top:16px;">
+        <div class="panel sunk">
+          <h3>Evidence, not recall</h3>
+          <ul class="plain">
+            <li><code>&lt;meta name="generator"&gt;</code> &rarr; Astro v7.2.8</li>
+            <li><code>/_next/static/chunks/app/</code> &rarr; Next.js App Router</li>
+            <li><code>_astro/</code> and <code>data-astro</code> in the shell</li>
+            <li>supabase.co image URLs &rarr; Supabase storage</li>
+          </ul>
+        </div>
+        <div class="panel sunk">
+          <h3>What the reading turned up</h3>
+          <ul class="plain">
+            <li>One project&rsquo;s link had been dead for months &mdash; 404</li>
+            <li>Six projects shared one cover: another organisation&rsquo;s logo</li>
+            <li>One subtitle was simply empty</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flag"><p>Four lines carry a <code>REVIEW</code> marker in the SQL, where the source
+      was a README rather than a stated fact. Inference is allowed; passing it off as
+      evidence is not.</p></div>
+    </div>
+  </section>
+
+  <!-- 11 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 11: Three bugs">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">11</span><span>What the work surfaced</span></div>
+      <h2>Three bugs, none of them the feature</h2>
+      <div class="two" style="margin-top:16px;">
+        <div class="panel">
+          <h3>A leading space</h3>
+          <p>One row is stored as <code>"&nbsp;E20 ka Chakravyuha"</code>. Every
+          <code>where title = &hellip;</code> in the date backfill missed it, so the row fell through
+          to the non-ISO safety net and had its date <strong>cleared</strong>. Titles are trimmed
+          first now, and matched on <code>btrim</code>.</p>
+        </div>
+        <div class="panel">
+          <h3>A type that only held by luck</h3>
+          <p>The cross-entity tag function declares <code>date text</code> and passed the column
+          through raw. That type-checked only while the column <em>was</em> text &mdash; changing it
+          would have broken every tag page. Cast in the same migration.</p>
+        </div>
+      </div>
+      <div class="flag" style="margin-top:16px;">
+        <p><strong>Both were caught by rehearsal, not by reading.</strong> Every migration was
+        applied to a scratch PostgreSQL instance loaded with the real thirteen rows before it
+        touched anything live &mdash; which also proved the whole chain applies clean from empty,
+        and is idempotent.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 12: Where it stands">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">12</span><span>Standing</span></div>
+      <h2>Where it stands</h2>
+      <div class="stats" style="margin:18px 0;">
+        <div class="stat"><div class="v accent">4</div><div class="k">Views</div></div>
+        <div class="stat"><div class="v">13</div><div class="k">Columns added</div></div>
+        <div class="stat"><div class="v">15</div><div class="k">Stack filters</div></div>
+        <div class="stat"><div class="v">272</div><div class="k">Tests passing</div></div>
+      </div>
+      <div class="two">
+        <div class="panel">
+          <h3>The catalogue now</h3>
+          <div class="bars">
+            <div class="bar"><span class="lab">Live</span><span class="meter"><span class="fill" style="width:100%"></span></span><span class="n">10</span></div>
+            <div class="bar"><span class="lab">Archived</span><span class="meter"><span class="fill" style="width:20%"></span></span><span class="n">2</span></div>
+          </div>
+          <p class="note" style="margin-top:12px;">Website 4 &middot; Web App 4 &middot; Tool 2 &middot; Design 1 &middot; Data Story 1.
+          Spanning 2020 to 2026.</p>
+        </div>
+        <div class="panel">
+          <h3>What changed underneath</h3>
+          <ul class="plain">
+            <li>Three migrations, each rehearsed before it ran</li>
+            <li>Drafts enforced in Postgres, not in the client</li>
+            <li>Every filtered view is a shareable URL</li>
+            <li>Keyboard-navigable throughout, focus returned on close</li>
+          </ul>
+        </div>
+      </div>
+      <div class="title-meta" style="margin-top:22px;">
+        <a href="https://sankettambare.in/projects">See it live &rarr;</a>
+        <span>sankettambare.in/projects</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <div class="ticks" id="ticks"></div>
+  <span class="counter" id="counter">01 / 12</span>
+</nav>
+
+<script>
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var counter = document.getElementById('counter');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var current = 0;
+
+  var TITLES = ['Title', 'Where it started', 'The data model', 'Visibility', 'Dates made real',
+                'Four views', 'Filtering', 'Interaction', 'The admin', 'Metadata', 'Three bugs', 'Standing'];
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  slides.forEach(function (slide, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Slide ' + (i + 1) + ': ' + (TITLES[i] || ''));
+    b.addEventListener('click', function () { go(i); });
+    ticks.appendChild(b);
+  });
+  var tickButtons = Array.prototype.slice.call(ticks.children);
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    tickButtons.forEach(function (b, i) {
+      b.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+    paint();
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  // A resize changes what offsetLeft means; stay on the slide the reader was on.
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' });
+    }, 120);
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>
