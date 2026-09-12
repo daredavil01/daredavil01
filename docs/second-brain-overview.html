@@ -1,0 +1,1612 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ask the Archive — A Second Brain on Free Tiers</title>
+    <meta
+      name="description"
+      content="How sankettambare.in got a natural-language chatbot over its own content: hybrid retrieval with Reciprocal Rank Fusion, a four-rung model ladder, and a running cost of zero."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
+    />
+
+    <style>
+      /* ========================================================================
+         Palette. Light lives on bare :root so the default theme needs no media
+         query; dark is declared twice — behind prefers-color-scheme guarded as
+         :not([data-theme="light"]), and again on [data-theme="dark"] — so an
+         explicit choice wins in either direction.
+
+         The accent is split: --accent is a FILL, --accent-ink is the
+         contrast-safe variant for text. Setting body text in --accent is a bug.
+         ==================================================================== */
+      :root {
+        --bg: #f5f2ec;
+        --surface: #fffdf8;
+        --sunk: #ebe6da;
+        --line: #e0dacb;
+        --line-2: #c9c1ad;
+
+        --ink: #17150f;
+        --muted: #6d675b;
+
+        --accent: #2f6f5e;
+        --accent-ink: #1f5648;
+        --accent-soft: #dcebe5;
+
+        --warn-ink: #9a4a1c;
+        --warn-soft: #f6e6d8;
+
+        --band: #17150f;
+        --band-ink: #f6f3ea;
+        --band-mut: #8b8579;
+
+        --f-display: "Fraunces", Georgia, serif;
+        --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+        color-scheme: light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #0f0f0d;
+          --surface: #191917;
+          --sunk: #0a0a09;
+          --line: #272724;
+          --line-2: #3b3b36;
+
+          --ink: #f3f0e8;
+          --muted: #99938a;
+
+          --accent: #4f9e88;
+          --accent-ink: #6fbfa6;
+          --accent-soft: #17312a;
+
+          --warn-ink: #e09a63;
+          --warn-soft: #2e2114;
+
+          --band: #f3f0e8;
+          --band-ink: #0f0f0d;
+          --band-mut: #6d675b;
+
+          color-scheme: dark;
+        }
+      }
+
+      :root[data-theme="dark"] {
+        --bg: #0f0f0d;
+        --surface: #191917;
+        --sunk: #0a0a09;
+        --line: #272724;
+        --line-2: #3b3b36;
+        --ink: #f3f0e8;
+        --muted: #99938a;
+        --accent: #4f9e88;
+        --accent-ink: #6fbfa6;
+        --accent-soft: #17312a;
+        --warn-ink: #e09a63;
+        --warn-soft: #2e2114;
+        --band: #f3f0e8;
+        --band-ink: #0f0f0d;
+        --band-mut: #6d675b;
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--f-body);
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .wrap {
+        width: min(1080px, 100% - 48px);
+        margin-inline: auto;
+      }
+
+      a {
+        color: var(--accent-ink);
+      }
+
+      .home-link {
+        display: inline-block;
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: var(--muted);
+        margin-bottom: 28px;
+      }
+      .home-link:hover {
+        color: var(--accent-ink);
+      }
+
+      .eyebrow {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent-ink);
+        margin: 0 0 10px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: var(--f-display);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        text-wrap: balance;
+        margin: 0;
+      }
+      h1 {
+        font-size: clamp(40px, 6.2vw, 76px);
+        font-weight: 700;
+      }
+      h2 {
+        font-size: clamp(28px, 3.6vw, 44px);
+        font-weight: 700;
+      }
+      h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      p {
+        margin: 0 0 14px;
+      }
+      .lede {
+        font-size: clamp(17px, 1.5vw, 20px);
+        color: var(--muted);
+        max-width: 68ch;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      small {
+        font-size: 12px;
+      }
+
+      header.hero {
+        padding: 48px 0 56px;
+        border-bottom: 1px solid var(--line);
+        background:
+          radial-gradient(
+            120% 90% at 85% -10%,
+            var(--accent-soft) 0%,
+            transparent 60%
+          ),
+          var(--bg);
+      }
+
+      .tag {
+        display: inline-block;
+        font-family: var(--f-mono);
+        font-size: 11px;
+        padding: 4px 9px;
+        border: 1px solid var(--line-2);
+        border-radius: 999px;
+        margin: 0 6px 6px 0;
+        color: var(--muted);
+      }
+      .tag.on {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      .statbar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 26px;
+      }
+      .statbar > div {
+        background: var(--surface);
+        padding: 14px 16px;
+      }
+      .statbar .n {
+        font-family: var(--f-mono);
+        font-weight: 700;
+        font-size: clamp(20px, 2.2vw, 27px);
+        line-height: 1.1;
+      }
+      .statbar .l {
+        font-family: var(--f-mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      nav.toc {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: color-mix(in srgb, var(--bg) 92%, transparent);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+      }
+      nav.toc .inner {
+        width: min(1080px, 100% - 48px);
+        margin-inline: auto;
+        display: flex;
+        gap: 18px;
+        overflow-x: auto;
+        padding: 11px 0;
+        scrollbar-width: none;
+      }
+      nav.toc .inner::-webkit-scrollbar {
+        display: none;
+      }
+      nav.toc a {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        text-decoration: none;
+        color: var(--muted);
+      }
+      nav.toc a:hover {
+        color: var(--accent-ink);
+      }
+
+      section {
+        padding: 64px 0;
+        border-bottom: 1px solid var(--line);
+        scroll-margin-top: 52px;
+      }
+      .sechead {
+        margin-bottom: 30px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 14px;
+      }
+      .g2 {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+      .g3 {
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 18px 20px;
+      }
+      .card .k {
+        font-family: var(--f-mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent-ink);
+        margin-bottom: 8px;
+      }
+      .card p:last-child {
+        margin-bottom: 0;
+      }
+
+      pre {
+        background: var(--sunk);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-family: var(--f-mono);
+        font-size: 12.5px;
+        line-height: 1.65;
+        margin: 0 0 14px;
+      }
+      code {
+        font-family: var(--f-mono);
+        font-size: 0.92em;
+      }
+      pre .c {
+        color: var(--muted);
+      }
+      pre .kw {
+        color: var(--accent-ink);
+        font-weight: 700;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 9px 12px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        font-family: var(--f-mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      td.num {
+        font-family: var(--f-mono);
+        white-space: nowrap;
+      }
+      .scroller {
+        overflow-x: auto;
+      }
+
+      /* --- Live demo strip --------------------------------------------------
+         A replay, not a live endpoint: this page is static and must work on any
+         host. The timings below are the ones actually logged by the real
+         endpoint for this question, so the pacing is honest.
+         ------------------------------------------------------------------- */
+      .demo {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 20px;
+        max-width: 720px;
+      }
+      .demo .q {
+        display: inline-block;
+        background: var(--band);
+        color: var(--band-ink);
+        border-radius: 14px 14px 4px 14px;
+        padding: 9px 14px;
+        font-size: 14px;
+        float: right;
+        clear: both;
+        max-width: 85%;
+      }
+      .demo .a {
+        clear: both;
+        background: var(--sunk);
+        border-radius: 14px 14px 14px 4px;
+        padding: 11px 15px;
+        font-size: 14px;
+        min-height: 22px;
+      }
+      .demo .stage {
+        font-family: var(--f-mono);
+        font-size: 10.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 14px 0 8px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .demo .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex: none;
+      }
+      .cite {
+        display: inline-block;
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+        border-radius: 3px;
+        padding: 0 4px;
+        font-family: var(--f-mono);
+        font-size: 11px;
+      }
+      .srcs {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .src {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 7px 10px;
+        font-size: 12.5px;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        opacity: 0;
+        transform: translateY(4px);
+        transition:
+          opacity 0.28s ease,
+          transform 0.28s ease;
+      }
+      .src.in {
+        opacity: 1;
+        transform: none;
+      }
+      .src .n {
+        width: 17px;
+        height: 17px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #fff;
+        font-family: var(--f-mono);
+        font-size: 10px;
+        display: grid;
+        place-items: center;
+        flex: none;
+        margin-top: 1px;
+      }
+      .src .t {
+        font-weight: 500;
+      }
+      .src .m {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .caret {
+        display: inline-block;
+        width: 6px;
+        height: 14px;
+        background: var(--ink);
+        vertical-align: -2px;
+        animation: blink 1s steps(2) infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      .replay {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: none;
+        border: 1px solid var(--line-2);
+        border-radius: 999px;
+        padding: 6px 14px;
+        color: var(--muted);
+        cursor: pointer;
+        margin-top: 14px;
+      }
+      .replay:hover {
+        color: var(--accent-ink);
+        border-color: var(--accent);
+      }
+
+      .ladder {
+        display: grid;
+        gap: 8px;
+      }
+      .rung {
+        display: grid;
+        grid-template-columns: 34px 1fr auto;
+        gap: 14px;
+        align-items: center;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        border-radius: 6px;
+        padding: 12px 16px;
+      }
+      .rung:last-child {
+        border-left-color: var(--line-2);
+      }
+      .rung .i {
+        font-family: var(--f-mono);
+        font-size: 18px;
+        color: var(--muted);
+      }
+      .rung .free {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        color: var(--muted);
+        text-align: right;
+      }
+
+      .broke {
+        border-left: 3px solid var(--warn-ink);
+        background: var(--surface);
+        border-radius: 6px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+      }
+      .broke .k {
+        font-family: var(--f-mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--warn-ink);
+        margin-bottom: 6px;
+      }
+      .broke p:last-child {
+        margin-bottom: 0;
+      }
+
+      .pull {
+        font-family: var(--f-display);
+        font-size: clamp(21px, 2.6vw, 30px);
+        line-height: 1.25;
+        border-left: 3px solid var(--accent);
+        padding-left: 20px;
+        margin: 0 0 20px;
+        max-width: 26ch;
+      }
+
+      footer {
+        padding: 44px 0 64px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .theme-toggle {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 40;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--surface);
+        border: 1px solid var(--line-2);
+        color: var(--ink);
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgb(0 0 0 / 0.12);
+      }
+      .theme-toggle:hover {
+        border-color: var(--accent);
+        color: var(--accent-ink);
+      }
+      .theme-toggle svg {
+        width: 19px;
+        height: 19px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+      }
+      /* Show the icon for the theme you would switch TO, which is the one
+         people reach for. */
+      .theme-toggle .moon {
+        display: block;
+      }
+      .theme-toggle .sun {
+        display: none;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) .theme-toggle .moon {
+          display: none;
+        }
+        :root:not([data-theme="light"]) .theme-toggle .sun {
+          display: block;
+        }
+      }
+      :root[data-theme="dark"] .theme-toggle .moon {
+        display: none;
+      }
+      :root[data-theme="dark"] .theme-toggle .sun {
+        display: block;
+      }
+      :root[data-theme="light"] .theme-toggle .moon {
+        display: block;
+      }
+      :root[data-theme="light"] .theme-toggle .sun {
+        display: none;
+      }
+
+      @media (max-width: 640px) {
+        .rung {
+          grid-template-columns: 26px 1fr;
+        }
+        .rung .free {
+          grid-column: 2;
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="hero">
+      <div class="wrap">
+        <a class="home-link" href="../index.html">← Home</a>
+        <div class="eyebrow">sankettambare.in · /ask</div>
+        <h1>Ask the archive.</h1>
+        <p class="lede" style="margin-top: 18px">
+          Thirteen years of books, races, treks, projects and short posts sat in
+          Postgres, reachable only through one filter box per page. This is the
+          build log of the thing that made all of it answerable in a sentence —
+          and the notes on keeping it at a running cost of zero.
+        </p>
+        <div style="margin-top: 20px">
+          <span class="tag on">v17.0.0 — shipped</span>
+          <span class="tag">Postgres + pgvector</span>
+          <span class="tag">Cloudflare Pages Functions</span>
+          <span class="tag">Workers AI</span>
+          <span class="tag">Gemini</span>
+          <span class="tag">React 18</span>
+          <span class="tag">SSE streaming</span>
+        </div>
+
+        <div class="statbar">
+          <div>
+            <div class="n">2,022</div>
+            <div class="l">Indexed chunks</div>
+          </div>
+          <div>
+            <div class="n">1,661</div>
+            <div class="l">Micro posts</div>
+          </div>
+          <div>
+            <div class="n">4</div>
+            <div class="l">Model rungs</div>
+          </div>
+          <div>
+            <div class="n">8 <small>MB</small></div>
+            <div class="l">Of vectors</div>
+          </div>
+          <div>
+            <div class="n">$0</div>
+            <div class="l">Per month</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc">
+      <div class="inner">
+        <a href="#why">Why</a>
+        <a href="#demo">Watch it answer</a>
+        <a href="#retrieval">Retrieval</a>
+        <a href="#facts">The facts card</a>
+        <a href="#ladder">The ladder</a>
+        <a href="#cost">Cost</a>
+        <a href="#closed">Failing closed</a>
+        <a href="#log">The log</a>
+        <a href="#broke">What broke</a>
+        <a href="#reuse">Reuse</a>
+        <a href="#next">Next</a>
+      </div>
+    </nav>
+
+    <!-- ============ WHY ============ -->
+    <section id="why">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">The problem</div>
+          <h2>Nothing crossed</h2>
+        </div>
+        <div class="grid g2">
+          <div>
+            <p class="pull">
+              Every page could search itself. No page could search another.
+            </p>
+            <p>
+              The site had six separate filter interfaces — books, projects,
+              micro posts, races, treks, tags — each with its own
+              <code>?q=</code> parameter and its own in-memory
+              <code>.includes()</code> scan. All of them worked. None of them
+              talked to each other.
+            </p>
+            <p class="muted">
+              So a question like <em>“which forts did I climb the year I read
+              the most Marathi non-fiction”</em> had no home. It needs two
+              tables, a date reconciliation between a free-text
+              <code>DD-MM-YYYY</code> and an integer year, and a definition of
+              “most”. That is not a filter. That is a conversation.
+            </p>
+          </div>
+          <div class="grid" style="align-content: start">
+            <div class="card">
+              <div class="k">Rule 1 — ground everything</div>
+              <p>
+                Every answer cites the rows it came from, and the interface —
+                not the model — turns those into links. A model that cannot
+                write a URL cannot invent one.
+              </p>
+            </div>
+            <div class="card">
+              <div class="k">Rule 2 — never bill</div>
+              <p>
+                A public endpoint that calls a paid model is a stranger's
+                credit card. Caps are counted in Postgres and fail closed: if
+                the quota check itself is unreachable, the request is refused
+                rather than run uncapped.
+              </p>
+            </div>
+            <div class="card">
+              <div class="k">Rule 3 — degrade, don't break</div>
+              <p>
+                No embeddings? Keyword-only through the same code path. No
+                model at all? Return the matching pages with a one-line note.
+                There is no error state, only a worse answer.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DEMO ============ -->
+    <section id="demo">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Watch it answer</div>
+          <h2>Sources first, prose second</h2>
+          <p class="lede">
+            A replay of one real exchange, paced by the timings the endpoint
+            actually logged for it: retrieval finished at 1.81 s, the answer
+            was complete at 4.20 s. Cards land the moment retrieval returns, so
+            the page has something true on it a full two seconds before the
+            model has finished its first sentence.
+          </p>
+        </div>
+
+        <div class="demo" id="demo">
+          <div class="q">Get details for all treks</div>
+          <div style="clear: both; height: 14px"></div>
+
+          <div class="stage">
+            <span class="dot"></span><span id="stageLabel">idle</span>
+          </div>
+
+          <div class="srcs" id="srcs">
+            <div class="src">
+              <span class="n">1</span
+              ><span
+                ><span class="t">Ghangad Fort</span><br /><span class="m"
+                  >Trek · 09-08-2026</span
+                ></span
+              >
+            </div>
+            <div class="src">
+              <span class="n">2</span
+              ><span
+                ><span class="t">Lingya Waterfall</span><br /><span class="m"
+                  >Trek · 01-08-2026</span
+                ></span
+              >
+            </div>
+            <div class="src">
+              <span class="n">3</span
+              ><span
+                ><span class="t">Harishchandragad</span><br /><span class="m"
+                  >Trek · 19-06-2026</span
+                ></span
+              >
+            </div>
+            <div class="src">
+              <span class="n">4</span
+              ><span
+                ><span class="t">Karnala</span><br /><span class="m"
+                  >Trek · 14-06-2026</span
+                ></span
+              >
+            </div>
+          </div>
+
+          <div style="height: 12px"></div>
+          <div class="a" id="answer"></div>
+
+          <button class="replay" id="replay" type="button">Replay</button>
+        </div>
+
+        <p class="muted" style="margin-top: 16px; font-size: 13px">
+          This page is static — the replay is scripted, not a live call to the
+          endpoint. The real thing is at
+          <a href="https://sankettambare.in/ask">sankettambare.in/ask</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ RETRIEVAL ============ -->
+    <section id="retrieval">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Retrieval</div>
+          <h2>Two searches, one ranking</h2>
+          <p class="lede">
+            Keyword search knows that “Ghangad” is a word. Vector search knows
+            that “forts near Pune” means Ghangad. Neither is sufficient, so
+            both run and their rankings are fused with Reciprocal Rank Fusion —
+            each result scored <code>1 / (k + rank)</code> in each list, summed,
+            sorted.
+          </p>
+        </div>
+
+        <div class="grid g3" style="margin-bottom: 22px">
+          <div class="card">
+            <div class="k">One index, every table</div>
+            <p>
+              <code>content_chunks</code> is polymorphic —
+              <code>entity_type</code> + <code>entity_id</code> — exactly like
+              the site's existing tag join table. Books, blogs, micro posts,
+              projects, races, treks, photo sets, Now months and two
+              hand-written markdown files all land in the same 2,022 rows.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">Multilingual on purpose</div>
+            <p>
+              <code>@cf/baai/bge-m3</code>, 1024 dimensions. Two fifths of the
+              shelf is Marathi; an English-only embedding model fails on it
+              silently, which is the worst way to fail. The text search config
+              is <code>simple</code>, not <code>english</code> — stemming
+              Devanagari is worse than not stemming at all.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">Nullable query vector</div>
+            <p>
+              The RPC takes <code>query_embedding vector(1024) default null</code>.
+              Pass null and the semantic half matches nothing, leaving a pure
+              keyword search — so the degraded path is the same function, not a
+              second one that can rot unnoticed.
+            </p>
+          </div>
+        </div>
+
+        <pre><span class="c">-- The fusion, trimmed to its spine. Both halves are optional:
+-- keyword needs a query, semantic needs a vector.</span>
+<span class="kw">with</span> fts_ranked <span class="kw">as</span> (
+  <span class="kw">select</span> c.id, row_number() <span class="kw">over</span> (
+           <span class="kw">order by</span> ts_rank_cd(c.fts, to_tsquery('simple', expr)) <span class="kw">desc</span>
+         ) <span class="kw">as</span> rank_ix
+    <span class="kw">from</span> content_chunks c
+   <span class="kw">where</span> c.fts @@ to_tsquery('simple', expr)
+),
+semantic_ranked <span class="kw">as</span> (
+  <span class="kw">select</span> c.id, row_number() <span class="kw">over</span> (<span class="kw">order by</span> c.embedding &lt;#&gt; query_embedding) <span class="kw">as</span> rank_ix
+    <span class="kw">from</span> content_chunks c
+   <span class="kw">where</span> query_embedding <span class="kw">is not null</span> <span class="kw">and</span> c.embedding <span class="kw">is not null</span>
+)
+<span class="kw">select</span> coalesce(f.id, s.id),
+       coalesce(1.0 / (rrf_k + f.rank_ix), 0.0) * full_text_weight
+     + coalesce(1.0 / (rrf_k + s.rank_ix), 0.0) * semantic_weight <span class="kw">as</span> score
+  <span class="kw">from</span> fts_ranked f
+  <span class="kw">full outer join</span> semantic_ranked s <span class="kw">on</span> f.id = s.id
+ <span class="kw">order by</span> score <span class="kw">desc</span>;</pre>
+
+        <p class="muted">
+          <code>full outer join</code> matters: a result that only one half
+          found still scores. The weights are rows in a settings table, so the
+          balance between “matches the words” and “matches the meaning” is a
+          dropdown in the admin, not a deploy.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ FACTS ============ -->
+    <section id="facts">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">The trick that replaced an agent</div>
+          <h2>Vectors cannot count</h2>
+        </div>
+        <div class="grid g2">
+          <div>
+            <p>
+              “How many books has he read?” is the question a retrieval system
+              is worst at. Semantic search returns eight books that feel like
+              the question; none of them knows there are fifty-one.
+            </p>
+            <p>
+              The obvious fix is tool-calling: let the model issue queries and
+              loop. That is three or four round trips per question, on free
+              tiers with request-per-day limits.
+            </p>
+            <p>
+              Instead, one Postgres function returns every aggregate the site
+              has — counts per table, date ranges, books by language and
+              status, races by distance, the top 25 tags — as a single JSON
+              blob, cached at the edge for an hour and injected into
+              <em>every</em> prompt. About 250 tokens. It answers the entire
+              class of counting questions deterministically, before retrieval
+              is even consulted.
+            </p>
+            <p class="muted">
+              Retrieval is then only asked the thing it is good at:
+              <em>which ones</em>.
+            </p>
+          </div>
+          <div>
+            <pre><span class="c">// what rides along in every single prompt</span>
+{
+  counts: { books: 51, microblog: 1661, blogs: 60,
+            projects: 13, sports: 25, treks: 20,
+            instagram: 11, tags: 213 },
+  books: {
+    by_language: { English: 30, Marathi: 21 },
+    by_status:   { read: 51 },
+    year_range:  { min: 2018, max: 2026 }
+  },
+  microblog: {
+    date_range: { min: "2018-03-19",
+                  max: "2026-09-10" },
+    by_type: { text: 471, photo: 953, quote: 237 }
+  },
+  now_current: { month: "July", year: 2026 },
+  top_tags: [ … 25 of them … ]
+}</pre>
+            <div class="card">
+              <div class="k">And a second card, for the model</div>
+              <p>
+                A ~480-token brief compiled from the schema and hand-written
+                notes: what each content type <em>means</em>. That
+                <code>books.year</code> is the year it was read, not published.
+                That a micro post is a passing thought from years ago, not a
+                position. Generated into the repo, pushed into the settings
+                row, read on every request.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ LADDER ============ -->
+    <section id="ladder">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Generation</div>
+          <h2>Four rungs, and the last one always holds</h2>
+          <p class="lede">
+            Tried top to bottom until one answers. Order, model ids, timeouts
+            and on/off switches are rows in <code>ask_settings</code> — so when
+            Google retired the model this was built on, mid-build, the fix was
+            editing a field.
+          </p>
+        </div>
+
+        <div class="ladder">
+          <div class="rung">
+            <span class="i">1</span>
+            <span
+              ><strong>Gemini Flash-Lite</strong> — best quality of the three.
+              Fails over on 429, 5xx, a 6-second timeout, or a missing key.</span
+            >
+            <span class="free">~1,000–1,500 req/day free</span>
+          </div>
+          <div class="rung">
+            <span class="i">2</span>
+            <span
+              ><strong>Workers AI · gpt-oss-20b</strong> — no key, no egress,
+              runs at the edge beside the worker.</span
+            >
+            <span class="free">10,000 neurons/day free</span>
+          </div>
+          <div class="rung">
+            <span class="i">3</span>
+            <span
+              ><strong>Workers AI · llama-3.2-3b</strong> — same neuron pool,
+              roughly five times cheaper per call.</span
+            >
+            <span class="free">same pool</span>
+          </div>
+          <div class="rung">
+            <span class="i">4</span>
+            <span
+              ><strong>Search-only</strong> — no model wrote anything, so the
+              retrieved pages are returned with one honest line. Not an error
+              page. The feature has no failure state.</span
+            >
+            <span class="free">free forever</span>
+          </div>
+        </div>
+
+        <div class="grid g2" style="margin-top: 22px">
+          <div class="card">
+            <div class="k">Streaming complicates a ladder</div>
+            <p>
+              Once tokens have reached the reader, falling through to another
+              model would rewrite the answer mid-sentence. So a rung counts as
+              “working” at its <em>first</em> token: fail before that and the
+              next rung takes over; fail after and we keep what was written.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">Gemini goes first, deliberately</div>
+            <p>
+              Workers AI is second not because it is worse but because the same
+              neuron pool also serves the query embeddings. Draining it on
+              prose would cost retrieval quality for the rest of the day.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COST ============ -->
+    <section id="cost">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Cost</div>
+          <h2>The maths that keeps it at zero</h2>
+          <p class="lede">
+            Free tiers are the design constraint, not a happy accident. Here is
+            what it would cost if every request were billed at list price —
+            which is the number worth knowing before you rely on a free tier.
+          </p>
+        </div>
+
+        <div class="scroller" style="margin-bottom: 22px">
+          <table>
+            <thead>
+              <tr>
+                <th>Line item</th>
+                <th>Rate</th>
+                <th>This site</th>
+                <th>Billed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Embedding the whole corpus, once</td>
+                <td class="num">$0.012 / M tok</td>
+                <td class="num">~400K tokens</td>
+                <td class="num">$0.005</td>
+              </tr>
+              <tr>
+                <td>Vector storage</td>
+                <td class="num">500 MB free</td>
+                <td class="num">2,022 × 1024 × 4 B</td>
+                <td class="num">8 MB</td>
+              </tr>
+              <tr>
+                <td>One question — input</td>
+                <td class="num">$0.10 / M tok</td>
+                <td class="num">~2,300 tokens</td>
+                <td class="num">$0.00023</td>
+              </tr>
+              <tr>
+                <td>One question — output</td>
+                <td class="num">$0.40 / M tok</td>
+                <td class="num">~350 tokens</td>
+                <td class="num">$0.00014</td>
+              </tr>
+              <tr>
+                <td><strong>Per question, all in</strong></td>
+                <td class="num">—</td>
+                <td class="num">—</td>
+                <td class="num"><strong>$0.00037</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid g3">
+          <div class="card">
+            <div class="k">≈ 2,700</div>
+            <p>
+              questions per dollar at list price — and the free tiers cover
+              roughly 1,000 a day before any of that applies.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">The real ceiling</div>
+            <p>
+              Not money: requests per day. Which is why the caps are set below
+              the free allowance rather than above it, and why exhausting them
+              produces a polite note instead of a fallback to a paid model.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">Where it would go paid</div>
+            <p>
+              A busier site swaps rung one for Claude Haiku or Gemini Flash and
+              pays single-digit dollars a month. Nothing else in the design
+              changes — that is what putting the model list in a database row
+              buys you.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAILING CLOSED ============ -->
+    <section id="closed">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Abuse</div>
+          <h2>A public LLM endpoint is a stranger's GPU</h2>
+        </div>
+        <div class="grid g2">
+          <div class="grid" style="align-content: start">
+            <div class="card">
+              <div class="k">Counted in Postgres</div>
+              <p>
+                One row per (day, salted IP hash), incremented inside a
+                <code>security definer</code> function that is the only way
+                anonymous traffic can touch the table. A global daily cap and a
+                per-visitor cap, both editable in the admin.
+              </p>
+            </div>
+            <div class="card">
+              <div class="k">Fails closed, not open</div>
+              <p>
+                If the quota function itself is unreachable, the request is
+                <em>refused</em>. The failure mode of a billing guard must
+                never be “carry on”.
+              </p>
+            </div>
+            <div class="card">
+              <div class="k">Turnstile, invisible</div>
+              <p>
+                Rendered only when the admin switches it on, in
+                interaction-only mode, so most visitors never see a challenge.
+                It also, pleasingly, blocked my own browser automation while
+                testing — which is the strongest evidence it works.
+              </p>
+            </div>
+          </div>
+          <div>
+            <p class="pull">Retrieved rows are data. Never instructions.</p>
+            <p>
+              The micro-blog table is a bulk Tumblr import, and a fair number
+              of those posts are reblogs of other people's words. Text I did
+              not write is being pasted into a model prompt on every request.
+            </p>
+            <p>
+              So retrieved content is wrapped in delimiters and the system
+              prompt says plainly that everything between them is archive
+              content, never an instruction — and that if it asks the model to
+              change behaviour, ignore it.
+            </p>
+            <pre><span class="c">-- what the model actually sees</span>
+&lt;&lt;&lt;item 1 | trek | Ghangad Fort | 09-08-2026 | /treks/20&gt;&gt;&gt;
+Trek: Ghangad Fort | Date: 09-08-2026 | Duration: 1.5 Hrs …
+&lt;&lt;&lt;end item 1&gt;&gt;&gt;</pre>
+            <p class="muted" style="margin-bottom: 0">
+              Asked to print its own system prompt, it declines and offers to
+              talk about the books instead.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ LOG ============ -->
+    <section id="log">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Observability</div>
+          <h2>Every question, and what it cost to answer</h2>
+          <p class="lede">
+            Two tables: one row per conversation, one per message. Assistant
+            rows carry the operational detail — which rung answered, which
+            model, and where the time went.
+          </p>
+        </div>
+        <div class="scroller" style="margin-bottom: 20px">
+          <table>
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Measured</th>
+                <th>What it is</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="num">embed_ms</td>
+                <td class="num">0–120</td>
+                <td>Turning the question into a vector, at the edge.</td>
+              </tr>
+              <tr>
+                <td class="num">retrieval_ms</td>
+                <td class="num">1,810</td>
+                <td>
+                  Hybrid search plus the facts card. The largest fixed cost,
+                  and the reason sources are flushed before the answer starts.
+                </td>
+              </tr>
+              <tr>
+                <td class="num">generation_ms</td>
+                <td class="num">2,392</td>
+                <td>The model writing, streamed token by token.</td>
+              </tr>
+              <tr>
+                <td class="num">total_ms</td>
+                <td class="num">4,202</td>
+                <td>First byte to last, as logged for the demo question.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid g3">
+          <div class="card">
+            <div class="k">Written after the fact</div>
+            <p>
+              Logging runs in <code>waitUntil()</code>, after the response is
+              already on its way. It cannot slow an answer, and it cannot fail
+              one.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">Owner-only, by policy</div>
+            <p>
+              Visitors write the log through a definer function and can never
+              read it. Row-level security, not application code, is what
+              enforces that.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">The question it answers</div>
+            <p>
+              “Is the free tier still holding?” A week of nothing but rung two
+              is visible as a tier-mix column in the admin, without opening a
+              log viewer.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WHAT BROKE ============ -->
+    <section id="broke">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">The interesting part</div>
+          <h2>What broke</h2>
+          <p class="lede">
+            Every one of these shipped as working code and was caught by
+            actually using the thing. None of them threw an error.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">01 — the model retired itself</div>
+          <p>
+            The seeded model id returned
+            <code>404: no longer available to new users</code> the first time a
+            real key called it. The ladder did exactly its job — the answer
+            arrived from rung two — but the fix was to point rung one at a
+            moving alias so a vendor's deprecation schedule stops being an
+            outage. This is the entire argument for keeping model ids in a
+            database row.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">02 — the endpoint ate its own page</div>
+          <p>
+            The function lived at <code>/ask</code>, and so did the page.
+            Cloudflare Pages Functions take precedence over the SPA fallback,
+            so in production, opening <code>/ask</code> in a browser would have
+            served raw JSON to every visitor. Caught locally, one minute before
+            it would have shipped. The endpoint is <code>/api/ask</code> now.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">03 — keyword search ANDed the whole question</div>
+          <p>
+            <code>websearch_to_tsquery</code> requires every term. The
+            <code>simple</code> config has no stopword list — that is why it is
+            the right config for Marathi — so “which”, “has” and “he” were
+            treated as content words, and
+            <em>“which forts has he trekked?”</em> matched nothing at all.
+            Terms are ORed and rank-fused now, with a short English stopword
+            list applied to the query only, never to the indexed text.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">04 — “treks” never matched “Trek”</div>
+          <p>
+            No stemming, remember. A question about treks could not find a
+            chunk that began <code>Trek: Jivdhan</code>. Every term gets a
+            prefix match now (<code>trek:*</code>), which buys
+            singular/plural across the whole index without touching Devanagari.
+            And a type-filtered question that still finds nothing falls back to
+            the newest rows of that type — silence reads as “there are none”
+            when there are twenty.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">05 — blog posts ate every related slot</div>
+          <p>
+            The “more like this” query used
+            <code>distinct on (entity_type, entity_id)</code>, which forces
+            Postgres to sort by those columns <em>first</em> — so the row limit
+            was consumed in alphabetical order of type. Every trek's related
+            strip was four marathon blog posts. Take the nearest neighbours
+            first, dedupe second, and a trek recommends treks.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">06 — the indexer was never idempotent</div>
+          <p>
+            A re-run re-embedded 866 rows every time. Two causes stacked:
+            PostgREST silently caps an unbounded select at 1,000 rows, so the
+            “what's already indexed” check only ever saw half the index; and
+            Postgres returns <code>…479+00:00</code> where Node wrote
+            <code>…479Z</code>, so a string comparison marked those rows stale
+            forever. Paginate, and compare instants rather than strings.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">07 — the changelog arrived as one paragraph</div>
+          <p>
+            The markdown files are CRLF, and
+            <code>/\n{2,}/</code> does not match <code>\r\n\r\n</code>. A
+            136 KB changelog became a single “paragraph”, truncated to its
+            first 4,000 characters at embedding time — losing years of release
+            notes from the index without a single warning.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ REUSE ============ -->
+    <section id="reuse">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Dividend</div>
+          <h2>The index pays for itself twice</h2>
+        </div>
+        <div class="grid g2">
+          <div>
+            <p>
+              Every book, trek, race and project already has a vector sitting
+              in the same table. So “more like this” on a detail page is a
+              nearest-neighbour query against that item's <em>own</em> stored
+              embedding — no model call at read time, no API key, no second
+              index, no extra pipeline.
+            </p>
+            <p>
+              It is roughly forty lines of SQL and one component, and it turned
+              a chatbot into site infrastructure.
+            </p>
+          </div>
+          <div>
+            <pre><span class="c">-- Permanent Record (Snowden) recommends:</span>
+book   0.619  Pegasus: The Story of the World's Most…
+book   0.598  Mindf*ck: Inside Cambridge Analytica
+book   0.595  Possible Minds
+
+<span class="c">-- Jivdhan (a fort) recommends:</span>
+trek   0.886  Ghangad Fort
+trek   0.837  Harishchandragad
+trek   0.823  Karnala</pre>
+            <p class="muted" style="margin-bottom: 0">
+              Nobody tagged those relationships. They fall out of the same
+              vectors the chat was already using.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ NEXT ============ -->
+    <section id="next">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Deliberately not built</div>
+          <h2>What's next, and what isn't</h2>
+        </div>
+        <div class="grid g3">
+          <div class="card">
+            <div class="k">Next — a compiled digest layer</div>
+            <p>
+              Andrej Karpathy's “LLM wiki” argument is that at personal-archive
+              scale you should compile sources into a maintained set of notes
+              rather than re-reading raw documents per query. Raw posts answer
+              <em>what did I say</em>; compiled notes would answer
+              <em>what do I think</em>. That is the piece that turns a search
+              box into a second brain.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">Next — one search, everywhere</div>
+            <p>
+              The six client-side filter interfaces could all call the same
+              hybrid search instead of scanning arrays in the browser. The
+              infrastructure already exists.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">Not built — an agent</div>
+            <p>
+              Tool-calling loops are three or four round trips per question for
+              a corpus of two thousand short documents. One retrieval pass plus
+              a precomputed facts card answers the same questions in one. The
+              simplest thing that holds, holds.
+            </p>
+          </div>
+        </div>
+
+        <p style="margin-top: 26px">
+          Live at
+          <a href="https://sankettambare.in/ask">sankettambare.in/ask</a>.
+          Ask it something it cannot answer — the honest refusals are more
+          interesting than the hits.
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        Ask the Archive · sankettambare.in/ask · Postgres, pgvector, Cloudflare
+        Pages Functions, Workers AI, Gemini.
+        <a href="../index.html">← Back home</a>
+      </div>
+    </footer>
+
+    <button
+      class="theme-toggle"
+      id="themeToggle"
+      type="button"
+      aria-label="Switch between light and dark"
+      title="Switch theme"
+    >
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+      </svg>
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4" />
+        <path
+          d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"
+        />
+      </svg>
+    </button>
+
+    <script>
+      /* Theme. The page already follows the system setting through
+         prefers-color-scheme; this only exists for the case where someone wants
+         the other one. The choice is remembered per browser, and "no stored
+         choice" means "follow the system", which is why the attribute is
+         removed rather than set to a third value. */
+      (function () {
+        var root = document.documentElement;
+        var KEY = "sb-theme";
+
+        try {
+          var saved = localStorage.getItem(KEY);
+          if (saved === "dark" || saved === "light") {
+            root.setAttribute("data-theme", saved);
+          }
+        } catch (e) {
+          /* storage blocked — the system setting still applies */
+        }
+
+        document
+          .getElementById("themeToggle")
+          .addEventListener("click", function () {
+            var systemDark = window.matchMedia(
+              "(prefers-color-scheme: dark)",
+            ).matches;
+            var current =
+              root.getAttribute("data-theme") || (systemDark ? "dark" : "light");
+            var next = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", next);
+            try {
+              localStorage.setItem(KEY, next);
+            } catch (e) {
+              /* not fatal */
+            }
+          });
+      })();
+    </script>
+
+    <script>
+      /* The demo replay. Scripted, not live: this page is static and has to work
+         on any static host. The delays below are the real logged stage timings
+         for this question — 1.81 s to sources, 4.20 s to a finished answer —
+         compressed slightly so a reader is not kept waiting twice. */
+      (function () {
+        var ANSWER =
+          "The archive has 20 treks, mostly forts and hills around Pune. The most recent: **Ghangad Fort** on 09-08-2026, 1.5 hours, easy [1]. **Lingya Waterfall** on 01-08-2026, an hour, easy [2]. **Harishchandragad** on 19-06-2026 is the long one — 7 hours, medium endurance [3]. **Karnala** on 14-06-2026, 3 hours, easy [4].";
+
+        var answerEl = document.getElementById("answer");
+        var stageEl = document.getElementById("stageLabel");
+        var srcEls = document.querySelectorAll("#srcs .src");
+        var replayBtn = document.getElementById("replay");
+        var timers = [];
+
+        function at(ms, fn) {
+          timers.push(setTimeout(fn, ms));
+        }
+
+        /* Renders the answer text as HTML: **bold** and [n] citation chips, the
+           same two transforms the real interface applies. */
+        function render(text) {
+          return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+            .replace(/\[(\d)\]/g, '<span class="cite">$1</span>');
+        }
+
+        function run() {
+          timers.forEach(clearTimeout);
+          timers = [];
+          answerEl.innerHTML = "";
+          srcEls.forEach(function (el) {
+            el.classList.remove("in");
+          });
+
+          stageEl.textContent = "embedding the question";
+          at(500, function () {
+            stageEl.textContent = "hybrid search · 2,022 chunks";
+          });
+
+          at(1400, function () {
+            stageEl.textContent = "retrieval done at 1.81 s — sources first";
+            srcEls.forEach(function (el, i) {
+              at(i * 110, function () {
+                el.classList.add("in");
+              });
+            });
+          });
+
+          at(2100, function () {
+            stageEl.textContent = "gemini-flash-lite · streaming";
+            answerEl.innerHTML = '<span class="caret"></span>';
+
+            /* Typed a word at a time rather than a character at a time: it reads
+               like token streaming, which is what it is standing in for. */
+            var words = ANSWER.split(" ");
+            var shown = "";
+            words.forEach(function (w, i) {
+              at(i * 45, function () {
+                shown += (i ? " " : "") + w;
+                answerEl.innerHTML =
+                  render(shown) +
+                  (i === words.length - 1 ? "" : '<span class="caret"></span>');
+                if (i === words.length - 1) {
+                  stageEl.textContent = "done at 4.20 s · 4 sources cited";
+                }
+              });
+            });
+          });
+        }
+
+        replayBtn.addEventListener("click", run);
+
+        /* Start when it scrolls into view, so a reader does not arrive at a
+           finished answer they never saw appear. */
+        if ("IntersectionObserver" in window) {
+          var seen = false;
+          new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (e) {
+                if (e.isIntersecting && !seen) {
+                  seen = true;
+                  run();
+                }
+              });
+            },
+            { threshold: 0.4 },
+          ).observe(document.getElementById("demo"));
+        } else {
+          run();
+        }
+      })();
+    </script>
+  </body>
+</html>

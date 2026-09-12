@@ -22,6 +22,8 @@ docs/
   yung-foundation-site-overview.html  Yung Foundation site: routes + architecture
   antyodaya-website-overview.html Antyodaya site: features + technical spec
   runfolio-overview.html          RunFolio: the race-portfolio intro deck
+  second-brain-overview.html      Ask the Archive: how the site's chatbot is
+                                   built, what it costs, and what broke
 presentations/
   e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
                                    ethanol/sugar trade-off and how the site was built
