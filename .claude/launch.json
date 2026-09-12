@@ -1,0 +1,38 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "yung-data",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "serve",
+        "yung-data",
+        "-l",
+        "3000"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "digital-wellbeing",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "serve",
+        "digital-wellbeing",
+        "-l",
+        "3005"
+      ],
+      "port": 3005
+    },
+    {
+      "name": "repo-root",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "serve",
+        ".",
+        "-l",
+        "3010"
+      ],
+      "port": 3010
+    }
+  ]
+}

@@ -1,5 +1,20 @@
 {
   "permissions": {
-    "allow": ["Bash(npx --version)"]
+    "allow": [
+      "Bash(npx --version)",
+      "PowerShell(\\(Get-Content \"C:\\\\Users\\\\daredavil\\\\Desktop\\\\Projects\\\\daredavil01\\\\yung-data\\\\yung_data.csv\" | Measure-Object -Line\\).Lines)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(node -e ' *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "mcp__visualize__read_me",
+      "Bash(git -C \"C:/Users/daredavil/Desktop/Projects/daredavil01\" status --short)",
+      "Bash(git -C \"C:/Users/daredavil/Desktop/Projects/daredavil01\" log --oneline -3)",
+      "Bash(git mv *)",
+      "Bash(mv yung-foundation-site-overview.html docs/yung-foundation-site-overview.html)",
+      "Bash(git commit -m '@ *)",
+      "Bash(git commit *)"
+    ]
   }
 }
