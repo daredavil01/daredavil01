@@ -24,6 +24,8 @@ docs/
   runfolio-overview.html          RunFolio: the race-portfolio intro deck
   second-brain-overview.html      Ask the Archive: how the site's chatbot is
                                    built, what it costs, and what broke
+  what-the-archive-knows.html     Ask the Archive audit: data coverage, blog-text
+                                   cost, incremental ingestion, feedback evals
 presentations/
   e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
                                    ethanol/sugar trade-off and how the site was built

@@ -1,0 +1,1873 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Audit of the Ask the Archive second brain on sankettambare.in: data-source coverage, what full blog text costs, incremental ingestion, richer answers and reader feedback as evals."
+    />
+    <!--
+  HAND-MAINTAINED. An audit of the /ask chatbot on sankettambare.in, as read
+  from the personal-site repo on 2026-09-13. Self-contained: no script beyond
+  the small canvas placeholder, no build step. Companion to
+  second-brain-overview.html, which describes the version that shipped.
+-->
+    <title>What the Archive Knows</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Tiro+Devanagari+Marathi&display=swap"
+    />
+    <style>
+      :root {
+        --ground: #f7f6f4;
+        --paper: #ffffff;
+        --ink: #1a1c1c;
+        --muted: #5a5d5e;
+        --rule: #dcdad6;
+        --accent: #b22200;
+        --accent-soft: #fbe6e0;
+        --teal: #113843;
+        --teal-soft: #dcebf0;
+        --ochre: #8a5a00;
+        --ochre-soft: #f6ead2;
+        --code: #efece8;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --ground: #141617;
+          --paper: #1c1f20;
+          --ink: #ecebe8;
+          --muted: #a3a6a6;
+          --rule: #33373a;
+          --accent: #ff8a70;
+          --accent-soft: #3a1c15;
+          --teal: #9fd0de;
+          --teal-soft: #15323a;
+          --ochre: #e6b75c;
+          --ochre-soft: #3a2d12;
+          --code: #25292b;
+        }
+      }
+      :root[data-theme="dark"] {
+        --ground: #141617;
+        --paper: #1c1f20;
+        --ink: #ecebe8;
+        --muted: #a3a6a6;
+        --rule: #33373a;
+        --accent: #ff8a70;
+        --accent-soft: #3a1c15;
+        --teal: #9fd0de;
+        --teal-soft: #15323a;
+        --ochre: #e6b75c;
+        --ochre-soft: #3a2d12;
+        --code: #25292b;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--ground);
+        color: var(--ink);
+        font:
+          16px/1.6 "IBM Plex Sans",
+          system-ui,
+          sans-serif;
+        margin: 0;
+      }
+      main {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 48px 24px 96px;
+        display: flex;
+        flex-direction: column;
+        gap: 64px;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Instrument Serif", Georgia, serif;
+        font-weight: 400;
+        text-wrap: balance;
+        margin: 0;
+        line-height: 1.1;
+      }
+      h1 {
+        font-size: clamp(2.6rem, 6vw, 4.2rem);
+      }
+      h2 {
+        font-size: 2.2rem;
+      }
+      h3 {
+        font-size: 1.45rem;
+      }
+      p {
+        margin: 0;
+        max-width: 66ch;
+      }
+      code,
+      .mono {
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.86em;
+      }
+      code {
+        background: var(--code);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+      .mr {
+        font-family: "Tiro Devanagari Marathi", serif;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+      .eyebrow {
+        font:
+          500 0.72rem/1 "IBM Plex Mono",
+          monospace;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .lede {
+        font-size: 1.15rem;
+        color: var(--muted);
+      }
+      .asof {
+        font:
+          0.8rem "IBM Plex Mono",
+          monospace;
+        color: var(--muted);
+      }
+      header.top {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        border-bottom: 1px solid var(--rule);
+        padding-bottom: 40px;
+      }
+      .figs {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1px;
+        background: var(--rule);
+        border: 1px solid var(--rule);
+      }
+      .fig {
+        background: var(--paper);
+        padding: 18px 18px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .fig b {
+        font:
+          400 2.4rem/1 "Instrument Serif",
+          serif;
+        font-variant-numeric: tabular-nums;
+      }
+      .fig span {
+        font-size: 0.88rem;
+      }
+      .fig small {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+      .tier {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        border-top: 3px solid var(--ink);
+        padding-top: 14px;
+      }
+      .section {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .sec-head {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      figure {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      figcaption {
+        font-size: 0.86rem;
+        color: var(--muted);
+        max-width: 80ch;
+      }
+      figcaption b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .scroll {
+        overflow-x: auto;
+        background: var(--paper);
+        border: 1px solid var(--rule);
+        padding: 20px;
+      }
+      svg {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+      /* source map */
+      .legend {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        font-size: 0.82rem;
+      }
+      .legend i {
+        display: inline-block;
+        width: 11px;
+        height: 11px;
+        border-radius: 2px;
+        margin-right: 6px;
+        vertical-align: -1px;
+      }
+      .map {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 18px;
+        min-width: 640px;
+      }
+      .lane h4 {
+        margin: 0 0 8px;
+        font:
+          500 0.72rem "IBM Plex Mono",
+          monospace;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .lane ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .chip {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font:
+          0.8rem "IBM Plex Mono",
+          monospace;
+        border-left: 4px solid;
+      }
+      .chip em {
+        font-style: normal;
+        color: var(--muted);
+        font-size: 0.72rem;
+        white-space: nowrap;
+      }
+      .ok {
+        background: var(--teal-soft);
+        border-color: var(--teal);
+      }
+      .part {
+        background: var(--ochre-soft);
+        border-color: var(--ochre);
+      }
+      .miss {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+      }
+      .k-ok {
+        background: var(--teal);
+      }
+      .k-part {
+        background: var(--ochre);
+      }
+      .k-miss {
+        background: var(--accent);
+      }
+      /* definition list */
+      dl.ask {
+        display: grid;
+        grid-template-columns: minmax(120px, 190px) 1fr;
+        gap: 10px 24px;
+        margin: 0;
+      }
+      dl.ask dt {
+        font:
+          0.84rem "IBM Plex Mono",
+          monospace;
+        padding-top: 2px;
+      }
+      dl.ask dd {
+        margin: 0;
+        max-width: 66ch;
+      }
+      dl.ask dd q {
+        font-style: italic;
+        color: var(--muted);
+      }
+      .callout {
+        background: var(--paper);
+        border: 1px solid var(--rule);
+        padding: 18px 20px;
+        max-width: none;
+      }
+      .callout p {
+        max-width: 78ch;
+      }
+      /* tables */
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.9rem;
+        min-width: 640px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 9px 12px;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: top;
+      }
+      th {
+        font:
+          500 0.72rem "IBM Plex Mono",
+          monospace;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      td.num {
+        font-variant-numeric: tabular-nums;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.84rem;
+        white-space: nowrap;
+      }
+      .pill {
+        display: inline-block;
+        font:
+          500 0.7rem "IBM Plex Mono",
+          monospace;
+        padding: 2px 7px;
+        border-radius: 99px;
+        white-space: nowrap;
+      }
+      .pill.ok {
+        background: var(--teal-soft);
+        color: var(--teal);
+      }
+      .pill.part {
+        background: var(--ochre-soft);
+        color: var(--ochre);
+      }
+      .pill.miss {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      .two {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+      }
+      /* answer mock */
+      .mock {
+        background: var(--paper);
+        border: 1px solid var(--rule);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-width: 640px;
+      }
+      .q {
+        align-self: flex-end;
+        background: var(--ink);
+        color: var(--ground);
+        padding: 8px 14px;
+        border-radius: 14px 14px 2px 14px;
+        font-size: 0.92rem;
+      }
+      .a {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        font-size: 0.95rem;
+      }
+      .lchip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 1px 8px;
+        border-radius: 99px;
+        background: var(--teal-soft);
+        color: var(--teal);
+        font-weight: 500;
+        font-size: 0.88rem;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .lchip.ext {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      .lchip small {
+        font:
+          0.68rem "IBM Plex Mono",
+          monospace;
+        opacity: 0.8;
+      }
+      .cite {
+        font:
+          0.68rem "IBM Plex Mono",
+          monospace;
+        background: var(--code);
+        padding: 0 5px;
+        border-radius: 3px;
+        vertical-align: 1px;
+      }
+      .photo {
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid var(--rule);
+      }
+      .photo canvas {
+        display: block;
+        width: 100%;
+        height: 150px;
+      }
+      .photo p {
+        font-size: 0.78rem;
+        color: var(--muted);
+        padding: 6px 10px;
+      }
+      .srcs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .src {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        padding: 6px;
+        font-size: 0.76rem;
+        line-height: 1.3;
+      }
+      .src i {
+        flex: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 4px;
+        background: var(--teal-soft);
+      }
+      .src:nth-child(2) i {
+        background: var(--ochre-soft);
+      }
+      .src:nth-child(3) i {
+        background: var(--accent-soft);
+      }
+      .acts {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font:
+          500 0.7rem "IBM Plex Mono",
+          monospace;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-top: 1px solid var(--rule);
+        padding-top: 10px;
+      }
+      .acts .on {
+        color: var(--accent);
+      }
+      .fb {
+        border: 1px dashed var(--rule);
+        border-radius: 6px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.82rem;
+      }
+      .tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .tags span {
+        border: 1px solid var(--rule);
+        border-radius: 99px;
+        padding: 1px 8px;
+        font-size: 0.74rem;
+      }
+      .tags span.sel {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .fb .box {
+        background: var(--code);
+        border-radius: 4px;
+        padding: 6px 8px;
+        color: var(--muted);
+      }
+      .anno {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-size: 0.88rem;
+      }
+      .anno li {
+        max-width: 56ch;
+      }
+      ol.anno {
+        padding-left: 20px;
+        margin: 0;
+      }
+      footer.src-list {
+        border-top: 1px solid var(--rule);
+        padding-top: 24px;
+      }
+      footer.src-list ul {
+        margin: 0;
+        padding-left: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 0.9rem;
+      }
+      a {
+        color: var(--accent);
+      }
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      @media (max-width: 640px) {
+        dl.ask {
+          grid-template-columns: 1fr;
+        }
+        .srcs {
+          grid-template-columns: 1fr;
+        }
+      }
+      .home-link {
+        font:
+          500 0.78rem "IBM Plex Mono",
+          monospace;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        text-decoration: none;
+        align-self: flex-start;
+      }
+      .home-link:hover,
+      .home-link:focus-visible {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="home-link" href="../index.html">← Home</a>
+      <header class="top">
+        <p class="eyebrow">sankettambare.in · /ask audit</p>
+        <h1>What the archive knows, and what it doesn't</h1>
+        <p class="mr">संग्रहाला काय माहीत आहे</p>
+        <p class="lede">
+          An audit of the second brain behind <code>/ask</code>: every source of
+          data on the site, what the chatbot can see today, what adding the full
+          text of every blog post would cost, and how the next version will be
+          built. That version ingests only new data, shows links and photos in
+          its answers, and records reader feedback as evals.
+        </p>
+        <p class="asof">
+          As audited on 13 September 2026 · branch
+          <code>feat/ask-sources-feedback</code> · production at v17.0.1
+        </p>
+        <div class="figs">
+          <div class="fig">
+            <b>9</b><span>content types indexed today</span
+            ><small>about 15 after this work</small>
+          </div>
+          <div class="fig">
+            <b>100,199</b><span>words of blog posts no one can search</span
+            ><small>104 posts on Substack + WordPress</small>
+          </div>
+          <div class="fig">
+            <b>5</b><span>data sources with zero coverage</span
+            ><small>resume, ledger, stats, tags, site map</small>
+          </div>
+          <div class="fig">
+            <b>&lt;$0.01</b><span>to embed every post, once</span
+            ><small>inside the free Workers AI allowance</small>
+          </div>
+          <div class="fig">
+            <b>~600</b><span>new searchable chunks</span
+            ><small>≈ 5–8 MB of 500 MB free storage</small>
+          </div>
+        </div>
+      </header>
+
+      <section class="tier">
+        <p class="eyebrow">Tier one</p>
+        <h2>What /ask can see</h2>
+        <p class="lede">
+          In plain terms: where the site's knowledge lives, which parts the
+          chatbot reads, and what it costs to teach it the rest.
+        </p>
+      </section>
+
+      <section class="section">
+        <div class="sec-head">
+          <h3>The data-source map</h3>
+          <span class="mr">माहितीचा नकाशा</span>
+        </div>
+        <p>
+          Everything a visitor can see on the site comes from one of three
+          places: a Supabase table, a hand-kept file in the repo, or a writing
+          platform the site links out to. The chatbot only knows what its index
+          <code>content_chunks</code> holds.
+        </p>
+        <figure>
+          <div class="scroll">
+            <div class="legend" style="margin-bottom: 16px">
+              <span><i class="k-ok"></i>indexed</span
+              ><span><i class="k-part"></i>partly: metadata or counts only</span
+              ><span><i class="k-miss"></i>invisible to /ask</span>
+            </div>
+            <div class="map">
+              <div class="lane">
+                <h4>Supabase tables</h4>
+                <ul>
+                  <li class="chip ok">books<em>row per book</em></li>
+                  <li class="chip ok">sports<em>races</em></li>
+                  <li class="chip ok">treks<em>forts</em></li>
+                  <li class="chip ok">projects<em>visible only</em></li>
+                  <li class="chip ok">microblog<em>1,600+ rows</em></li>
+                  <li class="chip ok">instagram</li>
+                  <li class="chip ok">now_months</li>
+                  <li class="chip part">blogs<em>60 rows, no text</em></li>
+                  <li class="chip part">tags<em>top 10 in facts</em></li>
+                  <li class="chip miss">now_meta</li>
+                  <li class="chip miss">resume_positions</li>
+                  <li class="chip miss">resume_degrees</li>
+                  <li class="chip miss">resume_certifications</li>
+                  <li class="chip miss">resume_skills</li>
+                </ul>
+              </div>
+              <div class="lane">
+                <h4>Files in the repo</h4>
+                <ul>
+                  <li class="chip ok">about.md</li>
+                  <li class="chip ok">
+                    changelog.md<em>re-embeds nightly*</em>
+                  </li>
+                  <li class="chip miss">stats/personal.js<em>JSX</em></li>
+                  <li class="chip miss">
+                    pageMeta.js<em>what each page is</em>
+                  </li>
+                  <li class="chip miss">contact.js</li>
+                  <li class="chip miss">
+                    writing-ledger.html<em>data baked in</em>
+                  </li>
+                </ul>
+              </div>
+              <div class="lane">
+                <h4>Outside the site</h4>
+                <ul>
+                  <li class="chip miss">
+                    Substack posts<em>76 · 75,514 words</em>
+                  </li>
+                  <li class="chip miss">
+                    WordPress posts<em>28 · 24,685 words</em>
+                  </li>
+                  <li class="chip part">
+                    blog-word-counts.json<em>gitignored, local</em>
+                  </li>
+                  <li class="chip part">
+                    Stats page aggregates<em>browser-only</em>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <figcaption>
+            <b
+              >Figure 1. Nine of the site's twenty-four data sources are fully
+              visible to the chatbot.</b
+            >
+            The rest are either missing entirely or reduced to a title and a
+            count. *The changelog is indexed, but a CI checkout resets its file
+            time, and every new entry shifts the chunk numbering, so the whole
+            file would re-embed on every nightly run.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section">
+        <div class="sec-head">
+          <h3>What a visitor could ask, once each gap is closed</h3>
+        </div>
+        <dl class="ask">
+          <dt>Resume</dt>
+          <dd>
+            <q>Where has he worked, and what certifications does he hold?</q>
+            Four resume tables become one chunk per position, degree and
+            certificate, plus one for skills.
+          </dd>
+          <dt>Full blog text</dt>
+          <dd>
+            <q>What does he argue in The Un-Orthodox Ways of Seeing?</q> Today
+            the chatbot only has a two-line description. With the text it can
+            quote and summarise.
+          </dd>
+          <dt>44 untracked posts</dt>
+          <dd>
+            <q>Has he written about Buddhism?</q> Published posts with no row in
+            the <code>blogs</code> table become a new <code>writing</code> type
+            that links straight to the post.
+          </dd>
+          <dt>Writing ledger</dt>
+          <dd>
+            <q>How many words did he write this year?</q> Answered from numbers
+            (67,258 in 2026), not guessed from whatever posts retrieval happened
+            to find.
+          </dd>
+          <dt>Personal stats</dt>
+          <dd>
+            <q>Which city does he live in? How old is he?</q> Plain values split
+            out of the JSX file so the indexer can read them.
+          </dd>
+          <dt>Microblog activity</dt>
+          <dd>
+            <q>When did he post most on Tumblr?</q> Posts per year are added to
+            the facts card.
+          </dd>
+          <dt>Tags, pages, contact</dt>
+          <dd>
+            <q>What is the Mind Map page? How do I reach him?</q> Tag
+            descriptions, each route's meta description, and the contact file.
+          </dd>
+        </dl>
+      </section>
+
+      <section class="section">
+        <div class="sec-head">
+          <h3>What full blog text costs</h3>
+          <span class="mr">खर्च</span>
+        </div>
+        <p>
+          The expensive step is turning text into vectors, and that is charged
+          once per piece of text, not once per question. The prompt sent to the
+          model stays capped at 8 retrieved chunks of at most 1,200 characters,
+          so answers cost the same after the change.
+        </p>
+        <div class="scroll" style="padding: 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Size</th>
+                <th>Cost</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Embedding, first run</td>
+                <td class="num">≤ 250k tokens</td>
+                <td class="num">&lt; $0.01</td>
+                <td>
+                  bge-m3 at about $0.012 per million tokens; fits the free 10k
+                  neurons/day. Marathi posts tokenise heavier, which is already
+                  priced in.
+                </td>
+              </tr>
+              <tr>
+                <td>Embedding, nightly</td>
+                <td class="num">new posts only</td>
+                <td class="num">≈ $0</td>
+                <td>
+                  Content hashes skip unchanged text, and moved text reuses its
+                  old vector.
+                </td>
+              </tr>
+              <tr>
+                <td>Supabase storage</td>
+                <td class="num">~600 chunks</td>
+                <td class="num">$0</td>
+                <td>
+                  ≈ 5–8 MB of the 500 MB free tier, including the HNSW index.
+                </td>
+              </tr>
+              <tr>
+                <td>Answering a question</td>
+                <td class="num">unchanged</td>
+                <td class="num">$0 extra</td>
+                <td>Same prompt size; better material in it.</td>
+              </tr>
+              <tr>
+                <td>GitHub Actions</td>
+                <td class="num">~3 min/night</td>
+                <td class="num">$0</td>
+                <td>
+                  ≈ 90 min/month; free on public repos, 4.5% of the private free
+                  quota.
+                </td>
+              </tr>
+              <tr>
+                <td>Cloudflare Pages builds</td>
+                <td class="num">only on change</td>
+                <td class="num">$0</td>
+                <td>
+                  The bot commits only when the ledger JSON actually changed.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <p>
+            <b>Content boundary.</b> All 76 Substack posts are public, so
+            nothing is truncated by a paywall. Full post text lives only in the
+            search index and a gitignored local cache. It is never written to
+            <code>public/</code>, so the site does not republish the posts.
+          </p>
+        </div>
+      </section>
+
+      <section class="tier">
+        <p class="eyebrow">Tier two</p>
+        <h2>How it will be built</h2>
+        <p class="lede">
+          The pipeline, the rule that keeps it incremental, and the two
+          reader-facing changes. Written for whoever maintains this next.
+        </p>
+      </section>
+
+      <section class="section">
+        <div class="sec-head">
+          <h3>One pipeline, any number of sources</h3>
+          <span class="mr">स्रोत</span>
+        </div>
+        <p>
+          Today the indexer hard-codes nine builders, and the database refuses
+          any entity type outside a fixed list. After this change, a source is
+          one file in <code>scripts/ask-sources/</code> that exports
+          <code>load()</code> and <code>toChunks()</code>. The indexer picks up
+          every file in the folder, and the database accepts any well-formed
+          type name.
+        </p>
+        <figure>
+          <div class="scroll">
+            <svg
+              viewBox="0 0 960 330"
+              role="img"
+              aria-label="Pipeline: source files load data, the indexer diffs content hashes, reuses or embeds vectors, upserts content_chunks, and the ask worker retrieves chunks plus facts to answer."
+            >
+              <defs>
+                <marker
+                  id="ar"
+                  viewBox="0 0 10 10"
+                  refX="9"
+                  refY="5"
+                  markerWidth="7"
+                  markerHeight="7"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M0 0L10 5L0 10z" fill="currentColor" />
+                </marker>
+              </defs>
+              <g
+                font-family="IBM Plex Mono, monospace"
+                font-size="12"
+                fill="currentColor"
+              >
+                <text
+                  x="20"
+                  y="22"
+                  font-size="11"
+                  letter-spacing="1.5"
+                  fill-opacity=".6"
+                >
+                  NIGHTLY · GITHUB ACTION 02:00 IST
+                </text>
+                <rect
+                  x="20"
+                  y="40"
+                  width="200"
+                  height="250"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-opacity=".35"
+                />
+                <text x="32" y="62" font-weight="500">
+                  scripts/ask-sources/
+                </text>
+                <text x="32" y="88">book · blog · trek</text>
+                <text x="32" y="108">sport · project · now</text>
+                <text x="32" y="128">microblog · instagram</text>
+                <text x="32" y="148">page</text>
+                <line
+                  x1="32"
+                  y1="162"
+                  x2="208"
+                  y2="162"
+                  stroke="currentColor"
+                  stroke-opacity=".25"
+                />
+                <text x="32" y="184" fill="#b22200" style="fill: var(--accent)">
+                  + resume · writing
+                </text>
+                <text x="32" y="204" fill="#b22200" style="fill: var(--accent)">
+                  + stats · tag · site
+                </text>
+                <text x="32" y="236" fill-opacity=".6">drop a file here</text>
+                <text x="32" y="254" fill-opacity=".6">to add a source</text>
+                <text x="32" y="278" fill-opacity=".6">
+                  a failing source is skipped
+                </text>
+
+                <rect
+                  x="290"
+                  y="110"
+                  width="170"
+                  height="80"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="375" y="140" text-anchor="middle" font-weight="500">
+                  hash diff
+                </text>
+                <text x="375" y="160" text-anchor="middle" fill-opacity=".7">
+                  sha1(title+body)
+                </text>
+                <text x="375" y="176" text-anchor="middle" fill-opacity=".7">
+                  vs content_hash
+                </text>
+                <line
+                  x1="220"
+                  y1="150"
+                  x2="286"
+                  y2="150"
+                  stroke="currentColor"
+                  marker-end="url(#ar)"
+                />
+                <text x="253" y="142" text-anchor="middle" font-size="11">
+                  chunks
+                </text>
+
+                <rect
+                  x="530"
+                  y="40"
+                  width="160"
+                  height="56"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="610" y="64" text-anchor="middle" font-weight="500">
+                  reuse vector
+                </text>
+                <text x="610" y="82" text-anchor="middle" fill-opacity=".7">
+                  moved text
+                </text>
+                <rect
+                  x="530"
+                  y="122"
+                  width="160"
+                  height="56"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                  style="stroke: var(--accent)"
+                />
+                <text
+                  x="610"
+                  y="146"
+                  text-anchor="middle"
+                  font-weight="500"
+                  style="fill: var(--accent)"
+                >
+                  Workers AI
+                </text>
+                <text x="610" y="164" text-anchor="middle" fill-opacity=".7">
+                  new text only
+                </text>
+                <rect
+                  x="530"
+                  y="204"
+                  width="160"
+                  height="56"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-dasharray="4 3"
+                />
+                <text x="610" y="228" text-anchor="middle" font-weight="500">
+                  delete
+                </text>
+                <text x="610" y="246" text-anchor="middle" fill-opacity=".7">
+                  source row gone
+                </text>
+                <path
+                  d="M460 130 C495 130 495 68 526 68"
+                  fill="none"
+                  stroke="currentColor"
+                  marker-end="url(#ar)"
+                />
+                <line
+                  x1="460"
+                  y1="150"
+                  x2="526"
+                  y2="150"
+                  stroke="currentColor"
+                  marker-end="url(#ar)"
+                />
+                <path
+                  d="M460 170 C495 170 495 232 526 232"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-dasharray="4 3"
+                  marker-end="url(#ar)"
+                />
+
+                <rect
+                  x="760"
+                  y="110"
+                  width="180"
+                  height="80"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <text x="850" y="140" text-anchor="middle" font-weight="500">
+                  content_chunks
+                </text>
+                <text x="850" y="160" text-anchor="middle" fill-opacity=".7">
+                  + image_url
+                </text>
+                <text x="850" y="176" text-anchor="middle" fill-opacity=".7">
+                  + content_hash
+                </text>
+                <path
+                  d="M690 68 C725 68 725 135 756 135"
+                  fill="none"
+                  stroke="currentColor"
+                  marker-end="url(#ar)"
+                />
+                <line
+                  x1="690"
+                  y1="150"
+                  x2="756"
+                  y2="150"
+                  stroke="currentColor"
+                  marker-end="url(#ar)"
+                />
+                <text x="723" y="208" text-anchor="middle" font-size="11">
+                  upsert
+                </text>
+
+                <line
+                  x1="850"
+                  y1="190"
+                  x2="850"
+                  y2="262"
+                  stroke="currentColor"
+                  marker-end="url(#ar)"
+                />
+                <text x="858" y="232" font-size="11">hybrid_search</text>
+                <rect
+                  x="740"
+                  y="266"
+                  width="200"
+                  height="50"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="840" y="287" text-anchor="middle" font-weight="500">
+                  /api/ask
+                </text>
+                <text x="840" y="305" text-anchor="middle" fill-opacity=".7">
+                  + facts + ledger JSON
+                </text>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <b
+              >Figure 2. The indexer sends new text to Workers AI and nothing
+              else.</b
+            >
+            Unchanged chunks are skipped, moved chunks copy an existing vector,
+            and chunks whose source is gone are deleted, except when that
+            source's load failed, so a Substack outage cannot empty the index.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section">
+        <div class="sec-head">
+          <h3>The incremental rule</h3>
+          <span class="mr">फक्त नवीन माहिती</span>
+        </div>
+        <p>
+          Chunks are keyed by type, id and position. Today, "has this changed?"
+          is answered from timestamps, which fails twice. The file time resets
+          on every CI checkout. And the changelog grows at the top, so one new
+          entry renumbers every chunk below it. Keying the decision on a hash of
+          the text fixes both.
+        </p>
+        <figure>
+          <div class="scroll" style="padding: 0">
+            <table>
+              <thead>
+                <tr>
+                  <th>Same key?</th>
+                  <th>Same hash?</th>
+                  <th>What happens</th>
+                  <th>Calls Workers AI</th>
+                  <th>Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>yes</td>
+                  <td>yes</td>
+                  <td>
+                    <span class="pill ok">unchanged</span> skipped, not even
+                    upserted
+                  </td>
+                  <td class="num">no</td>
+                  <td>a trek nobody edited</td>
+                </tr>
+                <tr>
+                  <td>no</td>
+                  <td>yes (elsewhere)</td>
+                  <td>
+                    <span class="pill part">moved</span> copy the stored vector
+                    to the new key
+                  </td>
+                  <td class="num">no</td>
+                  <td>changelog chunk 3 becomes chunk 4</td>
+                </tr>
+                <tr>
+                  <td>—</td>
+                  <td>no</td>
+                  <td><span class="pill miss">new</span> embed, then upsert</td>
+                  <td class="num">yes</td>
+                  <td>a new post, an edited paragraph</td>
+                </tr>
+                <tr>
+                  <td>key only in DB</td>
+                  <td>—</td>
+                  <td>
+                    <span class="pill">gone</span> delete, unless its source
+                    failed to load
+                  </td>
+                  <td class="num">no</td>
+                  <td>a project set to hidden</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <figcaption>
+            <b
+              >Figure 3. Four outcomes for a chunk; only one of them costs an
+              embedding.</b
+            >
+            The same idea runs one step earlier for blog bodies: a local cache
+            keyed by post URL and modified date means only new or edited posts
+            are downloaded. CI keeps that cache between runs with
+            <code>actions/cache</code>. Numbers that change every day
+            (month-to-date, days elapsed) go only into the facts card, never
+            into embedded text.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section">
+        <div class="sec-head"><h3>The Writing Ledger reads live JSON</h3></div>
+        <figure>
+          <div class="scroll">
+            <svg
+              viewBox="0 0 900 250"
+              role="img"
+              aria-label="Before: two scripts inline JSON into a 122 KB HTML file that must be committed. After: one script writes public/data/writing-ledger.json, the HTML page fetches it, and the ask worker reads it for facts."
+            >
+              <defs>
+                <marker
+                  id="ar2"
+                  viewBox="0 0 10 10"
+                  refX="9"
+                  refY="5"
+                  markerWidth="7"
+                  markerHeight="7"
+                  orient="auto"
+                >
+                  <path d="M0 0L10 5L0 10z" fill="currentColor" />
+                </marker>
+              </defs>
+              <g
+                font-family="IBM Plex Mono, monospace"
+                font-size="12"
+                fill="currentColor"
+              >
+                <text
+                  x="20"
+                  y="24"
+                  font-size="11"
+                  letter-spacing="1.5"
+                  fill-opacity=".6"
+                >
+                  BEFORE
+                </text>
+                <rect
+                  x="20"
+                  y="40"
+                  width="160"
+                  height="44"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="100" y="67" text-anchor="middle">blogs:wordcount</text>
+                <rect
+                  x="220"
+                  y="40"
+                  width="160"
+                  height="44"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="300" y="67" text-anchor="middle">
+                  blogs:infographic
+                </text>
+                <rect
+                  x="20"
+                  y="130"
+                  width="360"
+                  height="90"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-dasharray="4 3"
+                  style="stroke: var(--accent)"
+                />
+                <text x="200" y="160" text-anchor="middle" font-weight="500">
+                  writing-ledger.html · 122 KB
+                </text>
+                <text x="200" y="182" text-anchor="middle" fill-opacity=".7">
+                  data frozen at __DATA__
+                </text>
+                <text x="200" y="202" text-anchor="middle" fill-opacity=".7">
+                  stale until someone re-runs both
+                </text>
+                <line
+                  x1="180"
+                  y1="62"
+                  x2="216"
+                  y2="62"
+                  stroke="currentColor"
+                  marker-end="url(#ar2)"
+                />
+                <line
+                  x1="300"
+                  y1="84"
+                  x2="300"
+                  y2="126"
+                  stroke="currentColor"
+                  marker-end="url(#ar2)"
+                />
+                <text x="308" y="110" font-size="11">inline</text>
+
+                <line
+                  x1="450"
+                  y1="20"
+                  x2="450"
+                  y2="230"
+                  stroke="currentColor"
+                  stroke-opacity=".25"
+                />
+
+                <text
+                  x="500"
+                  y="24"
+                  font-size="11"
+                  letter-spacing="1.5"
+                  fill-opacity=".6"
+                >
+                  AFTER
+                </text>
+                <rect
+                  x="500"
+                  y="40"
+                  width="160"
+                  height="44"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="580" y="67" text-anchor="middle">blogs:wordcount</text>
+                <rect
+                  x="700"
+                  y="40"
+                  width="190"
+                  height="44"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <text x="795" y="60" text-anchor="middle" font-weight="500">
+                  data/writing-ledger
+                </text>
+                <text x="795" y="76" text-anchor="middle">.json</text>
+                <line
+                  x1="660"
+                  y1="62"
+                  x2="696"
+                  y2="62"
+                  stroke="currentColor"
+                  marker-end="url(#ar2)"
+                />
+                <text x="678" y="54" text-anchor="middle" font-size="11">
+                  writes
+                </text>
+                <rect
+                  x="500"
+                  y="150"
+                  width="170"
+                  height="56"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="585" y="174" text-anchor="middle" font-weight="500">
+                  writing-ledger.html
+                </text>
+                <text x="585" y="192" text-anchor="middle" fill-opacity=".7">
+                  markup + charts only
+                </text>
+                <rect
+                  x="720"
+                  y="150"
+                  width="170"
+                  height="56"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="805" y="174" text-anchor="middle" font-weight="500">
+                  /api/ask facts
+                </text>
+                <text x="805" y="192" text-anchor="middle" fill-opacity=".7">
+                  cached 1 hour
+                </text>
+                <path
+                  d="M760 84 C760 120 600 110 590 146"
+                  fill="none"
+                  stroke="currentColor"
+                  marker-end="url(#ar2)"
+                />
+                <line
+                  x1="805"
+                  y1="84"
+                  x2="805"
+                  y2="146"
+                  stroke="currentColor"
+                  marker-end="url(#ar2)"
+                />
+                <text x="630" y="124" font-size="11">fetch()</text>
+                <text x="812" y="122" font-size="11">fetch()</text>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <b
+              >Figure 4. One JSON file now feeds both the page and the
+              chatbot.</b
+            >
+            The HTML becomes a hand-maintained page with no data inside it, and
+            <code>build-blog-infographic.mjs</code> is deleted. The JSON carries
+            totals and per-post word counts but no post text.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section">
+        <div class="sec-head">
+          <h3>Answers that show links and photos</h3>
+          <span class="mr">उत्तराची मांडणी</span>
+        </div>
+        <p>
+          Today an answer is plain markdown: images are thrown away, links are a
+          thin underline, and the prompt tells the model never to write a URL.
+          The new answer is still markdown, so copy, share-as-image and
+          permalinks keep working, but it renders richer.
+        </p>
+        <figure>
+          <div class="two">
+            <div class="mock" aria-label="Example answer, illustrative">
+              <div class="q">Show me his marathon photos</div>
+              <div class="a">
+                <p>
+                  He has run two full marathons in the archive. The most recent
+                  was the
+                  <a class="lchip" href="#"
+                    >Pune International Marathon <small>RACE</small></a
+                  >
+                  in 42:12 <span class="cite">1</span>, after a first finish at
+                  <a class="lchip" href="#"
+                    >Tata Mumbai Marathon <small>RACE</small></a
+                  >
+                  <span class="cite">2</span>. He wrote about the training on
+                  <a class="lchip ext" href="#">sankettambare.substack.com ↗</a>
+                  <span class="cite">3</span>.
+                </p>
+                <div class="photo">
+                  <canvas
+                    id="ph"
+                    width="600"
+                    height="150"
+                    aria-hidden="true"
+                  ></canvas>
+                  <p>Pune International Marathon, finish line. Example image</p>
+                </div>
+              </div>
+              <div class="srcs">
+                <div class="src"><i></i>Pune International Marathon</div>
+                <div class="src"><i></i>Tata Mumbai Marathon</div>
+                <div class="src"><i></i>Notes from mile 20</div>
+              </div>
+              <div class="acts">
+                <span>Copy</span><span>Permalink</span><span>Image</span
+                ><span>👍</span><span class="on">👎</span>
+              </div>
+              <div class="fb">
+                <span>What could be better?</span>
+                <div class="tags">
+                  <span>Wrong facts</span><span class="sel">Missing data</span
+                  ><span>Bad links</span><span>Formatting</span
+                  ><span>Too long</span>
+                </div>
+                <div class="box">It missed the 50 km ultra.</div>
+              </div>
+            </div>
+            <ol class="anno">
+              <li>
+                <b>Internal links are chips</b> in the site's teal, labelled
+                with the content type. External links take the accent and name
+                their domain, so a reader knows before tapping that they are
+                leaving the site.
+              </li>
+              <li>
+                <b>Citations stay</b> as small numbered marks tied to the source
+                cards.
+              </li>
+              <li>
+                <b>Photos render inline</b>, lazy-loaded, captioned from the alt
+                text, and linked to their page. A photo that fails to load
+                disappears rather than leaving a broken frame.
+              </li>
+              <li>
+                <b>Source cards get thumbnails</b> from the new
+                <code>image_url</code> on each chunk: race and trek photos,
+                project covers, post covers.
+              </li>
+              <li>
+                <b>Nothing the archive does not contain can be linked.</b>
+                Before the answer leaves the worker, any URL or image not
+                present in a retrieved item is stripped. That blocks invented
+                links and instructions hidden in reblogged Tumblr text.
+              </li>
+              <li>
+                <b>Feedback lives under every answer</b>: thumbs up, thumbs
+                down, reason tags and a comment box.
+              </li>
+            </ol>
+          </div>
+          <figcaption>
+            <b>Figure 5. The anatomy of an answer after the change.</b> The race
+            names, time and image are illustrative placeholders, not archive
+            data.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section">
+        <div class="sec-head">
+          <h3>Feedback becomes evals</h3>
+          <span class="mr">अभिप्राय</span>
+        </div>
+        <p>
+          Ratings are written to the conversation log that already exists, on
+          the same <code>ask_messages</code> row as the answer, next to the
+          tier, model, timings and sources. A disliked answer can therefore be
+          traced to its cause: no matching data, a weak model tier, or a
+          keyword-only search.
+        </p>
+        <figure>
+          <div class="scroll">
+            <svg
+              viewBox="0 0 940 200"
+              role="img"
+              aria-label="Feedback loop: the reader rates an answer, ask_feedback RPC updates the ask_messages row if the session matches, admin exports rated rows as JSONL, which tunes the system prompt and ingestion sources."
+            >
+              <defs>
+                <marker
+                  id="ar3"
+                  viewBox="0 0 10 10"
+                  refX="9"
+                  refY="5"
+                  markerWidth="7"
+                  markerHeight="7"
+                  orient="auto"
+                >
+                  <path d="M0 0L10 5L0 10z" fill="currentColor" />
+                </marker>
+              </defs>
+              <g
+                font-family="IBM Plex Mono, monospace"
+                font-size="12"
+                fill="currentColor"
+              >
+                <rect
+                  x="20"
+                  y="50"
+                  width="160"
+                  height="70"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="100" y="78" text-anchor="middle" font-weight="500">
+                  reader
+                </text>
+                <text x="100" y="98" text-anchor="middle" fill-opacity=".7">
+                  👍 👎 tags · note
+                </text>
+                <rect
+                  x="250"
+                  y="50"
+                  width="190"
+                  height="70"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="345" y="78" text-anchor="middle" font-weight="500">
+                  ask_feedback()
+                </text>
+                <text x="345" y="98" text-anchor="middle" fill-opacity=".7">
+                  session must own row
+                </text>
+                <rect
+                  x="510"
+                  y="50"
+                  width="180"
+                  height="70"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <text x="600" y="78" text-anchor="middle" font-weight="500">
+                  ask_messages
+                </text>
+                <text x="600" y="98" text-anchor="middle" fill-opacity=".7">
+                  feedback · tags · comment
+                </text>
+                <rect
+                  x="760"
+                  y="50"
+                  width="160"
+                  height="70"
+                  rx="4"
+                  fill="none"
+                  stroke="currentColor"
+                />
+                <text x="840" y="78" text-anchor="middle" font-weight="500">
+                  /admin evals
+                </text>
+                <text x="840" y="98" text-anchor="middle" fill-opacity=".7">
+                  JSONL export
+                </text>
+                <line
+                  x1="180"
+                  y1="85"
+                  x2="246"
+                  y2="85"
+                  stroke="currentColor"
+                  marker-end="url(#ar3)"
+                />
+                <text x="213" y="77" text-anchor="middle" font-size="11">
+                  messageId
+                </text>
+                <line
+                  x1="440"
+                  y1="85"
+                  x2="506"
+                  y2="85"
+                  stroke="currentColor"
+                  marker-end="url(#ar3)"
+                />
+                <text x="473" y="77" text-anchor="middle" font-size="11">
+                  update
+                </text>
+                <line
+                  x1="690"
+                  y1="85"
+                  x2="756"
+                  y2="85"
+                  stroke="currentColor"
+                  marker-end="url(#ar3)"
+                />
+                <text x="723" y="77" text-anchor="middle" font-size="11">
+                  read
+                </text>
+                <path
+                  d="M840 120 C840 180 110 180 100 124"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-dasharray="4 3"
+                  style="stroke: var(--accent)"
+                  marker-end="url(#ar3)"
+                />
+                <text
+                  x="470"
+                  y="172"
+                  text-anchor="middle"
+                  style="fill: var(--accent)"
+                >
+                  tune system prompt · add or fix a source · better next answer
+                </text>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <b
+              >Figure 6. A rating closes the loop back to the prompt and the
+              sources.</b
+            >
+            The worker issues a <code>messageId</code> with every answer.
+            Because the log row is written just after the answer is sent, the
+            browser retries a rating once if the row has not landed yet. A
+            rating from another session is ignored, and the log itself stays
+            readable by the owner only.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section">
+        <div class="sec-head"><h3>The complete gap list</h3></div>
+        <div class="scroll" style="padding: 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Lives in</th>
+                <th>Today</th>
+                <th>Change</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Resume</td>
+                <td><code>resume_*</code> (4 tables)</td>
+                <td><span class="pill miss">missing</span></td>
+                <td>
+                  new <code>resume</code> source; counts in
+                  <code>site_facts()</code>
+                </td>
+              </tr>
+              <tr>
+                <td>Now meta</td>
+                <td><code>now_meta</code></td>
+                <td><span class="pill miss">missing</span></td>
+                <td>folded into the <code>now</code> source</td>
+              </tr>
+              <tr>
+                <td>Full blog text</td>
+                <td>Substack, WordPress</td>
+                <td><span class="pill miss">missing</span></td>
+                <td>extra chunks on each <code>blog</code> entity</td>
+              </tr>
+              <tr>
+                <td>Untracked posts (44)</td>
+                <td>Substack, WordPress</td>
+                <td><span class="pill miss">missing</span></td>
+                <td>new <code>writing</code> type, external links</td>
+              </tr>
+              <tr>
+                <td>Writing ledger</td>
+                <td>gitignored JSON</td>
+                <td><span class="pill miss">missing</span></td>
+                <td>
+                  <code>public/data/writing-ledger.json</code>; facts +
+                  <code>stats</code> source
+                </td>
+              </tr>
+              <tr>
+                <td>Personal stats</td>
+                <td><code>stats/personal.js</code></td>
+                <td><span class="pill miss">missing</span></td>
+                <td>split into <code>personalFacts.js</code></td>
+              </tr>
+              <tr>
+                <td>Microblog activity</td>
+                <td>computed in browser</td>
+                <td><span class="pill part">partial</span></td>
+                <td>posts per year in <code>site_facts()</code></td>
+              </tr>
+              <tr>
+                <td>Tag descriptions</td>
+                <td><code>tags</code></td>
+                <td><span class="pill part">partial</span></td>
+                <td>new <code>tag</code> source</td>
+              </tr>
+              <tr>
+                <td>Page map, contact</td>
+                <td><code>pageMeta.js</code>, <code>contact.js</code></td>
+                <td><span class="pill miss">missing</span></td>
+                <td>new <code>site</code> source</td>
+              </tr>
+              <tr>
+                <td>About, changelog</td>
+                <td>markdown files</td>
+                <td><span class="pill ok">indexed</span></td>
+                <td>hash-keyed so nightly runs stop re-embedding</td>
+              </tr>
+              <tr>
+                <td>Images</td>
+                <td>chunks have none</td>
+                <td><span class="pill miss">missing</span></td>
+                <td><code>content_chunks.image_url</code></td>
+              </tr>
+              <tr>
+                <td>Reader feedback</td>
+                <td>not collected</td>
+                <td><span class="pill miss">missing</span></td>
+                <td>
+                  columns on <code>ask_messages</code> +
+                  <code>ask_feedback()</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          All schema changes ship in one migration,
+          <code>0016_ask_sources_and_feedback.sql</code>. It opens the
+          entity-type check, adds the hash, image and feedback columns,
+          recreates <code>ask_log()</code> with a message id, and extends
+          <code>site_facts()</code>.
+        </p>
+      </section>
+
+      <footer class="src-list stack">
+        <h3>Where these facts come from</h3>
+        <p>
+          Every figure on this page was read from the file or service that owns
+          it, not recalled:
+        </p>
+        <ul>
+          <li>
+            <code>supabase/migrations/0009_second_brain.sql</code>: the
+            entity-type check, <code>content_chunks</code> columns,
+            <code>site_facts()</code>
+          </li>
+          <li>
+            <code>supabase/migrations/0012_ask_conversations.sql</code>:
+            <code>ask_messages</code> and <code>ask_log()</code>
+          </li>
+          <li>
+            <code>scripts/build-content-index.mjs</code>: the nine builders, the
+            timestamp skip rule, file-mtime pages
+          </li>
+          <li>
+            <code>scripts/blog-word-counts.mjs</code> and
+            <code>knowledge_base/blog-word-counts.json</code>: 104 posts,
+            100,199 words, platform split, 44 untracked, audience flags
+          </li>
+          <li>
+            <code>scripts/infographic-template.html</code>,
+            <code>public/writing-ledger.html</code>: the
+            <code>__DATA__</code> inlining, 122 KB
+          </li>
+          <li>
+            <code>src/components/Ask/AnswerBody.js</code>,
+            <code>functions/api/ask.js</code>: image suppression and the "never
+            paste URLs" rule
+          </li>
+          <li>
+            <code>src/data/stats/personal.js</code>,
+            <code>src/data/askConfig.js</code>, <code>docs/data-model.md</code>:
+            stats data, labels, row counts
+          </li>
+          <li>
+            Workers AI and Supabase pricing figures are estimates to confirm
+            against the providers' current pricing pages.
+          </li>
+        </ul>
+      </footer>
+    </main>
+
+    <script>
+      (function () {
+        var c = document.getElementById("ph");
+        if (!c || !c.getContext) return;
+        var x = c.getContext("2d"),
+          w = c.width,
+          h = c.height;
+        var dark = matchMedia("(prefers-color-scheme: dark)").matches;
+        var t = document.documentElement.getAttribute("data-theme");
+        if (t) dark = t === "dark";
+        var g = x.createLinearGradient(0, 0, 0, h);
+        g.addColorStop(0, dark ? "#1d3a44" : "#cfe3ea");
+        g.addColorStop(1, dark ? "#3a2a22" : "#f3d9c9");
+        x.fillStyle = g;
+        x.fillRect(0, 0, w, h);
+        x.fillStyle = dark ? "#0f1c20" : "#8fb2bd";
+        x.beginPath();
+        x.moveTo(0, h * 0.7);
+        for (var i = 0; i <= 12; i++) {
+          x.lineTo((i * w) / 12, h * (0.5 + 0.12 * Math.sin(i * 1.3)));
+        }
+        x.lineTo(w, h);
+        x.lineTo(0, h);
+        x.fill();
+        x.strokeStyle = dark ? "#ff8a70" : "#b22200";
+        x.lineWidth = 3;
+        x.setLineDash([10, 8]);
+        x.beginPath();
+        x.moveTo(w * 0.08, h * 0.92);
+        x.quadraticCurveTo(w * 0.5, h * 0.55, w * 0.92, h * 0.8);
+        x.stroke();
+      })();
+    </script>
+  </body>
+</html>
