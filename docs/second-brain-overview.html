@@ -763,6 +763,7 @@
         <a href="#retrieval">Retrieval</a>
         <a href="#facts">The facts card</a>
         <a href="#snapshot">Stats snapshot</a>
+        <a href="#history">Follow-ups</a>
         <a href="#ladder">The ladder</a>
         <a href="#answers">Answers that show</a>
         <a href="#cost">Cost</a>
@@ -1196,6 +1197,62 @@ semantic_ranked <span class="kw">as</span> (
             <p><code>GET /api/stats</code> builds the snapshot on a cache miss and serves it from the edge for an hour. The stats page is one request; the nightly indexer reads the same JSON.</p></div>
           <div class="card"><div class="k">Found on the way</div>
             <p>The micro-post activity query was unpaged, so PostgREST's 1,000-row cap dropped every post after the thousandth. The activity chart stopped in 2021. It pages now.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FOLLOW-UP QUESTIONS ============ -->
+    <section id="history">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Conversation history</div>
+          <h2>Follow-ups: the model remembers, the search doesn't</h2>
+          <p class="lede">
+            Ask a second question and the whole thread goes with it — but only
+            the model reads it. Retrieval still searches the new question on its
+            own words. That split is cheap, and it is also the weakest part of a
+            follow-up.
+          </p>
+        </div>
+
+        <ol class="flow">
+          <li><b>The page sends the thread</b><p>Every earlier turn — question or answer, text only — travels with the new question. The thread lives in the reader's localStorage for 24 hours, so a reload keeps it.</p></li>
+          <li><b>The worker trims it</b><p>It keeps the last <code>max_history_turns</code> turns (8 by default, about four exchanges) and cuts each to <code>max_message_chars</code> (500). Both are rows in <code>ask_settings</code>, edited from the admin.</p></li>
+          <li><b>Retrieval ignores it</b><p><code>hybrid_search</code> embeds and keyword-matches the new message alone. The sources a follow-up gets are chosen from its own words.</p></li>
+          <li><b>The model reads it</b><p>The trimmed turns are placed before the new question in the generation call, for every rung of the ladder — so the model knows what “it” refers to.</p></li>
+          <li><b>The log keeps each exchange</b><p>Every question and answer is written as its own pair under the browser's session id; the admin groups them back into a chat.</p></li>
+        </ol>
+
+        <div class="scroller" style="margin: 22px 0">
+          <table>
+            <thead><tr><th>Follow-up</th><th>What the model has</th><th>What retrieval searches</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>“Where has he worked?” → “Which was the longest?”</td><td>The earlier answer naming three roles</td><td>“which was the longest”</td><td>Answerable from history; sources drift</td></tr>
+              <tr><td>“Show me his treks” → “Tell me more about Harishchandragad”</td><td>The trek list</td><td>“Harishchandragad”</td><td>Works — the follow-up names its subject</td></tr>
+              <tr><td>“What are his PBs?” → “What about 2024?”</td><td>The PB answer</td><td>“what about 2024”</td><td>Weak — the search has no topic</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid g2">
+          <div class="card"><div class="k">Where it falls short</div>
+            <p>A vague follow-up is searched without its topic. A previous answer longer than 500 characters reaches the model cut short. A turn that failed — “verification failed”, “Stopped.” — is sent back as if it were an answer. And earlier source lists are not carried forward, only answer text.</p></div>
+          <div class="card"><div class="k">Why it was built this way</div>
+            <p>No extra model call, no extra round trip, and a prompt whose size is capped regardless of how long a chat runs. On free tiers, every call saved is a question someone else can ask.</p></div>
+        </div>
+
+        <div class="sechead" style="margin-top: 30px">
+          <h3 style="margin: 0">The fixes, cheapest first</h3>
+        </div>
+        <div class="grid g2">
+          <div class="card"><div class="k">1 — Search with context</div>
+            <p>When a question is short or opens with “it”, “that” or “more”, prepend the previous question to the search text. One line in the worker, no model call.</p></div>
+          <div class="card"><div class="k">2 — Drop failed turns</div>
+            <p>Turns marked for retry or stopped mid-answer stay out of the history the page sends. A one-line filter.</p></div>
+          <div class="card"><div class="k">3 — Longer past answers</div>
+            <p>A separate, larger cap for earlier answers than for questions — say 1,500 characters — so a follow-up about the second half of an answer still has it.</p></div>
+          <div class="card"><div class="k">4 — Rewrite, then retrieve</div>
+            <p>Ask the model to turn a follow-up into a standalone question before searching. The best retrieval, at the price of one extra call per follow-up against free-tier quota.</p></div>
         </div>
       </div>
     </section>
