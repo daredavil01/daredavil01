@@ -18,6 +18,7 @@ docs/
   yung-foundation-site-overview.html  Yung Foundation site: routes + architecture
   antyodaya-website-overview.html   Antyodaya site: features + technical spec
   runfolio-overview.html            RunFolio: the race-portfolio intro deck
+  what-the-archive-knows.html       Ask the Archive audit: data coverage + ingestion plan
 digital-wellbeing/                "The Wanderer's Digital Escape" browser game
   index.html                      Game entry point
   three-orb-prototype.html        Three.js self-orb prototype

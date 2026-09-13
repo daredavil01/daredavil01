@@ -625,6 +625,76 @@
         }
       }
     </style>
+    <style>
+      /* ---- v17.1 additions: tabs, link chips, figures, flows, mock admin ---- */
+      .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+      .tabs button {
+        font: 500 12px/1 var(--f-mono); letter-spacing: 0.02em;
+        padding: 8px 11px; border-radius: 999px; cursor: pointer;
+        border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+      }
+      .tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+      .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .chip {
+        display: inline-flex; align-items: baseline; gap: 5px; padding: 1px 7px;
+        border-radius: 6px; font-weight: 600; text-decoration: none;
+        background: var(--accent-soft); color: var(--accent-ink);
+      }
+      .chip small { font: 500 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.75; }
+      .chip.ext { background: var(--sunk); color: var(--ink); }
+      .chip.ext small { text-transform: none; letter-spacing: 0; }
+      .src .thumb { width: 38px; height: 38px; border-radius: 6px; object-fit: cover; flex: none; background: var(--sunk); }
+      .answer-fig { margin: 14px 0 0; max-width: 340px; }
+      .answer-fig img { display: block; width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); }
+      .answer-fig figcaption { font-size: 12px; color: var(--muted); margin-top: 6px; }
+      .fbrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; font: 500 11px/1 var(--f-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+      .fbrow span { border: 1px solid var(--line); border-radius: 999px; padding: 6px 9px; }
+      .fbrow[hidden] { display: none; }
+      pre.code {
+        margin: 0; padding: 14px 16px; overflow-x: auto; border-radius: 10px;
+        background: var(--sunk); border: 1px solid var(--line);
+        font: 12.5px/1.55 var(--f-mono); color: var(--ink);
+      }
+      .flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: step; }
+      .flow li {
+        counter-increment: step; position: relative; padding: 14px 16px 14px 54px;
+        border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+      }
+      .flow li::before {
+        content: counter(step); position: absolute; left: 16px; top: 14px;
+        width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+        font: 700 12px/1 var(--f-mono); background: var(--accent-soft); color: var(--accent-ink);
+      }
+      .flow b { display: block; margin-bottom: 3px; }
+      .flow p { margin: 0; color: var(--muted); font-size: 14px; }
+      .plan { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 18px; }
+      .plan div { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--surface); }
+      .plan .n { font: 700 22px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+      .plan .l { font-size: 12px; color: var(--muted); margin-top: 4px; }
+      .plan .embed { border-color: var(--accent); }
+      .mock {
+        border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
+        padding: 18px; display: grid; gap: 14px;
+      }
+      .mock .bar { display: flex; flex-wrap: wrap; gap: 6px; }
+      .mock .f { font: 500 11px/1 var(--f-mono); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; color: var(--muted); background: var(--bg); }
+      .mock .f b { color: var(--ink); font-weight: 600; }
+      .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px; }
+      .tiles div { border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; }
+      .tiles .l { font-size: 11px; color: var(--muted); }
+      .tiles .n { font: 600 18px/1.2 var(--f-body); font-variant-numeric: tabular-nums; }
+      .badge { display: inline-block; font: 500 11px/1.4 var(--f-mono); padding: 1px 6px; border-radius: 5px; background: var(--sunk); color: var(--muted); margin: 2px 4px 2px 0; }
+      .badge.good { background: var(--accent-soft); color: var(--accent-ink); }
+      .badge.bad { background: var(--warn-soft); color: var(--warn-ink); }
+      .chat { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 10px; }
+      .chat .qq { font-weight: 600; font-size: 14px; }
+      .chat .aa { color: var(--muted); font-size: 13px; margin: 0; }
+      .chat .ex + .ex { border-top: 1px solid var(--line); padding-top: 10px; }
+      .compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+      .compare .label { font: 500 11px/1 var(--f-mono); text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+      .rendered { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--surface); font-size: 15px; line-height: 1.7; }
+      .stripped { text-decoration: line-through; text-decoration-color: var(--warn-ink); color: var(--warn-ink); }
+    </style>
   </head>
 
   <body>
@@ -639,19 +709,27 @@
           build log of the thing that made all of it answerable in a sentence —
           and the notes on keeping it at a running cost of zero.
         </p>
+        <p class="lede" style="margin-top: 12px">
+          <strong>v17.1</strong> widened what it knows to everything the site
+          publishes — the full text of every essay, the résumé, every number on
+          the stats page — made re-indexing touch only what changed, let answers
+          show links and photos, and turned reader feedback into evals.
+        </p>
         <div style="margin-top: 20px">
-          <span class="tag on">v17.0.0 — shipped</span>
+          <span class="tag on">v17.1.0 — every source, feedback, evals</span>
+          <span class="tag">v17.0.0 — shipped</span>
           <span class="tag">Postgres + pgvector</span>
           <span class="tag">Cloudflare Pages Functions</span>
           <span class="tag">Workers AI</span>
           <span class="tag">Gemini</span>
           <span class="tag">React 18</span>
           <span class="tag">SSE streaming</span>
+          <span class="tag">GitHub Actions</span>
         </div>
 
         <div class="statbar">
           <div>
-            <div class="n">2,022</div>
+            <div class="n">2,702</div>
             <div class="l">Indexed chunks</div>
           </div>
           <div>
@@ -663,8 +741,8 @@
             <div class="l">Model rungs</div>
           </div>
           <div>
-            <div class="n">8 <small>MB</small></div>
-            <div class="l">Of vectors</div>
+            <div class="n">104</div>
+            <div class="l">Essays, full text</div>
           </div>
           <div>
             <div class="n">$0</div>
@@ -678,12 +756,21 @@
       <div class="inner">
         <a href="#why">Why</a>
         <a href="#demo">Watch it answer</a>
+        <a href="#abilities">What sets it apart</a>
+        <a href="#knows">What it knows</a>
+        <a href="#audit">Is it all in?</a>
+        <a href="#pipeline">Nightly</a>
         <a href="#retrieval">Retrieval</a>
         <a href="#facts">The facts card</a>
+        <a href="#snapshot">Stats snapshot</a>
         <a href="#ladder">The ladder</a>
+        <a href="#answers">Answers that show</a>
         <a href="#cost">Cost</a>
         <a href="#closed">Failing closed</a>
+        <a href="#security">Security</a>
         <a href="#log">The log</a>
+        <a href="#feedback">Feedback</a>
+        <a href="#admin">Admin</a>
         <a href="#broke">What broke</a>
         <a href="#reuse">Reuse</a>
         <a href="#next">Next</a>
@@ -755,68 +842,193 @@
           <div class="eyebrow">Watch it answer</div>
           <h2>Sources first, prose second</h2>
           <p class="lede">
-            A replay of one real exchange, paced by the timings the endpoint
-            actually logged for it: retrieval finished at 1.81 s, the answer
-            was complete at 4.20 s. Cards land the moment retrieval returns, so
-            the page has something true on it a full two seconds before the
-            model has finished its first sentence.
+            Five questions, one per kind of knowledge. The first is a replay of
+            a real exchange paced by the timings the endpoint logged for it:
+            retrieval at 1.81 s, a finished answer at 4.20 s. The other four are
+            composed from the real rows retrieval returns for those questions —
+            real race times, real essays, real résumé entries, real photos —
+            rendered the way v17.1 renders an answer: link chips, pictures, and a
+            feedback row.
           </p>
         </div>
 
-        <div class="demo" id="demo">
-          <div class="q">Get details for all treks</div>
+        <div class="tabs" role="tablist" aria-label="Sample questions" id="demoTabs"></div>
+
+        <div class="demo" role="tabpanel" aria-live="polite">
+          <div class="q" id="demoQ">Get details for all treks</div>
           <div style="clear: both; height: 14px"></div>
 
           <div class="stage">
             <span class="dot"></span><span id="stageLabel">idle</span>
           </div>
 
-          <div class="srcs" id="srcs">
-            <div class="src">
-              <span class="n">1</span
-              ><span
-                ><span class="t">Ghangad Fort</span><br /><span class="m"
-                  >Trek · 09-08-2026</span
-                ></span
-              >
-            </div>
-            <div class="src">
-              <span class="n">2</span
-              ><span
-                ><span class="t">Lingya Waterfall</span><br /><span class="m"
-                  >Trek · 01-08-2026</span
-                ></span
-              >
-            </div>
-            <div class="src">
-              <span class="n">3</span
-              ><span
-                ><span class="t">Harishchandragad</span><br /><span class="m"
-                  >Trek · 19-06-2026</span
-                ></span
-              >
-            </div>
-            <div class="src">
-              <span class="n">4</span
-              ><span
-                ><span class="t">Karnala</span><br /><span class="m"
-                  >Trek · 14-06-2026</span
-                ></span
-              >
-            </div>
-          </div>
+          <div class="srcs" id="srcs"></div>
 
           <div style="height: 12px"></div>
           <div class="a" id="answer"></div>
+          <div id="answerMedia"></div>
+          <div class="fbrow" id="fbrow" hidden>
+            <span>Copy</span><span>Permalink</span><span>Good answer</span><span>Poor answer</span><span>Suggest</span>
+          </div>
 
           <button class="replay" id="replay" type="button">Replay</button>
         </div>
 
         <p class="muted" style="margin-top: 16px; font-size: 13px">
-          This page is static — the replay is scripted, not a live call to the
-          endpoint. The real thing is at
+          This page is static — the replays are scripted, not live calls to the
+          endpoint. Photos load from the site's own storage. The real thing is at
           <a href="https://sankettambare.in/ask">sankettambare.in/ask</a>.
         </p>
+      </div>
+    </section>
+
+    <!-- ============ WHAT SETS IT APART ============ -->
+    <section id="abilities">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Distinctive abilities</div>
+          <h2>What sets it apart</h2>
+          <p class="lede">
+            Most "chat with your site" demos are a vector store and a prompt.
+            These are the properties that make this one worth trusting with a
+            personal archive.
+          </p>
+        </div>
+        <div class="grid g3">
+          <div class="card"><div class="k">It can't invent a link</div>
+            <p>Every link and every picture in an answer must come from a retrieved row. Anything else is stripped in the worker and again in the page.</p></div>
+          <div class="card"><div class="k">It counts from Postgres</div>
+            <p>"How many", "fastest" and "how many words this year" come from a facts card built from the same numbers the stats page shows, not from whichever rows retrieval happened to return.</p></div>
+          <div class="card"><div class="k">It knows everything published</div>
+            <p>Books, races, treks, projects, 1,661 micro posts, the full text of 104 essays, the résumé, every stats figure and the site's own pages — 2,702 chunks.</p></div>
+          <div class="card"><div class="k">It only embeds what changed</div>
+            <p>Chunks are compared by content hash. Unchanged text is skipped, moved text keeps its vector, and a night with no new posts embeds nothing.</p></div>
+          <div class="card"><div class="k">It reads Marathi</div>
+            <p>A multilingual embedding model and an unstemmed keyword index, so a Devanagari post is as findable as an English one.</p></div>
+          <div class="card"><div class="k">It never goes blank</div>
+            <p>Four model rungs down to search-only, keyword search when embeddings are unavailable, and quotas that refuse rather than bill.</p></div>
+          <div class="card"><div class="k">Readers grade it</div>
+            <p>Thumbs, reason tags and comments land on the exact answer row next to the model, tier and timings — exportable as evals.</p></div>
+          <div class="card"><div class="k">A new source is one file</div>
+            <p>Drop a module into <code>scripts/ask-sources/</code>; no migration, no registry to edit, and the chat labels an unfamiliar type on its own.</p></div>
+          <div class="card"><div class="k">Still $0 a month</div>
+            <p>All of the above runs inside the free tiers of Cloudflare, Supabase, Gemini and GitHub Actions.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WHAT IT KNOWS ============ -->
+    <section id="knows">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Sources</div>
+          <h2>What it knows now</h2>
+          <p class="lede">
+            v17.0 indexed nine kinds of content and could see a blog post only as
+            its title and two-line description. An audit found five sources the
+            chatbot could not see at all. Every one is indexed now.
+          </p>
+        </div>
+        <div class="scroller" style="margin-bottom: 22px">
+          <table>
+            <thead><tr><th>Type</th><th>From</th><th>What a chunk holds</th><th>Chunks</th><th>Since</th></tr></thead>
+            <tbody>
+              <tr><td>microblog</td><td>1,661 micro posts</td><td>The whole post; long posts split on paragraphs</td><td class="num">1,670</td><td>v17.0</td></tr>
+              <tr><td>blog</td><td>60 ledger posts</td><td>Metadata, plus the full post text as chunks 1…n</td><td class="num">455</td><td>text: v17.1</td></tr>
+              <tr><td>writing</td><td>44 essays with no ledger row</td><td>Full text, linking straight to Substack or WordPress</td><td class="num">221</td><td>v17.1</td></tr>
+              <tr><td>page</td><td>About, changelog</td><td>Prose, split on paragraphs</td><td class="num">161</td><td>v17.0</td></tr>
+              <tr><td>book · sport · trek · project · instagram · now</td><td>Content tables</td><td>One row, with its first photo</td><td class="num">144</td><td>v17.0</td></tr>
+              <tr><td>resume</td><td>Positions, degrees, certifications, skills</td><td>One entry each, plus the skills matrix</td><td class="num">21</td><td>v17.1</td></tr>
+              <tr><td>site</td><td>Route meta, contact links</td><td>What each page is, how to get in touch</td><td class="num">20</td><td>v17.1</td></tr>
+              <tr><td>stats</td><td>The stats page, Writing Ledger</td><td>One chunk per chapter of /stats</td><td class="num">10</td><td>v17.1</td></tr>
+              <tr><td>tag</td><td>Tag descriptions</td><td>Waiting on descriptions to be written</td><td class="num">0</td><td>v17.1</td></tr>
+              <tr><td><strong>Total</strong></td><td></td><td></td><td class="num"><strong>2,702</strong></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid g2">
+          <div>
+            <p style="margin-top: 0">
+              A source is a file. The indexer loads every module in the folder;
+              <code>content_chunks</code> accepts any well-formed type name since
+              migration 0016, and the chat falls back to a title-cased label for a
+              type it has never seen.
+            </p>
+            <p class="muted" style="font-size: 14px">
+              A source that throws is reported and its existing chunks are kept.
+              A Substack outage cannot empty the index.
+            </p>
+          </div>
+<pre class="code">// scripts/ask-sources/reading_list.mjs
+export default {
+  type: "reading_list",
+  load: (ctx) =&gt; ctx.fetchAll("reading_list", "*"),
+  toChunks: (rows, { compose }) =&gt; rows.map((r) =&gt; ({
+    entity_type: "reading_list",
+    entity_id: r.id,
+    chunk_index: 0,
+    title: r.title,
+    url: "/reading-list",
+    body: compose([["Reading list", r.title], [null, r.note]]),
+  })),
+};</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ AUDIT ============ -->
+    <section id="audit">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Coverage</div>
+          <h2>Is it all in?</h2>
+          <p class="lede">
+            "Indexed" is easy to claim and hard to mean. So the production index
+            was checked row by row against its sources.
+          </p>
+        </div>
+        <div class="plan">
+          <div><div class="n">1,661 / 1,661</div><div class="l">micro posts indexed</div></div>
+          <div><div class="n">1,630 / 1,630</div><div class="l">posts with text carry it in full (31 are photo-only)</div></div>
+          <div><div class="n">104 / 104</div><div class="l">essays with their full text</div></div>
+          <div><div class="n">100,369</div><div class="l">words extracted, vs 100,199 counted by the ledger</div></div>
+          <div class="embed"><div class="n">0</div><div class="l">chunks without an embedding</div></div>
+        </div>
+        <div class="grid g2" style="margin-top: 22px">
+          <div class="card"><div class="k">The one real gap</div>
+            <p>A micro post was always a single chunk, and the embedding model reads 4,000 characters. Two long posts had about 614 words past that window — keyword-searchable, invisible to meaning. Posts over 3,000 characters are split on paragraphs now; the fix embedded 15 chunks and left the other 2,687 alone.</p></div>
+          <div class="card"><div class="k">The three that look short</div>
+            <p>Three Substack items extract only about 55% of their word count. They are podcast stubs of about thirty words that link to a WordPress essay — and those essays are indexed in full.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ NIGHTLY PIPELINE ============ -->
+    <section id="pipeline">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Keeping it current</div>
+          <h2>Every night, only what's new</h2>
+          <p class="lede">
+            A GitHub Action refreshes the index at 02:00 IST. Each step is built
+            so that a quiet night costs nothing: no downloads, no embeddings, no
+            commit, no deploy.
+          </p>
+        </div>
+        <ol class="flow">
+          <li><b>Count every post</b><p><code>npm run blogs:wordcount</code> lists every Substack and WordPress post and rebuilds the Writing Ledger data.</p></li>
+          <li><b>Download only new or edited bodies</b><p>Post text is cached by URL and version (publish date plus word count). The first run downloaded 34 bodies and took 42 from cache; a routine night downloads none.</p></li>
+          <li><b>Hash every chunk</b><p>Each chunk gets a hash of its embedded text and one of its metadata, compared with what is already stored.</p></li>
+          <li><b>Embed only new text</b><p>Unchanged chunks are skipped; a new title keeps its vector; text that only moved — the changelog grows at the top — copies an existing vector.</p></li>
+          <li><b>Refresh the facts card</b><p>The chatbot's context card, with every stats figure, is regenerated and pushed to its settings row.</p></li>
+          <li><b>Commit only real changes</b><p>The ledger JSON is committed when a post was added, removed or edited — not when only today's date moved — so a quiet night triggers no deploy.</p></li>
+        </ol>
+        <div class="plan">
+          <div><div class="n">2,693</div><div class="l">chunks planned on the migration run</div></div>
+          <div><div class="n">1,868</div><div class="l">kept their existing vectors</div></div>
+          <div class="embed"><div class="n">825</div><div class="l">genuinely new, embedded</div></div>
+          <div><div class="n">0</div><div class="l">to embed on the very next run</div></div>
+        </div>
       </div>
     </section>
 
@@ -965,6 +1177,29 @@ semantic_ranked <span class="kw">as</span> (
       </div>
     </section>
 
+    <!-- ============ STATS SNAPSHOT ============ -->
+    <section id="snapshot">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">One set of numbers</div>
+          <h2>The stats page and the chatbot can't disagree</h2>
+          <p class="lede">
+            The stats page used to compute its figures in the browser, in two
+            layouts, from seven collection fetches. The chatbot had its own
+            counts. Now there is one implementation, served from one cache.
+          </p>
+        </div>
+        <div class="grid g3">
+          <div class="card"><div class="k">One module</div>
+            <p><code>siteStats.js</code> computes every figure on /stats — reading pace, PBs, kilometres, streaks, tag themes. The page, the facts card and the index all import it.</p></div>
+          <div class="card"><div class="k">At most once an hour</div>
+            <p><code>GET /api/stats</code> builds the snapshot on a cache miss and serves it from the edge for an hour. The stats page is one request; the nightly indexer reads the same JSON.</p></div>
+          <div class="card"><div class="k">Found on the way</div>
+            <p>The micro-post activity query was unpaged, so PostgREST's 1,000-row cap dropped every post after the thousandth. The activity chart stopped in 2021. It pages now.</p></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ LADDER ============ -->
     <section id="ladder">
       <div class="wrap">
@@ -1037,6 +1272,49 @@ semantic_ranked <span class="kw">as</span> (
       </div>
     </section>
 
+    <!-- ============ ANSWERS THAT SHOW ============ -->
+    <section id="answers">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Rendering</div>
+          <h2>Answers that show</h2>
+          <p class="lede">
+            v17.0 answers were plain text with numbered citations and a rule that
+            the model must never write a URL. v17.1 lets it link and show
+            pictures — under a stricter rule: only URLs that came from a
+            retrieved row survive.
+          </p>
+        </div>
+        <div class="compare">
+          <div>
+            <div class="label">What the model wrote</div>
+<pre class="code">His half-marathon PB is **1:59:57** at
+[NMDC Hyderabad Marathon 2025](/sports/15) [1].
+Read more at [this link](https://evil.example/x).
+
+![Finish line](https://evil.example/pixel.png)</pre>
+          </div>
+          <div>
+            <div class="label">What the reader sees</div>
+            <div class="rendered">
+              His half-marathon PB is <strong>1:59:57</strong> at
+              <a class="chip" href="https://sankettambare.in/sports/15">NMDC Hyderabad Marathon 2025 <small>Race</small></a>
+              <span class="cite">1</span>. Read more at this link.
+              <p class="muted" style="font-size: 12px; margin: 10px 0 0">The race link came from a retrieved row, so it renders. <span class="stripped">evil.example/x</span> and <span class="stripped">evil.example/pixel.png</span> did not: the words stay, the URL and the tracking pixel are gone.</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid g3" style="margin-top: 22px">
+          <div class="card"><div class="k">Link chips</div>
+            <p>Site links carry their content type; outside links carry their domain and ↗, so a reader knows before tapping that they are leaving.</p></div>
+          <div class="card"><div class="k">Pictures from the archive</div>
+            <p>Every chunk now carries its photo. Race, trek and project images appear inline or as a strip under the answer, and on every source card.</p></div>
+          <div class="card"><div class="k">Cleaned twice</div>
+            <p>Deltas stream raw, so the page sanitises as it renders, and the worker re-sends a cleaned final answer. The allow-list lives in one shared module.</p></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ COST ============ -->
     <section id="cost">
       <div class="wrap">
@@ -1070,8 +1348,8 @@ semantic_ranked <span class="kw">as</span> (
               <tr>
                 <td>Vector storage</td>
                 <td class="num">500 MB free</td>
-                <td class="num">2,022 × 1024 × 4 B</td>
-                <td class="num">8 MB</td>
+                <td class="num">2,702 × 1024 × 4 B</td>
+                <td class="num">11 MB</td>
               </tr>
               <tr>
                 <td>One question — input</td>
@@ -1084,6 +1362,18 @@ semantic_ranked <span class="kw">as</span> (
                 <td class="num">$0.40 / M tok</td>
                 <td class="num">~350 tokens</td>
                 <td class="num">$0.00014</td>
+              </tr>
+              <tr>
+                <td>v17.1: embedding 825 new chunks</td>
+                <td class="num">$0.012 / M tok</td>
+                <td class="num">~210K tokens</td>
+                <td class="num">$0.003</td>
+              </tr>
+              <tr>
+                <td>A night with no new posts</td>
+                <td class="num">—</td>
+                <td class="num">0 embeddings</td>
+                <td class="num">$0</td>
               </tr>
               <tr>
                 <td><strong>Per question, all in</strong></td>
@@ -1186,6 +1476,28 @@ Trek: Ghangad Fort | Date: 09-08-2026 | Duration: 1.5 Hrs …
       </div>
     </section>
 
+    <!-- ============ SECURITY ============ -->
+    <section id="security">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Security</div>
+          <h2>Treat the archive as untrusted input</h2>
+          <p class="lede">
+            The micro-post archive is a Tumblr import full of reblogged
+            third-party text. Anything retrieved is data, never instructions.
+          </p>
+        </div>
+        <div class="grid g3">
+          <div class="card"><div class="k">Prompt injection</div>
+            <p>Retrieved rows are fenced as content, and even a successful injection cannot produce a clickable link or a loaded image — neither survives the allow-list.</p></div>
+          <div class="card"><div class="k">Feedback only from its reader</div>
+            <p><code>ask_feedback()</code> updates a message only when the caller's session id owns that conversation. A rating cannot be forged for someone else's answer.</p></div>
+          <div class="card"><div class="k">Verification that recovers</div>
+            <p>Turnstile tokens are awaited before sending, and a rejected one offers "Verify and retry" instead of a dead end.</p></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ LOG ============ -->
     <section id="log">
       <div class="wrap">
@@ -1259,6 +1571,94 @@ Trek: Ghangad Fort | Date: 09-08-2026 | Duration: 1.5 Hrs …
               log viewer.
             </p>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FEEDBACK ============ -->
+    <section id="feedback">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">Evals</div>
+          <h2>Every verdict lands on the answer it judges</h2>
+          <p class="lede">
+            Under each answer: thumbs up, thumbs down, and "Suggest" — reason tags
+            plus a free-text comment. They are written onto that answer's row in
+            the conversation log, next to the model, tier, timings and sources.
+          </p>
+        </div>
+        <ol class="flow">
+          <li><b>The worker issues a message id</b><p>Every answer carries a UUID, returned to the page and stored on its log row.</p></li>
+          <li><b>The reader rates it</b><p>Wrong facts, missing data, bad links, formatting, too long — plus a comment of up to 1,000 characters. The verdict survives a reload.</p></li>
+          <li><b>A definer function writes it</b><p>Session-checked, and retried once, because the log row is written just after the answer is sent.</p></li>
+          <li><b>The admin exports evals</b><p>One JSON line per rated exchange: the input for tuning the system prompt and deciding what to ingest next.</p></li>
+        </ol>
+        <div style="margin-top: 18px">
+<pre class="code">{"question":"When did he start running?","answer":"The micro posts show the build-up…",
+ "tier":"gemini-flash-lite","keyword_only":false,"rating":-1,
+ "tags":["missing data"],"comment":"Doesn't mention the first 10K race.","asked_at":"…"}</pre>
+          <p class="muted" style="font-size: 13px">An illustrative line in the export's shape.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ADMIN ============ -->
+    <section id="admin">
+      <div class="wrap">
+        <div class="sechead">
+          <div class="eyebrow">The admin dashboard</div>
+          <h2>Every chat, every filter</h2>
+          <p class="lede">
+            The Conversations page no longer hides a chat behind a row to click.
+            Each chat is shown in full, newest first — a browser's questions stay
+            together until it goes quiet for 30 minutes — and the summary at the
+            top follows whatever is filtered.
+          </p>
+        </div>
+        <div class="mock" aria-label="Mock of the admin Conversations page">
+          <div class="bar">
+            <span class="f">From <b>2026-08-15</b></span><span class="f">To <b>2026-09-13</b></span>
+            <span class="f">Search <b>marathon</b></span><span class="f">Feedback <b>Disliked</b></span>
+            <span class="f">Reason <b>any</b></span><span class="f">Tier <b>any</b></span><span class="f">Model <b>any</b></span>
+            <span class="f">Cited type <b>sport</b></span><span class="f">Degraded <b>any</b></span><span class="f">Keyword-only <b>any</b></span>
+            <span class="f">Errors <b>any</b></span><span class="f">No sources <b>any</b></span><span class="f">Provider <b>any</b></span><span class="f">Session <b>any</b></span>
+          </div>
+          <div class="tiles">
+            <div><div class="l">Questions</div><div class="n">42</div></div>
+            <div><div class="l">Chats</div><div class="n">17</div></div>
+            <div><div class="l">Satisfaction</div><div class="n">81%</div></div>
+            <div><div class="l">Median answer</div><div class="n">3,940 ms</div></div>
+            <div><div class="l">95th percentile</div><div class="n">7,210 ms</div></div>
+            <div><div class="l">Avg retrieval</div><div class="n">1,760 ms</div></div>
+            <div><div class="l">Degraded</div><div class="n">2</div></div>
+            <div><div class="l">No sources</div><div class="n">1</div></div>
+          </div>
+          <div>
+            <span class="badge">gemini-flash-lite · 39</span><span class="badge">cf-gpt-oss-20b · 3</span>
+            <span class="badge bad">missing data · 3</span><span class="badge bad">too long · 1</span>
+            <span class="badge">sport · 31</span><span class="badge">stats · 12</span><span class="badge">microblog · 9</span>
+          </div>
+          <div class="chat">
+            <div class="ex">
+              <div class="qq">What are his marathon PBs?</div>
+              <p class="aa">Across 25 races and 577 km, his fastest times are: marathon 05:05:53 at Tata Mumbai Marathon 2026…</p>
+              <div><span class="badge good">Liked</span><span class="badge">gemini-flash-lite</span><span class="badge">total 3,812 ms · retrieval 1,640 ms</span></div>
+            </div>
+            <div class="ex">
+              <div class="qq">When did he start running?</div>
+              <p class="aa">The micro posts show the build-up. On 20 February 2024 he wrote that he had run 10 km in 86 minutes…</p>
+              <div><span class="badge bad">Disliked</span><span class="badge bad">missing data</span><span class="badge">3 sources</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="muted" style="font-size: 13px">Mock data — the real page reads the live log. Exports: CSV, JSON, and evals JSONL.</p>
+        <div class="grid g3" style="margin-top: 18px">
+          <div class="card"><div class="k">14 filters</div>
+            <p>Date range, search across question, answer and comment, feedback, reason, tier, model, provider, cited content type, degraded, keyword-only, model errors, no sources, and session.</p></div>
+          <div class="card"><div class="k">Summary for the selection</div>
+            <p>Questions, chats, satisfaction, comments, latency by stage, tier and model mix, reasons, content cited, questions per day, and index coverage per content type.</p></div>
+          <div class="card"><div class="k">Pure functions underneath</div>
+            <p>Grouping, filtering and summarising run client-side over one date-ranged load, all unit-tested — every filter combination is instant.</p></div>
         </div>
       </div>
     </section>
@@ -1359,6 +1759,58 @@ Trek: Ghangad Fort | Date: 09-08-2026 | Duration: 1.5 Hrs …
             notes from the index without a single warning.
           </p>
         </div>
+      
+        <div class="broke">
+          <div class="k">08 — the whole chat returned error 1101</div>
+          <p>
+            Streaming answers crashed in production while every other page was
+            fine. The Pages project had no <code>compatibility_date</code>, so
+            Functions ran on the oldest runtime defaults — where
+            <code>new ReadableStream()</code> is disabled. One line in
+            <code>wrangler.toml</code>; found by tailing the worker log, because
+            the error page said only “Worker threw exception”.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">09 — suggestion chips failed verification</div>
+          <p>
+            With Turnstile switched on, the chat bubble answered “verification
+            failed”. The Ask button waited for a token; the suggestion chips,
+            follow-ups and <code>?q=</code> links did not, and sent none. Every
+            path now awaits a fresh token, and a rejected one offers a retry.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">10 — the activity chart stopped in 2021</div>
+          <p>
+            The micro-post activity query had no pagination, and PostgREST
+            silently returns 1,000 rows. With 1,661 posts, every one after the
+            thousandth was simply never counted — the same trap as bug 06, in a
+            different file.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">11 — the changelog re-embedded every night</div>
+          <p>
+            Staleness was judged by file time, and a CI checkout resets it. Worse,
+            chunks were keyed by position and the changelog grows at the top, so
+            one new entry renumbered every chunk below it. Content hashes fixed
+            both: moved text keeps its vector.
+          </p>
+        </div>
+
+        <div class="broke">
+          <div class="k">12 — long posts were half-embedded</div>
+          <p>
+            The coverage audit found two micro posts longer than the embedding
+            model's 4,000-character window. About 614 words were findable by
+            keyword and invisible to meaning. Long posts are split on paragraphs
+            now.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -1417,8 +1869,24 @@ trek   0.823  Karnala</pre>
               scale you should compile sources into a maintained set of notes
               rather than re-reading raw documents per query. Raw posts answer
               <em>what did I say</em>; compiled notes would answer
-              <em>what do I think</em>. That is the piece that turns a search
-              box into a second brain.
+              <em>what do I think</em>. With the full text of every essay now
+              indexed, the raw material is finally all there.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">Next — tune from the evals</div>
+            <p>
+              The feedback export is the first honest signal about what the
+              chatbot gets wrong. Disliked answers tagged “missing data” point at
+              ingestion; “wrong facts” at the prompt.
+            </p>
+          </div>
+          <div class="card">
+            <div class="k">Next — describe the tags</div>
+            <p>
+              The tag source is built and indexes nothing: no tag has a
+              description yet. Writing them turns “what does the ultra tag
+              cover?” into an answerable question.
             </p>
           </div>
           <div class="card">
@@ -1433,9 +1901,9 @@ trek   0.823  Karnala</pre>
             <div class="k">Not built — an agent</div>
             <p>
               Tool-calling loops are three or four round trips per question for
-              a corpus of two thousand short documents. One retrieval pass plus
-              a precomputed facts card answers the same questions in one. The
-              simplest thing that holds, holds.
+              a corpus of under three thousand chunks. One retrieval pass plus a
+              facts card that already holds every stat answers the same
+              questions in one. The simplest thing that holds, holds.
             </p>
           </div>
         </div>
@@ -1452,7 +1920,7 @@ trek   0.823  Karnala</pre>
     <footer>
       <div class="wrap">
         Ask the Archive · sankettambare.in/ask · Postgres, pgvector, Cloudflare
-        Pages Functions, Workers AI, Gemini.
+        Pages Functions, Workers AI, Gemini, GitHub Actions.
         <a href="../index.html">← Back home</a>
       </div>
     </footer>
@@ -1514,95 +1982,208 @@ trek   0.823  Karnala</pre>
     </script>
 
     <script>
-      /* The demo replay. Scripted, not live: this page is static and has to work
-         on any static host. The delays below are the real logged stage timings
-         for this question — 1.81 s to sources, 4.20 s to a finished answer —
-         compressed slightly so a reader is not kept waiting twice. */
+      /* The sample replays. Scripted, not live: this page is static and has to
+         work on any static host. The trek replay is paced by its real logged
+         stage timings; the others reuse that pacing. Every title, date, time,
+         URL and photo below is a real row from the index. */
       (function () {
-        var ANSWER =
-          "The archive has 20 treks, mostly forts and hills around Pune. The most recent: **Ghangad Fort** on 09-08-2026, 1.5 hours, easy [1]. **Lingya Waterfall** on 01-08-2026, an hour, easy [2]. **Harishchandragad** on 19-06-2026 is the long one — 7 hours, medium endurance [3]. **Karnala** on 14-06-2026, 3 hours, easy [4].";
+        var SITE = "https://sankettambare.in";
+        var DEMOS = [
+          {
+            tab: "Treks",
+            q: "Get details for all treks",
+            search: "hybrid search · 2,702 chunks",
+            model: "gemini-flash-lite · streaming",
+            done: "done at 4.20 s · 4 sources cited",
+            sources: [
+              { t: "Ghangad Fort", m: "Trek · 09-08-2026", img: "https://xjqbvvurlmbslikiukdm.supabase.co/storage/v1/object/public/media/treks/1786286725793-1001952482.jpeg" },
+              { t: "Lingya Waterfall", m: "Trek · 01-08-2026", img: "https://xjqbvvurlmbslikiukdm.supabase.co/storage/v1/object/public/media/treks/1785659808339-lingya-1.jpeg" },
+              { t: "Harishchandragad", m: "Trek · 19-06-2026", img: "https://xjqbvvurlmbslikiukdm.supabase.co/storage/v1/object/public/media/treks/1782061830704-whatsapp-image-2026-06-21-at-8-25-41-pm.jpeg" },
+              { t: "Karnala", m: "Trek · 14-06-2026", img: "https://xjqbvvurlmbslikiukdm.supabase.co/storage/v1/object/public/media/treks/1782061742539-whatsapp-image-2026-06-15-at-6-11-43-pm.jpeg" }
+            ],
+            answer: "The archive has 20 treks, mostly forts and hills around Pune. The most recent: [Ghangad Fort](/treks/20) on 09-08-2026, 1.5 hours, easy [1]. [Lingya Waterfall](/treks/19) on 01-08-2026, an hour, easy [2]. [Harishchandragad](/treks/18) on 19-06-2026 is the long one — 7 hours, medium endurance [3]. [Karnala](/treks/17) on 14-06-2026, 3 hours, easy [4].",
+            figure: { src: "https://xjqbvvurlmbslikiukdm.supabase.co/storage/v1/object/public/media/treks/1786286725793-1001952482.jpeg", alt: "Ghangad Fort, 09-08-2026", href: "/treks/20" }
+          },
+          {
+            tab: "Stats",
+            q: "What are his marathon PBs?",
+            search: "facts card · site_stats from the hourly snapshot",
+            model: "gemini-flash-lite · streaming",
+            done: "done · answered from the facts card · 3 sources cited",
+            sources: [
+              { t: "Tata Mumbai Marathon 2026", m: "Race · January 18, 2026" },
+              { t: "NMDC Hyderabad Marathon 2025", m: "Race · August 24, 2025" },
+              { t: "IPA Neerathon 2026", m: "Race · February 15, 2026" }
+            ],
+            answer: "Across **25 races and 577 km**, his fastest times are: marathon **05:05:53** at [Tata Mumbai Marathon 2026](/sports/17) [1], half marathon **1:59:57** at [NMDC Hyderabad Marathon 2025](/sports/15) [2], and 10K **00:55:28** at [IPA Neerathon 2026](/sports/18) [3]."
+          },
+          {
+            tab: "Essays",
+            q: "What does he think about Pegasus and privacy?",
+            search: "hybrid search · essay full text",
+            model: "gemini-flash-lite · streaming",
+            done: "done · 4 essays cited",
+            sources: [
+              { t: "Pegasus: Should I really worry about it?", m: "Essay · 2022-02-06 · wordpress.com ↗", img: "https://daredavil453624413.wordpress.com/wp-content/uploads/2022/02/pegasus-banner-1.png" },
+              { t: "What does “P” in Privacy really mean?", m: "Essay · 2022-01-26 · wordpress.com ↗", img: "https://daredavil453624413.wordpress.com/wp-content/uploads/2022/01/p-in-privacy-1.png" },
+              { t: "PRINTF(PRIVACY == MYTH) IF(TRUE): HOW…?", m: "Essay · 2020-08-18 · wordpress.com ↗", img: "https://daredavil453624413.wordpress.com/wp-content/uploads/2020/08/island-of-privacy1.png" },
+              { t: "Privacy and Security in the Modern Technical World", m: "Essay · 2020-10-30 · wordpress.com ↗", img: "https://daredavil453624413.wordpress.com/wp-content/uploads/2020/10/download.png" }
+            ],
+            answer: "He treats it as something to take seriously rather than wave away. [Pegasus: Should I really worry about it?](https://daredavil453624413.wordpress.com/2022/02/06/pegasus-india/) walks through the government-operated spyware used against heads of state, activists, lawyers and journalists, and argues you should reconsider if you are ignoring it [1]. [What does “P” in Privacy really mean?](https://daredavil453624413.wordpress.com/2022/01/26/p-in-privacy/) pushes back on “it's so big, what can I do about it?” — small everyday practices still matter [2]. Earlier, [PRINTF(PRIVACY == MYTH)](https://daredavil453624413.wordpress.com/2020/08/18/printfprivacy-myth-iftrue-how/) explains social media as a map — the internet a world, platforms its cities, big tech its nations — starting from “privacy is a myth, data is the new oil” [3].",
+            figure: { src: "https://daredavil453624413.wordpress.com/wp-content/uploads/2022/02/pegasus-banner-1.png", alt: "Pegasus: Should I really worry about it?", href: "https://daredavil453624413.wordpress.com/2022/02/06/pegasus-india/" }
+          },
+          {
+            tab: "Résumé",
+            q: "Where has he worked, and how can I reach him?",
+            search: "hybrid search · résumé + site pages",
+            model: "gemini-flash-lite · streaming",
+            done: "done · 4 sources cited",
+            sources: [
+              { t: "Software Developer at Bridgenext", m: "Résumé" },
+              { t: "NAST Fellow at The Takshashila Institution", m: "Résumé" },
+              { t: "Software Engineer at Emtec Inc.", m: "Résumé" },
+              { t: "Contact", m: "Site page" }
+            ],
+            answer: "He is a **Software Developer at Bridgenext** (February 2024 – present) [1]. Before that he was a **Software Engineer at Emtec Inc.** for three years (January 2021 – February 2024) [3], and alongside the current role he was a **NAST Fellow at The Takshashila Institution** (April 2024 – May 2025) [2]. The [résumé](/resume) lists six organisations in all. To get in touch, the [contact page](/contact) has email, LinkedIn, GitHub, Substack and a digital card [4]."
+          },
+          {
+            tab: "Micro posts",
+            q: "When did he start running?",
+            search: "hybrid search · micro posts + races",
+            model: "gemini-flash-lite · streaming",
+            done: "done · 3 sources cited",
+            sources: [
+              { t: "Micro post #1256", m: "Micro post · 2024-02-20" },
+              { t: "Running and me", m: "Micro post · 2024-06-09" },
+              { t: "NMDC Hyderabad Marathon 2025", m: "Race · August 24, 2025" }
+            ],
+            answer: "The micro posts show the build-up. On 20 February 2024 he wrote that he had run **10 km in 86 minutes** and would attempt 21 km in the next few weeks [1]. That June, a short Hindi verse titled “Running and me” describes running as a way of finding himself again [2]. The half-marathon target became a PB the next year: **1:59:57** at [NMDC Hyderabad Marathon 2025](/sports/15) [3]."
+          }
+        ];
 
+        var tabsEl = document.getElementById("demoTabs");
+        var qEl = document.getElementById("demoQ");
         var answerEl = document.getElementById("answer");
+        var mediaEl = document.getElementById("answerMedia");
         var stageEl = document.getElementById("stageLabel");
-        var srcEls = document.querySelectorAll("#srcs .src");
+        var srcsEl = document.getElementById("srcs");
+        var fbEl = document.getElementById("fbrow");
         var replayBtn = document.getElementById("replay");
         var timers = [];
+        var current = 0;
 
-        function at(ms, fn) {
-          timers.push(setTimeout(fn, ms));
+        function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+        function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+        function hideOnError(img) { img.addEventListener("error", function () { img.style.display = "none"; }); }
+
+        /* The same transforms the real interface applies: **bold**, [n]
+           citations, and links as chips — site links labelled with their type,
+           outside links with their domain. */
+        function chip(label, url) {
+          if (url.charAt(0) === "/") {
+            return '<a class="chip" href="' + SITE + esc(url) + '">' + esc(label) + "</a>";
+          }
+          var host = url.replace(/^https?:\/\//, "").split("/")[0].replace(/^www\./, "");
+          return '<a class="chip ext" href="' + esc(url) + '">' + esc(label) + " <small>" + esc(host) + " ↗</small></a>";
+        }
+        function renderToken(tok) {
+          var link = tok.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+          if (link) return chip(link[1], link[2]);
+          var bold = tok.match(/^\*\*(.+)\*\*$/);
+          if (bold) return "<strong>" + esc(bold[1]) + "</strong>";
+          var cite = tok.match(/^\[(\d)\]$/);
+          if (cite) return '<span class="cite">' + cite[1] + "</span>";
+          return esc(tok);
+        }
+        /* Links, bold runs and citations stream as whole units, so a half-typed
+           link never shows its markdown. */
+        function tokens(text) {
+          return text.match(/\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|\[\d\]|\s+|[^\s[*]+|./g) || [];
         }
 
-        /* Renders the answer text as HTML: **bold** and [n] citation chips, the
-           same two transforms the real interface applies. */
-        function render(text) {
-          return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-            .replace(/\[(\d)\]/g, '<span class="cite">$1</span>');
+        function paintSources(demo) {
+          srcsEl.innerHTML = demo.sources.map(function (src, i) {
+            var lead = src.img
+              ? '<img class="thumb" alt="" loading="lazy" src="' + esc(src.img) + '" />'
+              : '<span class="n">' + (i + 1) + "</span>";
+            return '<div class="src">' + lead + '<span><span class="t">' + (src.img ? (i + 1) + ". " : "") +
+              esc(src.t) + '</span><br /><span class="m">' + esc(src.m) + "</span></span></div>";
+          }).join("");
+          srcsEl.querySelectorAll("img").forEach(hideOnError);
         }
 
         function run() {
+          var demo = DEMOS[current];
           timers.forEach(clearTimeout);
           timers = [];
+          qEl.textContent = demo.q;
           answerEl.innerHTML = "";
-          srcEls.forEach(function (el) {
-            el.classList.remove("in");
-          });
+          mediaEl.innerHTML = "";
+          fbEl.hidden = true;
+          paintSources(demo);
+          var srcEls = srcsEl.querySelectorAll(".src");
 
           stageEl.textContent = "embedding the question";
-          at(500, function () {
-            stageEl.textContent = "hybrid search · 2,022 chunks";
-          });
-
+          at(500, function () { stageEl.textContent = demo.search; });
           at(1400, function () {
-            stageEl.textContent = "retrieval done at 1.81 s — sources first";
-            srcEls.forEach(function (el, i) {
-              at(i * 110, function () {
-                el.classList.add("in");
-              });
-            });
+            stageEl.textContent = "retrieval done — sources first";
+            srcEls.forEach(function (el, i) { at(i * 110, function () { el.classList.add("in"); }); });
           });
-
           at(2100, function () {
-            stageEl.textContent = "gemini-flash-lite · streaming";
+            stageEl.textContent = demo.model;
             answerEl.innerHTML = '<span class="caret"></span>';
-
-            /* Typed a word at a time rather than a character at a time: it reads
-               like token streaming, which is what it is standing in for. */
-            var words = ANSWER.split(" ");
-            var shown = "";
-            words.forEach(function (w, i) {
-              at(i * 45, function () {
-                shown += (i ? " " : "") + w;
-                answerEl.innerHTML =
-                  render(shown) +
-                  (i === words.length - 1 ? "" : '<span class="caret"></span>');
-                if (i === words.length - 1) {
-                  stageEl.textContent = "done at 4.20 s · 4 sources cited";
+            var parts = tokens(demo.answer);
+            var html = "";
+            parts.forEach(function (tok, i) {
+              at(i * 22, function () {
+                html += renderToken(tok);
+                var last = i === parts.length - 1;
+                answerEl.innerHTML = html + (last ? "" : '<span class="caret"></span>');
+                if (!last) return;
+                stageEl.textContent = demo.done;
+                if (demo.figure) {
+                  var f = demo.figure;
+                  var href = f.href.charAt(0) === "/" ? SITE + f.href : f.href;
+                  mediaEl.innerHTML = '<figure class="answer-fig"><a href="' + esc(href) + '"><img loading="lazy" alt="' +
+                    esc(f.alt) + '" src="' + esc(f.src) + '" /></a><figcaption>' + esc(f.alt) + "</figcaption></figure>";
+                  mediaEl.querySelectorAll("img").forEach(hideOnError);
                 }
+                fbEl.hidden = false;
               });
             });
           });
         }
 
+        DEMOS.forEach(function (demo, i) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.setAttribute("role", "tab");
+          b.setAttribute("aria-selected", i === 0 ? "true" : "false");
+          b.textContent = demo.tab;
+          b.addEventListener("click", function () {
+            current = i;
+            tabsEl.querySelectorAll("button").forEach(function (other, j) {
+              other.setAttribute("aria-selected", j === i ? "true" : "false");
+            });
+            run();
+          });
+          tabsEl.appendChild(b);
+        });
+
+        /* Resting state before the first run: the trek question with its
+           sources visible, so the section is never empty. */
+        paintSources(DEMOS[0]);
+        srcsEl.querySelectorAll(".src").forEach(function (el) { el.classList.add("in"); });
+
         replayBtn.addEventListener("click", run);
 
-        /* Start when it scrolls into view, so a reader does not arrive at a
-           finished answer they never saw appear. */
         if ("IntersectionObserver" in window) {
           var seen = false;
-          new IntersectionObserver(
-            function (entries) {
-              entries.forEach(function (e) {
-                if (e.isIntersecting && !seen) {
-                  seen = true;
-                  run();
-                }
-              });
-            },
-            { threshold: 0.4 },
-          ).observe(document.getElementById("demo"));
+          new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting && !seen) { seen = true; run(); }
+            });
+          }, { threshold: 0.35 }).observe(document.getElementById("demo"));
         } else {
           run();
         }
