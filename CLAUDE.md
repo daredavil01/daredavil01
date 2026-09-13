@@ -26,7 +26,12 @@ docs/
                                    built, what it costs, and what broke
   what-the-archive-knows.html     Ask the Archive audit: data coverage, blog-text
                                    cost, incremental ingestion, feedback evals
+  ask-the-archive-story.html       Ask the Archive from the ground up: data,
+                                   database, sources, feedback, admin, timeline
+  assets/ask-the-archive/          Illo illustrations shared by the page + deck
 presentations/
+  ask-the-archive.html            Ask the Archive: the 29-slide deck version of
+                                   docs/ask-the-archive-story.html
   e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
                                    ethanol/sugar trade-off and how the site was built
   projects-page-revamp.html       Projects, Reborn: the 12-slide deck on

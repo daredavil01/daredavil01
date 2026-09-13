@@ -19,6 +19,9 @@ docs/
   antyodaya-website-overview.html   Antyodaya site: features + technical spec
   runfolio-overview.html            RunFolio: the race-portfolio intro deck
   what-the-archive-knows.html       Ask the Archive audit: data coverage + ingestion plan
+  ask-the-archive-story.html        Ask the Archive from the ground up (scrolling page)
+presentations/
+  ask-the-archive.html              Ask the Archive: the 29-slide deck
 digital-wellbeing/                "The Wanderer's Digital Escape" browser game
   index.html                      Game entry point
   three-orb-prototype.html        Three.js self-orb prototype
