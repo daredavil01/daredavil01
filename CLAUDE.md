@@ -37,6 +37,10 @@ presentations/
   projects-page-revamp.html       Projects, Reborn: the 12-slide deck on
                                    rebuilding /projects — data model, four
                                    views, and the bugs the work surfaced
+  the-long-way-around.html        The Long Way Round: the 12-slide deck on the
+                                   scrollytelling piece — the MET model, the
+                                   320M-pixel scroll, the tiers, and what
+                                   deriving the numbers caught
 developer-infographic/
   index.html                      "A Developer, Measured" — scroll-through
                                    infographic (career gantt, rated stack,

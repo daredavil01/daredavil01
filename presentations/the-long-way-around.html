@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A 12-slide deck on The Long Way Round: a walker, a runner and a cyclist scroll one lap of the Earth. How a 320-million-pixel journey fits in a browser, why the counters never touch React state, and the arithmetic error the build caught.">
+<title>The Long Way Round &mdash; the deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<script>
+// Runs before first paint: a stored theme must be on <html> already, or the
+// deck flashes the system theme before switching.
+(function(){
+  try{
+    var t = localStorage.getItem('deck-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ /* private mode, blocked storage — fall through to system */ }
+})();
+</script>
+
+<style>
+/* ---------------------------------------------------------------------------
+ * Same tokens as the other decks in this repo — stone neutrals, the rust
+ * `secondary` (#b22200), Noto Serif / Inter / Plus Jakarta / IBM Plex Mono.
+ * The three mover colours are the only additions: they are the piece's own
+ * palette and carry meaning, so they keep their values in both themes.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#f9f9f9; --surface:#ffffff; --surface-alt:#f3f3f3; --surface-sunk:#eeeeee;
+  --rule:#e2e2e2; --rule-soft:#eeeeee;
+  --text:#1a1c1c; --text-prose:#2f3131; --text-secondary:#444748;
+  --text-muted:#63676a; --text-faint:#747878;
+  --accent:#b22200; --accent-soft:#ffdad3; --accent-ink:#8c1800;
+  --ok:#2e7d4f; --ok-bg:#e7f3ec;
+  --warn:#8f5b00; --warn-bg:#fbf1de;
+  --bad:#ba1a1a; --bad-bg:#ffdad6;
+  --focus:#2563eb;
+
+  --walk:#c08a00; --run:#c4276d; --cycle:#0f8b86;
+
+  --font-display:'Noto Serif',Georgia,serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-label:'Plus Jakarta Sans',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#1a1c1c; --surface:#222525; --surface-alt:#2a2d2d; --surface-sunk:#2f3131;
+    --rule:#3a3e3e; --rule-soft:#2f3131;
+    --text:#f1f1f1; --text-prose:#dcdcdc; --text-secondary:#c4c7c7;
+    --text-muted:#a2a6a6; --text-faint:#8b8f8f;
+    --accent:#ffb4a4; --accent-soft:#4a1305; --accent-ink:#ffdad3;
+    --ok:#79c293; --ok-bg:#17291f;
+    --warn:#e0b25f; --warn-bg:#2c2312;
+    --bad:#f08a8a; --bad-bg:#2c1917;
+    --focus:#7aa7ff;
+    --walk:#FFD23F; --run:#FF5FA2; --cycle:#3DD6D0;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#1a1c1c; --surface:#222525; --surface-alt:#2a2d2d; --surface-sunk:#2f3131;
+  --rule:#3a3e3e; --rule-soft:#2f3131;
+  --text:#f1f1f1; --text-prose:#dcdcdc; --text-secondary:#c4c7c7;
+  --text-muted:#a2a6a6; --text-faint:#8b8f8f;
+  --accent:#ffb4a4; --accent-soft:#4a1305; --accent-ink:#ffdad3;
+  --ok:#79c293; --ok-bg:#17291f;
+  --warn:#e0b25f; --warn-bg:#2c2312;
+  --bad:#f08a8a; --bad-bg:#2c1917;
+  --focus:#7aa7ff;
+  --walk:#FFD23F; --run:#FF5FA2; --cycle:#3DD6D0;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--paper);color:var(--text);
+  font-family:var(--font-body);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  height:100dvh;scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100%;width:100%;height:100dvh;scroll-snap-align:start;
+  display:flex;align-items:center;justify-content:center;
+  padding:64px 24px 96px;overflow-y:auto;
+}
+.inner{width:100%;max-width:960px;}
+
+.eyebrow{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:18px;
+}
+.eyebrow .num{
+  font-weight:500;color:var(--accent);
+  border:1px solid var(--accent);border-radius:999px;padding:1px 8px;
+}
+h1{font-family:var(--font-display);font-weight:700;font-size:clamp(38px,7vw,68px);line-height:1.05;margin:0 0 18px;letter-spacing:-.02em;}
+h2{font-family:var(--font-display);font-weight:600;font-size:clamp(24px,4vw,38px);line-height:1.15;margin:0 0 14px;letter-spacing:-.01em;}
+h3{font-family:var(--font-label);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin:0 0 10px;}
+p{margin:0 0 12px;color:var(--text-prose);}
+.lead{font-size:clamp(16px,2.1vw,20px);color:var(--text-secondary);max-width:62ch;}
+.note{font-size:14px;color:var(--text-muted);}
+.mono{font-family:var(--font-mono);font-size:13px;}
+strong{color:var(--text);font-weight:600;}
+
+/* --- Title --------------------------------------------------------------- */
+.title-slide .inner{max-width:820px;}
+.title-rule{height:3px;width:110px;background:var(--accent);margin:0 0 22px;border-radius:2px;}
+.title-meta{
+  display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:28px;
+  font-family:var(--font-mono);font-size:12px;color:var(--text-muted);
+}
+.title-meta a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;}
+.title-meta a:hover{border-bottom-color:var(--accent);}
+
+/* --- Layout helpers ------------------------------------------------------ */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media (max-width:760px){
+  .two,.three{grid-template-columns:1fr;}
+  .slide{padding:56px 18px 92px;}
+}
+
+.panel{
+  background:var(--surface);border:1px solid var(--rule);
+  border-radius:14px;padding:18px 20px;
+}
+.panel.sunk{background:var(--surface-alt);}
+.panel h3{margin-bottom:8px;}
+.panel p:last-child{margin-bottom:0;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px;}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--surface-alt);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;}
+.stat .v{font-family:var(--font-display);font-weight:700;font-size:30px;line-height:1;color:var(--text);}
+.stat .v.accent{color:var(--accent);}
+.stat .k{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-top:7px;}
+
+ul.plain{list-style:none;margin:0;padding:0;}
+ul.plain li{position:relative;padding-left:20px;margin-bottom:9px;color:var(--text-prose);font-size:15px;}
+ul.plain li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:50%;background:var(--accent);}
+ul.plain li:last-child{margin-bottom:0;}
+
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:760px){.ba{grid-template-columns:1fr;}}
+.ba .col{border-radius:14px;padding:18px 20px;border:1px solid var(--rule);}
+.ba .was{background:var(--bad-bg);border-color:transparent;}
+.ba .now{background:var(--ok-bg);border-color:transparent;}
+.ba .col h3{color:var(--text-secondary);}
+.ba .col li::before{background:currentColor;opacity:.5;}
+.ba .was li,.ba .was p{color:var(--text-prose);}
+
+.tag{
+  display:inline-block;font-family:var(--font-mono);font-size:11px;
+  padding:3px 9px;border-radius:999px;border:1px solid var(--rule);
+  color:var(--text-muted);background:var(--surface);margin:0 5px 6px 0;
+}
+.tag.on{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink);}
+
+code{
+  font-family:var(--font-mono);font-size:.88em;background:var(--surface-sunk);
+  border:1px solid var(--rule-soft);border-radius:5px;padding:1px 5px;color:var(--text-secondary);
+}
+pre{
+  font-family:var(--font-mono);font-size:12.5px;line-height:1.65;
+  background:var(--surface-sunk);border:1px solid var(--rule);border-radius:12px;
+  padding:14px 16px;overflow-x:auto;margin:0;color:var(--text-secondary);
+}
+pre .hl{color:var(--accent);}
+
+.flag{
+  border-left:3px solid var(--accent);background:var(--surface-alt);
+  border-radius:0 10px 10px 0;padding:12px 16px;margin-top:14px;
+}
+.flag p{margin:0;font-size:14px;color:var(--text-secondary);}
+
+/* --- Mover-specific bits ------------------------------------------------- */
+.movers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+@media (max-width:760px){.movers{grid-template-columns:1fr;}}
+.mover{background:var(--surface);border:1px solid var(--rule);border-top-width:3px;border-radius:12px;padding:14px 16px;}
+.mover.w{border-top-color:var(--walk);}
+.mover.r{border-top-color:var(--run);}
+.mover.c{border-top-color:var(--cycle);}
+.mover .nm{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;}
+.mover.w .nm{color:var(--walk);}
+.mover.r .nm{color:var(--run);}
+.mover.c .nm{color:var(--cycle);}
+.mover .big{font-family:var(--font-display);font-weight:700;font-size:26px;line-height:1;margin:8px 0 6px;}
+.mover .rest{font-family:var(--font-mono);font-size:12px;line-height:1.75;color:var(--text-muted);}
+
+/* The ribbon signature: dots, dashes, a ticked line. Drawn in CSS so the
+   shape encoding the piece relies on is visible in the deck too. */
+.ribbons{display:flex;flex-direction:column;gap:14px;margin-top:6px;}
+.ribbon{display:flex;align-items:center;gap:12px;}
+.ribbon .key{width:58px;flex:0 0 58px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;}
+.ribbon .lane{flex:1;height:14px;border-radius:999px;position:relative;overflow:hidden;background:var(--surface-sunk);}
+.ribbon .lane i{position:absolute;inset:0;}
+.lane.dots i{background-image:radial-gradient(circle at 5px 50%, var(--walk) 2.6px, transparent 3px);background-size:13px 100%;}
+.lane.dash i{background-image:linear-gradient(90deg, var(--run) 0 11px, transparent 11px 22px);background-size:22px 100%;}
+.lane.line i{background-image:linear-gradient(var(--cycle),var(--cycle)),linear-gradient(90deg, var(--cycle) 0 2px, transparent 2px 26px);background-size:100% 2px,26px 100%;background-position:0 50%,0 0;background-repeat:repeat-x,repeat;}
+.ribbon .say{width:210px;flex:0 0 210px;font-size:12.5px;color:var(--text-muted);}
+@media (max-width:760px){.ribbon{flex-wrap:wrap;}.ribbon .say{width:100%;flex:1 0 100%;}}
+
+/* Scroll-scale comparison bars */
+.scale{display:flex;flex-direction:column;gap:9px;}
+.srow{display:flex;align-items:center;gap:10px;font-size:13px;}
+.srow .lab{width:118px;flex:0 0 118px;color:var(--text-secondary);font-size:12.5px;}
+.srow .meter{flex:1;height:10px;border-radius:999px;background:var(--surface-sunk);overflow:hidden;}
+.srow .fill{display:block;height:100%;border-radius:999px;background:var(--rule);}
+.srow .fill.cap{background:var(--warn);}
+.srow .fill.us{background:var(--accent);}
+.srow .n{width:78px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);}
+@media (max-width:760px){.srow .lab{width:88px;flex:0 0 88px;}.srow .n{width:64px;}}
+
+/* --- Home link + rail ---------------------------------------------------- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 18px;pointer-events:none;
+}
+.topbar > *{pointer-events:auto;}
+
+.home,.theme{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-muted);text-decoration:none;
+  background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;
+}
+.home:hover,.theme:hover{color:var(--accent);border-color:var(--accent);}
+.theme{display:inline-flex;align-items:center;gap:7px;cursor:pointer;line-height:1;}
+.theme .ico{font-size:13px;line-height:1;}
+
+.rail{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;background:var(--surface);border-top:1px solid var(--rule);
+}
+.rail button{
+  font:inherit;font-size:15px;line-height:1;cursor:pointer;
+  background:var(--surface-alt);color:var(--text-secondary);
+  border:1px solid var(--rule);border-radius:8px;padding:7px 12px;
+}
+.rail button:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.rail button:disabled{opacity:.35;cursor:default;}
+.ticks{display:flex;gap:5px;flex:1;overflow:hidden;}
+.ticks button{flex:1;min-width:0;height:5px;padding:0;border-radius:999px;background:var(--rule);border:none;}
+.ticks button[aria-current="true"]{background:var(--accent);}
+.counter{font-family:var(--font-mono);font-size:11.5px;color:var(--text-muted);white-space:nowrap;}
+
+@media (max-width:760px){
+  .topbar{background:var(--paper);border-bottom:1px solid var(--rule);padding:9px 14px;}
+  .home,.theme{border-color:transparent;background:transparent;padding:4px 6px;}
+  .slide{padding-top:64px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .track{scroll-behavior:auto;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="home" href="../index.html">&larr; Home</a>
+  <button class="theme" type="button" id="theme" aria-label="Theme: follow system. Activate to change.">
+    <span class="ico" id="theme-ico" aria-hidden="true">&#9681;</span><span id="theme-lab">Auto</span>
+  </button>
+</div>
+
+<div class="track" id="track" tabindex="-1">
+
+  <!-- 01 ------------------------------------------------------------------ -->
+  <!-- ILLO SLOT: title spot — the three movers side by side on a dark road,
+       walker/runner/cyclist, the mascot among them. -->
+  <section class="slide title-slide" aria-label="Slide 1: Title">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">01</span><span>Scrollytelling &middot; 2026</span></div>
+      <h1>The Long<br>Way Round</h1>
+      <div class="title-rule"></div>
+      <p class="lead">A walker, a runner and a cyclist set off together and go once around the
+      Earth. They are always at the same distance, so the race is never about position &mdash;
+      it is about what the distance <em>cost</em> each of them.</p>
+      <div class="title-meta">
+        <span>Vite &middot; React 18 &middot; React Three Fiber &middot; three.js &middot; zustand</span>
+        <span>40,075 km &middot; 18 milestones &middot; ~320 million pixels</span>
+        <a href="https://the-long-way-around.sankettambare.in">the-long-way-around.sankettambare.in</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 2: The idea">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">02</span><span>The idea</span></div>
+      <h2>Scroll is distance. The only variable is cost.</h2>
+      <p class="lead">Most comparison pieces race things against each other. This one refuses to.
+      All three movers sit at the same kilometre for the whole journey, which turns the question
+      from <em>who is ahead</em> into something more interesting: what did getting here take?</p>
+      <div class="two" style="margin-top:18px;">
+        <div class="panel">
+          <h3>The rules</h3>
+          <ul class="plain">
+            <li>Scroll maps linearly to distance &mdash; 8 pixels per metre</li>
+            <li>Three numbers per mover: time, calories, food</li>
+            <li>No scroll-jacking, ever &mdash; native scroll throughout</li>
+            <li>Zero onboarding: one line that fades after 20 metres</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>What it is not</h3>
+          <ul class="plain">
+            <li>Not a calorie calculator &mdash; there is nothing to input</li>
+            <li>Not a training tool, and not weight-loss framing</li>
+            <li>No sign-up, no tracking, one generic person</li>
+            <li>Jokes aim at physics and time, never at bodies</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flag"><p>The pitch fits on one line: <strong>one lap of the Earth, three ways to
+      pay for it.</strong> Please do not scroll to the end.</p></div>
+    </div>
+  </section>
+
+  <!-- 03 ------------------------------------------------------------------ -->
+  <!-- ILLO SLOT: a pizza slice as a unit of distance — the mascot holding a
+       slice against a stretch of road. -->
+  <section class="slide" aria-label="Slide 3: The hook">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">03</span><span>The hook</span></div>
+      <h2>One pizza slice buys 4.4&nbsp;km</h2>
+      <p class="lead">Food is the currency, because kilocalories are abstract and a slice is not.
+      One 285&nbsp;kcal cheese slice, converted at each mover's rate, is the whole idea in one number.</p>
+      <div class="movers" style="margin-top:18px;">
+        <div class="mover r"><div class="nm">Run</div><div class="big">4.4 km</div><div class="rest">65.1 kcal/km<br>6 min per km</div></div>
+        <div class="mover w"><div class="nm">Walk</div><div class="big">5.4 km</div><div class="rest">53.2 kcal/km<br>12 min per km</div></div>
+        <div class="mover c"><div class="nm">Cycle</div><div class="big">10.2 km</div><div class="rest">28.0 kcal/km<br>3 min per km</div></div>
+      </div>
+      <div class="flag"><p>The runner gets there first and pays most. The cyclist covers more than
+      twice the ground on the same slice &mdash; which is the finale's argument, arrived at by
+      scrolling rather than asserted up front.</p></div>
+    </div>
+  </section>
+
+  <!-- 04 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 4: The model">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">04</span><span>The model</span></div>
+      <h2>One imaginary 70&nbsp;kg adult, on flat ground</h2>
+      <p class="lead">Every number on screen comes from one formula &mdash;
+      <code>kcal = MET &times; kg &times; hours</code> &mdash; using 2024 Compendium of Physical
+      Activities values. Nothing is tuned to make the story better.</p>
+      <div class="two" style="margin-top:18px;">
+        <div class="panel">
+          <h3>The three modes</h3>
+          <pre>walk    5 km/h   3.8 MET   <span class="hl">53.2</span> kcal/km   1,421 steps/km
+run    10 km/h   9.3 MET   <span class="hl">65.1</span> kcal/km     960 steps/km
+cycle  20 km/h   8.0 MET   <span class="hl">28.0</span> kcal/km     240 strokes/km</pre>
+          <p class="note" style="margin-top:12px;">Compendium codes 17190, 12050 and 01030.</p>
+        </div>
+        <div class="panel sunk">
+          <h3>The caveat that had to be stated</h3>
+          <p>These are <strong>gross</strong> calories &mdash; they include the ~70 kcal/hour this
+          person burns doing nothing, the way a fitness watch reports it.</p>
+          <p>So running costs only <strong>1.2&times;</strong> walking per kilometre here, where
+          textbooks say about 2&times;. That figure is <em>net</em>. Both are right, and the HUD
+          carries a one-line caption saying so.</p>
+        </div>
+      </div>
+      <div class="flag"><p>No hills, no wind, no rest stops, no sleep, no eating. The movers are
+      not realistic. They are <strong>consistent</strong>, which is the only property the piece needs.</p></div>
+    </div>
+  </section>
+
+  <!-- 05 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 5: The scroll problem">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">05</span><span>The core problem</span></div>
+      <h2>The page is ten times taller than a browser allows</h2>
+      <p class="lead">At 8 pixels per metre, a full lap of the Earth is about
+      <strong>320 million pixels</strong>. Browsers do not go that far &mdash; and they fail
+      quietly, by clamping, not by erroring.</p>
+      <div class="scale" style="margin-top:20px;">
+        <div class="srow"><span class="lab">Firefox cap</span><span class="meter"><span class="fill cap" style="width:5.6%"></span></span><span class="n">17.9M px</span></div>
+        <div class="srow"><span class="lab">Chrome cap</span><span class="meter"><span class="fill cap" style="width:10.5%"></span></span><span class="n">33.5M px</span></div>
+        <div class="srow"><span class="lab">One marathon</span><span class="meter"><span class="fill" style="width:0.2%"></span></span><span class="n">0.34M px</span></div>
+        <div class="srow"><span class="lab">Our journey</span><span class="meter"><span class="fill us" style="width:100%"></span></span><span class="n">320.6M px</span></div>
+      </div>
+      <div class="flag"><p>Custom wheel handling would solve it and ruin everything else &mdash;
+      scroll-jacking is the single most common accessibility and mobile complaint about pieces
+      like this. The fix had to keep <strong>native scroll</strong> intact.</p></div>
+    </div>
+  </section>
+
+  <!-- 06 ------------------------------------------------------------------ -->
+  <!-- ILLO SLOT: the recycling spacer — a treadmill or a looping strip of road
+       sliding under a fixed viewer. -->
+  <section class="slide" aria-label="Slide 6: The recycling spacer">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">06</span><span>The mechanism</span></div>
+      <h2>One tall spacer, quietly sliding underneath</h2>
+      <p class="lead">The page holds a single 4,000,000&nbsp;px spacer &mdash; 500&nbsp;km worth &mdash;
+      with the canvas fixed behind it. A virtual offset does the rest.</p>
+      <div class="two" style="margin-top:18px;">
+        <div class="panel">
+          <h3>The whole trick</h3>
+          <pre>distanceM = offsetM + scrollY / 8
+
+<span class="hl">// once scrolling has been idle 160ms</span>
+if (scrollY &gt; 3_000_000) {
+  offsetM += 250_000
+  scrollTo(0, scrollY - 2_000_000)
+}</pre>
+        </div>
+        <div class="panel sunk">
+          <h3>Why the idle wait is load-bearing</h3>
+          <p>Moving <code>scrollY</code> mid-gesture kills iOS momentum dead. Waiting for
+          <strong>160&nbsp;ms of quiet</strong> means the swap only ever happens between flicks,
+          where nobody can feel it.</p>
+          <p class="note">Verified in a real browser: scrollY jumps 2,900,000 &rarr; 1,100,000
+          while distance continues 362,500 &rarr; 387,500&nbsp;m, monotonic throughout.</p>
+        </div>
+      </div>
+      <div class="flag"><p>The wheel is never touched. Keyboard, trackpad, screen reader and
+      momentum all behave exactly as the browser intends.</p></div>
+    </div>
+  </section>
+
+  <!-- 07 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 7: Keeping React out of the frame loop">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">07</span><span>Architecture</span></div>
+      <h2>The counters never touch React state</h2>
+      <p class="lead"><code>distanceM</code> changes every frame, and the HUD, whisper, rail, sky
+      and camera all read it. Routing that through <code>useState</code> re-renders the tree sixty
+      times a second.</p>
+      <div class="ba" style="margin-top:18px;">
+        <div class="col was">
+          <h3>What would have happened</h3>
+          <ul class="plain">
+            <li>Every counter tick re-renders the component tree</li>
+            <li>Reconciliation competes with the render loop for frame budget</li>
+            <li>Mid-range Android drops below 45&nbsp;fps and stays there</li>
+          </ul>
+        </div>
+        <div class="col now">
+          <h3>What it does instead</h3>
+          <ul class="plain">
+            <li>A mutable singleton holds <code>distanceM</code>, outside React entirely</li>
+            <li>One rAF writes straight to DOM nodes and object refs</li>
+            <li>React state is touched only when a <em>discrete</em> value changes</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flag"><p>This is an architecture decision, not an optimisation. Retrofitting it
+      would mean rewriting every component that reads the value &mdash; so it was settled before
+      a line of UI was written.</p></div>
+    </div>
+  </section>
+
+  <!-- 08 ------------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 8: Rendering tiers">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">08</span><span>Rendering</span></div>
+      <h2>The flat version paints first, then upgrades in place</h2>
+      <p class="lead">three.js is 800&nbsp;KB. Nobody should look at a blank screen while it loads,
+      and some readers should never receive it at all.</p>
+      <div class="three" style="margin-top:18px;">
+        <div class="panel">
+          <h3>Full</h3>
+          <p class="note">Desktops and recent phones. Perspective 3D, up to 2,000 calorie
+          particles, device pixel ratio up to 2.</p>
+        </div>
+        <div class="panel">
+          <h3>Lite</h3>
+          <p class="note">Mobile default, or anything an FPS watchdog catches below 45&nbsp;fps.
+          Same scene, 300 particles, pixel ratio 1. Downgrades once, never flaps.</p>
+        </div>
+        <div class="panel">
+          <h3>Flat</h3>
+          <p class="note">No WebGL, or <code>prefers-reduced-motion</code>. Canvas 2D lanes, no
+          particles, counters jump rather than ease. A complete experience, not a stub.</p>
+        </div>
+      </div>
+      <div class="stats" style="margin-top:18px;">
+        <div class="stat"><div class="v accent">60 KB</div><div class="k">entry, gzipped</div></div>
+        <div class="stat"><div class="v">3 s</div><div class="k">first paint budget</div></div>
+        <div class="stat"><div class="v">45 fps</div><div class="k">downgrade floor</div></div>
+        <div class="stat"><div class="v">1</div><div class="k">canvas in flat tier</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 ------------------------------------------------------------------ -->
+  <!-- ILLO SLOT: three lanes seen from above — dots, dashes, a ticked line —
+       legible with the colour drained out. -->
+  <section class="slide" aria-label="Slide 9: The ribbons">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">09</span><span>Accessibility</span></div>
+      <h2>The ribbon shapes are not decoration</h2>
+      <p class="lead">Each mover's trail encodes its own data, and each is a different
+      <em>shape</em> &mdash; so the three stay tellable apart with colour removed entirely.</p>
+      <div class="ribbons" style="margin-top:20px;">
+        <div class="ribbon"><span class="key" style="color:var(--walk)">Walk</span><span class="lane dots"><i></i></span><span class="say">One dot per 0.704&nbsp;m step. No gaps &mdash; a walker always has a foot down.</span></div>
+        <div class="ribbon"><span class="key" style="color:var(--run)">Run</span><span class="lane dash"><i></i></span><span class="say">One dash per 1.04&nbsp;m stride. The gap is airtime.</span></div>
+        <div class="ribbon"><span class="key" style="color:var(--cycle)">Cycle</span><span class="lane line"><i></i></span><span class="say">A continuous line, ticked once per 2.1&nbsp;m wheel turn.</span></div>
+      </div>
+      <div class="flag"><p>A colour-blindness review passed the palette <strong>conditional on</strong>
+      keeping this redundancy &mdash; yellow and pink converge for red-green viewers. Collapsing to
+      colour alone would silently fail a check that had already been signed off, so it is written
+      into the repo's <code>CLAUDE.md</code> as a rule.</p></div>
+    </div>
+  </section>
+
+  <!-- 10 ----------------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 10: Features">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">10</span><span>What is in it</span></div>
+      <h2>Eighteen milestones, and a lot of quiet road</h2>
+      <p class="lead">The pacing is deliberate: long empty stretches make the payoffs land. Hero
+      cards are the only skip targets; everything else is a whisper printed flat on the road as
+      you pass over it.</p>
+      <div class="two" style="margin-top:18px;">
+        <div class="panel">
+          <h3>The journey</h3>
+          <ul class="plain">
+            <li><strong>18 hero cards</strong> &mdash; Bolt at 100&nbsp;m to a full lap at 40,075&nbsp;km</li>
+            <li><strong>27 whispers</strong> &mdash; one line each, no card, no pause</li>
+            <li>Ghosts: Sawe's sub-two marathon, Ganna's hour record, a car at Pune</li>
+            <li>Sky follows the walker's clock from 06:00 &mdash; dark by km&nbsp;60</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Getting around</h3>
+          <ul class="plain">
+            <li>Skip pill, plus <code>N</code> / <code>P</code> keys</li>
+            <li>An 18-dot rail on a log scale, so the first kilometre isn't crushed</li>
+            <li>Auto-travel at 1&times;, 100&times; and 10,000&times;</li>
+            <li>Sources drawer, shareable <code>?km=</code> links, screenshot-ready ending</li>
+          </ul>
+        </div>
+      </div>
+      <div class="stats" style="margin-top:18px;">
+        <div class="stat"><div class="v accent">334</div><div class="k">walker&rsquo;s days</div></div>
+        <div class="stat"><div class="v">167</div><div class="k">runner&rsquo;s days</div></div>
+        <div class="stat"><div class="v">83</div><div class="k">cyclist&rsquo;s days</div></div>
+        <div class="stat"><div class="v">7,481</div><div class="k">slices, walking</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 ----------------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 11: What the build caught">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">11</span><span>What the build caught</span></div>
+      <h2>Deriving numbers finds what re-reading cannot</h2>
+      <p class="lead">Card copy uses tokens resolved against the model at each card's own distance,
+      so text can never drift from the numbers. That rule reads like tidiness. It is a correctness
+      mechanism.</p>
+      <div class="two" style="margin-top:18px;">
+        <div class="panel">
+          <h3>83 days, not 84</h3>
+          <p>The spec said 84. So did its 49-claim fact-check. So did the design.
+          40,075 &divide; 20&nbsp;km/h is 2,003.75 hours &mdash; <strong>83.49 days</strong>.</p>
+          <p class="note">The walker (333.96) and runner (166.98) genuinely do round up. The same
+          instinct was applied once too often, and three review passes agreed with each other.</p>
+        </div>
+        <div class="panel">
+          <h3>Three more, the same way</h3>
+          <ul class="plain">
+            <li>Share text said &ldquo;7,107&rdquo; beside a card saying &ldquo;7,481&rdquo; &mdash; one walker, two units</li>
+            <li>Two rail dots sat <strong>2.9&nbsp;px apart</strong>, making one unclickable</li>
+            <li>At 360&times;640 a card covered the controls once the copy wrapped</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flag"><p>Prose numbers are unverified claims. Derive them and they become
+      assertions &mdash; 19 of them, run in under a second.</p></div>
+    </div>
+  </section>
+
+  <!-- 12 ----------------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 12: Where it stands">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">12</span><span>Where it stands</span></div>
+      <h2>Real science, unrealistic people</h2>
+      <div class="two" style="margin-top:6px;">
+        <div class="panel">
+          <h3>The stack</h3>
+          <div style="margin-bottom:10px;">
+            <span class="tag on">Vite</span><span class="tag on">React 18</span><span class="tag on">React Three Fiber</span>
+            <span class="tag on">three.js</span><span class="tag on">zustand</span><span class="tag on">vitest</span>
+          </div>
+          <p class="note">No framework for the scroll &mdash; it is 180 lines of plain rAF and one
+          spacer. The heavy dependency is three.js, and it is the one thing that lazy-loads.</p>
+        </div>
+        <div class="panel">
+          <h3>Honest about what is unsettled</h3>
+          <p>Five figures are flagged on their own cards and in the sources drawer rather than
+          quietly rounded &mdash; two expressway lengths, NH&nbsp;44's true distance, the Comrades
+          route, and a 1970 efficiency ranking.</p>
+          <p class="note">Every card carries its source. The drawer builds itself from them.</p>
+        </div>
+      </div>
+      <div class="stats" style="margin-top:18px;">
+        <div class="stat"><div class="v accent">40,075</div><div class="k">km, one lap</div></div>
+        <div class="stat"><div class="v">18</div><div class="k">hero milestones</div></div>
+        <div class="stat"><div class="v">19</div><div class="k">model assertions</div></div>
+        <div class="stat"><div class="v">3</div><div class="k">rendering tiers</div></div>
+      </div>
+      <div class="title-meta" style="margin-top:22px;">
+        <a href="https://the-long-way-around.sankettambare.in">Scroll it &rarr;</a>
+        <a href="https://github.com/daredavil01/the-long-way-around">Source on GitHub</a>
+        <span>Please do not scroll to the end.</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <div class="ticks" id="ticks"></div>
+  <span class="counter" id="counter">01 / 12</span>
+</nav>
+
+<script>
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var counter = document.getElementById('counter');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var current = 0;
+
+  var TITLES = ['Title', 'The idea', 'The hook', 'The model', 'The scroll problem',
+                'The recycling spacer', 'Architecture', 'Rendering tiers', 'The ribbons',
+                'Features', 'What the build caught', 'Where it stands'];
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  slides.forEach(function (slide, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Slide ' + (i + 1) + ': ' + (TITLES[i] || ''));
+    b.addEventListener('click', function () { go(i); });
+    ticks.appendChild(b);
+  });
+  var tickButtons = Array.prototype.slice.call(ticks.children);
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    tickButtons.forEach(function (b, i) {
+      b.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+    paint();
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  // A resize changes what offsetLeft means; stay on the slide the reader was on.
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' });
+    }, 120);
+  });
+
+  paint();
+})();
+
+// --- Theme toggle ---------------------------------------------------------
+// Three states, not two: the deck's CSS already honours the reader's OS setting
+// when no data-theme is present, and a two-way switch would throw that away.
+(function () {
+  var KEY = 'deck-theme';
+  var MODES = ['auto', 'light', 'dark'];
+  var META = {
+    auto:  { ico: '◑', lab: 'Auto',  say: 'follow system' },
+    light: { ico: '☀', lab: 'Light', say: 'light' },
+    dark:  { ico: '☾', lab: 'Dark',  say: 'dark' }
+  };
+
+  var btn = document.getElementById('theme');
+  var ico = document.getElementById('theme-ico');
+  var lab = document.getElementById('theme-lab');
+
+  function stored() {
+    try { return localStorage.getItem(KEY); } catch (e) { return null; }
+  }
+
+  var mode = MODES.indexOf(stored()) > -1 ? stored() : 'auto';
+
+  function apply(next, persist) {
+    mode = next;
+    if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', mode);
+
+    ico.textContent = META[mode].ico;
+    lab.textContent = META[mode].lab;
+    btn.setAttribute('aria-label', 'Theme: ' + META[mode].say + '. Activate to change.');
+
+    if (persist) {
+      // Storage can throw in a private window; the toggle must still work.
+      try {
+        if (mode === 'auto') localStorage.removeItem(KEY);
+        else localStorage.setItem(KEY, mode);
+      } catch (e) { /* ignored */ }
+    }
+  }
+
+  btn.addEventListener('click', function () {
+    apply(MODES[(MODES.indexOf(mode) + 1) % MODES.length], true);
+  });
+
+  apply(mode, false);
+})();
+</script>
+</body>
+</html>
