@@ -1,0 +1,1362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Day Island — the redesign deck. How a homepage became an ink-drawn 3D island in one working session: every prompt and design question, the paths not taken (Blender, Zdog), the contour terrain, the ink renderer, the scroll-driven camera and clock, and the bugs the build caught.">
+<title>Day Island — the Redesign Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600&family=Noto+Serif:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<script>
+// Runs before first paint: a stored theme must be on <html> already, or the
+// deck flashes the system theme before switching.
+(function(){
+  try{
+    var t = localStorage.getItem('deck-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ /* private mode, blocked storage — fall through to system */ }
+})();
+</script>
+
+<style>
+/* ---------------------------------------------------------------------------
+ * The shell and tokens are the same as the other decks in presentations/ —
+ * stone neutrals, the rust accent, Noto Serif / Inter / Plus Jakarta / IBM Plex
+ * Mono. The illustration tokens (--i-*) and classes (.il-*) are the illo house
+ * style from ask-the-archive.html: Blot, the ink-drop mascot, on warm paper.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#f9f9f9; --surface:#ffffff; --surface-alt:#f3f3f3; --surface-sunk:#eeeeee;
+  --rule:#e2e2e2; --rule-soft:#eeeeee;
+  --text:#1a1c1c; --text-prose:#2f3131; --text-secondary:#444748;
+  --text-muted:#63676a; --text-faint:#747878;
+  --accent:#b22200; --accent-soft:#ffdad3; --accent-ink:#8c1800;
+  --ok:#2e7d4f; --ok-bg:#e7f3ec;
+  --bad:#ba1a1a; --bad-bg:#ffdad6;
+  --focus:#2563eb;
+  --i-paper:#f6f2ea; --i-ink:#1d1b16; --i-acc:#1f9e7a; --i-sec:#e0632e;
+
+  --font-display:'Noto Serif',Georgia,serif;
+  --font-body:'Inter',system-ui,-apple-system,sans-serif;
+  --font-label:'Plus Jakarta Sans',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --font-hand:'Caveat',cursive;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#1a1c1c; --surface:#222525; --surface-alt:#2a2d2d; --surface-sunk:#2f3131;
+    --rule:#3a3e3e; --rule-soft:#2f3131;
+    --text:#f1f1f1; --text-prose:#dcdcdc; --text-secondary:#c4c7c7;
+    --text-muted:#a2a6a6; --text-faint:#8b8f8f;
+    --accent:#ffb4a4; --accent-soft:#4a1305; --accent-ink:#ffdad3;
+    --ok:#79c293; --ok-bg:#17291f;
+    --bad:#f08a8a; --bad-bg:#2c1917;
+    --focus:#7aa7ff;
+    --i-paper:#1d1c18; --i-ink:#e9e3d3; --i-acc:#4fb795; --i-sec:#e08a52;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#1a1c1c; --surface:#222525; --surface-alt:#2a2d2d; --surface-sunk:#2f3131;
+  --rule:#3a3e3e; --rule-soft:#2f3131;
+  --text:#f1f1f1; --text-prose:#dcdcdc; --text-secondary:#c4c7c7;
+  --text-muted:#a2a6a6; --text-faint:#8b8f8f;
+  --accent:#ffb4a4; --accent-soft:#4a1305; --accent-ink:#ffdad3;
+  --ok:#79c293; --ok-bg:#17291f;
+  --bad:#f08a8a; --bad-bg:#2c1917;
+  --focus:#7aa7ff;
+  --i-paper:#1d1c18; --i-ink:#e9e3d3; --i-acc:#4fb795; --i-sec:#e08a52;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--paper);color:var(--text);
+  font-family:var(--font-body);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+a{color:var(--accent);}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  height:100dvh;scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100%;width:100%;height:100dvh;scroll-snap-align:start;
+  display:flex;align-items:center;justify-content:center;
+  padding:64px 24px 96px;overflow-y:auto;
+}
+.inner{width:100%;max-width:1040px;margin:auto 0;}
+
+.eyebrow{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:16px;
+}
+.eyebrow .num{
+  font-weight:500;color:var(--accent);
+  border:1px solid var(--accent);border-radius:999px;padding:1px 8px;
+}
+h1{font-family:var(--font-display);font-weight:700;font-size:clamp(36px,6.4vw,64px);line-height:1.05;margin:0 0 18px;letter-spacing:-.02em;}
+h2{font-family:var(--font-display);font-weight:600;font-size:clamp(24px,3.6vw,36px);line-height:1.15;margin:0 0 12px;letter-spacing:-.01em;}
+h3{font-family:var(--font-label);font-weight:700;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin:0 0 10px;}
+p{margin:0 0 12px;color:var(--text-prose);}
+.lead{font-size:clamp(16px,1.9vw,19px);color:var(--text-secondary);max-width:66ch;}
+.note{font-size:13.5px;color:var(--text-muted);}
+strong{color:var(--text);font-weight:600;}
+code{
+  font-family:var(--font-mono);font-size:.86em;background:var(--surface-sunk);
+  border:1px solid var(--rule-soft);border-radius:5px;padding:1px 5px;color:var(--text-secondary);
+}
+pre{
+  font-family:var(--font-mono);font-size:12px;line-height:1.65;
+  background:var(--surface-sunk);border:1px solid var(--rule);border-radius:12px;
+  padding:12px 14px;overflow-x:auto;margin:0;color:var(--text-secondary);
+}
+pre .hl{color:var(--accent);}
+
+/* --- Title --------------------------------------------------------------- */
+.title-rule{height:3px;width:110px;background:var(--accent);margin:0 0 22px;border-radius:2px;}
+.title-meta{
+  display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:22px;
+  font-family:var(--font-mono);font-size:12px;color:var(--text-muted);
+}
+.title-meta a{text-decoration:none;border-bottom:1px solid transparent;}
+.title-meta a:hover{border-bottom-color:var(--accent);}
+
+/* --- Layout helpers ------------------------------------------------------ */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;}
+.two.wide-left{grid-template-columns:1.25fr 1fr;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+/* Grid children may shrink below their content, so long code lines scroll inside their box instead of widening the slide */
+.two > *,.three > *,.pair > *,.fallbacks > *,.dqs > *{min-width:0;}
+.stack-sm{display:flex;flex-direction:column;gap:12px;}
+.stack-sm > *{margin-top:0;margin-bottom:0;}
+@media (max-width:820px){
+  .two,.two.wide-left,.three{grid-template-columns:1fr;}
+  .slide{padding:60px 16px 92px;}
+}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:16px 18px;}
+.panel.sunk{background:var(--surface-alt);}
+.panel p:last-child{margin-bottom:0;}
+ul.plain{list-style:none;margin:0;padding:0;}
+ul.plain li{position:relative;padding-left:20px;margin-bottom:8px;color:var(--text-prose);font-size:14.5px;}
+ul.plain li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:50%;background:var(--accent);}
+ul.plain li:last-child{margin-bottom:0;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px;}
+@media (max-width:820px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--surface-alt);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;}
+.stat .v{font-family:var(--font-display);font-weight:700;font-size:28px;line-height:1;color:var(--text);}
+.stat .v.accent{color:var(--accent);}
+.stat .k{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-top:6px;}
+.stats.six{grid-template-columns:repeat(6,1fr);}
+@media (max-width:980px){.stats.six{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:620px){.stats.six{grid-template-columns:repeat(2,1fr);}}
+table.t{width:100%;border-collapse:collapse;font-size:13.5px;}
+table.t th,table.t td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--rule);vertical-align:top;}
+table.t th{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);font-weight:500;}
+table.t td.n{font-family:var(--font-mono);white-space:nowrap;}
+table.t tr.pick td{background:var(--accent-soft);color:var(--accent-ink);}
+.flag{border-left:3px solid var(--accent);background:var(--surface-alt);border-radius:0 10px 10px 0;padding:10px 14px;margin-top:12px;}
+.flag p{margin:0;font-size:14px;color:var(--text-secondary);}
+
+/* --- Prompts: the user's words, verbatim, with a light fix underneath ---- */
+.prompt{
+  margin:0;border:1px solid var(--rule);border-left:4px solid var(--accent);
+  background:var(--surface);border-radius:12px;padding:12px 16px 12px;
+}
+.prompt figcaption{
+  display:flex;justify-content:space-between;gap:12px;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);
+}
+.prompt figcaption b{color:var(--accent);font-weight:500;}
+.prompt blockquote{
+  margin:8px 0 0;font-family:var(--font-mono);font-size:14px;line-height:1.6;color:var(--text);white-space:pre-line;
+}
+.prompt blockquote::before{content:"› ";color:var(--accent);}
+.prompt .fix{margin:8px 0 0;font-size:12.5px;font-style:italic;color:var(--text-muted);}
+.prompt .fix b{font-style:normal;font-weight:500;color:var(--text-secondary);}
+/* The appendix flows its prompt cards down two balanced columns */
+.cols2{columns:2;column-gap:14px;}
+.cols2 > *{break-inside:avoid;margin:0 0 10px;}
+.cols2 .prompt{padding:10px 14px;}
+.cols2 .prompt blockquote{font-size:12.5px;line-height:1.5;margin-top:6px;}
+@media (max-width:820px){.cols2{columns:1;}}
+ol.checks{margin:0;padding-left:22px;}
+ol.checks li{margin:0 0 7px;font-size:14px;color:var(--text-prose);}
+ol.checks li::marker{font-family:var(--font-mono);color:var(--accent);}
+
+/* --- Design questions: the question, every option, the pick ------------- */
+.dqs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;}
+.dq{border:1px solid var(--rule);border-radius:12px;padding:11px 13px 12px;background:var(--surface-alt);}
+.dq .h{
+  display:inline-block;font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:0 7px;margin-bottom:6px;
+}
+.dq .q{margin:0 0 6px;font-size:13.5px;font-weight:600;line-height:1.35;color:var(--text);}
+.dq ul{list-style:none;margin:0;padding:0;}
+.dq li{display:flex;gap:7px;font-size:12.5px;line-height:1.35;color:var(--text-muted);padding:3px 7px;border-radius:6px;}
+.dq li::before{content:"○";flex:none;color:var(--text-faint);}
+.dq li.on{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;}
+.dq li.on::before{content:"✓";color:var(--accent-ink);}
+.dq li em{font-style:normal;opacity:.75;font-weight:400;}
+.dq .typed{margin:6px 0 0;font-family:var(--font-mono);font-size:12px;color:var(--accent-ink);background:var(--accent-soft);border-radius:6px;padding:4px 8px;}
+.dq .typed::before{content:"typed: ";opacity:.7;}
+.dqs.two-up{grid-template-columns:1fr 1fr;}
+@media (max-width:620px){.dqs.two-up{grid-template-columns:1fr;}}
+.round{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin:14px 0 8px;}
+.round:first-child{margin-top:0;}
+
+/* --- Pictures ------------------------------------------------------------ */
+.shot{margin:0;border-radius:12px;overflow:hidden;border:1px solid var(--rule);background:var(--surface-sunk);}
+.shot img{display:block;width:100%;height:auto;}
+.shot figcaption{font-family:var(--font-mono);font-size:11px;letter-spacing:.02em;padding:7px 10px;color:var(--text-muted);background:var(--surface);border-top:1px solid var(--rule);}
+.shot.phone{max-width:230px;justify-self:center;}
+/* Wide crops keep a pair of screenshots to one row of a slide */
+.shot.crop img{aspect-ratio:16/6;object-fit:cover;}
+.fallbacks{display:grid;grid-template-columns:1fr 230px;gap:18px;align-items:start;}
+@media (max-width:820px){.fallbacks{grid-template-columns:1fr;}}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media (max-width:820px){.pair{grid-template-columns:1fr;}}
+.bugs{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:820px){.bugs{grid-template-columns:1fr;}}
+.bug{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--text-prose);}
+.bug.has-pic{display:grid;grid-template-columns:190px 1fr;gap:12px;}
+.bug h4{margin:0 0 4px;font-family:var(--font-label);font-size:13.5px;color:var(--text);}
+.bug p{font-size:12.8px;margin:0 0 6px;}
+.bug p:last-child{margin-bottom:0;}
+.bug .pic{display:flex;gap:4px;min-height:120px;}
+.bug .pic img{display:block;flex:1;min-width:0;width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--rule);}
+.bug .fixline{color:var(--ok);font-weight:500;}
+@media (max-width:620px){.bug.has-pic{grid-template-columns:1fr;}.bug .pic{height:170px;}}
+/* Ink-on-alpha stills from the island, recoloured with the deck's text colour */
+.stills{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+@media (max-width:980px){.stills{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:620px){.stills{grid-template-columns:repeat(2,1fr);}}
+.still{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:8px 10px 10px;}
+.still i{display:block;aspect-ratio:3/2;background:var(--text);-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;}
+.still b{display:block;font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-top:4px;}
+.still span{font-size:12.5px;color:var(--text-secondary);}
+.ascii{font-family:var(--font-mono);font-size:11px;line-height:1.35;white-space:pre;background:var(--surface-sunk);border:1px solid var(--rule);border-radius:10px;padding:10px 12px;color:var(--text-secondary);overflow-x:auto;margin:6px 0 0;}
+.world{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:12px;}
+.world.pick{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);}
+.world h4{margin:0 0 2px;font-family:var(--font-label);font-size:14px;}
+.world p{font-size:12.5px;margin:0;color:var(--text-muted);}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;}
+.flow .box{flex:1 1 170px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:10px 12px;font-size:12.8px;color:var(--text-prose);}
+.flow .box h4{margin:0 0 4px;font-family:var(--font-mono);font-size:12px;color:var(--accent);}
+.flow .box.off{border-style:dashed;background:var(--surface-alt);}
+.flow .arrow{align-self:center;font-family:var(--font-mono);color:var(--text-faint);}
+.strip{display:flex;flex-direction:column;gap:4px;font-family:var(--font-mono);font-size:12px;}
+.strip div{border-radius:8px;padding:6px 10px;}
+.strip .dwell{background:var(--accent-soft);color:var(--accent-ink);}
+.strip .transit{border:1px dashed var(--rule);color:var(--text-muted);height:44px;display:flex;align-items:center;}
+
+/* --- Illustrations: the illo house style ---------------------------------- */
+.illo{margin:0;border-radius:14px;overflow:hidden;background:var(--i-paper);border:1px solid var(--rule);}
+.illo-svg{display:block;width:100%;height:auto;}
+.il-bg{fill:var(--i-paper)}
+.il-p{fill:var(--i-paper);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.il-a{fill:var(--i-acc);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round}
+.il-s{fill:var(--i-sec);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round}
+.il-k{fill:none;stroke:var(--i-ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.il-thin{fill:none;stroke:var(--i-ink);stroke-width:2.5;stroke-linecap:round;opacity:.75}
+.il-ka{fill:none;stroke:var(--i-acc);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.il-ks{fill:none;stroke:var(--i-sec);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.il-mark{fill:var(--i-acc)}
+.il-limb{stroke:var(--i-ink);stroke-width:9;stroke-linecap:round}
+.il-body{fill:var(--i-paper);stroke:none}
+.il-an{fill:var(--i-acc)}
+.il-dot{fill:var(--i-ink)}
+.il-t{font-family:"Caveat",cursive;font-weight:500;fill:var(--i-ink)}
+.il-title{font-weight:700}
+.il-ta{font-family:"Caveat",cursive;font-weight:700;fill:var(--i-acc)}
+.il-ts{font-family:"Caveat",cursive;font-weight:700;fill:var(--i-sec)}
+.title-illo{max-width:560px;}
+
+/* --- Home link + rail ---------------------------------------------------- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 18px;pointer-events:none;
+}
+.topbar > *{pointer-events:auto;}
+.home,.theme{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-muted);text-decoration:none;
+  background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;
+}
+.home:hover,.theme:hover{color:var(--accent);border-color:var(--accent);}
+.theme{display:inline-flex;align-items:center;gap:7px;cursor:pointer;line-height:1;}
+.theme .ico{font-size:13px;line-height:1;}
+.rail{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;background:var(--surface);border-top:1px solid var(--rule);
+}
+.rail button{
+  font:inherit;font-size:15px;line-height:1;cursor:pointer;
+  background:var(--surface-alt);color:var(--text-secondary);
+  border:1px solid var(--rule);border-radius:8px;padding:7px 12px;
+}
+.rail button:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.rail button:disabled{opacity:.35;cursor:default;}
+.ticks{display:flex;gap:4px;flex:1;overflow:hidden;}
+.ticks button{flex:1;min-width:0;height:5px;padding:0;border-radius:999px;background:var(--rule);border:none;}
+.ticks button[aria-current="true"]{background:var(--accent);}
+.counter{font-family:var(--font-mono);font-size:11.5px;color:var(--text-muted);white-space:nowrap;}
+@media (max-width:760px){
+  .topbar{background:var(--paper);border-bottom:1px solid var(--rule);padding:9px 14px;}
+  .home,.theme{border-color:transparent;background:transparent;padding:4px 6px;}
+}
+@media (prefers-reduced-motion: reduce){.track{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+<!-- Blot and the grain filter, defined once and reused by every drawing -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="blot">
+      <path class="il-body" d="M0,-62 C10,-44 36,-26 36,2 C36,24 20,38 0,38 C-20,38 -36,24 -36,2 C-36,-26 -10,-44 0,-62 Z"/>
+      <path class="il-an" d="M0,-62 C5,-54 11,-47 16,-39 Q0,-32 -16,-39 C-11,-47 -5,-54 0,-62 Z"/>
+      <path class="il-k" d="M16,-39 Q0,-32 -16,-39"/>
+      <path class="il-k" d="M0,-62 C10,-44 36,-26 36,2 C36,24 20,38 0,38 C-20,38 -36,24 -36,2 C-36,-26 -10,-44 0,-62 Z"/>
+      <circle class="il-dot" cx="-11" cy="-3" r="3.8"/><circle class="il-dot" cx="11" cy="-3" r="3.8"/>
+    </g>
+    <g id="blot-look-up">
+      <path class="il-body" d="M0,-62 C10,-44 36,-26 36,2 C36,24 20,38 0,38 C-20,38 -36,24 -36,2 C-36,-26 -10,-44 0,-62 Z"/>
+      <path class="il-an" d="M0,-62 C5,-54 11,-47 16,-39 Q0,-32 -16,-39 C-11,-47 -5,-54 0,-62 Z"/>
+      <path class="il-k" d="M16,-39 Q0,-32 -16,-39"/>
+      <path class="il-k" d="M0,-62 C10,-44 36,-26 36,2 C36,24 20,38 0,38 C-20,38 -36,24 -36,2 C-36,-26 -10,-44 0,-62 Z"/>
+      <circle class="il-dot" cx="-9" cy="-10" r="3.8"/><circle class="il-dot" cx="13" cy="-10" r="3.8"/>
+    </g>
+    <filter id="il-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0.11 0"/>
+    </filter>
+    <marker id="il-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="il-mark"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <a class="home" data-island-return href="../index.html#build/day-island-deck">&larr; Home</a>
+  <button class="theme" type="button" id="theme" aria-label="Theme: follow system. Activate to change.">
+    <span class="ico" id="theme-ico" aria-hidden="true">&#9681;</span><span id="theme-lab">Auto</span>
+  </button>
+</div>
+
+<div class="track" id="track" tabindex="-1">
+
+  <!-- 01 · Title --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 1: Title">
+    <div class="inner">
+      <div class="two wide-left">
+        <div>
+          <div class="eyebrow"><span class="num">01</span><span>The redesign deck · September 2026</span></div>
+          <h1>Day Island</h1>
+          <div class="title-rule"></div>
+          <p class="lead">How a flat homepage became <strong>one full day drawn as an ink-on-paper island</strong> — told through every prompt that asked for it, every design question that shaped it, the paths not taken, and the bugs the build caught on the way.</p>
+          <div class="title-meta">
+            <a href="../index.html">Open the island ↗</a>
+            <span>8 prompts · 27 design questions · 9 rounds</span>
+            <a href="https://github.com/daredavil01/daredavil01">daredavil01/daredavil01</a>
+          </div>
+        </div>
+        <figure class="illo title-illo">
+          <svg class="illo-svg" viewBox="0 0 800 450" role="img" aria-label="Blot, the ink-drop mascot, inks a contour-line island onto a sheet of paper, with the sun on one side and the moon on the other">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="30" y1="412" x2="770" y2="412"/>
+            <circle class="il-s" cx="92" cy="92" r="30"/>
+            <g class="il-k"><line x1="92" y1="40" x2="92" y2="30"/><line x1="92" y1="144" x2="92" y2="154"/><line x1="40" y1="92" x2="30" y2="92"/><line x1="144" y1="92" x2="154" y2="92"/><line x1="55" y1="55" x2="48" y2="48"/><line x1="129" y1="129" x2="136" y2="136"/><line x1="55" y1="129" x2="48" y2="136"/><line x1="129" y1="55" x2="136" y2="48"/></g>
+            <path class="il-a" d="M712,58 a40,40 0 1,0 34,66 a32,32 0 1,1 -34,-66 z"/>
+            <path class="il-k" d="M640,70 v14 M633,77 h14 M606,128 v10 M601,133 h10"/>
+            <text class="il-t il-title" x="190" y="88" font-size="58">Day Island</text>
+            <g transform="rotate(-3 340 290)">
+              <rect class="il-p" x="130" y="165" width="430" height="235" rx="8"/>
+              <path class="il-k" d="M180,318 C185,250 290,212 360,226 C440,214 515,252 505,305 C496,352 410,375 332,366 C258,364 176,352 180,318Z"/>
+              <path class="il-thin" d="M218,315 C224,266 300,242 357,252 C422,244 475,270 466,306 C458,340 396,356 338,350 C278,349 214,340 218,315Z"/>
+              <path class="il-k" d="M262,310 C268,282 312,266 352,272 C394,268 424,286 418,308 C412,330 374,340 338,337 C298,337 258,330 262,310Z"/>
+              <path class="il-a" d="M318,288 h44 v-20 h-9 v7 h-8 v-7 h-9 v7 h-9 v-7 h-9 z"/>
+              <path class="il-ka" d="M420,334 q24,-12 50,-4 q20,6 38,-6" stroke-dasharray="8 8"/>
+              <path class="il-ks" d="M196,352 l14,-6"/>
+            </g>
+            <line class="il-k" x1="560" y1="294" x2="512" y2="336" style="stroke-width:8"/>
+            <path class="il-s" d="M512,336 l-12,14 l18,-6 z"/>
+            <g transform="translate(646 346) scale(1.25)">
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-29" y1="10" x2="-70" y2="-40"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="29" y1="10" x2="48" y2="36"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-13" y1="30" x2="-15" y2="49"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="13" y1="30" x2="15" y2="49"/>
+              <use href="#blot"/>
+            </g>
+            <rect width="800" height="450" filter="url(#il-grain)" pointer-events="none"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · The brief -------------------------------------------------------->
+  <section class="slide" aria-label="Slide 2: The brief">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">02</span><span>The brief</span></div>
+      <h2>It started with one open-ended prompt.</h2>
+      <div class="two wide-left">
+        <div class="stack-sm">
+          <figure class="prompt">
+            <figcaption><span><b>Prompt 01</b> · plan mode</span><span>verbatim</span></figcaption>
+            <blockquote>I want to completely redesign this.
+Explore options to make this interactive, engaging.
+Ask questions to clarify requirement.
+Use full imagination and be as creative as possible.
+Research the web for ideas if you want.</blockquote>
+            <p class="fix">Light fix: “clarify <b>requirements</b>”.</p>
+          </figure>
+          <p>“This” could have meant the homepage, the README or the whole repo. So the work began with a read of everything the hub linked to — 16 pages, the README and the old homepage’s 3,719 lines — and a first round of design questions instead of a design.</p>
+          <div class="flag"><p>Working agreement for the whole session: <strong>plan first, ask before assuming</strong>. Every fork in this deck was a question put to the owner, with a recommendation and the option to type something else.</p></div>
+        </div>
+        <figure class="illo">
+          <svg class="illo-svg" viewBox="0 0 800 450" role="img" aria-label="Blot looks up at a tall almanac page covered in lines, holding a pencil, with a question mark above">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="30" y1="412" x2="770" y2="412"/>
+            <rect class="il-p" x="360" y="60" width="300" height="352" rx="6"/>
+            <path class="il-k" d="M610,60 v34 h50"/>
+            <g class="il-thin"><line x1="392" y1="118" x2="560" y2="118"/><line x1="392" y1="144" x2="628" y2="144"/><line x1="392" y1="170" x2="610" y2="170"/><line x1="392" y1="196" x2="628" y2="196"/></g>
+            <rect class="il-s" x="392" y="224" width="70" height="46" rx="4"/><rect class="il-p" x="474" y="224" width="70" height="46" rx="4"/><rect class="il-p" x="556" y="224" width="72" height="46" rx="4"/>
+            <rect class="il-p" x="392" y="282" width="70" height="46" rx="4"/><rect class="il-a" x="474" y="282" width="70" height="46" rx="4"/><rect class="il-p" x="556" y="282" width="72" height="46" rx="4"/>
+            <g class="il-thin"><line x1="392" y1="352" x2="600" y2="352"/><line x1="392" y1="378" x2="560" y2="378"/></g>
+            <text class="il-t il-title" x="392" y="100" font-size="30">Field Almanac</text>
+            <text class="il-ts" x="210" y="120" font-size="92">?</text>
+            <g transform="translate(220 342) scale(1.3)">
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-29" y1="10" x2="-44" y2="30"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="29" y1="10" x2="62" y2="-18"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-13" y1="30" x2="-15" y2="49"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="13" y1="30" x2="15" y2="49"/>
+              <use href="#blot-look-up"/>
+            </g>
+            <line class="il-k" x1="298" y1="318" x2="318" y2="286" style="stroke-width:7"/>
+            <text class="il-t" x="40" y="440" font-size="26">“redesign this”… this what?</text>
+            <rect width="800" height="450" filter="url(#il-grain)" pointer-events="none"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · Before -------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 3: Before">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">03</span><span>Before · the Field Almanac</span></div>
+      <h2>A handsome page with eight hidden rooms.</h2>
+      <div class="two wide-left">
+        <div class="pair">
+          <figure class="shot"><img src="assets/day-island/before-almanac.webp" width="1280" height="800" alt="The old Field Almanac homepage: warm paper, a serif headline 'A developer who runs at dawn and reads past midnight', a nav of eight views"><figcaption>The Field Almanac, top</figcaption></figure>
+          <figure class="shot"><img src="assets/day-island/before-almanac-2.webp" width="1280" height="800" loading="lazy" alt="Further down the old homepage: grids of project cards in two bands"><figcaption>…and its card bands</figcaption></figure>
+        </div>
+        <div class="panel">
+          <h3>What the audit found</h3>
+          <ul class="plain">
+            <li>Eight views (About, Miles, Shelf…) toggled by a <code>go(view)</code> router — <strong>no URLs</strong>, so no deep links, and Back always went home</li>
+            <li>The clock said “Pune” but used the <strong>visitor’s</strong> time zone</li>
+            <li>Eight <code>&lt;h1&gt;</code>s, no landmarks, nav items that were <code>&lt;span&gt;</code>s</li>
+            <li>Numbers that disagreed: 20+ vs 21 races, 15+ vs 18 forts, 43 vs 48 books</li>
+            <li>No dark mode, no reduced-motion handling, 384 inline <code>style=""</code>s</li>
+            <li>The Shelf promised “spines you can pull” — they were twelve plain <code>&lt;div&gt;</code>s</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · Round 1 ------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 4: Design questions, round 1">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">04</span><span>Design questions · round 1 of 9</span></div>
+      <h2>Four questions set the ambition.</h2>
+      <p class="lead">The answers pushed every dial to the top: the whole site, any look, a show-stopper, and one journey instead of eight rooms.</p>
+      <div class="dqs">
+        <div class="dq"><span class="h">Scope</span><p class="q">What should the redesign cover? (“this” could mean a few things in this repo)</p><ul><li>Homepage only <em>(Recommended)</em></li><li>Homepage + README</li><li class="on">Whole site</li></ul></div>
+        <div class="dq"><span class="h">Aesthetic</span><p class="q">How far from the current “Field Almanac” look (warm paper, serif, rust accent) should it go?</p><ul><li>Clean break</li><li>Evolve the almanac</li><li class="on">Surprise me</li></ul></div>
+        <div class="dq"><span class="h">Intensity</span><p class="q">How ambitious should the interactivity be?</p><ul><li class="on">Show-stopper</li><li>Rich but light <em>(Recommended)</em></li><li>Subtle &amp; editorial</li></ul></div>
+        <div class="dq"><span class="h">Content</span><p class="q">What should happen to the in-page content views (About, Miles, Shelf, Treks, Notes, Now, Stats)?</p><ul><li>Keep all, re-imagine</li><li>Slim hub</li><li class="on">Merge into one journey</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · Time, not place ----------------------------------------------- -->
+  <section class="slide" aria-label="Slide 5: Time, not place">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">05</span><span>A constraint worth having</span></div>
+      <h2>The live site already had a map. This one got a clock.</h2>
+      <div class="two">
+        <div>
+          <p class="lead">Reading the repo turned up <code>docs/personal-website-redesign.html</code>: <strong>sankettambare.in already runs “The Wanderer’s Atlas”</strong> — a globe you dive into, an illustrated map of regions, quests and a passport.</p>
+          <ul class="plain">
+            <li>A second world organised <em>by place</em> would just be a copy.</li>
+            <li>The homepage’s own tagline — <em>“a developer who runs at dawn and reads past midnight”</em> — is organised <strong>by time</strong>.</li>
+            <li>So: one island, one day. Every chapter is an hour; the scroll is the clock.</li>
+            <li>No quests, no passport — the only collectible is a quiet count of hidden field notes.</li>
+          </ul>
+          <div class="flag"><p>One request was declined along the way: fetching the live site for book and race lists. Everything on the island comes from data already in this repo.</p></div>
+        </div>
+        <figure class="illo">
+          <svg class="illo-svg" viewBox="0 0 800 450" role="img" aria-label="Blot holds up a large clock face in front of a pinned treasure map that has been set aside">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="30" y1="412" x2="770" y2="412"/>
+            <g transform="rotate(6 560 180)">
+              <rect class="il-p" x="440" y="60" width="260" height="190" rx="4"/>
+              <path class="il-thin" d="M470,210 C510,150 560,190 600,130 C630,90 660,120 680,100" stroke-dasharray="8 8"/>
+              <path class="il-k" d="M662,88 l16,16 M678,88 l-16,16"/>
+              <circle class="il-s" cx="450" cy="70" r="9"/>
+              <text class="il-t" x="468" y="244" font-size="24">the Atlas (by place)</text>
+            </g>
+            <circle class="il-p" cx="290" cy="190" r="110"/>
+            <g class="il-k"><line x1="290" y1="92" x2="290" y2="106"/><line x1="290" y1="274" x2="290" y2="288"/><line x1="192" y1="190" x2="206" y2="190"/><line x1="374" y1="190" x2="388" y2="190"/></g>
+            <line class="il-k" x1="290" y1="190" x2="290" y2="120" style="stroke-width:7"/>
+            <line class="il-ks" x1="290" y1="190" x2="345" y2="222" style="stroke-width:7"/>
+            <circle class="il-dot" cx="290" cy="190" r="8"/>
+            <text class="il-ta" x="238" y="160" font-size="26">05:30</text>
+            <g transform="translate(410 344) scale(1.2)">
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-29" y1="10" x2="-66" y2="-40"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="29" y1="10" x2="52" y2="-30"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-13" y1="30" x2="-15" y2="49"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="13" y1="30" x2="15" y2="49"/>
+              <use href="#blot"/>
+            </g>
+            <text class="il-t il-title" x="40" y="440" font-size="30">time, not place</text>
+            <rect width="800" height="450" filter="url(#il-grain)" pointer-events="none"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · Into 3D ------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 6: Into 3D">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">06</span><span>Prompt 02 · into 3D</span></div>
+      <div class="two wide-left">
+        <figure class="prompt">
+          <figcaption><span><b>Prompt 02</b> · plan mode</span><span>verbatim</span></figcaption>
+          <blockquote>What are the possible options to convert this in 3d designed world?
+Give it rich, professional look.</blockquote>
+          <p class="fix">Light fix: “convert this <b>into a 3D-designed</b> world? Give it <b>a</b> rich, professional look.”</p>
+        </figure>
+        <p class="lead" style="margin:0">Six worlds went on the table — each a different answer to “what is a personal site, spatially?” — every one with the same promise: a real typographic layer on top, deep links, and a plain classic page as the fallback.</p>
+      </div>
+      <div class="three" style="margin-top:14px">
+        <div class="world pick"><h4>Day Island ✓</h4><p>A floating diorama that runs one full day; drag the clock from 05:30 to 00:30.</p>
+<pre class="ascii">  ☀ 05:30 ━━━●━━━━━ 00:30 ☾
+         ▲ fort
+   ┌───/^\─── tower ──┐
+   │ ~~river~~  run   │
+   └─[studio]─────────┘</pre></div>
+        <div class="world"><h4>The Ridge</h4><p>Scroll climbs a Sahyadri trail; campsites are projects, the summit fort is contact.</p>
+<pre class="ascii">              ▲ SUMMIT
+      ⛺ camp 2 ./
+  ⛺ camp 1 ../
+ 🏠 base   ▁▂▃▅▇ elevation</pre></div>
+        <div class="world"><h4>The Observatory</h4><p>Projects as constellations, books as a nebula, races as comets.</p>
+<pre class="ascii">  ✦ · ✧     ·  ✦
+    ✦──✦ Ask the Archive
+  ☄ races   ░nebula░
+ ▁▂▃▅▇▆▄ Sahyadri</pre></div>
+        <div class="world"><h4>The Studio</h4><p>A cabin room: the monitor runs the decks, a shelf of pullable books, a medal wall.</p></div>
+        <div class="world"><h4>The Long Run</h4><p>A 42.195 km course: km boards are chapters, aid stations are projects.</p></div>
+        <div class="world"><h4>Open world</h4><p>A walkable avatar with physics, Bruno-Simon style.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · Rounds 2–3 ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 7: Design questions, rounds 2 and 3">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">07</span><span>Design questions · rounds 2–3</span></div>
+      <h2>A day island, drawn in ink, flown like a film.</h2>
+      <p class="round">Round 2 · the world</p>
+      <div class="dqs">
+        <div class="dq"><span class="h">World</span><p class="q">Which 3D world should the site become?</p><ul><li class="on">Day Island <em>(Recommended)</em></li><li>The Ridge</li><li>The Observatory</li><li>The Studio</li></ul></div>
+        <div class="dq"><span class="h">Navigation</span><p class="q">How should visitors move through the world?</p><ul><li class="on">Guided cinematic <em>(Recommended)</em></li><li>Free-roam avatar</li><li>Hybrid</li></ul></div>
+        <div class="dq"><span class="h">Art style</span><p class="q">Which art direction gives the “rich, professional” look you want?</p><ul><li>Stylized soft-lit</li><li>Cinematic luminous</li><li class="on">Topographic ink</li><li>Photoreal PBR</li></ul></div>
+        <div class="dq"><span class="h">Assets</span><p class="q">Where should the 3D assets come from?</p><ul><li class="on">Procedural, code-only <em>(Recommended)</em></li><li>CC0 model kits</li><li>Your Blender models</li></ul></div>
+      </div>
+      <p class="round">Round 3 · the rest of the site</p>
+      <div class="dqs">
+        <div class="dq"><span class="h">Sub-pages</span><p class="q">“Whole site”: how far should the island look reach into the sub-pages?</p><ul><li class="on">Shared chrome <em>(Recommended)</em></li><li>Chrome + re-skin “me” pages</li><li>Re-skin everything</li></ul></div>
+        <div class="dq"><span class="h">README</span><p class="q">What should happen to the GitHub profile README?</p><ul><li class="on">Island banner + rewrite <em>(Recommended)</em></li><li>Banner only</li><li>Text only</li></ul></div>
+        <div class="dq"><span class="h">Extras</span><p class="q">Which extra layers should the island have? (pick any)</p><ul><li>Ambient sound</li><li class="on">⌘K command palette</li><li class="on">Hidden field notes</li><li class="on">Live “what’s Sanket doing now”</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · Blender ------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 8: Use it from Blender">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">08</span><span>Prompt 03 · rounds 4–5</span></div>
+      <div class="two wide-left">
+        <div class="stack-sm">
+          <figure class="prompt">
+            <figcaption><span><b>Prompt 03</b> · mid-plan</span><span>verbatim</span></figcaption>
+            <blockquote>Use it from blender</blockquote>
+            <p class="fix">Light fix: “Use it from <b>Blender</b>” — i.e. build the island’s assets in Blender.</p>
+          </figure>
+          <div class="panel sunk">
+            <h3>The Blender plan (as first drawn up)</h3>
+            <ul class="plain">
+              <li><code>pip install bpy==4.5.14</code> (4.5 LTS) — Blender, headless, in the container</li>
+              <li>Python scripts model the island; Cycles bakes AO + three sun-shadow keys</li>
+              <li>A node naming contract — <code>stop_run</code>, <code>cam_build</code>, <code>hot_read_*</code> — so a GUI edit re-exports without touching JS</li>
+              <li>Freestyle ink renders for the README banners and classic-view stills</li>
+              <li>Found on the way: no EGL in the container, so Eevee, Workbench and Line Art can’t render headless — Cycles on CPU only</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <p class="round">Round 4 · Blender</p>
+          <div class="dqs" style="grid-template-columns:1fr">
+            <div class="dq"><span class="h">Blender</span><p class="q">“Use it from Blender” — who should build the island in Blender?</p><ul><li class="on">You script it in Blender <em>(Recommended)</em></li><li>I’ll model it myself</li><li>Hybrid</li></ul></div>
+            <div class="dq"><span class="h">Blender use</span><p class="q">Where should Blender’s rendering be used, beyond the models? (pick any)</p><ul><li class="on">Baked lighting/AO</li><li class="on">Authored camera &amp; animation</li><li class="on">README banner via Freestyle</li><li class="on">Classic-view illustrations</li></ul></div>
+          </div>
+        </div>
+      </div>
+      <p class="round">Round 5 · the numbers disagreed, so the owner decided</p>
+      <div class="dqs">
+        <div class="dq"><span class="h">Books</span><p class="q">The book count disagrees across the repo. Which is canonical?</p><ul><li class="on">48 (infographic)</li><li>43</li></ul></div>
+        <div class="dq"><span class="h">Ratings</span><p class="q">Java and C skill ratings disagree. Which is right?</p><ul><li>★★★ (README)</li><li>★★ (homepage)</li></ul><p class="typed">No preference → went with ★★★</p></div>
+        <div class="dq"><span class="h">Archive</span><p class="q">Where should the four Ask the Archive cards live on the island?</p><ul><li class="on">Read: library archive wing <em>(Recommended)</em></li><li>Build: the studio</li></ul></div>
+        <div class="dq"><span class="h">.blend file</span><p class="q">Should the Blender source file (island.blend, likely 5–20 MB compressed) be committed?</p><ul><li class="on">Commit it <em>(Recommended)</em></li><li>Scripts only</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 · Heavy --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 9: As it is heavy">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">09</span><span>Prompts 04–05 · round 6</span></div>
+      <div class="two">
+        <div class="stack-sm">
+          <figure class="prompt">
+            <figcaption><span><b>Prompt 04</b> · on the plan, and again mid-turn</span><span>verbatim</span></figcaption>
+            <blockquote>What are the options for blender, as it is heavy</blockquote>
+            <p class="fix">Light fix: “What are the options for <b>Blender</b>, as it’s heavy<b>?</b>”</p>
+          </figure>
+          <table class="t">
+            <thead><tr><th>Option</th><th>Visitor download</th><th>Repo</th><th>Tooling</th></tr></thead>
+            <tbody>
+              <tr><td>A · full Blender</td><td class="n">~1.5 MB</td><td class="n">15–30 MB</td><td>1.2 GB install · ~40 min bake</td></tr>
+              <tr><td>B · Blender-lite</td><td class="n">~1 MB</td><td class="n">2–3 MB</td><td>1.2 GB install · ~3 min</td></tr>
+              <tr><td>C · in the browser</td><td class="n">~0.1 MB</td><td class="n">~1.5 MB</td><td>none</td></tr>
+              <tr><td>D · browser, Blender-ready</td><td class="n">~0.1 MB</td><td class="n">~1.5 MB</td><td>none now</td></tr>
+            </tbody>
+          </table>
+          <div class="dq"><span class="h">3D source</span><p class="q">Given the weight, which way should the 3D island be built?</p><ul><li>D. Browser, Blender-ready <em>(Recommended)</em></li><li>C. Browser only</li><li>B. Blender-lite</li><li>A. Full Blender (as planned)</li></ul><p class="typed">Suggest other options for 3D</p></div>
+        </div>
+        <div class="stack-sm">
+        <figure class="illo">
+          <svg class="illo-svg" viewBox="0 0 800 450" role="img" aria-label="Blot looks at a balance scale: a heavy block labelled 1.2 GB sinks one side while a feather labelled 0.1 MB floats on the other">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="30" y1="412" x2="770" y2="412"/>
+            <path class="il-p" d="M400,412 L372,412 L400,190 L428,412 Z"/>
+            <line class="il-k" x1="200" y1="236" x2="600" y2="144" style="stroke-width:7"/>
+            <circle class="il-dot" cx="400" cy="190" r="9"/>
+            <line class="il-thin" x1="220" y1="232" x2="220" y2="290"/><line class="il-thin" x1="580" y1="148" x2="580" y2="206"/>
+            <path class="il-p" d="M160,290 h120 l-14,14 h-92 z"/>
+            <path class="il-p" d="M520,206 h120 l-14,14 h-92 z"/>
+            <rect class="il-s" x="178" y="222" width="84" height="68" rx="6"/>
+            <text class="il-t il-title" x="190" y="266" font-size="30" style="fill:var(--i-paper)">1.2 GB</text>
+            <path class="il-a" d="M560,200 C570,170 600,158 632,150 C612,172 594,188 560,200 Z"/>
+            <path class="il-k" d="M560,200 C586,182 606,168 630,152"/>
+            <text class="il-t" x="600" y="130" font-size="26">0.1 MB</text>
+            <g transform="translate(110 350) scale(1.1)">
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-29" y1="10" x2="-40" y2="30"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="29" y1="10" x2="40" y2="-26"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-13" y1="30" x2="-15" y2="49"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="13" y1="30" x2="15" y2="49"/>
+              <use href="#blot-look-up"/>
+            </g>
+            <text class="il-t il-title" x="470" y="440" font-size="30">…as it is heavy</text>
+            <rect width="800" height="450" filter="url(#il-grain)" pointer-events="none"/>
+          </svg>
+        </figure>
+        <figure class="prompt">
+          <figcaption><span><b>Prompt 05</b> · typed into the question on the left</span><span>verbatim</span></figcaption>
+          <blockquote>Suggest other options for 3D</blockquote>
+          <p class="fix">No fix needed. Instead of picking a weight, the answer reopened the menu — Zdog, CC0 kits, real terrain, a scroll film.</p>
+        </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · The wider menu ------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 10: The wider menu">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">10</span><span>Rounds 7–8 · the fork in the road</span></div>
+      <h2>Zdog looked light — until it met the model kits.</h2>
+      <p class="round">Round 7 · beyond Blender</p>
+      <div class="three">
+        <div class="dq"><span class="h">Ground</span><p class="q">What should the island’s ground be?</p><ul><li>Real Sahyadri terrain <em>(Recommended)</em></li><li>Procedural island</li><li class="on">Zdog illustrated 3D</li><li>Pre-rendered scroll film</li></ul></div>
+        <div class="dq"><span class="h">Props</span><p class="q">Where should buildings and props come from? (pick any)</p><ul><li class="on">Procedural code</li><li class="on">CC0 low-poly kits</li><li>AI-generated models</li><li>Browser design tool</li></ul></div>
+        <div class="dq"><span class="h">Memories</span><p class="q">Add photoreal “memories” — 3D scans captured on a phone?</p><ul><li>Later, leave a slot</li><li>Yes, plan for it now</li><li class="on">No</li></ul></div>
+      </div>
+      <p class="round">Round 8 · the conflict: Zdog draws its own shapes and can’t load GLB models</p>
+      <div class="three">
+        <div class="dq"><span class="h">Props in Zdog</span><p class="q">Zdog can’t load the CC0 model files. How should the props be made?</p><ul><li>Zdog-native, kits as reference <em>(Recommended)</em></li><li>Convert a few CC0 props</li><li class="on">Switch to three.js</li></ul></div>
+        <div class="dq"><span class="h">Ground look</span><p class="q">What should the island’s ground look like?</p><ul><li class="on">Stacked contour layers <em>(Recommended)</em></li><li>Round toy diorama</li><li>Flat tile island</li></ul></div>
+        <figure class="illo" style="align-self:center">
+          <svg class="illo-svg" viewBox="0 0 800 450" role="img" aria-label="Blot stands at a fork in the road with three signposts: Blender, Zdog, and three.js with a tick, and walks toward three.js">
+            <rect class="il-bg" width="800" height="450"/>
+            <path class="il-thin" d="M360,450 C370,380 380,330 400,300 M440,450 C430,380 420,330 400,300"/>
+            <path class="il-k" d="M400,300 C340,250 230,220 110,200"/>
+            <path class="il-k" d="M400,300 C400,240 400,190 400,120"/>
+            <path class="il-ka" d="M400,300 C460,250 570,220 700,200"/>
+            <line class="il-k" x1="300" y1="300" x2="300" y2="190"/>
+            <rect class="il-p" x="180" y="170" width="130" height="40" rx="6"/><text class="il-t" x="196" y="200" font-size="28">Blender</text>
+            <rect class="il-p" x="238" y="220" width="104" height="40" rx="6"/><text class="il-t" x="254" y="250" font-size="28">Zdog</text>
+            <line class="il-k" x1="520" y1="300" x2="520" y2="190"/>
+            <rect class="il-a" x="510" y="160" width="190" height="46" rx="6"/><text class="il-t il-title" x="526" y="194" font-size="32" style="fill:var(--i-paper)">three.js ✓</text>
+            <path class="il-k" d="M250,150 l14,-14 M264,150 l-14,-14" style="opacity:.7"/>
+            <g transform="translate(470 350) scale(1.2)">
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-29" y1="10" x2="-46" y2="28"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="29" y1="10" x2="56" y2="-12"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-13" y1="30" x2="-24" y2="48"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="13" y1="30" x2="22" y2="49"/>
+              <use href="#blot"/>
+            </g>
+            <text class="il-t il-title" x="40" y="80" font-size="34">which way?</text>
+            <rect width="800" height="450" filter="url(#il-grain)" pointer-events="none"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · The final stack ----------------------------------------------- -->
+  <section class="slide" aria-label="Slide 11: The final stack">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">11</span><span>What got built</span></div>
+      <h2>No Blender, no build step, one static page.</h2>
+      <p class="lead">Day Island · a guided camera · topographic ink · <strong>three.js 0.186</strong> from jsDelivr through an importmap · free <strong>Kenney</strong> models plus code. The page is readable before a single module loads.</p>
+      <div class="flow" style="margin-top:14px">
+        <div class="box"><h4>index.html</h4>Semantic content: 10 stops, 22 registry cards, 12 field notes, meta/OG. Works with no JS.</div>
+        <span class="arrow">→</span>
+        <div class="box"><h4>classic scripts</h4><code>core</code> · <code>registry</code> · <code>router</code> · <code>ui</code> · <code>cmdk</code> · <code>notes</code> — IST clock, deep links, ⌘K. No CDN needed.</div>
+        <span class="arrow">→</span>
+        <div class="box"><h4>boot-world.js</h4>WebGL2 + importmap + no reduced motion? → island. Otherwise the classic view.</div>
+        <span class="arrow">→</span>
+        <div class="box"><h4>world/ modules</h4><code>main3d</code> → <code>scene</code> → <code>terrain</code> · <code>props</code> · <code>materials</code> · <code>post</code> · <code>palette</code> · <code>rail</code></div>
+      </div>
+      <div class="flow" style="margin-top:8px">
+        <div class="box"><h4>models/</h4><code>props.glb.gz</code> 145 KB · <code>runner.glb.gz</code> 28 KB — meshopt + gzip, inflated with <code>DecompressionStream</code></div>
+        <div class="box"><h4>assets/chrome/</h4>One shared “← Home” chip for all 16 sub-pages</div>
+        <div class="box off"><h4>tools/ (offline only)</h4>Kenney kits → GLB · still/banner capture · Playwright QA. The site never needs it.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · Terrain -------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 12: Terrain as contour layers">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">12</span><span>The island · a laser-cut topographic model</span></div>
+      <div class="two">
+        <div>
+          <h2>Terrain as stacked contour slices.</h2>
+          <ul class="plain">
+            <li>A seeded heightmap — <strong>177 × 129</strong> cells, seed <code>1834</code> for 18°34′N — with a warped coast, a carved river, bays and flat pads for buildings</li>
+            <li>Marching squares cut <strong>15 contour levels</strong>; Chaikin smoothing rounds each ring</li>
+            <li>Every level becomes an <code>ExtrudeGeometry</code> terrace; tops and walls merge into two meshes</li>
+            <li>The fort sits on an irregular <strong>Deccan-trap mesa</strong> — scarp sides, 7.5 units up</li>
+            <li>Built in the browser at load, in about <strong>250 ms</strong>; the same seed draws the same island every time</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg class="illo-svg" viewBox="0 0 800 450" role="img" aria-label="Blot lowers the top slice onto a stack of contour layers, like building a layer cake">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="30" y1="412" x2="770" y2="412"/>
+            <path class="il-p" d="M150,380 C150,346 250,322 380,322 C510,322 610,346 610,380 L610,398 C610,420 510,436 380,436 C250,436 150,420 150,398 Z"/>
+            <path class="il-k" d="M150,380 C150,414 250,432 380,432 C510,432 610,414 610,380"/>
+            <path class="il-p" d="M190,346 C190,318 270,298 380,298 C490,298 570,318 570,346 L570,362 C570,384 490,398 380,398 C270,398 190,384 190,362 Z"/>
+            <path class="il-a" d="M232,312 C232,290 296,274 380,274 C464,274 528,290 528,312 L528,328 C528,348 464,360 380,360 C296,360 232,348 232,328 Z"/>
+            <path class="il-p" d="M274,280 C274,262 322,250 380,250 C438,250 486,262 486,280 L486,294 C486,310 438,320 380,320 C322,320 274,310 274,294 Z"/>
+            <path class="il-s" d="M318,248 C318,236 346,228 380,228 C414,228 442,236 442,248 L442,260 C442,272 414,278 380,278 C346,278 318,272 318,260 Z"/>
+            <g transform="rotate(-8 590 150)">
+              <path class="il-p" d="M520,150 C520,138 548,130 582,130 C616,130 644,138 644,150 L644,160 C644,172 616,178 582,178 C548,178 520,172 520,160 Z"/>
+              <path class="il-a" d="M566,140 h30 v-14 h-6 v5 h-6 v-5 h-6 v5 h-6 v-5 h-6 z"/>
+            </g>
+            <line class="il-thin" x1="582" y1="190" x2="560" y2="226" stroke-dasharray="6 7" marker-end="url(#il-arrow)"/>
+            <g transform="translate(690 330) scale(1.15)">
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-29" y1="10" x2="-72" y2="-128"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="29" y1="10" x2="18" y2="-120"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-13" y1="30" x2="-15" y2="49"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="13" y1="30" x2="15" y2="49"/>
+              <use href="#blot-look-up"/>
+            </g>
+            <text class="il-t il-title" x="40" y="80" font-size="34">15 slices of Deccan</text>
+            <rect width="800" height="450" filter="url(#il-grain)" pointer-events="none"/>
+          </svg>
+        </figure>
+      </div>
+      <div class="pair" style="margin-top:12px">
+        <figure class="shot crop"><img style="object-position:50% 35%" src="assets/day-island/fix-mesa.webp" width="960" height="570" loading="lazy" alt="The island from the fort stop: a stepped mesa with the fort on top, terraces drawn as ink rings"><figcaption>The mesa, fort on top, 16:00</figcaption></figure>
+        <figure class="shot crop"><img style="object-position:50% 45%" src="assets/day-island/after-climb.webp" width="960" height="600" loading="lazy" alt="The fort stop in island view, with its panel on the right: 18 forts and summits, and one 22-hour night march"><figcaption>The same stop with its panel</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · Ink ------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 13: Drawing in ink">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">13</span><span>The renderer · nothing outputs colour until the end</span></div>
+      <div class="two">
+        <div class="stack-sm">
+          <h2>Four passes turn geometry into a drawing.</h2>
+          <ol style="margin:0;padding-left:20px;font-size:14.5px;color:var(--text-prose)">
+            <li><strong>Normals + depth</strong> → a Sobel filter draws the ink edges (every terrace rim for free)</li>
+            <li><strong>Ink data</strong> — every material writes a packed texel, not a colour</li>
+            <li><strong>Composite</strong> → paper, hatching by tone, ink, rust, glow, grain, distance fade</li>
+            <li><strong>Glow</strong> — beam, stars, moon, lantern halos, depth-tested against pass 1</li>
+          </ol>
+          <table class="t">
+            <thead><tr><th>Channel</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td class="n">R · tone</td><td>0 = sunlit paper … 1 = deep shade (drives the hatching)</td></tr>
+              <tr><td class="n">G · ink</td><td>extra line work: strata, isobaths, ripples, trails</td></tr>
+              <tr><td class="n">B · accent</td><td>0–0.5 rust; 0.5–1 glow (lit windows, lamps)</td></tr>
+              <tr><td class="n">A · class</td><td>sky · water · land · props · lines</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="stack-sm">
+          <figure class="illo">
+            <svg class="illo-svg" viewBox="0 0 800 450" role="img" aria-label="Blot pushes a giant fountain-pen nib that draws hatching lines across four stacked sheets labelled one to four">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="30" y1="412" x2="770" y2="412"/>
+              <rect class="il-p" x="120" y="300" width="360" height="90" rx="4" transform="rotate(-2 300 345)"/>
+              <rect class="il-p" x="110" y="310" width="360" height="90" rx="4" transform="rotate(1 290 355)"/>
+              <rect class="il-p" x="100" y="318" width="360" height="90" rx="4"/>
+              <g class="il-thin"><line x1="130" y1="396" x2="190" y2="336"/><line x1="160" y1="396" x2="220" y2="336"/><line x1="190" y1="396" x2="250" y2="336"/><line x1="220" y1="396" x2="280" y2="336"/><line x1="250" y1="396" x2="310" y2="336"/></g>
+              <text class="il-ta" x="120" y="296" font-size="30">1 · 2 · 3 · 4</text>
+              <path class="il-s" d="M360,300 L420,120 L520,150 L430,318 Z"/>
+              <path class="il-k" d="M395,304 L470,138"/>
+              <circle class="il-p" cx="452" cy="180" r="12"/>
+              <path class="il-k" d="M360,300 L352,332"/>
+              <g transform="translate(620 344) scale(1.2)">
+                <line class="il-limb" vector-effect="non-scaling-stroke" x1="-29" y1="10" x2="-80" y2="-110"/>
+                <line class="il-limb" vector-effect="non-scaling-stroke" x1="29" y1="10" x2="-40" y2="-60"/>
+                <line class="il-limb" vector-effect="non-scaling-stroke" x1="-13" y1="30" x2="-25" y2="48"/>
+                <line class="il-limb" vector-effect="non-scaling-stroke" x1="13" y1="30" x2="24" y2="49"/>
+                <use href="#blot"/>
+              </g>
+              <text class="il-t il-title" x="40" y="80" font-size="34">ink, not colour</text>
+              <rect width="800" height="450" filter="url(#il-grain)" pointer-events="none"/>
+            </svg>
+          </figure>
+<pre><span class="hl">// composite pass: hatch by tone, at CSS-pixel pitch</span>
+float h1 = hatchLine(vec2(cp.x + cp.y + wob, 0.0), 5.2, 0.9) * smoothstep(0.30, 0.40, tone);
+float h2 = hatchLine(vec2(cp.x - cp.y + wob, 0.0), 5.2, 0.9) * smoothstep(0.52, 0.62, tone);
+float h3 = hatchLine(vec2(cp.y + wob * 0.5, 0.0), 3.4, 0.8) * smoothstep(0.74, 0.84, tone);</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · Props ---------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 14: Props">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">14</span><span>Props · free kits, one ink style</span></div>
+      <h2>Nine Kenney kits became 145 KB.</h2>
+      <div class="two">
+        <div>
+          <ul class="plain">
+            <li><code>tools/props/kits.json</code> pins 9 CC0 kits (castle, nature, watercraft, city, pirate, survival, fantasy town, mini characters) by URL and sha256</li>
+            <li><code>build-props.mjs</code> flattens <strong>57 prototypes</strong>, samples each kit’s colormap under every vertex into <code>COLOR_0</code>, then <strong>drops the textures</strong> — so mixed kits read as one ink drawing</li>
+            <li>gltf-transform: weld → dedup → quantize → reorder → <strong>meshopt</strong> → gzip</li>
+            <li>The runner is a skinned Kenney character that keeps only its <code>sprint</code> and <code>idle</code> clips — <strong>28 KB</strong> — and only comes out at dawn</li>
+            <li>Code draws what the kits don’t have: the banyan and its chaupal, the lighthouse lamp and beam, the observatory dome, the orb, paper boats</li>
+          </ul>
+        </div>
+        <div class="stats" style="grid-template-columns:repeat(2,1fr)">
+          <div class="stat"><div class="v accent">145 KB</div><div class="k">props.glb.gz · budget 600</div></div>
+          <div class="stat"><div class="v">28 KB</div><div class="k">runner.glb.gz</div></div>
+          <div class="stat"><div class="v">57</div><div class="k">prototypes, instanced</div></div>
+          <div class="stat"><div class="v">~190 KB</div><div class="k">three.js from the CDN</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 · Day and night ------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 15: Day and night">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">15</span><span>One number decides every colour</span></div>
+      <h2>Ink on paper by day, cyanotype by night.</h2>
+      <p class="lead">A single <code>uHour</code> drives the palette keys, the sun and moon, and a shadow map that sweeps as you scroll. After dusk, windows light up one by one, lanterns glow, stars twinkle and the lighthouse beam turns.</p>
+      <div class="pair">
+        <figure class="shot"><img src="../assets/island/renders/readme-day.jpg" width="1600" height="600" loading="lazy" alt="The whole island at 09:30: ink on warm paper, the fort on its mesa, the library tower, the harbour studio"><figcaption>09:30 — the README banner, light mode</figcaption></figure>
+        <figure class="shot"><img src="../assets/island/renders/readme-night.jpg" width="1600" height="600" loading="lazy" alt="The same island at 22:30 in cyanotype blue: pale ink lines, rust-lit windows and a lighthouse beam"><figcaption>22:30 — the same banner in dark mode</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 · Scroll = camera + clock ---------------------------------------- -->
+  <section class="slide" aria-label="Slide 16: Scroll is the camera and the clock">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">16</span><span>The guided camera</span></div>
+      <div class="two">
+        <div class="stack-sm">
+          <h2>Scrolling turns the clock and flies the camera.</h2>
+          <div class="strip" aria-label="Page layout in island mode">
+            <div class="dwell">RUN panel · camera parked · 05:30 → 06:40</div>
+            <div class="transit">spacer · camera flies · 06:40 → 09:00</div>
+            <div class="dwell">BUILD panel · camera parked · 09:00 → 11:30</div>
+            <div class="transit">spacer · …</div>
+          </div>
+<pre>focus = scrollY + vh × <span class="hl">0.5</span>          <span class="hl">// 0.66 on phones</span>
+inside a panel  → u = k,            hour = in → out
+inside a spacer → u = k + ease(f),  hour = out → next in</pre>
+          <ul class="plain">
+            <li>A Catmull-Rom rail through every stop’s shot, with lifted midpoints so transits arc over the island</li>
+            <li><code>setViewOffset</code> keeps the subject clear of the panel; phones get bottom sheets</li>
+            <li>Links, ⌘K and the scrubber all become a scroll — one source of truth — so Back just works</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg class="illo-svg" viewBox="0 0 800 450" role="img" aria-label="Blot turns a crank on a paper scroll; a belt from the crank turns the hand of a clock">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="30" y1="412" x2="770" y2="412"/>
+            <rect class="il-p" x="120" y="150" width="70" height="240" rx="30"/>
+            <rect class="il-p" x="190" y="170" width="220" height="200" rx="4"/>
+            <g class="il-thin"><line x1="214" y1="206" x2="380" y2="206"/><line x1="214" y1="236" x2="360" y2="236"/><line x1="214" y1="266" x2="386" y2="266"/><line x1="214" y1="296" x2="340" y2="296"/><line x1="214" y1="326" x2="370" y2="326"/></g>
+            <circle class="il-p" cx="155" cy="270" r="14"/>
+            <path class="il-k" d="M155,270 L110,230 L96,244"/>
+            <path class="il-ka" d="M155,256 C220,120 480,90 560,120" stroke-dasharray="10 9" marker-end="url(#il-arrow)"/>
+            <circle class="il-p" cx="620" cy="190" r="88"/>
+            <g class="il-k"><line x1="620" y1="110" x2="620" y2="122"/><line x1="620" y1="258" x2="620" y2="270"/><line x1="540" y1="190" x2="552" y2="190"/><line x1="688" y1="190" x2="700" y2="190"/></g>
+            <line class="il-ks" x1="620" y1="190" x2="668" y2="142" style="stroke-width:7"/>
+            <line class="il-k" x1="620" y1="190" x2="620" y2="138" style="stroke-width:6"/>
+            <circle class="il-dot" cx="620" cy="190" r="7"/>
+            <g transform="translate(80 350) scale(1.05)">
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-29" y1="10" x2="-40" y2="30"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="29" y1="10" x2="28" y2="-110"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-13" y1="30" x2="-15" y2="49"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="13" y1="30" x2="15" y2="49"/>
+              <use href="#blot-look-up"/>
+            </g>
+            <text class="il-t il-title" x="470" y="330" font-size="34">scroll = time</text>
+            <rect width="800" height="450" filter="url(#il-grain)" pointer-events="none"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 · Nine stops ------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 17: One day, nine stops">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">17</span><span>The old views, merged into one journey</span></div>
+      <h2>One day, nine stops.</h2>
+      <div class="stills">
+        <div class="still"><i style="--m:url('../assets/island/illustrations/run.webp')"></i><b>05:30 · The river mouth</b><span>21 races, PBs 5:05 / 1:59 / 0:55, RunSmart, RunFolio</span></div>
+        <div class="still"><i style="--m:url('../assets/island/illustrations/build.webp')"></i><b>09:00 · The studio</b><span>The career record, the stack rated honestly, what shipped</span></div>
+        <div class="still"><i style="--m:url('../assets/island/illustrations/read.webp')"></i><b>13:00 · The library</b><span>48 books by genre, and Ask the Archive’s wing</span></div>
+        <div class="still"><i style="--m:url('../assets/island/illustrations/climb.webp')"></i><b>16:00 · The fort</b><span>18 forts, the 22-hour Panhala → Pawankhind march</span></div>
+        <div class="still"><i style="--m:url('../assets/island/illustrations/commons.webp')"></i><b>18:00 · The commons</b><span>AI-governance research, foundation sites, the Adivasi survey</span></div>
+        <div class="still"><i style="--m:url('../assets/island/illustrations/play.webp')"></i><b>20:00 · The pavilion</b><span>The Wanderer’s Digital Escape and its orb</span></div>
+        <div class="still"><i style="--m:url('../assets/island/illustrations/write.webp')"></i><b>22:00 · The lighthouse</b><span>1,600+ micro-posts, 86,789 long-form words</span></div>
+        <div class="still"><i style="--m:url('../assets/island/illustrations/night.webp')"></i><b>00:30 · The observatory</b><span>Now, socials, and “across the water ↗”</span></div>
+        <div class="still"><i style="--m:url('../assets/island/illustrations/island.webp')"></i><b>now · The whole island</b><span>Opens at the real time in Pune; the map lists everything</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 18 · Everything is an id -------------------------------------------- -->
+  <section class="slide" aria-label="Slide 18: Everything is an id">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">18</span><span>Navigation without a framework</span></div>
+      <div class="two">
+        <div class="stack-sm">
+          <h2>Every place is a plain element id.</h2>
+          <ul class="plain">
+            <li><strong>The registry</strong>: each page is one <code>&lt;article id=&quot;stop/slug&quot;&gt;</code> in <code>#map</code>; <code>registry.js</code> moves it to its stop, lists it in its band and indexes it — adding content is one article</li>
+            <li><strong>Deep links</strong> like <code>#read/ask-the-archive</code> land on the card with a “you were here ↩”; Back and Forward fly the camera</li>
+            <li><strong>⌘K</strong> searches <strong>104</strong> entries — stops, pages, races, forts, genres, the stack, socials</li>
+            <li><strong>12 field notes</strong> appear only inside their hour; a found note is remembered, nothing more</li>
+            <li><strong>The “now” line</strong> uses Asia/Kolkata, whatever the visitor’s zone: “It’s 14:07 in Pune — probably back at the studio, shipping.”</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg class="illo-svg" viewBox="0 0 800 450" role="img" aria-label="Blot holds a magnifying glass over a grid of index cards; one card reads #read/ask-the-archive, and a keyboard key shows the command-K shortcut">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="30" y1="412" x2="770" y2="412"/>
+            <g>
+              <rect class="il-p" x="300" y="90" width="130" height="80" rx="6"/><rect class="il-p" x="450" y="90" width="130" height="80" rx="6"/><rect class="il-p" x="600" y="90" width="130" height="80" rx="6"/>
+              <rect class="il-p" x="300" y="190" width="130" height="80" rx="6"/><rect class="il-a" x="450" y="190" width="130" height="80" rx="6"/><rect class="il-p" x="600" y="190" width="130" height="80" rx="6"/>
+              <rect class="il-p" x="300" y="290" width="130" height="80" rx="6"/><rect class="il-p" x="450" y="290" width="130" height="80" rx="6"/><rect class="il-p" x="600" y="290" width="130" height="80" rx="6"/>
+              <g class="il-thin"><line x1="318" y1="118" x2="400" y2="118"/><line x1="468" y1="118" x2="560" y2="118"/><line x1="618" y1="118" x2="690" y2="118"/><line x1="318" y1="218" x2="410" y2="218"/><line x1="618" y1="218" x2="700" y2="218"/><line x1="318" y1="318" x2="390" y2="318"/><line x1="468" y1="318" x2="552" y2="318"/><line x1="618" y1="318" x2="706" y2="318"/></g>
+              <text class="il-t" x="460" y="238" font-size="21" style="fill:var(--i-paper)">#read/ask-</text>
+              <text class="il-t" x="460" y="258" font-size="21" style="fill:var(--i-paper)">the-archive</text>
+            </g>
+            <circle class="il-p" cx="515" cy="232" r="70" style="fill:none"/>
+            <line class="il-k" x1="466" y1="282" x2="400" y2="348" style="stroke-width:12"/>
+            <rect class="il-p" x="60" y="80" width="96" height="80" rx="12"/><text class="il-t il-title" x="76" y="134" font-size="40">⌘K</text>
+            <g transform="translate(250 350) scale(1.15)">
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-29" y1="10" x2="-44" y2="30"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="29" y1="10" x2="128" y2="4"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="-13" y1="30" x2="-15" y2="49"/>
+              <line class="il-limb" vector-effect="non-scaling-stroke" x1="13" y1="30" x2="15" y2="49"/>
+              <use href="#blot"/>
+            </g>
+            <text class="il-t il-title" x="40" y="220" font-size="34">find it</text>
+            <rect width="800" height="450" filter="url(#il-grain)" pointer-events="none"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 · The whole site --------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 19: The whole site">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">19</span><span>“Whole site” · shared chrome</span></div>
+      <h2>Every page finds its way back to its own spot.</h2>
+      <div class="two wide-left">
+        <figure class="shot"><img src="assets/day-island/chips.webp" width="1280" height="300" loading="lazy" alt="Four sub-pages, each with the same small chip at top left: a contour glyph, '← Home', and the hour and place it returns to"><figcaption>The same chip on four very different pages</figcaption></figure>
+        <div>
+          <ul class="plain">
+            <li>Each page keeps a <strong>static</strong> <code>&lt;a data-island-return href=&quot;…#stop/slug&quot;&gt;← Home&lt;/a&gt;</code> — it works without JS</li>
+            <li><code>chrome.js</code> draws one consistent chip in its place, inside a shadow root, so decks keep their own CSS and arrow keys</li>
+            <li>It copies the original link’s position and picks ink-on-paper or cyanotype from the background behind it</li>
+            <li><strong>16 pages, 1–3 lines each</strong>; the game and the E20 deck gained the Home link they never had</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 · Fallbacks ------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 20: Fallbacks">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">20</span><span>For every visitor</span></div>
+      <h2>The island is an enhancement, not a gate.</h2>
+      <div class="fallbacks">
+        <div class="stack-sm">
+          <div class="pair">
+            <figure class="shot"><img src="assets/day-island/classic-light.webp" width="1280" height="800" loading="lazy" alt="The classic view: a vertical day timeline with an ink still of the whole island above the headline"><figcaption>Classic view · light</figcaption></figure>
+            <figure class="shot"><img src="assets/day-island/classic-dark.webp" width="1280" height="800" loading="lazy" alt="The classic view in dark mode: cyanotype blue paper with pale ink lines"><figcaption>Classic view · dark (cyanotype)</figcaption></figure>
+          </div>
+          <ul class="plain">
+            <li>No WebGL2, <code>prefers-reduced-motion</code>, Save-Data or <code>?classic</code> → the classic day timeline, with Blender-free ink stills captured from the island and recoloured by CSS masks</li>
+            <li>No JavaScript → every word and all 22 cards are still there, in the two bands</li>
+            <li>Phones get the island too, with each panel as a bottom sheet under it</li>
+            <li>The first paint already knows the hour: after dusk in Pune the page opens in cyanotype, before a single module loads</li>
+          </ul>
+        </div>
+        <figure class="shot phone"><img src="assets/day-island/after-phone.webp" width="390" height="844" loading="lazy" alt="Island view on a phone at night: the island above, the hero panel as a bottom sheet"><figcaption>Phone · 21:40 · bottom sheet</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 21 · What the build caught ------------------------------------------ -->
+  <section class="slide" aria-label="Slide 21: What the build caught">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">21</span><span>Screenshots, not assumptions</span></div>
+      <h2>What the build caught.</h2>
+      <div class="bugs">
+        <div class="bug has-pic"><div class="pic"><img src="assets/day-island/bug-floating-fort.webp" width="960" height="570" loading="lazy" alt="Before the fix: the fort floats above a flat island"></div><div><h4>1 · The floating fort</h4><p>Only 2 of 15 terrace levels drew: merging the levels gave each one its own material slot, and only two materials existed.</p><p class="fixline">Fix: merge tops and walls into two meshes.</p></div></div>
+        <div class="bug has-pic"><div class="pic"><img src="assets/day-island/bug-tiny-lighthouse.webp" width="960" height="570" loading="lazy" alt="Before the fix: the lighthouse lamp floats over a tiny stub tower"></div><div><h4>2 · The tiny lighthouse</h4><p>Quantized models keep their scale on the node, not the mesh; placing only the geometry shrank a 10-unit tower to a stub.</p><p class="fixline">Fix: carry each prototype’s node matrix into its instances.</p></div></div>
+        <div class="bug has-pic"><div class="pic"><img src="assets/day-island/bug-glowing-trees.webp" width="960" height="570" loading="lazy" alt="Before the fix: orange glowing trees at night"></div><div><h4>3 · Trees that lit up</h4><p>“Blue-ish means glass” also caught green leaves and blue-grey stone, so whole forests glowed like windows at night.</p><p class="fixline">Fix: glass is g−r &gt; 0.08 and b−g &gt; 0.05 — Kenney’s real glass swatches.</p></div></div>
+        <div class="bug has-pic"><div class="pic"><img src="assets/day-island/bug-dawn-contrast.webp" width="390" height="844" loading="lazy" alt="Before: a washed-out purple panel at dawn"><img src="assets/day-island/fix-dawn.webp" width="390" height="844" loading="lazy" alt="After: the dawn panel readable on rosy paper"></div><div><h4>4 · Unreadable dawn</h4><p>Paper and ink swap brightness at dawn and dusk — and the swap landed right on the 05:30 and 18:00 stops.</p><p class="fixline">Fix: swaps moved into the spacers, plus a contrast guard for panels.</p></div></div>
+        <div class="bug"><h4>5 · The 84-pixel chip</h4><p><code>getComputedStyle</code> resolves all four offsets; copying both <code>left</code> and <code>right</code> squeezed the Home chip to 84 px.</p><p class="fixline">Fix: keep only the corner the original is anchored to.</p></div>
+        <div class="bug"><h4>6 · Lagging panels, trusted proxies</h4><p>A 0.4 s panel colour transition let pale night ink land on a still-light panel mid-flight (found while making this deck). Headless Chrome also couldn’t trust the sandbox’s TLS proxy.</p><p class="fixline">Fix: no colour transition; QA answers the CDN from pinned local packages.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 22 · After ---------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 22: After">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">22</span><span>After</span></div>
+      <h2>Day Island, live on GitHub Pages.</h2>
+      <div class="pair">
+        <figure class="shot"><img src="assets/day-island/after-island.webp" width="1280" height="800" loading="lazy" alt="Day Island at 10:30: the hero panel on the left, the ink-drawn island on the right"><figcaption>10:30 · the hero over the island</figcaption></figure>
+        <figure class="shot"><img src="assets/day-island/after-write-night.webp" width="1280" height="800" loading="lazy" alt="The lighthouse stop at 22:00 in cyanotype: the beam sweeping, the writing panel on the right"><figcaption>22:00 · the lighthouse</figcaption></figure>
+      </div>
+      <div class="stats six" style="margin-top:12px">
+        <div class="stat"><div class="v accent">65</div><div class="k">files in the Day Island commit</div></div>
+        <div class="stat"><div class="v">+7,371</div><div class="k">lines added · −3,752 removed</div></div>
+        <div class="stat"><div class="v">9</div><div class="k">stops, one day</div></div>
+        <div class="stat"><div class="v">22</div><div class="k">registry cards, incl. this deck</div></div>
+        <div class="stat"><div class="v">17</div><div class="k">sub-pages with the chip</div></div>
+        <div class="stat"><div class="v">51</div><div class="k">QA checks passing</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 23 · How this deck was made ------------------------------------------ -->
+  <section class="slide" aria-label="Slide 23: How this deck was made">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">23</span><span>Prompts 06–07 · round 9</span></div>
+      <h2>And then: a deck about the deck-maker’s day.</h2>
+      <div class="two">
+        <div class="stack-sm">
+          <figure class="prompt">
+            <figcaption><span><b>Prompt 06</b></span><span>verbatim</span></figcaption>
+            <blockquote>Directly commit of all these changes to main and push as well.
+
+I want to create a presentation about this re-design efforts and the detailed Redesign
+Ass this as static Html Slides, add under presentations, and list on homepage.
+Use illo-skill for drawing illustrations..
+Ask questions to clarify requirement.
+For the presentation, include provided prompts in the slides.</blockquote>
+            <p class="fix">Light fix: “Directly commit all these changes…”, “this <b>redesign effort</b>”, “<b>Add</b> this as static <b>HTML slides</b>”, “use <b>the illo skill</b>”, “clarify <b>requirements</b>”, “include <b>the</b> provided prompts”.</p>
+          </figure>
+          <figure class="prompt">
+            <figcaption><span><b>Prompt 07</b> · resent after a restart</span><span>verbatim</span></figcaption>
+            <blockquote>… For the presentation, include provided prompts, design questions in the slides.</blockquote>
+            <p class="fix">Light fix: “include the provided prompts <b>and</b> design questions”. The rest repeats prompt 06.</p>
+          </figure>
+        </div>
+        <div>
+          <p class="round">Round 9 · this deck</p>
+          <div class="dqs two-up">
+            <div class="dq"><span class="h">Illustrations</span><p class="q">The illo skill isn’t installed in this session. How should the illustrations be drawn?</p><ul><li class="on">Match illo house style <em>(Recommended)</em></li><li>Illo style, Day Island palette</li><li>Wait for the illo skill</li></ul></div>
+            <div class="dq"><span class="h">Length</span><p class="q">How deep should the deck go?</p><ul><li>~12 slides</li><li class="on">~20 slides <em>(Recommended)</em></li><li>~30 slides</li></ul></div>
+            <div class="dq"><span class="h">Content</span><p class="q">What should the deck include besides your prompts and the illustrations? (pick any)</p><ul><li class="on">Before / after</li><li class="on">Real renders</li><li class="on">Decision trail</li><li class="on">Engineering + numbers</li></ul></div>
+            <div class="dq"><span class="h">Prompts</span><p class="q">How should your prompts appear on the slides?</p><ul><li>Verbatim, as typed</li><li class="on">Verbatim + light fix</li><li>Lightly edited</li></ul></div>
+          </div>
+          <div class="flag"><p>The illo skill wasn’t available in this session, so every drawing here follows its house style by hand — Blot, warm paper, a 4 px ink line, one teal and one orange accent — as in the Ask the Archive deck.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 24 · The rule --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 24: One rule, three places">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">24</span><span>Prompt 08 · the rule</span></div>
+      <h2>New content lands in three places, or it isn’t done.</h2>
+      <div class="two">
+        <div class="stack-sm">
+          <figure class="prompt">
+            <figcaption><span><b>Prompt 08</b> · after the deck’s first draft</span><span>verbatim</span></figcaption>
+            <blockquote>continue, now also add instructions in claude.md that whenever such presentation/ doc/ project is added, entry should be added on homepage. readme  and claude.md</blockquote>
+            <p class="fix">Light fix: “Continue. Now also add instructions in <b>CLAUDE.md</b> that whenever a presentation, doc or project is added, an entry should be added on the homepage, <b>README</b> and <b>CLAUDE.md</b>.”</p>
+          </figure>
+          <div class="panel">
+            <h3>Now in CLAUDE.md and AGENTS.md</h3>
+            <p style="font-size:14px">Whenever a presentation, doc, dashboard, game, prototype or project is added, renamed, moved or removed, update all three in the same commit:</p>
+            <ol class="checks">
+              <li><strong>index.html</strong> — one registry card in <code>#map</code>, in the right band</li>
+              <li><strong>README.md</strong> — the matching Projects row, plus In This Repo</li>
+              <li><strong>CLAUDE.md + AGENTS.md</strong> — the directory tree, kept in sync</li>
+            </ol>
+            <p class="note" style="margin:8px 0 0">The task isn’t done until all three are updated. <code>node tools/qa.mjs</code> already fails if a page is missing from the homepage.</p>
+          </div>
+        </div>
+        <div class="stack-sm">
+          <figure class="illo">
+            <svg class="illo-svg" viewBox="0 0 800 450" role="img" aria-label="Blot pins the last of three cards to a board: index.html and README.md are ticked, CLAUDE.md is being pinned">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="30" y1="412" x2="770" y2="412"/>
+              <g transform="rotate(-3 225 190)">
+                <rect class="il-p" x="140" y="135" width="170" height="110" rx="8"/>
+                <text class="il-t il-title" x="156" y="178" font-size="28">index.html</text>
+                <line class="il-thin" x1="156" y1="200" x2="270" y2="200"/><line class="il-thin" x1="156" y1="222" x2="236" y2="222"/>
+                <path class="il-ka" d="M252,214 l10,10 l22,-26"/>
+              </g>
+              <circle class="il-s" cx="222" cy="137" r="9"/>
+              <g transform="rotate(2 415 175)">
+                <rect class="il-p" x="330" y="120" width="170" height="110" rx="8"/>
+                <text class="il-t il-title" x="346" y="163" font-size="28">README.md</text>
+                <line class="il-thin" x1="346" y1="185" x2="460" y2="185"/><line class="il-thin" x1="346" y1="207" x2="426" y2="207"/>
+                <path class="il-ka" d="M442,199 l10,10 l22,-26"/>
+              </g>
+              <circle class="il-a" cx="417" cy="122" r="9"/>
+              <g transform="rotate(-2 605 205)">
+                <rect class="il-p" x="520" y="150" width="170" height="110" rx="8"/>
+                <text class="il-t il-title" x="536" y="193" font-size="28">CLAUDE.md</text>
+                <line class="il-thin" x1="536" y1="215" x2="650" y2="215"/><line class="il-thin" x1="536" y1="237" x2="616" y2="237"/>
+              </g>
+              <circle class="il-s" cx="604" cy="152" r="9"/>
+              <path class="il-k" d="M231,140 C300,96 350,96 408,121 M426,124 C490,120 540,126 595,150" style="stroke-width:2.5;stroke-dasharray:2 8;opacity:.8"/>
+              <g transform="translate(730 350) scale(1.1)">
+                <line class="il-limb" vector-effect="non-scaling-stroke" x1="-29" y1="10" x2="-52" y2="-128"/>
+                <line class="il-limb" vector-effect="non-scaling-stroke" x1="29" y1="10" x2="42" y2="32"/>
+                <line class="il-limb" vector-effect="non-scaling-stroke" x1="-13" y1="30" x2="-15" y2="49"/>
+                <line class="il-limb" vector-effect="non-scaling-stroke" x1="13" y1="30" x2="15" y2="49"/>
+                <use href="#blot-look-up"/>
+              </g>
+              <circle class="il-a" cx="672" cy="208" r="8"/>
+              <text class="il-t il-title" x="40" y="80" font-size="34">one rule, three places</text>
+              <text class="il-t" x="150" y="370" font-size="30">same commit, every time</text>
+              <rect width="800" height="450" filter="url(#il-grain)" pointer-events="none"/>
+            </svg>
+          </figure>
+          <p class="note" style="margin:0">This deck is the rule’s first customer: the card <code>build/day-island-deck</code>, a Day Island row in the README’s Websites table, and its entries in the tree.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 25 · All the prompts ------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 25: Every prompt, in order">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">25</span><span>Appendix · every prompt, in order, verbatim</span></div>
+      <h2>Eight prompts, twenty-seven questions, one island.</h2>
+      <div class="cols2">
+        <figure class="prompt"><figcaption><span><b>01</b> · the brief</span></figcaption><blockquote>I want to completely redesign this.
+Explore options to make this interactive, engaging.
+Ask questions to clarify requirement.
+Use full imagination and be as creative as possible.
+Research the web for ideas if you want.</blockquote></figure>
+        <figure class="prompt"><figcaption><span><b>02</b> · into 3D</span></figcaption><blockquote>What are the possible options to convert this in 3d designed world?
+Give it rich, professional look.</blockquote></figure>
+        <figure class="prompt"><figcaption><span><b>03</b> · Blender</span></figcaption><blockquote>Use it from blender</blockquote></figure>
+        <figure class="prompt"><figcaption><span><b>04</b> · weight</span></figcaption><blockquote>What are the options for blender, as it is heavy</blockquote></figure>
+        <figure class="prompt"><figcaption><span><b>05</b> · typed as an answer</span></figcaption><blockquote>Suggest other options for 3D</blockquote></figure>
+        <figure class="prompt"><figcaption><span><b>06</b> · ship it, then tell the story</span></figcaption><blockquote>Directly commit of all these changes to main and push as well.
+
+I want to create a presentation about this re-design efforts and the detailed Redesign
+Ass this as static Html Slides, add under presentations, and list on homepage.
+Use illo-skill for drawing illustrations..
+Ask questions to clarify requirement.
+For the presentation, include provided prompts in the slides.</blockquote></figure>
+        <figure class="prompt"><figcaption><span><b>07</b> · resent</span></figcaption><blockquote>I want to create a presentation about this re-design efforts and the detailed Redesign
+Ass this as static Html Slides, add under presentations, and list on homepage.
+Use illo-skill for drawing illustrations..
+Ask questions to clarify requirement.
+For the presentation, include provided prompts, design questions in the slides.</blockquote></figure>
+        <figure class="prompt"><figcaption><span><b>08</b> · the rule</span></figcaption><blockquote>continue, now also add instructions in claude.md that whenever such presentation/ doc/ project is added, entry should be added on homepage. readme  and claude.md</blockquote></figure>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <div class="ticks" id="ticks"></div>
+  <span class="counter" id="counter">01 / 25</span>
+</nav>
+
+<script>
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var counter = document.getElementById('counter');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var current = 0;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  slides.forEach(function (slide, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', slide.getAttribute('aria-label') || 'Slide ' + (i + 1));
+    b.addEventListener('click', function () { go(i); });
+    ticks.appendChild(b);
+  });
+  var tickButtons = Array.prototype.slice.call(ticks.children);
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    tickButtons.forEach(function (b, i) {
+      b.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+    paint();
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  // A resize changes what offsetLeft means; stay on the slide the reader was on.
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' });
+    }, 120);
+  });
+
+  paint();
+})();
+
+// --- Theme toggle ---------------------------------------------------------
+// Three states, not two: the deck's CSS already honours the reader's OS setting
+// when no data-theme is present, and a two-way switch would throw that away.
+(function () {
+  var KEY = 'deck-theme';
+  var MODES = ['auto', 'light', 'dark'];
+  var META = {
+    auto:  { ico: '◑', lab: 'Auto',  say: 'follow system' },
+    light: { ico: '☀', lab: 'Light', say: 'light' },
+    dark:  { ico: '☾', lab: 'Dark',  say: 'dark' }
+  };
+  var btn = document.getElementById('theme');
+  var ico = document.getElementById('theme-ico');
+  var lab = document.getElementById('theme-lab');
+  function stored() {
+    try { return localStorage.getItem(KEY); } catch (e) { return null; }
+  }
+  var mode = MODES.indexOf(stored()) > -1 ? stored() : 'auto';
+  function apply(next, persist) {
+    mode = next;
+    if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', mode);
+    ico.textContent = META[mode].ico;
+    lab.textContent = META[mode].lab;
+    btn.setAttribute('aria-label', 'Theme: ' + META[mode].say + '. Activate to change.');
+    if (persist) {
+      try {
+        if (mode === 'auto') localStorage.removeItem(KEY);
+        else localStorage.setItem(KEY, mode);
+      } catch (e) { /* storage blocked: the toggle still works */ }
+    }
+  }
+  btn.addEventListener('click', function () {
+    apply(MODES[(MODES.indexOf(mode) + 1) % MODES.length], true);
+  });
+  apply(mode, false);
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="build"></script>
+</body>
+</html>

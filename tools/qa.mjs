@@ -178,7 +178,7 @@ console.log('homepage · classic view');
   }));
   check(/mode-classic/.test(r.mode), '?classic gives the classic view');
   check(r.h1 === 1 && r.landmarks, 'one h1 and header/main/nav/footer landmarks');
-  check(r.placed === 21 && r.lists === 21, `registry placed ${r.placed} cards at their stops and listed ${r.lists} in the bands`);
+  check(r.placed === cards.length && r.lists === cards.length, `registry placed ${r.placed} of ${cards.length} cards at their stops and listed ${r.lists} in the bands`);
   check(r.clock === '14:07' && /14:07 in Pune/.test(r.now), `IST clock + now line (${r.now})`);
   check(r.alts && r.og, 'images have alt text; OG image set');
   await page.keyboard.press('Control+k');
@@ -205,7 +205,7 @@ console.log('homepage · classic view');
   const page = await ctx.newPage();
   await page.goto(url + 'index.html');
   const n = await page.evaluate(() => document.querySelectorAll('#map article.card').length);
-  check(n === 21, 'without JS all 21 cards are in the bands');
+  check(n === cards.length, `without JS all ${cards.length} cards are in the bands`);
   await page.screenshot({ path: join(OUT, 'no-js.png') });
   await ctx.close();
 }

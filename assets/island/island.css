@@ -986,7 +986,8 @@ main {
   border: 1px solid var(--line-2);
   border-radius: var(--radius);
   box-shadow: 0 18px 50px color-mix(in srgb, var(--ink) 14%, transparent);
-  transition: background-color 0.4s;
+  /* no colour transition: paper and ink must change in the same frame, or a
+     fast day→night flight briefly leaves pale ink on a still-light panel */
 }
 .mode-island .stop::before,
 .mode-island .still,

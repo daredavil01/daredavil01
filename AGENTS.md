@@ -63,6 +63,11 @@ docs/
 presentations/
   ask-the-archive.html            Ask the Archive: the 29-slide deck version of
                                    docs/ask-the-archive-story.html
+  day-island-redesign.html        Day Island, the Redesign: the 25-slide
+                                   illustrated deck on how this homepage was
+                                   rebuilt — every prompt and design question,
+                                   the paths not taken, the ink renderer, the bugs
+  assets/day-island/              Screenshots used by that deck (webp)
   e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
                                    ethanol/sugar trade-off and how the site was built
   projects-page-revamp.html       Projects, Reborn: the 12-slide deck on
@@ -85,18 +90,27 @@ yung-data/                        Adivasi Survey Dashboard (Marathi/English)
 
 ## ⚠️ Homepage rule (always follow)
 
-**Whenever content is added, renamed, moved, or removed in this repo — a new
-page, deck, game, dashboard, prototype, or project directory — update
-`index.html` in the same change so the homepage reflects all content.**
+**Whenever a presentation, doc, dashboard, game, prototype or project is added,
+renamed, moved or removed, update all three places in the same commit:**
 
-Specifically:
+| # | Where | What |
+|---|---|---|
+| 1 | `index.html` | One registry card in `#map`, in the right band (details below) |
+| 2 | `README.md` | The matching **Projects** sub-table row (*Apps, games & data* or *Websites I've designed & built*) **and** a row in **In This Repo** |
+| 3 | `CLAUDE.md` **and** `AGENTS.md` | The directory tree at the top of both files (keep the two in sync) |
+
+The task isn't done until all three are updated. A page that isn't linked from
+the homepage is unfinished, and `node tools/qa.mjs` fails if any repo page is
+missing from `index.html`.
+
+The homepage card, specifically:
 
 1. Add (or update/remove) one card in the registry — the `#map` section of
    `index.html` — in the right band:
    - **"Things I built you can play with"** (`data-band="play"`) — apps, games,
      dashboards and decks you can open and use.
    - **"Websites I've designed & built"** (`data-band="sites"`) — whole sites
-     and the dossiers, specs and architecture write-ups behind them.
+     and the dossiers, specs, decks and architecture write-ups behind them.
 
    ```html
    <article class="card" id="<stop>/<slug>" data-stop="<stop>" data-band="play">
@@ -117,13 +131,8 @@ Specifically:
    `new-project/index.html`, not `new-project/`), so links work on any host.
    Off-repo work links to its live URL or GitHub repo instead, with a
    trailing `↗` in the kicker to mark it as leaving the site.
-3. Give the new page the shared return chip (see Conventions).
-4. Mirror the change in `README.md` — the matching **Projects** sub-table
-   (*Apps, games & data* or *Websites I've designed & built*) and the
-   **In This Repo** section — and in the directory tree above.
-
-A page that isn't linked from the homepage is considered unfinished.
-`node tools/qa.mjs` fails if any repo page is missing from `index.html`.
+3. Give the new page the shared return chip (see Conventions), pointing at the
+   card's `id`.
 
 ## Conventions
 
@@ -138,7 +147,10 @@ A page that isn't linked from the homepage is considered unfinished.
   (contour glyph, "← Home", the hour and place it returns to) and matches the
   page's light or dark background. The page's own theme is otherwise untouched.
 - Keep new root-level files to a minimum; put projects in their own
-  directory, design docs in `docs/` and decks in `presentations/`.
+  directory, design docs in `docs/` and decks in `presentations/`. A deck's
+  screenshots go in `presentations/assets/<deck>/` as webp (roughly 120 KB
+  each at most); the island's own renders and stills are referenced in place,
+  not copied.
 - **The homepage look — "topographic ink".** Day: warm paper `#f4ecda` /
   `#e6dcc4`, ink `#2b2620`, rust accent `#c4642f`. Night (and dark mode):
   cyanotype paper `#0f2a47` / `#13365b`, pale ink `#dfe9f1`, rust `#e0864f`.
