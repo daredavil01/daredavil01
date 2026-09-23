@@ -88,11 +88,6 @@
     if (theme === "auto") delete document.documentElement.dataset.theme;
     else document.documentElement.dataset.theme = theme;
     DI.store.set("theme", theme);
-    // drop any sun-driven inline tokens so the stylesheet (or the sun again) can win
-    ["--paper", "--paper-2", "--ink", "--rust", "--green"].forEach(function (p) {
-      document.documentElement.style.removeProperty(p);
-    });
-    DI.themeDirty = true;
     var m = THEME_META[theme], btn = $('[data-action="theme"]');
     if (btn) {
       $("[data-theme-icon]", btn).textContent = m.icon;

@@ -387,6 +387,10 @@ class Island {
         if (this.override.t >= 1) this.override = null;
       } else targetHour = this.override.hour;
     }
+    // forced light/dark theme pins the whole scene to noon / midnight
+    var forced = document.documentElement.dataset.theme;
+    if (forced === 'light') targetHour = 12;
+    else if (forced === 'dark') targetHour = 0;
     this.cur.hour += (targetHour - this.cur.hour) * k;
     const [ox, oy] = this.offsetFor(this.cur.u);
     this.view.setViewOffset(ox, oy);
@@ -416,10 +420,8 @@ class Island {
       this.lastHourLabel = hl;
       range.setAttribute('aria-valuetext', `${hl}, ${stop ? DI.stop(stop.id).name : ''}`);
     }
-    // palette → CSS, so the panels follow the sun — unless a theme is forced
-    const forcedTheme = document.documentElement.dataset.theme;
-    if (!forcedTheme && (this.DI.themeDirty || Math.abs((this.cssHour ?? -9) - this.cur.hour) > 0.03)) {
-      this.DI.themeDirty = false;
+    // palette → CSS, so the panels follow the sun
+    if (Math.abs((this.cssHour ?? -9) - this.cur.hour) > 0.03) {
       this.cssHour = this.cur.hour;
       const p = uiPalette(this.view.palette);
       const r = document.documentElement.style;
