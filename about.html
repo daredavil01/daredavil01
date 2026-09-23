@@ -956,7 +956,7 @@ body.theme-mono .d-med{background:#dbeafe;color:#1e40af}
 </style>
 </head>
 <body class="theme-dark">
-<a id="home-link" href="index.html">← Home</a>
+<a id="home-link" data-island-return href="index.html#island/about-me">← Home</a>
 <style>
   #home-link {
     position: fixed; top: 14px; left: 16px; z-index: 2147483647;
@@ -1496,5 +1496,6 @@ document.querySelector('deck-stage').addEventListener('slidechange', e => {
   }
 });
 </script>
+<script src="assets/chrome/chrome.js" defer data-stop="island"></script>
 </body>
 </html>

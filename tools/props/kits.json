@@ -1,0 +1,87 @@
+{
+  "$comment": "Kenney CC0 kits (https://kenney.nl, Creative Commons Zero). Zips are downloaded to ~/.cache/day-island/kits, verified by sha256, and never committed. Each prop becomes a node named proto_<name> in assets/island/models/props.glb.gz; textures are dropped and the colormap swatch under each vertex is baked into COLOR_0 so the ink shader can read the albedo.",
+  "kits": {
+    "castle-kit": { "url": "https://kenney.nl/media/pages/assets/castle-kit/a395102d20-1711543616/kenney_castle-kit.zip", "sha256": "921f3f73927bb23106cae34bc21d5ab4b033a9fc120475e96f714a406e3169df", "dir": "Models/GLB format" },
+    "nature-kit": { "url": "https://kenney.nl/media/pages/assets/nature-kit/37ac38a37b-1677698939/kenney_nature-kit.zip", "sha256": "fa7974a0d342bfe63c38664ba9f8ec1a4aab8ea25f099bdc56870e33588c4d9d", "dir": "Models/GLTF format" },
+    "watercraft-kit": { "url": "https://kenney.nl/media/pages/assets/watercraft-kit/a335cfed49-1713519620/kenney_watercraft-pack.zip", "sha256": "cd1470c1cf441c7f46d0944ae6d0d897242365dc97677c5079b3238965d659f3", "dir": "Models/GLB format" },
+    "city-kit-suburban": { "url": "https://kenney.nl/media/pages/assets/city-kit-suburban/2c871b7af2-1745479373/kenney_city-kit-suburban_20.zip", "sha256": "5869c35cf30b1c87bdb2d197b6d325eebadd2ef08ea27f04797e8e08d77a9a39", "dir": "Models/GLB format" },
+    "city-kit-commercial": { "url": "https://kenney.nl/media/pages/assets/city-kit-commercial/a742d900eb-1753115042/kenney_city-kit-commercial_2.1.zip", "sha256": "f8b09b081c2bb88bcc126e2dec1cb40fd0dad7e7e591b6c26aaefe96fb35276b", "dir": "Models/GLB format" },
+    "pirate-kit": { "url": "https://kenney.nl/media/pages/assets/pirate-kit/e6d4bb1525-1771333093/kenney_pirate-kit.zip", "sha256": "667ed2caf92954ddb98f7b7cede831fe99ab75063c26b25e23d32715bee9c943", "dir": "Models/GLB format" },
+    "survival-kit": { "url": "https://kenney.nl/media/pages/assets/survival-kit/4065a8185b-1712149243/kenney_survival-kit.zip", "sha256": "c3586341b5932c87eb43d75d915434f47daed168b17ed36a03e8ca9977c7443e", "dir": "Models/GLB format" },
+    "fantasy-town-kit": { "url": "https://kenney.nl/media/pages/assets/fantasy-town-kit/efe948d309-1754222374/kenney_fantasy-town-kit_2.0.zip", "sha256": "1a7530c09f4d2fa2cdee259876f089334f8b1f27fa86a0c4f54ef86cdd8676ef", "dir": "Models/GLB format" },
+    "mini-characters": { "url": "https://kenney.nl/media/pages/assets/mini-characters/bfc7e272b4-1774770718/kenney_mini-characters.zip", "sha256": "9e1d48e6d7b8479ebbe84df71eb5bd8e1b3f0da546dea641890dccc8a02d0999", "dir": "Models/GLB format" }
+  },
+  "props": {
+    "fort_wall": ["castle-kit", "wall"],
+    "fort_wall_half": ["castle-kit", "wall-half"],
+    "fort_corner": ["castle-kit", "wall-corner-half-tower"],
+    "fort_gate": ["castle-kit", "gate"],
+    "fort_tower_base": ["castle-kit", "tower-hexagon-base"],
+    "fort_tower_mid": ["castle-kit", "tower-hexagon-mid"],
+    "fort_tower_top": ["castle-kit", "tower-hexagon-top"],
+    "fort_tower_roof": ["castle-kit", "tower-hexagon-roof"],
+    "flag": ["castle-kit", "flag-pennant"],
+    "flag_banner": ["castle-kit", "flag-banner-long"],
+    "stairs_stone": ["castle-kit", "stairs-stone"],
+
+    "library_base": ["castle-kit", "tower-square-base-color"],
+    "library_mid": ["castle-kit", "tower-square-mid-windows"],
+    "library_top": ["castle-kit", "tower-square-top-roof-high-windows"],
+    "archive_wing": ["city-kit-suburban", "building-type-m"],
+
+    "studio": ["city-kit-commercial", "building-c"],
+    "studio_awning": ["city-kit-commercial", "detail-awning-wide"],
+    "watermill": ["fantasy-town-kit", "watermill"],
+    "mill_wheel": ["fantasy-town-kit", "wheel"],
+    "cargo_pile": ["watercraft-kit", "cargo-pile-a"],
+    "crate": ["pirate-kit", "crate"],
+    "barrel": ["pirate-kit", "barrel"],
+
+    "finish_gate": ["watercraft-kit", "gate-finish"],
+    "lantern": ["fantasy-town-kit", "lantern"],
+    "signpost": ["survival-kit", "signpost"],
+
+    "school": ["city-kit-suburban", "building-type-c"],
+    "stall": ["fantasy-town-kit", "stall-red"],
+    "bench": ["fantasy-town-kit", "stall-bench"],
+    "fountain": ["fantasy-town-kit", "fountain-round"],
+
+    "pavilion_platform": ["pirate-kit", "structure-platform"],
+    "pavilion_roof": ["pirate-kit", "structure-roof"],
+    "dock": ["pirate-kit", "structure-platform-dock"],
+    "dock_small": ["pirate-kit", "structure-platform-dock-small"],
+
+    "lighthouse_tower": ["pirate-kit", "tower-complete-large"],
+    "cottage": ["city-kit-suburban", "building-type-a"],
+
+    "observatory_base": ["castle-kit", "tower-square-base"],
+    "observatory_mid": ["castle-kit", "tower-square-mid"],
+
+    "boat_sail": ["watercraft-kit", "boat-sail-a"],
+    "boat_sail_b": ["watercraft-kit", "boat-sail-b"],
+    "boat_row": ["watercraft-kit", "boat-row-small"],
+    "boat_fishing": ["watercraft-kit", "boat-fishing-small"],
+    "ferry": ["watercraft-kit", "boat-tug-a"],
+    "buoy": ["watercraft-kit", "buoy-flag"],
+
+    "tree_oak": ["nature-kit", "tree_oak"],
+    "tree_default": ["nature-kit", "tree_default"],
+    "tree_fat": ["nature-kit", "tree_fat"],
+    "tree_pine": ["nature-kit", "tree_pineTallA_detailed"],
+    "tree_pine_round": ["nature-kit", "tree_pineRoundC"],
+    "tree_palm": ["nature-kit", "tree_palmTall"],
+    "tree_thin": ["nature-kit", "tree_thin"],
+    "bush": ["nature-kit", "plant_bushLarge"],
+    "rock_large": ["nature-kit", "rock_largeA"],
+    "rock_tall": ["nature-kit", "rock_tallB"],
+    "rock_small": ["nature-kit", "rock_smallC"],
+    "tent": ["nature-kit", "tent_detailedOpen"],
+    "campfire": ["nature-kit", "campfire_stones"],
+    "log_stack": ["nature-kit", "log_stack"]
+  },
+  "runner": {
+    "kit": "mini-characters",
+    "model": "character-male-b",
+    "clips": ["sprint", "idle"]
+  }
+}

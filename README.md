@@ -1,3 +1,10 @@
+<a href="https://daredavil01.github.io/daredavil01/">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/daredavil01/daredavil01/main/assets/island/renders/readme-night.jpg" />
+    <img src="https://raw.githubusercontent.com/daredavil01/daredavil01/main/assets/island/renders/readme-day.jpg" alt="Day Island — an ink-drawn topographic island: a stepped Deccan mesa with a fort on top, a river running east, a lighthouse on the north-west headland, a library tower and a harbour studio. In dark mode it is drawn at night in cyanotype blue." width="100%" />
+  </picture>
+</a>
+
 <div align="center">
 
 # 👋 Hey, I'm Sanket Tambare
@@ -16,9 +23,26 @@
 
 ---
 
+## 🗺️ A day on the island
+
+The homepage of this repo is **[Day Island](https://daredavil01.github.io/daredavil01/)** — one ordinary, full day drawn as an ink-on-paper 3D island. Scroll and the clock turns from the dawn run to the observatory; every stop is a place on the island and a chapter of the site. It opens at the real time in Pune, turns to cyanotype blue at night, has a <kbd>⌘K</kbd> palette for everything, and hides a dozen field notes that only show up at certain hours. A plain, readable classic view is always one click away (and automatic for reduced motion).
+
+| Time      | Place                         | What's there                                                                  | Open                                                          |
+| --------- | ----------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **05:30** | 🏃 The river mouth            | 21 races, 10K to a 50K ultra · PBs 5:05 / 1:59 / 0:55 · RunSmart · RunFolio   | [#run](https://daredavil01.github.io/daredavil01/#run)                                            |
+| **09:00** | 🛠️ The harbour studio         | Career record, the stack rated honestly, and the things that shipped         | [#build](https://daredavil01.github.io/daredavil01/#build)                                        |
+| **13:00** | 📚 The library + archive wing | 48 books by genre · Ask the Archive, the chatbot over my own records          | [#read](https://daredavil01.github.io/daredavil01/#read)                                          |
+| **16:00** | 🏔️ The fort on the mesa       | 18 Sahyadri forts & summits · the 22-hour Panhala → Pawankhind night march   | [#climb](https://daredavil01.github.io/daredavil01/#climb)                                        |
+| **18:00** | 🌳 The commons                | AI-governance research · foundation websites · the Adivasi survey · E20 story | [#commons](https://daredavil01.github.io/daredavil01/#commons)                                    |
+| **20:00** | 🎮 The pavilion               | The Wanderer's Digital Escape and its Three.js orb                            | [#play](https://daredavil01.github.io/daredavil01/#play)                                          |
+| **22:00** | ✍️ The lighthouse             | 1,600+ micro-posts, 86,789 long-form words, and where they live               | [#write](https://daredavil01.github.io/daredavil01/#write)                                        |
+| **00:30** | 🔭 The observatory            | What I'm doing now, and everywhere else to find me                            | [#night](https://daredavil01.github.io/daredavil01/#night)                                        |
+
+---
+
 ## 🧑‍💻 About Me
 
-I'm a software developer from **Pune, Maharashtra 🇮🇳**, specialising in full-stack development and data engineering. Beyond writing code, I research AI governance as a **NAST Fellow** at The Takshashila Institution, run 5 days a week 🏃, and read obsessively 📚.
+I'm a software developer from **Pune, Maharashtra 🇮🇳**, specialising in full-stack development and data engineering. Beyond writing code, I researched citizen agency in AI governance as a **NAST Fellow** at The Takshashila Institution (2024–25), run 5 days a week 🏃, and read obsessively 📚.
 
 I care deeply about the intersection of **technology, society, and public policy** — not just building things, but thinking critically about what we build and why.
 
@@ -31,8 +55,8 @@ I care deeply about the intersection of **technology, society, and public policy
 | Role                  | Organisation                | Focus                                                  |
 | --------------------- | --------------------------- | ------------------------------------------------------ |
 | 🧑‍💼 Software Developer | **Bridgenext**              | DORA metrics · ETL pipelines · GitLab API · Databricks |
-| 🎓 NAST Fellow        | **Takshashila Institution** | Citizen Agency in AI governance for public deployments |
-| 🏃 Marathon Training  | Self                        | 5 days/week · 20+ races completed                      |
+| 🎓 NAST Fellow (2024–25, completed) | **Takshashila Institution** | Citizen Agency in AI governance for public deployments |
+| 🏃 Marathon Training  | Self                        | 5 days/week · 21 races, 10K to a 50K ultra             |
 
 ---
 
@@ -136,11 +160,14 @@ I care deeply about the intersection of **technology, society, and public policy
 
 ## 🗂️ In This Repo
 
-This profile repo doubles as a small static site — `index.html` is the hub that links to everything:
+This profile repo doubles as a small static site with no build step — `index.html` is the hub that links to everything:
 
 | Page                                                                                   | What It Is                                                                                                                                     |
 | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`index.html`](./index.html)                                                           | Homepage hub — links to all content below                                                                                                      |
+| [`index.html`](./index.html)                                                           | **Day Island** — the homepage: a three.js island drawn in ink, one stop per hour of the day, linking to all content below (with a classic view for no-WebGL / reduced motion) |
+| [`assets/island/`](./assets/island)                                                    | The island itself — world modules, ink shaders, the page styles and scripts, Kenney CC0 props (`models/`), captured stills and banners           |
+| [`assets/chrome/`](./assets/chrome)                                                    | The shared “← Home” return chip every sub-page uses to fly back to its spot on the island                                                        |
+| [`tools/`](./tools)                                                                    | Authoring and QA only (never needed to serve the site): the props pipeline, the still/banner capture, and the Playwright QA run                  |
 | [`about.html`](./about.html)                                                           | Interactive 12-slide **About Me** deck (engineering · research · running · trekking · writing · reading · now)                                 |
 | [`developer-infographic/`](./developer-infographic)                                    | **A Developer, Measured** — scroll-through infographic: career gantt, rated stack, writing ledger, and the counterweight (races, forts, books) |
 | [`digital-wellbeing/`](./digital-wellbeing)                                            | **The Wanderer's Digital Escape** — narrative digital-wellbeing game + Three.js self-orb prototype                                             |
@@ -159,18 +186,18 @@ This profile repo doubles as a small static site — `index.html` is the hub tha
 
 ---
 
-## 🌐 Explore My Personal Site
+## 🌐 Across the water: sankettambare.in
 
-> **[sankettambare.in](https://sankettambare.in)** — Built with React 18 · Tailwind CSS · Cloudflare Pages
+> **[sankettambare.in](https://sankettambare.in)** — the full personal site, with its own world (the Wanderer's Atlas) — React 18 · Tailwind CSS · Cloudflare Pages
 
 <div>
 
 [![About](https://img.shields.io/badge/👤_About_Me-4A90E2?style=for-the-badge)](https://sankettambare.in/about)
 [![Resume](https://img.shields.io/badge/📄_Resume-6C757D?style=for-the-badge)](https://sankettambare.in/resume)
 [![Projects](https://img.shields.io/badge/🚀_Projects-28A745?style=for-the-badge)](https://sankettambare.in/projects)
-[![Books](<https://img.shields.io/badge/📚_Books_(43+)-E97627?style=for-the-badge>)](https://sankettambare.in/books)
-[![Sports](<https://img.shields.io/badge/🏃_Sports_(20+_Races)-FF5733?style=for-the-badge>)](https://sankettambare.in/sports)
-[![Treks](<https://img.shields.io/badge/🏔️_Treks_(15+)-4CAF50?style=for-the-badge>)](https://sankettambare.in/treks)
+[![Books](<https://img.shields.io/badge/📚_Books_(48)-E97627?style=for-the-badge>)](https://sankettambare.in/books)
+[![Sports](<https://img.shields.io/badge/🏃_Sports_(21_Races)-FF5733?style=for-the-badge>)](https://sankettambare.in/sports)
+[![Treks](<https://img.shields.io/badge/🏔️_Treks_(18)-4CAF50?style=for-the-badge>)](https://sankettambare.in/treks)
 [![Now](https://img.shields.io/badge/📍_What_I'm_Doing_Now-9B59B6?style=for-the-badge)](https://sankettambare.in/now)
 [![Stats](https://img.shields.io/badge/📊_Life_Stats-17A2B8?style=for-the-badge)](https://sankettambare.in/stats)
 [![Challenges](https://img.shields.io/badge/🎯_Challenges-DC3545?style=for-the-badge)](https://sankettambare.in/challenges)
@@ -214,9 +241,9 @@ This profile repo doubles as a small static site — `index.html` is the hub tha
 
 ## 📈 By the Numbers
 
-| 📚 Books Read | 🏃 Races Run | 🏔️ Treks Done |
-| :-----------: | :----------: | :-----------: |
-|    **43+**    |   **20+**    |    **15+**    |
+| 📚 Books Read | 🏃 Races Run | 🏔️ Forts & Summits | ✍️ Micro-posts | 📝 Long-form words |
+| :-----------: | :----------: | :----------------: | :------------: | :----------------: |
+|    **48**     |    **21**    |       **18**       |   **1,600+**   |     **86,789**     |
 
 ---
 
@@ -232,5 +259,7 @@ This profile repo doubles as a small static site — `index.html` is the hub tha
 <div align="center">
 
 _"Critically engaging with the world, one commit at a time."_ 🌏
+
+<sub>Day Island's buildings, trees and boats are <a href="https://kenney.nl">Kenney</a> models (CC0); the terrain, banyan, lighthouse lamp and observatory are drawn in code.</sub>
 
 </div>

@@ -259,7 +259,7 @@ pre .hl{color:var(--accent);}
 <body>
 
 <div class="topbar">
-  <a class="home" href="../index.html">&larr; Home</a>
+  <a class="home" data-island-return href="../index.html#build/projects-reborn">&larr; Home</a>
   <button class="theme" type="button" id="theme" aria-label="Theme: follow system. Activate to change.">
     <span class="ico" id="theme-ico" aria-hidden="true">&#9681;</span><span id="theme-lab">Auto</span>
   </button>
@@ -753,5 +753,6 @@ pre .hl{color:var(--accent);}
   apply(mode, false);
 })();
 </script>
+<script src="../assets/chrome/chrome.js" defer data-stop="build"></script>
 </body>
 </html>

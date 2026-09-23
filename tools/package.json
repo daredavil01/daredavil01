@@ -1,0 +1,21 @@
+{
+  "name": "day-island-tools",
+  "private": true,
+  "type": "module",
+  "description": "Authoring + QA tools for the Day Island homepage. Never needed to serve the site.",
+  "scripts": {
+    "props": "node props/build-props.mjs",
+    "capture": "node capture.mjs",
+    "qa": "node qa.mjs"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "4.5.0",
+    "@gltf-transform/extensions": "4.5.0",
+    "@gltf-transform/functions": "4.5.0",
+    "meshoptimizer": "1.2.0",
+    "pngjs": "7.0.0"
+  },
+  "devDependencies": {
+    "three": "0.186.0"
+  }
+}
