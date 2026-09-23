@@ -80,6 +80,28 @@
     });
   }
 
+  // ---- colour theme: light / dark / auto (auto follows the OS live via CSS)
+  var THEMES = ["auto", "light", "dark"];
+  var THEME_META = { auto: { icon: "◐", label: "Auto" }, light: { icon: "☀", label: "Light" }, dark: { icon: "☾", label: "Dark" } };
+  DI.setTheme = function (theme) {
+    if (THEMES.indexOf(theme) < 0) theme = "auto";
+    if (theme === "auto") delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = theme;
+    DI.store.set("theme", theme);
+    // drop any sun-driven inline tokens so the stylesheet (or the sun again) can win
+    ["--paper", "--paper-2", "--ink", "--rust", "--green"].forEach(function (p) {
+      document.documentElement.style.removeProperty(p);
+    });
+    DI.themeDirty = true;
+    var m = THEME_META[theme], btn = $('[data-action="theme"]');
+    if (btn) {
+      $("[data-theme-icon]", btn).textContent = m.icon;
+      $("[data-theme-label]", btn).textContent = m.label;
+      btn.setAttribute("aria-label", "Colour theme: " + theme);
+    }
+  };
+  DI.setTheme(DI.store.get("theme") || "auto");
+
   // ---- buttons
   DI.setMode = function (mode) {
     DI.store.set("mode", mode);
@@ -96,6 +118,7 @@
     if (action === "now") DI.goNow();
     else if (action === "cmdk") DI.cmdk && DI.cmdk.open();
     else if (action === "mode") DI.setMode(DI.mode === "island" ? "classic" : "island");
+    else if (action === "theme") DI.setTheme(THEMES[(THEMES.indexOf(DI.store.get("theme") || "auto") + 1) % 3]);
     else if (action === "mode-link") {
       e.preventDefault();
       DI.setMode(b.getAttribute("data-mode"));

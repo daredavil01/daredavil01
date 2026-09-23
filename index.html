@@ -29,6 +29,10 @@
     <link rel="stylesheet" href="assets/island/island.css" />
     <script>
       document.documentElement.classList.replace("no-js", "js");
+      try {
+        var t = (JSON.parse(localStorage.getItem("dayIsland:v1")) || {}).theme;
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch (e) {}
     </script>
     <script type="importmap">
       {
@@ -59,6 +63,9 @@
         <span class="notes-count" id="notes-count" hidden></span>
         <button class="tool tool--cmdk" type="button" data-action="cmdk" aria-keyshortcuts="Meta+K Control+K /">
           <span aria-hidden="true">⌘K</span><span class="tool__label">Search the island</span>
+        </button>
+        <button class="tool tool--theme" type="button" data-action="theme" aria-label="Colour theme: auto">
+          <span aria-hidden="true" data-theme-icon>◐</span><span class="tool__label" data-theme-label>Auto</span>
         </button>
         <button class="tool tool--mode" type="button" data-action="mode" hidden>
           <span aria-hidden="true">◐</span><span class="tool__label" data-mode-label>Classic view</span>

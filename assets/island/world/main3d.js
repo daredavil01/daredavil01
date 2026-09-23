@@ -416,8 +416,10 @@ class Island {
       this.lastHourLabel = hl;
       range.setAttribute('aria-valuetext', `${hl}, ${stop ? DI.stop(stop.id).name : ''}`);
     }
-    // palette → CSS, so the panels follow the sun
-    if (Math.abs((this.cssHour ?? -9) - this.cur.hour) > 0.03) {
+    // palette → CSS, so the panels follow the sun — unless a theme is forced
+    const forcedTheme = document.documentElement.dataset.theme;
+    if (!forcedTheme && (this.DI.themeDirty || Math.abs((this.cssHour ?? -9) - this.cur.hour) > 0.03)) {
+      this.DI.themeDirty = false;
       this.cssHour = this.cur.hour;
       const p = uiPalette(this.view.palette);
       const r = document.documentElement.style;
