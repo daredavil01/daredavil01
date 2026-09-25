@@ -1,0 +1,1387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The Digital Hub — a 30-slide illustrated tour of sankettambare.in: six regions above ground, one Postgres underneath, eight years of records, and Ask the Archive, the chatbot that answers from inside it. A wanderer narrates; the map, the journey, the counters and a passport are interactive.">
+<title>The Digital Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+<style>
+/* ---------------------------------------------------------------------------
+ * Ported from a Claude Design handoff ("Portfolio Site Showcase v2"). Every
+ * slide is a fixed 1920×1080 canvas with inline styles, scaled to fit and
+ * letterboxed — the design is laid out in absolute pixels, so it scales
+ * rather than reflows. Colours follow sankettambare.in: rust #b22200, deep
+ * #00222b, the Atlas region colours; the slide tokens (--paper, --ink, …)
+ * are written onto #canvas by the script below for day or night.
+ * ------------------------------------------------------------------------- */
+html,body{margin:0;height:100%;overflow:hidden;background:#0e1a22;}
+.home{position:fixed;top:12px;left:12px;z-index:60;color:#f3ede2;font:600 14px 'Plus Jakarta Sans',sans-serif;}
+
+.canvas{position:fixed;left:50%;top:50%;width:1920px;height:1080px;overflow:hidden;
+  transform:translate(-50%,-50%) scale(var(--s,.5));}
+.canvas>section{position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;
+  box-sizing:border-box !important;overflow:hidden;visibility:hidden;opacity:0;pointer-events:none;}
+.canvas>section[data-deck-active]{visibility:visible;opacity:1;pointer-events:auto;}
+.canvas a{color:#b22200;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px;}
+.canvas a:hover{color:#8c1800;}
+
+/* The passport: one shared copy over every slide. */
+.hud{position:absolute;top:24px;right:30px;z-index:40;display:flex;align-items:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;}
+.hud>*{background:rgba(20,30,28,0.8);border:2px solid rgba(255,180,164,0.45);display:flex;align-items:center;}
+.hud-pass{gap:10px;padding:9px 15px;}
+.hud-trail{gap:7px;padding:12px 14px;}
+.hud-trail span{width:12px;height:12px;border-radius:9999px;display:block;}
+.hud button{color:#f3ede2;font-family:inherit;font-size:18px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;padding:11px 16px;cursor:pointer;}
+.hud button:hover{border-color:#b22200;color:#ffb4a4;}
+
+/* style-hover from the handoff; !important because every slide style is inline. */
+.hv1:hover{background:#003a49 !important}
+.hv2:hover{opacity:0.86 !important}
+.hv3:hover{background:#b22200 !important;color:#ffffff !important}
+.hv4:hover{transform:translateY(-10px) !important;border-color:#b22200 !important}
+.hv5:hover{border-top-color:#ffb4a4 !important}
+.hv6:hover{transform:translateY(-10px) !important}
+.hv7:hover{border-bottom-color:#b22200 !important}
+.hv8:hover{transform:translateY(-8px) !important}
+
+@keyframes om-twinkle { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
+@keyframes om-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes om-gear { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes om-glint { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+@keyframes om-drift { 0% { transform: translateX(-26px); } 100% { transform: translateX(26px); } }
+@keyframes om-wave { 0%,100% { transform: translateX(0); } 50% { transform: translateX(14px); } }
+@keyframes om-dash { to { stroke-dashoffset: -64; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+
+/* Slide counter: out of the way until the pointer moves. */
+.nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:4px;
+  padding:4px;background:#000;color:#fff;border-radius:999px;font:600 13px/1 'Inter',sans-serif;font-variant-numeric:tabular-nums;
+  opacity:0;transition:opacity .25s;}
+.nav.on,.nav:hover,.nav:focus-within{opacity:1;}
+.nav button{background:none;border:0;color:inherit;font:inherit;width:34px;height:30px;border-radius:999px;cursor:pointer;}
+.nav button:hover:not(:disabled){background:#333;}
+.nav button:disabled{opacity:.35;cursor:default;}
+.nav span{padding:0 6px;}
+
+@page{size:1920px 1080px;margin:0;}
+@media print{
+  html,body{height:auto;overflow:visible;background:none;}
+  .canvas{position:static;transform:none;height:auto;overflow:visible;}
+  .canvas>section{position:relative !important;width:1920px !important;height:1080px !important;contain:size;
+    visibility:visible;opacity:1;break-after:page;}
+  .canvas>section:last-of-type{break-after:auto;}
+  .hud,.nav,.home{display:none;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;animation-delay:-99s !important;animation-duration:.001s !important;
+    animation-iteration-count:1 !important;animation-fill-mode:both !important;transition-duration:0s !important;}
+}
+</style>
+<noscript><style>
+  html,body{height:auto;overflow:auto;}
+  .canvas{position:static;transform:none;height:auto;}
+  .canvas>section{position:relative !important;height:1080px !important;visibility:visible;opacity:1;}
+  .hud,.nav{display:none;}
+</style></noscript>
+</head>
+<body>
+<a class="home" data-island-return href="../index.html#island/digital-hub">&larr; Home</a>
+
+<main class="canvas" id="canvas">
+<div class="hud">
+  <div class="hud-pass">
+    <span style="font-size:18px; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:#e8dfc9;">Passport</span>
+    <span style="font-size:20px; font-weight:800; color:#ffb4a4;" data-t="stampText"></span>
+  </div>
+  <div class="hud-trail" id="trail"></div>
+  <button type="button" data-on="toggleTheme" data-t="themeLabel"></button>
+</div>
+
+<section aria-label="Slide 1: Title" data-label="Title" data-screen-label="01" data-speaker-notes="Open with the question, not the answer. Eight years of records, a world built on top of them, and now a chatbot that can answer from inside it." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:78px 92px 60px; display:flex; flex-direction:column; gap:30px; position:relative; overflow:hidden;">
+  <svg viewBox="0 0 1920 1080" aria-hidden="true" style="position:absolute; inset:0; width:100%; height:100%;">
+    <g style="animation:om-twinkle 5s ease-in-out infinite;"><circle cx="1520" cy="170" r="3" fill="#ffd9a0"></circle><circle cx="1648" cy="262" r="2.4" fill="#ffd9a0"></circle><circle cx="1432" cy="300" r="2" fill="#ffd9a0"></circle><circle cx="1742" cy="140" r="2.6" fill="#ffd9a0"></circle><circle cx="1600" cy="380" r="2" fill="#ffd9a0"></circle></g>
+    <path d="M0 872 L250 770 L440 842 L650 712 L870 826 L1090 694 L1330 796 L1610 684 L1920 786 L1920 1080 L0 1080 Z" fill="#00171e" opacity="0.9"></path>
+    <path d="M0 958 L300 896 L560 958 L820 888 L1120 958 L1420 876 L1700 948 L1920 898 L1920 1080 L0 1080 Z" fill="#012d38"></path>
+    <path d="M110 1042 Q520 978 900 1010 T1810 958" stroke="#b22200" stroke-width="5" fill="none" stroke-dasharray="18 15" opacity="0.75"></path>
+  </svg>
+  <div style="position:relative; display:flex; flex-direction:column; gap:28px; max-width:1320px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:27px; font-weight:800; letter-spacing:0.24em; text-transform:uppercase; color:#a7ccda;">An illustrated tour of sankettambare.in</div>
+    <h1 style="margin:0; font-family:'Noto Serif',serif; font-weight:900; font-size:128px; line-height:0.98; letter-spacing:-0.03em; color:#ffffff;">The Digital Hub</h1>
+    <p style="margin:0; font-size:39px; line-height:1.4; color:#c3e8f7; max-width:1120px;">Not a portfolio — a world you can walk into. Six regions above ground, one Postgres underneath, and eight years of one person's curiosity filed inside it.</p>
+  </div>
+  <div style="position:relative; margin-top:auto; display:flex; justify-content:space-between; align-items:flex-end; gap:40px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#a7ccda;">Sanket Tambare · <a href="https://sankettambare.in" target="_blank" rel="noopener" style="color:#ffb4a4;">sankettambare.in</a></div>
+    <div style="display:flex; align-items:flex-end; gap:18px;">
+      <svg width="76" height="122" viewBox="0 0 40 64" aria-hidden="true" style="animation:om-bob 4s ease-in-out infinite;">
+        <circle cx="19" cy="11" r="9" fill="#f3ede2"></circle>
+        <path d="M19 20 v23" stroke="#f3ede2" stroke-width="6" stroke-linecap="round"></path>
+        <path d="M19 27 l-10 7" stroke="#f3ede2" stroke-width="4.5" stroke-linecap="round"></path>
+        <path d="M19 26 l11 6" stroke="#f3ede2" stroke-width="4.5" stroke-linecap="round"></path>
+        <path d="M19 43 l-8 19" stroke="#f3ede2" stroke-width="5" stroke-linecap="round"></path>
+        <path d="M19 43 l8 19" stroke="#f3ede2" stroke-width="5" stroke-linecap="round"></path>
+        <path d="M32 18 l-4 46" stroke="#b22200" stroke-width="3.5" stroke-linecap="round"></path>
+      </svg>
+      <div style="position:relative; background:#f3ede2; border:3px solid #b22200; padding:24px 32px; max-width:780px;">
+        <div style="position:absolute; left:-11px; bottom:26px; width:18px; height:18px; background:#f3ede2; border-left:3px solid #b22200; border-bottom:3px solid #b22200; transform:rotate(45deg);"></div>
+        <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:33px; line-height:1.3; color:#17211f;">What does one person's curiosity look like, eight years in?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section aria-label="Slide 2: Ask the Archive" data-label="Ask the Archive" data-screen-label="02" data-speaker-notes="Lead with the newest thing: the whole archive is answerable in a sentence, in English or Marathi, with every claim linking back to its row. Then spend the rest of the deck earning that slide." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:28px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:48px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">The newest door · /ask</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:70px; font-weight:900; line-height:1.03;">You can just ask it</h2>
+    </div>
+    <p style="margin:0; font-size:28px; line-height:1.45; color:var(--muted,#5c6a66); max-width:620px;">Ask the Archive turns 2,702 indexed chunks into an answer in about four seconds — sources first, prose after, every name a link back to its row.</p>
+  </div>
+  <div style="display:grid; grid-template-columns:1.06fr 0.94fr; gap:44px; flex:1;">
+    <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:38px 40px; display:flex; flex-direction:column; gap:22px;">
+      <div style="display:flex; align-items:center; gap:14px; border:2px solid var(--line,#d6cdbc); padding:18px 22px;">
+        <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7" stroke="var(--rust,#b22200)" stroke-width="2.6" fill="none"></circle><path d="M16 16 L22 22" stroke="var(--rust,#b22200)" stroke-width="2.6" stroke-linecap="round"></path></svg>
+        <span style="font-size:29px; color:var(--ink,#17211f);">What are his running PBs?</span>
+      </div>
+      <p style="margin:0; font-size:29px; line-height:1.5; color:var(--ink,#17211f);">Across <strong>25 races</strong> and 577 km, the half-marathon best is <strong>1:59:57</strong> at NMDC Hyderabad Marathon 2025, and the marathon best is <strong>05:05:53</strong> at Tata Mumbai Marathon 2026.</p>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; background:#e8f1f5; color:#12505f; border:2px solid #9ec6d4; padding:9px 16px;">1 · Race</span>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; background:#e8f1f5; color:#12505f; border:2px solid #9ec6d4; padding:9px 16px;">2 · Race</span>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; background:#f6e8ef; color:#7d2a58; border:2px solid #d6a8c2; padding:9px 16px;">3 · Essay</span>
+      </div>
+      <div style="margin-top:auto; display:flex; gap:26px; font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted,#5c6a66);"><span>▲ Good</span><span>▼ Poor</span><span>Suggest</span></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px;">
+      <button type="button" data-on="countChunks" style="background:var(--deep,#00222b); color:#ffffff; border:none; text-align:left; padding:34px 32px; cursor:pointer; display:flex; flex-direction:column; gap:12px;" class="hv1">
+        <span style="font-family:'Noto Serif',serif; font-size:82px; font-weight:900; line-height:1; color:#ffb4a4;" data-t="counts.chunks"></span>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#a7ccda;">Indexed chunks</span>
+      </button>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:34px 32px; display:flex; flex-direction:column; gap:12px;">
+        <span style="font-family:'Noto Serif',serif; font-size:82px; font-weight:900; line-height:1; color:var(--rust,#b22200);">13</span>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted,#5c6a66);">Kinds of content</span>
+      </div>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:34px 32px; display:flex; flex-direction:column; gap:12px;">
+        <span style="font-family:'Noto Serif',serif; font-size:82px; font-weight:900; line-height:1; color:var(--rust,#b22200);">~4s</span>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted,#5c6a66);">Question to answer</span>
+      </div>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:34px 32px; display:flex; flex-direction:column; gap:12px;">
+        <span style="font-family:'Noto Serif',serif; font-size:82px; font-weight:900; line-height:1; color:var(--rust,#b22200);">$0</span>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted,#5c6a66);">Per month</span>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex; align-items:center; gap:20px; border-top:3px solid var(--line,#d6cdbc); padding-top:24px;">
+    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted,#5c6a66);">Try it</span>
+    <a href="https://sankettambare.in/ask" target="_blank" rel="noopener" style="font-family:'Noto Serif',serif; font-size:34px; font-weight:700;">sankettambare.in/ask</a>
+    <p style="margin:0 0 0 auto; font-family:'Noto Serif',serif; font-style:italic; font-size:30px; color:var(--rust,#b22200);">But what is it answering from?</p>
+  </div>
+</section>
+
+<section aria-label="Slide 3: The Map" data-label="The Map" data-screen-label="03" data-speaker-notes="Click a region — the panel changes. This is the site's real information architecture: six biomes, and every page is a place inside one of them. Six regions, six chapters of this deck." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:66px 76px 54px; display:flex; flex-direction:column; gap:24px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:44px;">
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">The world map · click a region</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:66px; font-weight:900; line-height:1.03;">Six regions, six chapters</h2>
+    </div>
+    <p style="margin:0; font-size:27px; line-height:1.45; color:var(--muted,#5c6a66); max-width:560px;">One SVG scene with pan, wheel-zoom and pinch. Day and night follow the visitor's own clock.</p>
+  </div>
+  <div style="display:grid; grid-template-columns:1.32fr 0.68fr; gap:36px; flex:1; align-items:stretch;">
+    <div style="position:relative; background:var(--sky,#cfe9f2); border:3px solid var(--line,#d6cdbc); overflow:hidden;">
+      <svg viewBox="0 0 1180 680" aria-hidden="false" style="width:100%; height:100%; display:block;">
+        <rect width="1180" height="680" fill="var(--sky,#cfe9f2)"></rect>
+        <g style="animation:om-drift 18s ease-in-out infinite alternate;" opacity="0.65"><ellipse cx="300" cy="90" rx="96" ry="30" fill="#ffffff"></ellipse><ellipse cx="880" cy="140" rx="120" ry="34" fill="#ffffff"></ellipse></g>
+        <path d="M0 470 Q160 430 300 468 T620 470 T940 452 T1180 480 L1180 680 L0 680 Z" fill="#e8dfc9"></path>
+        <path d="M0 512 Q200 486 420 516 T860 508 T1180 528 L1180 680 L0 680 Z" fill="#dcd0b3"></path>
+        <g data-on="pickCoast" style="cursor:pointer;" class="hv2">
+          <path d="M0 470 Q120 452 210 500 T170 620 L0 640 Z" fill="#1e6f8c" opacity="0.88"></path>
+          <g style="animation:om-wave 5s ease-in-out infinite;"><path d="M20 560 q30 -12 60 0 t60 0" stroke="#bfe6f5" stroke-width="5" fill="none" stroke-linecap="round"></path><path d="M30 600 q30 -12 60 0 t60 0" stroke="#bfe6f5" stroke-width="5" fill="none" stroke-linecap="round"></path></g>
+          <text x="40" y="510" font-family="'Noto Serif',serif" font-size="30" font-weight="700" fill="#ffffff">The Coast</text>
+          <circle cx="196" cy="596" r="11" fill="#ffd9a0" data-on="findMedal" style="cursor:pointer; animation:om-glint 3.4s ease-in-out infinite;"></circle>
+        </g>
+        <g data-on="pickRidge" style="cursor:pointer;" class="hv2">
+          <path d="M240 470 L330 300 L410 400 L470 250 L570 470 Z" fill="#5a7248"></path>
+          <path d="M470 250 L500 300 L440 306 Z" fill="#3f5233"></path>
+          <rect x="452" y="222" width="5" height="34" fill="#7d8f6a"></rect><path d="M457 224 l30 10 -30 10 z" fill="#b22200"></path>
+          <text x="300" y="440" font-family="'Noto Serif',serif" font-size="30" font-weight="700" fill="#ffffff">The Ridge</text>
+          <circle cx="352" cy="380" r="10" fill="#ffd9a0" data-on="findTent" style="cursor:pointer; animation:om-glint 4.2s ease-in-out infinite;"></circle>
+        </g>
+        <g data-on="pickForest" style="cursor:pointer;" class="hv2">
+          <g fill="#2f6b4f"><path d="M640 470 l40 -120 40 120 z"></path><path d="M700 470 l46 -150 46 150 z"></path><path d="M770 470 l38 -110 38 110 z"></path></g>
+          <rect x="676" y="466" width="8" height="18" fill="#6b4a2a"></rect><rect x="742" y="464" width="9" height="20" fill="#6b4a2a"></rect>
+          <text x="640" y="512" font-family="'Noto Serif',serif" font-size="30" font-weight="700" fill="#17352a">Book Forest</text>
+          <g style="animation:om-twinkle 6s ease-in-out infinite;"><circle cx="812" cy="286" r="3" fill="#ffd9a0"></circle><circle cx="838" cy="252" r="3" fill="#ffd9a0"></circle><circle cx="864" cy="292" r="3" fill="#ffd9a0"></circle></g>
+          <circle cx="838" cy="272" r="12" fill="none" stroke="#ffd9a0" stroke-width="2.5" data-on="findStars" style="cursor:pointer; animation:om-glint 5s ease-in-out infinite;"></circle>
+        </g>
+        <g data-on="pickWorkshop" style="cursor:pointer;" class="hv2">
+          <rect x="900" y="386" width="190" height="104" fill="#8c1800"></rect>
+          <path d="M890 386 L995 318 L1100 386 Z" fill="#6b1200"></path>
+          <g transform="translate(962,430)" style="animation:om-gear 9s linear infinite; transform-origin:center;"><circle r="24" fill="none" stroke="#ffd9a0" stroke-width="7" stroke-dasharray="9 8"></circle></g>
+          <text x="900" y="528" font-family="'Noto Serif',serif" font-size="30" font-weight="700" fill="#17211f">The Workshop</text>
+        </g>
+        <g data-on="pickScriptorium" style="cursor:pointer;" class="hv2">
+          <rect x="620" y="560" width="230" height="92" fill="#a8407a"></rect>
+          <path d="M646 604 l40 -30 10 12 -40 30 z" fill="#f3ede2"></path>
+          <rect x="736" y="586" width="80" height="46" fill="#f3ede2" opacity="0.9"></rect>
+          <text x="620" y="546" font-family="'Noto Serif',serif" font-size="30" font-weight="700" fill="#17211f">Scriptorium</text>
+          <path d="M792 620 l20 -10 -6 14 z" fill="#ffd9a0" data-on="findBoat" style="cursor:pointer; animation:om-glint 3.8s ease-in-out infinite;"></path>
+        </g>
+        <g data-on="pickHome" style="cursor:pointer;" class="hv2">
+          <rect x="250" y="560" width="230" height="92" fill="#b06000"></rect>
+          <path d="M240 560 L365 496 L490 560 Z" fill="#8a4a00"></path>
+          <rect x="336" y="600" width="52" height="52" fill="#f3ede2"></rect>
+          <text x="250" y="546" font-family="'Noto Serif',serif" font-size="30" font-weight="700" fill="#17211f">Hometown Square</text>
+          <circle cx="452" cy="636" r="10" fill="#8ed39a" data-on="findSapling" style="cursor:pointer; animation:om-glint 4.6s ease-in-out infinite;"></circle>
+        </g>
+        <g data-transform="ringT" transform="translate(365,600)" style="transition:transform 0.5s ease;"><circle r="46" fill="none" stroke="var(--rust,#b22200)" stroke-width="6" stroke-dasharray="12 10"></circle></g>
+      </svg>
+      <div style="position:absolute; left:20px; bottom:18px; font-family:'Plus Jakarta Sans',sans-serif; font-size:19px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#17211f; background:rgba(243,237,226,0.86); padding:8px 14px;">Five glints hide real stories — find them</div>
+    </div>
+    <div style="background:var(--card,#ffffff); border-top:12px solid var(--region,#b06000); border-right:3px solid var(--line,#d6cdbc); border-bottom:3px solid var(--line,#d6cdbc); border-left:3px solid var(--line,#d6cdbc); padding:38px 36px; display:flex; flex-direction:column; gap:22px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted,#5c6a66);" data-t="region.chapter"></div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:56px; font-weight:900; line-height:1.05;" data-t="region.name"></h3>
+      <div style="font-family:'Noto Serif',serif; font-size:90px; font-weight:900; line-height:1; color:var(--region,#b06000);" data-t="region.stat"></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:23px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted,#5c6a66);" data-t="region.statLabel"></div>
+      <p style="margin:0; font-size:29px; line-height:1.5; color:var(--ink,#17211f);" data-t="region.blurb"></p>
+      <div style="margin-top:auto; font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; color:var(--region,#b06000);" data-t="region.route"></div>
+    </div>
+  </div>
+</section>
+
+<section aria-label="Slide 4: The Journey ▶" data-label="The Journey ▶" data-screen-label="04" data-speaker-notes="This slide plays itself when you land on it — eight beats, the wanderer walking the whole world, ending underground and then at /ask. Hit Replay to run it again." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:58px 70px 48px; display:flex; flex-direction:column; gap:20px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:36px;">
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#a7ccda;"><span data-t="beatNum"></span> · plays itself</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:60px; font-weight:900; line-height:1.03;">The whole story, in one walk</h2>
+    </div>
+    <button type="button" data-on="play" style="background:transparent; border:3px solid #b22200; color:#ffb4a4; font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; padding:18px 30px; cursor:pointer;" class="hv3" data-t="playLabel"></button>
+  </div>
+  <div style="position:relative; flex:1; border:3px solid #28414e; overflow:hidden;">
+    <svg viewBox="0 0 1180 820" aria-hidden="true" style="width:100%; height:100%; display:block;">
+      <rect width="1180" height="820" fill="#012530"></rect>
+      <rect y="690" width="1180" height="130" fill="#00161d"></rect>
+      <path d="M0 470 Q160 430 300 468 T620 470 T940 452 T1180 480 L1180 690 L0 690 Z" fill="#073442"></path>
+      <path d="M0 470 Q120 452 210 500 T170 620 L0 640 Z" fill="#1e6f8c" opacity="0.9"></path>
+      <path d="M240 470 L330 300 L410 400 L470 250 L570 470 Z" fill="#43593a"></path>
+      <g fill="#245640"><path d="M640 470 l40 -120 40 120 z"></path><path d="M700 470 l46 -150 46 150 z"></path><path d="M770 470 l38 -110 38 110 z"></path></g>
+      <rect x="900" y="386" width="190" height="104" fill="#6b1200"></rect><path d="M890 386 L995 318 L1100 386 Z" fill="#4e0d00"></path>
+      <rect x="620" y="560" width="230" height="92" fill="#7d2a58"></rect>
+      <rect x="250" y="560" width="230" height="92" fill="#8a4a00"></rect><path d="M240 560 L365 496 L490 560 Z" fill="#6d3a00"></path>
+      <path d="M340 600 L150 548 L420 370 L726 396 L742 606 L996 430 L600 720 L600 780" stroke="#b22200" stroke-width="5" fill="none" stroke-dasharray="16 14" opacity="0.85" style="animation:om-dash 3s linear infinite;"></path>
+      <g opacity="0.55"><text x="60" y="736" font-family="'Plus Jakarta Sans',sans-serif" font-size="26" font-weight="700" fill="#9fb3ba" letter-spacing="4">UNDERGROUND · ONE POSTGRES · 15 TABLES · 2,702 CHUNKS</text><path d="M40 760 H1140" stroke="#28414e" stroke-width="3"></path></g>
+      <g data-transform="guideT" transform="translate(340,600)" style="transition:transform 1.5s cubic-bezier(0.4,0,0.2,1);">
+        <circle cx="0" cy="-46" r="15" fill="#f3ede2"></circle>
+        <path d="M0 -31 v36" stroke="#f3ede2" stroke-width="10" stroke-linecap="round"></path>
+        <path d="M0 -20 l-16 11" stroke="#f3ede2" stroke-width="7.5" stroke-linecap="round"></path>
+        <path d="M0 -21 l18 10" stroke="#f3ede2" stroke-width="7.5" stroke-linecap="round"></path>
+        <path d="M0 5 l-13 31" stroke="#f3ede2" stroke-width="8" stroke-linecap="round"></path>
+        <path d="M0 5 l13 31" stroke="#f3ede2" stroke-width="8" stroke-linecap="round"></path>
+        <path d="M21 -34 l-7 74" stroke="#b22200" stroke-width="6" stroke-linecap="round"></path>
+      </g>
+    </svg>
+  </div>
+  <div style="display:flex; align-items:center; gap:26px; border-top:3px solid #28414e; padding-top:20px;">
+    <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:46px; font-weight:900; color:#ffb4a4; min-width:520px;" data-t="beatTitle"></h3>
+    <p style="margin:0; font-size:31px; line-height:1.4; color:#c3e8f7;" data-t="beatBody"></p>
+  </div>
+</section>
+
+<section aria-label="Slide 5: § Hometown Square" data-label="§ Hometown Square" data-screen-label="05" data-speaker-notes="Chapter one. The archive is a person first — this stamps the passport automatically when you arrive." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:0; display:grid; grid-template-columns:1fr 1fr; position:relative; overflow:hidden;">
+  <div style="padding:90px 70px 80px 90px; display:flex; flex-direction:column; justify-content:center; gap:30px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#b06000;">Chapter One · /about</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:104px; font-weight:900; line-height:0.98; letter-spacing:-0.02em;">Hometown Square</h2>
+    <p style="margin:0; font-size:36px; line-height:1.45; color:var(--muted,#5c6a66); max-width:700px;">Before the database, the habits. Someone who reads in two languages, runs before dawn, and files all of it.</p>
+    <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:33px; color:#b06000;">So who keeps all these records?</p>
+  </div>
+  <div style="position:relative; background:#e8dfc9;">
+    <svg viewBox="0 0 700 1080" aria-hidden="true" style="position:absolute; inset:0; width:100%; height:100%;">
+      <rect width="700" height="1080" fill="var(--sky,#cfe9f2)"></rect>
+      <g style="animation:om-drift 20s ease-in-out infinite alternate;" opacity="0.7"><ellipse cx="180" cy="150" rx="90" ry="28" fill="#ffffff"></ellipse><ellipse cx="520" cy="240" rx="110" ry="30" fill="#ffffff"></ellipse></g>
+      <rect y="720" width="700" height="360" fill="#dcd0b3"></rect>
+      <rect x="150" y="470" width="400" height="260" fill="#b06000"></rect>
+      <path d="M130 470 L350 330 L570 470 Z" fill="#8a4a00"></path>
+      <rect x="300" y="580" width="100" height="150" fill="#f3ede2"></rect>
+      <rect x="196" y="530" width="76" height="70" fill="#ffd9a0"></rect>
+      <rect x="430" y="530" width="76" height="70" fill="#ffd9a0"></rect>
+      <g style="animation:om-drift 9s ease-in-out infinite alternate;"><ellipse cx="470" cy="300" rx="22" ry="14" fill="#ffffff" opacity="0.55"></ellipse></g>
+      <rect x="460" y="330" width="26" height="60" fill="#8a4a00"></rect>
+      <g><rect x="596" y="690" width="10" height="40" fill="#6b4a2a"></rect><circle cx="601" cy="676" r="26" fill="#3f7a4d"></circle><circle cx="581" cy="690" r="18" fill="#4f8f5c"></circle><circle cx="621" cy="690" r="18" fill="#4f8f5c"></circle></g>
+      <circle cx="601" cy="676" r="11" fill="#8ed39a" data-on="findSapling" style="cursor:pointer; animation:om-glint 4.4s ease-in-out infinite;"></circle>
+      <g transform="translate(90,640)" style="animation:om-bob 4.4s ease-in-out infinite;">
+        <circle cx="0" cy="-42" r="14" fill="#17211f"></circle>
+        <path d="M0 -28 v34" stroke="#17211f" stroke-width="9" stroke-linecap="round"></path>
+        <path d="M0 -18 l-15 10" stroke="#17211f" stroke-width="7" stroke-linecap="round"></path>
+        <path d="M0 -19 l17 9" stroke="#17211f" stroke-width="7" stroke-linecap="round"></path>
+        <path d="M0 6 l-12 30" stroke="#17211f" stroke-width="7.5" stroke-linecap="round"></path>
+        <path d="M0 6 l12 30" stroke="#17211f" stroke-width="7.5" stroke-linecap="round"></path>
+        <path d="M20 -32 l-7 70" stroke="#b22200" stroke-width="5.5" stroke-linecap="round"></path>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<section aria-label="Slide 6: Who I Am" data-label="Who I Am" data-screen-label="06" data-speaker-notes="Software developer, full-stack. The interests are not a hobby list — they are what the archive is made of." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:30px; position:relative;">
+  <div style="display:flex; flex-direction:column; gap:14px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">Who keeps the records</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:66px; font-weight:900; line-height:1.03; max-width:1500px;">A full-stack developer with a wide catchment area</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:52px; flex:1; align-items:center;">
+    <div style="display:flex; flex-direction:column; gap:28px;">
+      <p style="margin:0; font-size:34px; line-height:1.5; color:var(--muted,#5c6a66);">Technology, society, psychology, blogging, design, video editing, digital well-being. Years of exploring taught me what I am good at, what I am not, and what I actually want from a career.</p>
+      <p style="margin:0; font-size:34px; line-height:1.5; color:var(--ink,#17211f); border-left:8px solid var(--rust,#b22200); padding-left:32px;">Critically engage with what's new, better myself daily, understand the things happening around me — and enjoy the journey.</p>
+    </div>
+    <svg viewBox="0 0 520 520" aria-hidden="true" style="width:100%; height:auto; max-height:480px;">
+      <circle cx="260" cy="260" r="200" fill="none" stroke="var(--line,#d6cdbc)" stroke-width="3" stroke-dasharray="10 10"></circle>
+      <circle cx="260" cy="260" r="120" fill="none" stroke="var(--line,#d6cdbc)" stroke-width="3"></circle>
+      <circle cx="260" cy="260" r="58" fill="var(--rust,#b22200)"></circle>
+      <text x="260" y="270" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="22" font-weight="800" fill="#ffffff">CURIOSITY</text>
+      <g font-family="'Noto Serif',serif" font-size="25" font-weight="700" fill="var(--ink,#17211f)" text-anchor="middle">
+        <circle cx="260" cy="80" r="44" fill="#cfe4ea"></circle><text x="260" y="88">Code</text>
+        <circle cx="440" cy="190" r="44" fill="#e2d6f0"></circle><text x="440" y="198">Society</text>
+        <circle cx="400" cy="400" r="44" fill="#d8e8d2"></circle><text x="400" y="408">Trails</text>
+        <circle cx="180" cy="446" r="44" fill="#f2dcc8"></circle><text x="180" y="454">Words</text>
+        <circle cx="76" cy="240" r="44" fill="#f0d6dd"></circle><text x="76" y="248">Books</text>
+      </g>
+      <g stroke="var(--line,#d6cdbc)" stroke-width="3"><path d="M260 124 V202"></path><path d="M404 212 L312 240"></path><path d="M372 372 L300 306"></path><path d="M212 420 L246 316"></path><path d="M120 248 L202 256"></path></g>
+    </svg>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:var(--rust,#b22200); border-top:3px solid var(--line,#d6cdbc); padding-top:22px;">And what is he doing right now?</p>
+</section>
+
+<section aria-label="Slide 7: Currently" data-label="Currently" data-screen-label="07" data-speaker-notes="Three commitments held at once — the day job, the fellowship, and five days a week of training. That balance is why the archive exists." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:32px; position:relative;">
+  <div style="display:flex; flex-direction:column; gap:14px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">Currently · /now</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:66px; font-weight:900; line-height:1.03;">Three commitments, held at the same time</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:34px; flex:1;">
+    <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:40px 34px; display:flex; flex-direction:column; gap:20px; transition:transform 0.2s ease, border-color 0.2s ease;" class="hv4">
+      <svg viewBox="0 0 120 90" aria-hidden="true" style="width:100%; height:110px;"><rect x="8" y="10" width="104" height="66" rx="4" fill="none" stroke="var(--ink,#17211f)" stroke-width="4"></rect><path d="M22 30 h34 M22 44 h50 M22 58 h26" stroke="var(--rust,#b22200)" stroke-width="4" stroke-linecap="round"></path><path d="M84 36 l12 10 -12 10" stroke="var(--ink,#17211f)" stroke-width="4" fill="none" stroke-linecap="round"></path></svg>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:23px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--rust,#b22200);">Day job</div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:42px; font-weight:800; line-height:1.14;">Software Development Engineer</h3>
+      <p style="margin:0; font-size:29px; line-height:1.45; color:var(--muted,#5c6a66);">Full-stack, data engineering, CI/CD and DevOps.</p>
+    </div>
+    <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:40px 34px; display:flex; flex-direction:column; gap:20px; transition:transform 0.2s ease, border-color 0.2s ease;" class="hv4">
+      <svg viewBox="0 0 120 90" aria-hidden="true" style="width:100%; height:110px;"><circle cx="60" cy="44" r="30" fill="none" stroke="var(--ink,#17211f)" stroke-width="4"></circle><path d="M60 14 v60 M30 44 h60" stroke="var(--ink,#17211f)" stroke-width="3"></path><path d="M38 24 Q60 44 82 64" stroke="var(--rust,#b22200)" stroke-width="4" fill="none"></path><circle cx="60" cy="44" r="6" fill="var(--rust,#b22200)"></circle></svg>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:23px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--rust,#b22200);">Research</div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:42px; font-weight:800; line-height:1.14;">NAST Research Fellow</h3>
+      <p style="margin:0; font-size:29px; line-height:1.45; color:var(--muted,#5c6a66);">Technology geopolitics, at Takshashila.</p>
+    </div>
+    <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:40px 34px; display:flex; flex-direction:column; gap:20px; transition:transform 0.2s ease, border-color 0.2s ease;" class="hv4">
+      <svg viewBox="0 0 120 90" aria-hidden="true" style="width:100%; height:110px;"><path d="M10 70 q20 -14 36 -2 t30 -10 t34 -18" stroke="var(--rust,#b22200)" stroke-width="5" fill="none" stroke-linecap="round"></path><circle cx="46" cy="24" r="10" fill="var(--ink,#17211f)"></circle><path d="M46 34 l-6 18 M46 34 l10 14" stroke="var(--ink,#17211f)" stroke-width="4" stroke-linecap="round"></path></svg>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:23px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--rust,#b22200);">Training</div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:42px; font-weight:800; line-height:1.14;">Marathons, five days a week</h3>
+      <p style="margin:0; font-size:29px; line-height:1.45; color:var(--muted,#5c6a66);">10K through the Tata Ultra 50K.</p>
+    </div>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:var(--rust,#b22200); border-top:3px solid var(--line,#d6cdbc); padding-top:22px;">Eight years of that — how much does it add up to?</p>
+</section>
+
+<section aria-label="Slide 8: Life in Numbers" data-label="Life in Numbers" data-screen-label="08" data-speaker-notes="Click any number and it counts itself up. These are live figures from the database, and every one is a page you can open." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:36px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:40px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#a7ccda;">Life in numbers · click to count</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:66px; font-weight:900; line-height:1.03;">Eight years, counted live</h2>
+    </div>
+    <p style="margin:0; font-size:26px; line-height:1.45; color:#a7ccda; max-width:520px;">Nothing here was collected for a chatbot. It accumulated — then it got a database.</p>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:30px; flex:1;">
+    <button type="button" data-on="countPosts" style="background:transparent; border:none; border-top:5px solid #b22200; text-align:left; padding:26px 0 0; cursor:pointer; color:inherit;" class="hv5">
+      <div style="font-family:'Noto Serif',serif; font-size:96px; font-weight:900; line-height:1; color:#ffb4a4;" data-t="counts.posts"></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#a7ccda; margin-top:14px;">Micro posts</div>
+    </button>
+    <button type="button" data-on="countWords" style="background:transparent; border:none; border-top:5px solid #b22200; text-align:left; padding:26px 0 0; cursor:pointer; color:inherit;" class="hv5">
+      <div style="font-family:'Noto Serif',serif; font-size:96px; font-weight:900; line-height:1; color:#ffb4a4;" data-t="counts.words"></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#a7ccda; margin-top:14px;">Words of essays</div>
+    </button>
+    <button type="button" data-on="countEssays" style="background:transparent; border:none; border-top:5px solid #b22200; text-align:left; padding:26px 0 0; cursor:pointer; color:inherit;" class="hv5">
+      <div style="font-family:'Noto Serif',serif; font-size:96px; font-weight:900; line-height:1; color:#ffb4a4;" data-t="counts.essays"></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#a7ccda; margin-top:14px;">Essays published</div>
+    </button>
+    <button type="button" data-on="countBooks" style="background:transparent; border:none; border-top:5px solid #b22200; text-align:left; padding:26px 0 0; cursor:pointer; color:inherit;" class="hv5">
+      <div style="font-family:'Noto Serif',serif; font-size:96px; font-weight:900; line-height:1; color:#ffb4a4;" data-t="counts.books"></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#a7ccda; margin-top:14px;">Books read</div>
+    </button>
+    <button type="button" data-on="countRaces" style="background:transparent; border:none; border-top:5px solid #b22200; text-align:left; padding:26px 0 0; cursor:pointer; color:inherit;" class="hv5">
+      <div style="font-family:'Noto Serif',serif; font-size:96px; font-weight:900; line-height:1; color:#ffb4a4;" data-t="counts.races"></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#a7ccda; margin-top:14px;">Races run</div>
+    </button>
+    <button type="button" data-on="countTreks" style="background:transparent; border:none; border-top:5px solid #b22200; text-align:left; padding:26px 0 0; cursor:pointer; color:inherit;" class="hv5">
+      <div style="font-family:'Noto Serif',serif; font-size:96px; font-weight:900; line-height:1; color:#ffb4a4;" data-t="counts.treks"></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#a7ccda; margin-top:14px;">Forts trekked</div>
+    </button>
+    <button type="button" data-on="countChunks" style="background:transparent; border:none; border-top:5px solid #b22200; text-align:left; padding:26px 0 0; cursor:pointer; color:inherit;" class="hv5">
+      <div style="font-family:'Noto Serif',serif; font-size:96px; font-weight:900; line-height:1; color:#ffb4a4;" data-t="counts.chunks"></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#a7ccda; margin-top:14px;">Indexed chunks</div>
+    </button>
+    <button type="button" data-on="countVersions" style="background:transparent; border:none; border-top:5px solid #b22200; text-align:left; padding:26px 0 0; cursor:pointer; color:inherit;" class="hv5">
+      <div style="font-family:'Noto Serif',serif; font-size:96px; font-weight:900; line-height:1; color:#ffb4a4;" data-t="counts.versions"></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#a7ccda; margin-top:14px;">Releases shipped</div>
+    </button>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:#ffb4a4; border-top:3px solid #28414e; padding-top:22px;">Start with the running — where did 577 kilometres come from?</p>
+</section>
+
+<section aria-label="Slide 9: § The Coast" data-label="§ The Coast" data-screen-label="09" data-speaker-notes="Chapter two. Distance is a text label in the database — '21 Kms', '21K' — which is exactly the kind of quirk one generic search could never handle." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:0; display:grid; grid-template-rows:1fr auto; position:relative; overflow:hidden;">
+  <svg viewBox="0 0 1920 780" aria-hidden="true" style="position:absolute; top:0; left:0; width:100%; height:72%;">
+    <rect width="1920" height="780" fill="#0b3d4d"></rect>
+    <g style="animation:om-wave 7s ease-in-out infinite;"><path d="M0 560 q80 -26 160 0 t160 0 t160 0 t160 0 t160 0 t160 0 t160 0 t160 0 t160 0 t160 0 t160 0" stroke="#2e8fae" stroke-width="7" fill="none"></path></g>
+    <g style="animation:om-wave 9s ease-in-out infinite;"><path d="M0 640 q80 -26 160 0 t160 0 t160 0 t160 0 t160 0 t160 0 t160 0 t160 0 t160 0 t160 0 t160 0" stroke="#1e6f8c" stroke-width="7" fill="none"></path></g>
+    <path d="M0 700 H1920 V780 H0 Z" fill="#0a2f3c"></path>
+  </svg>
+  <div style="position:relative; padding:90px 90px 40px; display:flex; flex-direction:column; justify-content:center; gap:28px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#8fd0e6;">Chapter Two · /sports</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:104px; font-weight:900; line-height:0.98; letter-spacing:-0.02em;">The Coast</h2>
+    <p style="margin:0; font-size:36px; line-height:1.45; color:#c3e8f7; max-width:940px;">Twenty-five races and 577 kilometres, from a first 10K to a fifty.</p>
+  </div>
+  <div style="position:relative; display:flex; justify-content:space-between; align-items:flex-end; padding:0 90px 70px; gap:40px;">
+    <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:33px; color:#8fd0e6;">How far does that actually go?</p>
+    <svg width="120" height="150" viewBox="0 0 60 75" aria-hidden="true" style="animation:om-bob 4s ease-in-out infinite;">
+      <circle cx="28" cy="13" r="11" fill="#f3ede2"></circle>
+      <path d="M28 24 v27" stroke="#f3ede2" stroke-width="7" stroke-linecap="round"></path>
+      <path d="M28 32 l-12 8" stroke="#f3ede2" stroke-width="5.5" stroke-linecap="round"></path>
+      <path d="M28 31 l13 7" stroke="#f3ede2" stroke-width="5.5" stroke-linecap="round"></path>
+      <path d="M28 51 l-10 22" stroke="#f3ede2" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M28 51 l10 22" stroke="#f3ede2" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M44 22 l-5 53" stroke="#b22200" stroke-width="4" stroke-linecap="round"></path>
+    </svg>
+  </div>
+</section>
+
+<section aria-label="Slide 10: Race Route" data-label="Race Route" data-screen-label="10" data-speaker-notes="The route reads left to right by distance. The medal at the far end is the 50K — and it is one of the five hidden secrets, so click it." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:26px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:44px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#1e6f8c;">The race ledger</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">One coastline, five distances</h2>
+    </div>
+    <p style="margin:0; font-size:27px; line-height:1.45; color:var(--muted,#5c6a66); max-width:560px;">Personal bests, average paces, most-active city and year — plus a timing certificate on every race.</p>
+  </div>
+  <div style="flex:1; border:3px solid var(--line,#d6cdbc); background:var(--card,#ffffff); overflow:hidden;">
+    <svg viewBox="0 0 1700 520" aria-hidden="true" style="width:100%; height:100%; display:block;">
+      <rect width="1700" height="520" fill="var(--card,#ffffff)"></rect>
+      <path d="M0 420 q120 -30 240 -6 t240 -4 t240 -8 t240 -2 t240 -10 t260 -4 L1700 520 L0 520 Z" fill="#cfe9f2"></path>
+      <g style="animation:om-wave 8s ease-in-out infinite;"><path d="M0 470 q70 -18 140 0 t140 0 t140 0 t140 0 t140 0 t140 0 t140 0 t140 0 t140 0 t140 0 t140 0" stroke="#9ec6d4" stroke-width="5" fill="none"></path></g>
+      <path d="M90 350 C300 190, 520 420, 740 268 S1180 150, 1400 246 L1560 208" stroke="#1e6f8c" stroke-width="7" fill="none" stroke-dasharray="20 16"></path>
+      <g font-family="'Plus Jakarta Sans',sans-serif" font-size="25" font-weight="800" fill="#17211f" text-anchor="middle">
+        <g><circle cx="90" cy="350" r="15" fill="#1e6f8c"></circle><text x="90" y="318">10 km</text><text x="90" y="394" font-size="21" fill="#5c6a66">×3</text></g>
+        <g><circle cx="520" cy="420" r="19" fill="#1e6f8c"></circle><text x="520" y="384">21 km</text><text x="520" y="466" font-size="21" fill="#5c6a66">×18 · PB 1:59:57</text></g>
+        <g><circle cx="960" cy="212" r="15" fill="#1e6f8c"></circle><text x="960" y="180">35 km</text><text x="960" y="256" font-size="21" fill="#5c6a66">×1</text></g>
+        <g><circle cx="1330" cy="252" r="17" fill="#1e6f8c"></circle><text x="1330" y="218">42 km</text><text x="1330" y="296" font-size="21" fill="#5c6a66">×2 · PB 05:05:53</text></g>
+      </g>
+      <g data-on="findMedal" style="cursor:pointer;">
+        <circle cx="1560" cy="208" r="30" fill="#ffd9a0" stroke="#b22200" stroke-width="5" style="animation:om-glint 3.4s ease-in-out infinite;"></circle>
+        <path d="M1546 178 l14 -30 14 30" fill="#b22200"></path>
+        <text x="1560" y="278" font-family="'Plus Jakarta Sans',sans-serif" font-size="25" font-weight="800" fill="#17211f" text-anchor="middle">50 km</text>
+        <text x="1560" y="308" font-family="'Plus Jakarta Sans',sans-serif" font-size="21" fill="#5c6a66" text-anchor="middle">Tata Ultra · click me</text>
+      </g>
+    </svg>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:#1e6f8c; border-top:3px solid var(--line,#d6cdbc); padding-top:22px;">And when the running stops, where does he go?</p>
+</section>
+
+<section aria-label="Slide 11: § The Ridge" data-label="§ The Ridge" data-screen-label="11" data-speaker-notes="Chapter three. Trek dates are stored DD-MM-YYYY while races read 'February 22, 2026' — two formats, historical reasons, and a real reason the chatbot needs a hand-written brief on what fields mean." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:0; display:grid; grid-template-rows:1fr auto; position:relative; overflow:hidden;">
+  <svg viewBox="0 0 1920 800" aria-hidden="true" style="position:absolute; bottom:0; left:0; width:100%; height:78%;">
+    <rect width="1920" height="800" fill="#062a33"></rect>
+    <g style="animation:om-twinkle 6s ease-in-out infinite;" opacity="0.8"><circle cx="300" cy="90" r="3" fill="#ffd9a0"></circle><circle cx="620" cy="150" r="2.5" fill="#ffd9a0"></circle><circle cx="1500" cy="110" r="3" fill="#ffd9a0"></circle></g>
+    <path d="M0 620 L260 380 L420 520 L620 300 L820 560 L1020 340 L1240 540 L1460 320 L1700 540 L1920 400 L1920 800 L0 800 Z" fill="#2f4030"></path>
+    <path d="M620 300 L680 380 L556 388 Z" fill="#1f2c20"></path>
+    <path d="M1460 320 L1520 400 L1398 408 Z" fill="#1f2c20"></path>
+    <rect x="600" y="248" width="7" height="56" fill="#8fa37c"></rect><path d="M607 250 l40 14 -40 14 z" fill="#b22200"></path>
+    <path d="M0 700 L340 640 L700 700 L1100 630 L1500 700 L1920 650 L1920 800 L0 800 Z" fill="#20301f"></path>
+    <g data-on="findTent" style="cursor:pointer;"><path d="M1006 596 l44 -76 44 76 z" fill="#ffd9a0" style="animation:om-glint 4.2s ease-in-out infinite;"></path><path d="M1050 520 v76" stroke="#b22200" stroke-width="4"></path></g>
+  </svg>
+  <div style="position:relative; padding:90px 90px 40px; display:flex; flex-direction:column; justify-content:center; gap:28px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#b6cfa4;">Chapter Three · /treks</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:104px; font-weight:900; line-height:0.98; letter-spacing:-0.02em;">The Ridge</h2>
+    <p style="margin:0; font-size:36px; line-height:1.45; color:#d8e8d2; max-width:960px;">Twenty Sahyadri forts — six easy, eleven medium, three hard.</p>
+  </div>
+  <div style="position:relative; padding:0 90px 70px;">
+    <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:33px; color:#b6cfa4;">Which of them took twenty-two hours?</p>
+  </div>
+</section>
+
+<section aria-label="Slide 12: Fort Log" data-label="Fort Log" data-screen-label="12" data-speaker-notes="Every trek carries a year, a difficulty, an endurance level, photos, and usually the blog post it produced. Hover the bars." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:28px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:44px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#5a7248;">The fort log</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">Twenty forts, graded by difficulty</h2>
+    </div>
+    <p style="margin:0; font-size:27px; line-height:1.45; color:var(--muted,#5c6a66); max-width:520px;">Including the night march from Panhala to Pawankhind — 22 hours, and the trek the archive is most often asked about.</p>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:34px; flex:1;">
+    <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); border-bottom:12px solid #8fae76; padding:38px 32px; display:flex; flex-direction:column; gap:18px; transition:transform 0.2s ease;" class="hv6">
+      <div style="font-family:'Noto Serif',serif; font-size:100px; font-weight:900; line-height:1; color:#5a7248;">6</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted,#5c6a66);">Easy</div>
+      <svg viewBox="0 0 200 90" aria-hidden="true" style="width:100%; height:80px; margin-top:auto;"><path d="M0 80 L60 44 L110 70 L160 40 L200 62 L200 90 L0 90 Z" fill="#8fae76"></path></svg>
+    </div>
+    <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); border-bottom:12px solid #5a7248; padding:38px 32px; display:flex; flex-direction:column; gap:18px; transition:transform 0.2s ease;" class="hv6">
+      <div style="font-family:'Noto Serif',serif; font-size:100px; font-weight:900; line-height:1; color:#5a7248;">11</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted,#5c6a66);">Medium</div>
+      <svg viewBox="0 0 200 90" aria-hidden="true" style="width:100%; height:80px; margin-top:auto;"><path d="M0 90 L50 30 L96 66 L140 22 L200 72 L200 90 Z" fill="#5a7248"></path></svg>
+    </div>
+    <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); border-bottom:12px solid #3f5233; padding:38px 32px; display:flex; flex-direction:column; gap:18px; transition:transform 0.2s ease;" class="hv6">
+      <div style="font-family:'Noto Serif',serif; font-size:100px; font-weight:900; line-height:1; color:#5a7248;">3</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted,#5c6a66);">Hard</div>
+      <svg viewBox="0 0 200 90" aria-hidden="true" style="width:100%; height:80px; margin-top:auto;"><path d="M0 90 L40 18 L90 58 L130 8 L200 64 L200 90 Z" fill="#3f5233"></path></svg>
+    </div>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:#5a7248; border-top:3px solid var(--line,#d6cdbc); padding-top:22px;">What does he do on the days he isn't moving?</p>
+</section>
+
+<section aria-label="Slide 13: § Book Forest" data-label="§ Book Forest" data-screen-label="13" data-speaker-notes="Chapter four. The year stored is the year read, not published — half the dates are reconstructed, which is why a date_precision column exists." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:0; display:grid; grid-template-columns:1.05fr 0.95fr; position:relative; overflow:hidden;">
+  <div style="padding:90px 60px 80px 90px; display:flex; flex-direction:column; justify-content:center; gap:28px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#9ed4b4;">Chapter Four · /books</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:104px; font-weight:900; line-height:0.98; letter-spacing:-0.02em;">Book Forest</h2>
+    <p style="margin:0; font-size:36px; line-height:1.45; color:#c9e6d6; max-width:760px;">Fifty-one books — thirty in English, twenty-one in Marathi. A bilingual shelf is why the search index refuses to stem.</p>
+    <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:33px; color:#9ed4b4;">And what comes out of all that reading?</p>
+  </div>
+  <div style="position:relative;">
+    <svg viewBox="0 0 700 1080" aria-hidden="true" style="position:absolute; inset:0; width:100%; height:100%;">
+      <rect width="700" height="1080" fill="#052a20"></rect>
+      <g style="animation:om-twinkle 7s ease-in-out infinite;"><circle cx="150" cy="150" r="3" fill="#ffd9a0"></circle><circle cx="230" cy="96" r="2.6" fill="#ffd9a0"></circle><circle cx="300" cy="170" r="3" fill="#ffd9a0"></circle><circle cx="380" cy="110" r="2.4" fill="#ffd9a0"></circle></g>
+      <g data-on="findStars" style="cursor:pointer;"><path d="M150 150 L230 96 L300 170 L380 110" stroke="#ffd9a0" stroke-width="2.5" fill="none" opacity="0.7"></path><circle cx="265" cy="133" r="22" fill="none" stroke="#ffd9a0" stroke-width="3" style="animation:om-glint 5s ease-in-out infinite;"></circle></g>
+      <g fill="#1d6b4c">
+        <path d="M60 820 l70 -300 70 300 z"></path>
+        <path d="M200 820 l84 -380 84 380 z"></path>
+        <path d="M370 820 l64 -260 64 260 z"></path>
+        <path d="M500 820 l78 -340 78 340 z"></path>
+      </g>
+      <g fill="#6b4a2a"><rect x="122" y="812" width="16" height="60"></rect><rect x="276" y="812" width="18" height="60"></rect><rect x="426" y="812" width="16" height="60"></rect><rect x="570" y="812" width="18" height="60"></rect></g>
+      <rect y="866" width="700" height="214" fill="#03231b"></rect>
+      <g font-family="'Plus Jakarta Sans',sans-serif" font-size="27" font-weight="800" fill="#c9e6d6"><text x="60" y="960">30 English</text><text x="60" y="1006">21 Marathi</text></g>
+      <g transform="translate(600,986)" style="animation:om-bob 4.6s ease-in-out infinite;">
+        <circle cx="0" cy="-40" r="13" fill="#f3ede2"></circle>
+        <path d="M0 -27 v32" stroke="#f3ede2" stroke-width="8.5" stroke-linecap="round"></path>
+        <path d="M0 -17 l-16 12" stroke="#f3ede2" stroke-width="6.5" stroke-linecap="round"></path>
+        <path d="M0 -18 l16 10" stroke="#f3ede2" stroke-width="6.5" stroke-linecap="round"></path>
+        <path d="M0 5 l-11 28" stroke="#f3ede2" stroke-width="7" stroke-linecap="round"></path>
+        <path d="M0 5 l11 28" stroke="#f3ede2" stroke-width="7" stroke-linecap="round"></path>
+        <rect x="-22" y="-14" width="26" height="20" fill="#b22200"></rect>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<section aria-label="Slide 14: § The Scriptorium" data-label="§ The Scriptorium" data-screen-label="14" data-speaker-notes="Chapter five. 1,661 micro posts — 97% rescued from Tumblr, many of them reblogs, which is exactly why retrieved text is fenced as data and never trusted as instructions." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:0; display:grid; grid-template-columns:0.95fr 1.05fr; position:relative; overflow:hidden;">
+  <div style="position:relative; background:#f0e2ea;">
+    <svg viewBox="0 0 700 1080" aria-hidden="true" style="position:absolute; inset:0; width:100%; height:100%;">
+      <rect width="700" height="1080" fill="#f0e2ea"></rect>
+      <rect y="720" width="700" height="360" fill="#a8407a"></rect>
+      <rect x="70" y="640" width="560" height="90" fill="#7d2a58"></rect>
+      <rect x="140" y="470" width="180" height="170" fill="#f3ede2" stroke="#7d2a58" stroke-width="6"></rect>
+      <g stroke="#a8407a" stroke-width="5" stroke-linecap="round"><path d="M170 512 h120"></path><path d="M170 548 h120"></path><path d="M170 584 h80"></path></g>
+      <path d="M420 600 l130 -120 26 30 -130 120 z" fill="#f3ede2" stroke="#7d2a58" stroke-width="5"></path>
+      <path d="M404 618 l22 -6 -6 22 z" fill="#17211f"></path>
+      <rect x="430" y="700" width="170" height="24" fill="#f3ede2"></rect>
+      <g data-on="findBoat" style="cursor:pointer;"><path d="M300 820 l70 -26 -18 44 z" fill="#ffd9a0" stroke="#b22200" stroke-width="4" style="animation:om-glint 3.8s ease-in-out infinite;"></path><path d="M290 846 q44 16 90 0" stroke="#f3ede2" stroke-width="5" fill="none"></path></g>
+      <g font-family="'Plus Jakarta Sans',sans-serif" font-size="26" font-weight="800" fill="#f3ede2"><text x="70" y="940">953 photos</text><text x="70" y="986">471 notes</text><text x="70" y="1032">237 quotes</text></g>
+    </svg>
+  </div>
+  <div style="padding:90px 90px 80px 60px; display:flex; flex-direction:column; justify-content:center; gap:28px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#a8407a;">Chapter Five · /100-days</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:104px; font-weight:900; line-height:0.98; letter-spacing:-0.02em;">The Scriptorium</h2>
+    <p style="margin:0; font-size:36px; line-height:1.45; color:var(--muted,#5c6a66); max-width:760px;">1,661 micro posts since 2018, 104 essays on Substack and WordPress, and 100,199 words counted nightly.</p>
+    <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:33px; color:#a8407a;">How do you search eight years of short posts?</p>
+  </div>
+</section>
+
+<section aria-label="Slide 15: Writing at Scale" data-label="Writing at Scale" data-screen-label="15" data-speaker-notes="The micro-blog is the one table that broke every pattern — 1,661 rows that must never load wholesale. Server-side search, 24 rows a page, every filter mirrored into the URL." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:28px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:44px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#a8407a;">Case study · writing at scale</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">Rows that never load wholesale</h2>
+    </div>
+    <p style="margin:0; font-size:27px; line-height:1.45; color:var(--muted,#5c6a66); max-width:540px;">Micro posts peaked at 535 in 2020; essays exploded in 2026 with 61 of the 104. Every bar is a row a question can now reach.</p>
+  </div>
+  <div style="flex:1; border:3px solid var(--line,#d6cdbc); background:var(--card,#ffffff); padding:34px 36px;">
+    <svg viewBox="0 0 1660 440" aria-hidden="true" style="width:100%; height:100%; display:block;">
+      <g font-family="'Plus Jakarta Sans',sans-serif" font-size="22" font-weight="700" fill="#5c6a66" text-anchor="middle">
+        <g fill="#a8407a">
+          <rect x="60" y="322" width="120" height="68"></rect>
+          <rect x="240" y="316" width="120" height="74"></rect>
+          <rect x="420" y="128" width="120" height="262"></rect>
+          <rect x="600" y="254" width="120" height="136"></rect>
+          <rect x="780" y="336" width="120" height="54"></rect>
+          <rect x="960" y="358" width="120" height="32"></rect>
+          <rect x="1140" y="362" width="120" height="28"></rect>
+          <rect x="1320" y="346" width="120" height="44"></rect>
+        </g>
+        <g fill="#5c6a66"><text x="120" y="424">2018</text><text x="300" y="424">2019</text><text x="480" y="424">2020</text><text x="660" y="424">2021</text><text x="840" y="424">2022</text><text x="1020" y="424">2023</text><text x="1200" y="424">2024</text><text x="1380" y="424">2025</text></g>
+        <g fill="#17211f" font-size="24" font-weight="800"><text x="120" y="306">232</text><text x="300" y="300">230</text><text x="480" y="112">535</text><text x="660" y="238">280</text><text x="840" y="320">112</text><text x="1020" y="342">56</text><text x="1200" y="346">65</text><text x="1380" y="330">89</text></g>
+      </g>
+      <text x="1560" y="140" font-family="'Noto Serif',serif" font-size="72" font-weight="900" fill="#a8407a" text-anchor="middle">1,661</text>
+      <text x="1560" y="176" font-family="'Plus Jakarta Sans',sans-serif" font-size="21" font-weight="800" fill="#5c6a66" text-anchor="middle" letter-spacing="2">TOTAL</text>
+    </svg>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:28px;">
+    <div style="border-top:5px solid #a8407a; padding-top:18px;"><div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800;">Server-side search</div><p style="margin:8px 0 0; font-size:26px; line-height:1.4; color:var(--muted,#5c6a66);">A generated tsvector column, GIN-indexed, never shipped to a browser.</p></div>
+    <div style="border-top:5px solid #a8407a; padding-top:18px;"><div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800;">The <em>simple</em> config</div><p style="margin:8px 0 0; font-size:26px; line-height:1.4; color:var(--muted,#5c6a66);">Stemming Devanagari is worse than not stemming it at all.</p></div>
+    <div style="border-top:5px solid #a8407a; padding-top:18px;"><div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800;">Idempotent import</div><p style="margin:8px 0 0; font-size:26px; line-height:1.4; color:var(--muted,#5c6a66);">A unique key on source and source-id lets the Tumblr rescue re-run safely.</p></div>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:#a8407a;">Who built the machinery that holds all this?</p>
+</section>
+
+<section aria-label="Slide 16: § The Workshop" data-label="§ The Workshop" data-screen-label="16" data-speaker-notes="Chapter six. Thirteen projects, and the biggest one is the world you have been walking through. From here the deck goes under the floorboards." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:0; display:grid; grid-template-columns:1fr 1fr; position:relative; overflow:hidden;">
+  <div style="padding:90px 60px 80px 90px; display:flex; flex-direction:column; justify-content:center; gap:28px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#ffb4a4;">Chapter Six · /projects</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:104px; font-weight:900; line-height:0.98; letter-spacing:-0.02em;">The Workshop</h2>
+    <p style="margin:0; font-size:36px; line-height:1.45; color:#ffd9cf; max-width:760px;">Thirteen projects — and the largest of them is the site itself: two shells, one database, a custom CMS and a chatbot on top.</p>
+    <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:33px; color:#ffb4a4;">So how does one site show six worlds?</p>
+  </div>
+  <div style="position:relative;">
+    <svg viewBox="0 0 700 1080" aria-hidden="true" style="position:absolute; inset:0; width:100%; height:100%;">
+      <rect width="700" height="1080" fill="#3a0c00"></rect>
+      <rect x="60" y="640" width="580" height="40" fill="#6b1200"></rect>
+      <rect x="90" y="680" width="34" height="300" fill="#4e0d00"></rect>
+      <rect x="576" y="680" width="34" height="300" fill="#4e0d00"></rect>
+      <g transform="translate(200,470)" style="animation:om-gear 11s linear infinite; transform-origin:center;"><circle r="86" fill="none" stroke="#ffb4a4" stroke-width="20" stroke-dasharray="26 22"></circle><circle r="30" fill="none" stroke="#ffb4a4" stroke-width="12"></circle></g>
+      <g transform="translate(360,330)" style="animation:om-gear 7s linear infinite reverse; transform-origin:center;"><circle r="54" fill="none" stroke="#ff8f70" stroke-width="16" stroke-dasharray="20 16"></circle></g>
+      <rect x="440" y="560" width="150" height="20" fill="#ffd9a0"></rect>
+      <rect x="476" y="500" width="22" height="60" fill="#c4c7c7"></rect>
+      <path d="M150 600 h120 M150 616 h90" stroke="#ff8f70" stroke-width="7" stroke-linecap="round"></path>
+      <g font-family="'Plus Jakarta Sans',sans-serif" font-size="26" font-weight="800" fill="#ffd9cf"><text x="90" y="770">13 projects</text><text x="90" y="816">2 shells</text><text x="90" y="862">15 tables</text></g>
+    </svg>
+  </div>
+</section>
+
+<section aria-label="Slide 17: Two Front Doors" data-label="Two Front Doors" data-screen-label="17" data-speaker-notes="The most distinctive decision in the codebase: one content source, two complete presentations. The shells are pure presentation — the inner page is identical in both." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:28px; position:relative;">
+  <div style="display:flex; flex-direction:column; gap:14px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">The two-shell system</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:66px; font-weight:900; line-height:1.03;">One content source, two complete front doors</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1;">
+    <div style="background:var(--deep,#00222b); color:#f3ede2; padding:44px 40px; display:flex; flex-direction:column; gap:22px;">
+      <svg viewBox="0 0 420 200" aria-hidden="true" style="width:100%; height:180px;">
+        <rect width="420" height="200" fill="#012530"></rect>
+        <path d="M0 140 Q90 118 180 142 T420 132 L420 200 L0 200 Z" fill="#073442"></path>
+        <path d="M60 140 L110 74 L150 116 L196 62 L250 140 Z" fill="#43593a"></path>
+        <g fill="#245640"><path d="M270 140 l24 -54 24 54 z"></path><path d="M316 140 l26 -66 26 66 z"></path></g>
+        <rect x="14" y="150" width="70" height="34" fill="#1e6f8c"></rect>
+        <circle cx="366" cy="44" r="16" fill="#ffd9a0"></circle>
+      </svg>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:23px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffb4a4;">Default for everyone</div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:50px; font-weight:900; line-height:1.08;">The Wanderer's Atlas</h3>
+      <p style="margin:0; font-size:29px; line-height:1.45; color:#c3e8f7;">An illustrated 2.5D world. Every page is a place inside one of six regions, wrapped in a themed biome band with map breadcrumbs.</p>
+    </div>
+    <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:44px 40px; display:flex; flex-direction:column; gap:22px;">
+      <svg viewBox="0 0 420 200" aria-hidden="true" style="width:100%; height:180px;">
+        <rect width="420" height="200" fill="var(--paper,#f3ede2)" stroke="var(--line,#d6cdbc)" stroke-width="3"></rect>
+        <rect x="0" y="0" width="420" height="30" fill="var(--line,#d6cdbc)" opacity="0.6"></rect>
+        <rect x="24" y="52" width="150" height="120" fill="none" stroke="var(--muted,#5c6a66)" stroke-width="3"></rect>
+        <circle cx="99" cy="92" r="22" fill="var(--line,#d6cdbc)"></circle>
+        <g stroke="var(--muted,#5c6a66)" stroke-width="4" stroke-linecap="round"><path d="M44 132 h110"></path><path d="M44 150 h80"></path></g>
+        <g stroke="var(--ink,#17211f)" stroke-width="5" stroke-linecap="round"><path d="M204 60 h190"></path><path d="M204 84 h150"></path></g>
+        <g stroke="var(--muted,#5c6a66)" stroke-width="3" stroke-linecap="round"><path d="M204 116 h190"></path><path d="M204 136 h170"></path><path d="M204 156 h120"></path></g>
+      </svg>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:23px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--rust,#b22200);">One click away</div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:50px; font-weight:900; line-height:1.08;">The Classic Shell</h3>
+      <p style="margin:0; font-size:29px; line-height:1.45; color:var(--muted,#5c6a66);">Editorial portfolio layout — translucent nav, sticky bio sidebar, 3D globe homepage. The reduced-motion and accessibility escape hatch.</p>
+    </div>
+  </div>
+  <p style="margin:0; font-size:27px; line-height:1.45; color:var(--muted,#5c6a66); border-top:3px solid var(--line,#d6cdbc); padding-top:22px;">Resolution order: <strong style="color:var(--ink,#17211f);">?view=</strong> → stored preference → <strong style="color:var(--ink,#17211f);">prefers-reduced-motion</strong> → preview flag → feature flag. <em>And how do you arrive in the Atlas?</em></p>
+</section>
+
+<section aria-label="Slide 18: Arrival" data-label="Arrival" data-screen-label="18" data-speaker-notes="A three-stage state machine. The engineering note worth saying out loud: the orbit screen makes zero API calls, so it paints instantly on a cold mobile connection." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:32px; position:relative;">
+  <div style="display:flex; flex-direction:column; gap:14px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#a7ccda;">Arrival</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:66px; font-weight:900; line-height:1.03;">Orbit, dive, map — a three-stage entrance</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:40px; flex:1;">
+    <div style="display:flex; flex-direction:column; gap:22px;">
+      <svg viewBox="0 0 320 240" aria-hidden="true" style="width:100%; height:230px;">
+        <rect width="320" height="240" fill="#012530"></rect>
+        <g style="animation:om-twinkle 5s ease-in-out infinite;"><circle cx="40" cy="40" r="2.5" fill="#ffd9a0"></circle><circle cx="270" cy="60" r="2" fill="#ffd9a0"></circle><circle cx="120" cy="28" r="2" fill="#ffd9a0"></circle></g>
+        <circle cx="160" cy="130" r="72" fill="#12566a"></circle>
+        <path d="M100 100 q40 18 80 4 t50 14" stroke="#4f9db4" stroke-width="6" fill="none"></path>
+        <path d="M94 150 q50 22 100 2 t40 10" stroke="#4f9db4" stroke-width="6" fill="none"></path>
+        <ellipse cx="160" cy="130" rx="100" ry="30" fill="none" stroke="#b22200" stroke-width="4" stroke-dasharray="12 10"></ellipse>
+      </svg>
+      <div style="font-family:'Noto Serif',serif; font-size:52px; font-weight:900; color:#ffb4a4;">Orbit</div>
+      <p style="margin:0; font-size:28px; line-height:1.45; color:#c3e8f7;">A rotating WebGL globe, four counting-up teasers, one "Enter the World" call. Counts hardcoded on purpose — zero network calls before first paint.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:22px;">
+      <svg viewBox="0 0 320 240" aria-hidden="true" style="width:100%; height:230px;">
+        <rect width="320" height="240" fill="#012530"></rect>
+        <g opacity="0.85"><ellipse cx="90" cy="70" rx="80" ry="22" fill="#ffffff" opacity="0.5"></ellipse><ellipse cx="230" cy="120" rx="90" ry="24" fill="#ffffff" opacity="0.65"></ellipse><ellipse cx="140" cy="176" rx="100" ry="26" fill="#ffffff" opacity="0.8"></ellipse></g>
+        <path d="M160 20 v190" stroke="#b22200" stroke-width="5" stroke-dasharray="14 12"></path>
+        <path d="M144 196 l16 24 16 -24" fill="#b22200"></path>
+      </svg>
+      <div style="font-family:'Noto Serif',serif; font-size:52px; font-weight:900; color:#ffb4a4;">Dive</div>
+      <p style="margin:0; font-size:28px; line-height:1.45; color:#c3e8f7;">A 3.5-second GSAP timeline: camera plunge, three cloud sheets, a white bloom. The globe is swapped for the map at the bloom frame.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:22px;">
+      <svg viewBox="0 0 320 240" aria-hidden="true" style="width:100%; height:230px;">
+        <rect width="320" height="240" fill="#cfe9f2"></rect>
+        <path d="M0 150 Q80 130 160 152 T320 142 L320 240 L0 240 Z" fill="#e8dfc9"></path>
+        <path d="M40 150 L80 92 L112 128 L150 80 L196 150 Z" fill="#5a7248"></path>
+        <g fill="#2f6b4f"><path d="M212 150 l20 -44 20 44 z"></path><path d="M252 150 l22 -52 22 52 z"></path></g>
+        <rect x="14" y="160" width="60" height="28" fill="#b06000"></rect>
+        <rect x="230" y="176" width="70" height="26" fill="#a8407a"></rect>
+        <circle cx="272" cy="42" r="16" fill="#ffd9a0"></circle>
+      </svg>
+      <div style="font-family:'Noto Serif',serif; font-size:52px; font-weight:900; color:#ffb4a4;">Map</div>
+      <p style="margin:0; font-size:28px; line-height:1.45; color:#c3e8f7;">The world hub. Returning visitors land here directly; the intro replays on demand, and reduced motion skips the dive entirely.</p>
+    </div>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:#ffb4a4; border-top:3px solid #28414e; padding-top:22px;">And what happens if you just stand still?</p>
+</section>
+
+<section aria-label="Slide 19: Idle Life" data-label="Idle Life" data-screen-label="19" data-speaker-notes="The map is never still — and every bit of it no-ops under prefers-reduced-motion, down to the individual confetti burst." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:grid; grid-template-columns:1fr 1.02fr; gap:60px; align-items:center; position:relative;">
+  <div style="display:flex; flex-direction:column; gap:26px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">Idle life &amp; parallax</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">The map keeps moving when you don't</h2>
+    <p style="margin:0; font-size:32px; line-height:1.5; color:var(--muted,#5c6a66);">Sky and far layers lag the camera, near props lead it, and a fine pointer adds eight pixels of drift.</p>
+    <p style="margin:0; font-size:29px; line-height:1.45; color:var(--ink,#17211f); border-left:8px solid var(--rust,#b22200); padding-left:30px;">All of it stops under <strong>prefers-reduced-motion</strong> — the whole animation layer is opt-out in one media query.</p>
+    <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:var(--rust,#b22200);">Is there a reason to keep exploring?</p>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px 30px;">
+    <div style="display:flex; align-items:center; gap:16px; border-top:3px solid var(--line,#d6cdbc); padding-top:16px;"><svg width="42" height="30" viewBox="0 0 42 30" aria-hidden="true" style="animation:om-drift 8s ease-in-out infinite alternate;"><ellipse cx="21" cy="15" rx="19" ry="9" fill="#9ec6d4"></ellipse></svg><span style="font-size:28px;">Drifting clouds &amp; mist</span></div>
+    <div style="display:flex; align-items:center; gap:16px; border-top:3px solid var(--line,#d6cdbc); padding-top:16px;"><svg width="42" height="30" viewBox="0 0 42 30" aria-hidden="true"><rect x="8" y="3" width="3" height="26" fill="#5c6a66"></rect><path d="M11 5 l22 6 -22 6 z" fill="#b22200"></path></svg><span style="font-size:28px;">Fluttering flags</span></div>
+    <div style="display:flex; align-items:center; gap:16px; border-top:3px solid var(--line,#d6cdbc); padding-top:16px;"><svg width="42" height="30" viewBox="0 0 42 42" aria-hidden="true"><g transform="translate(21,21)" style="animation:om-gear 6s linear infinite; transform-origin:center;"><circle r="14" fill="none" stroke="#8c1800" stroke-width="6" stroke-dasharray="7 6"></circle></g></svg><span style="font-size:28px;">Spinning workshop gears</span></div>
+    <div style="display:flex; align-items:center; gap:16px; border-top:3px solid var(--line,#d6cdbc); padding-top:16px;"><svg width="42" height="30" viewBox="0 0 42 30" aria-hidden="true"><rect x="16" y="14" width="12" height="16" fill="#b06000"></rect><g style="animation:om-drift 5s ease-in-out infinite alternate;"><ellipse cx="22" cy="8" rx="8" ry="5" fill="#c4c7c7"></ellipse></g></svg><span style="font-size:28px;">Chimney smoke</span></div>
+    <div style="display:flex; align-items:center; gap:16px; border-top:3px solid var(--line,#d6cdbc); padding-top:16px;"><svg width="42" height="30" viewBox="0 0 42 30" aria-hidden="true" style="animation:om-bob 3.6s ease-in-out infinite;"><path d="M8 18 h26 l-5 9 h-16 z" fill="#1e6f8c"></path><rect x="20" y="4" width="3" height="14" fill="#5c6a66"></rect></svg><span style="font-size:28px;">Bobbing boats &amp; buoys</span></div>
+    <div style="display:flex; align-items:center; gap:16px; border-top:3px solid var(--line,#d6cdbc); padding-top:16px;"><svg width="42" height="30" viewBox="0 0 42 30" aria-hidden="true" style="animation:om-wave 4s ease-in-out infinite;"><path d="M2 18 q9 -8 18 0 t18 0" stroke="#1e6f8c" stroke-width="4" fill="none" stroke-linecap="round"></path></svg><span style="font-size:28px;">Lapping waves</span></div>
+    <div style="display:flex; align-items:center; gap:16px; border-top:3px solid var(--line,#d6cdbc); padding-top:16px;"><svg width="42" height="30" viewBox="0 0 42 30" aria-hidden="true"><path d="M6 26 l24 -20 5 6 -24 20 z" fill="#a8407a"></path></svg><span style="font-size:28px;">A writing quill</span></div>
+    <div style="display:flex; align-items:center; gap:16px; border-top:3px solid var(--line,#d6cdbc); padding-top:16px;"><svg width="42" height="30" viewBox="0 0 42 30" aria-hidden="true"><rect x="8" y="16" width="26" height="8" fill="#7d2a58"></rect><rect x="18" y="4" width="6" height="12" fill="#5c6a66"></rect></svg><span style="font-size:28px;">A stamping press</span></div>
+    <div style="display:flex; align-items:center; gap:16px; border-top:3px solid var(--line,#d6cdbc); padding-top:16px;"><svg width="42" height="30" viewBox="0 0 42 30" aria-hidden="true"><circle cx="12" cy="14" r="3.5" fill="#ffd9a0" style="animation:om-twinkle 3s ease-in-out infinite;"></circle><circle cx="26" cy="20" r="3" fill="#ffd9a0" style="animation:om-twinkle 4.2s ease-in-out infinite;"></circle><circle cx="34" cy="8" r="2.6" fill="#ffd9a0" style="animation:om-twinkle 5s ease-in-out infinite;"></circle></svg><span style="font-size:28px;">Night fireflies</span></div>
+    <div style="display:flex; align-items:center; gap:16px; border-top:3px solid var(--line,#d6cdbc); padding-top:16px;"><svg width="42" height="30" viewBox="0 0 42 30" aria-hidden="true"><path d="M6 16 q6 -7 12 0 q6 -7 12 0" stroke="#17211f" stroke-width="3.4" fill="none" stroke-linecap="round"></path></svg><span style="font-size:28px;">Low-flying birds</span></div>
+  </div>
+</section>
+
+<section aria-label="Slide 20: Passport &amp; Quests" data-label="Passport &amp; Quests" data-screen-label="20" data-speaker-notes="Gamification with an honest constraint: collector actions are tracked in both shells, so classic-mode readers earn quests too. The passport in the corner of this deck works the same way." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:30px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:40px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#a7ccda;">Gamification</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:66px; font-weight:900; line-height:1.03;">A passport, seven quests, five secrets</h2>
+    </div>
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffb4a4;">Your deck passport: <span data-t="stampText"></span></div>
+  </div>
+  <div style="display:grid; grid-template-columns:0.82fr 1.18fr; gap:56px; flex:1;">
+    <svg viewBox="0 0 420 520" aria-hidden="true" style="width:100%; height:100%;">
+      <rect x="10" y="10" width="400" height="500" fill="#f3ede2" stroke="#b22200" stroke-width="5"></rect>
+      <path d="M210 10 V510" stroke="#d6cdbc" stroke-width="3" stroke-dasharray="10 8"></path>
+      <text x="40" y="62" font-family="'Plus Jakarta Sans',sans-serif" font-size="20" font-weight="800" fill="#5c6a66" letter-spacing="3">PASSPORT</text>
+      <g fill="none" stroke="#b06000" stroke-width="4"><circle cx="106" cy="150" r="46" stroke-dasharray="9 8"></circle></g>
+      <text x="106" y="158" text-anchor="middle" font-family="'Noto Serif',serif" font-size="20" font-weight="800" fill="#b06000">HOME</text>
+      <g fill="none" stroke="#1e6f8c" stroke-width="4"><circle cx="300" cy="190" r="46" stroke-dasharray="9 8"></circle></g>
+      <text x="300" y="198" text-anchor="middle" font-family="'Noto Serif',serif" font-size="20" font-weight="800" fill="#1e6f8c">COAST</text>
+      <g fill="none" stroke="#5a7248" stroke-width="4"><circle cx="120" cy="300" r="46" stroke-dasharray="9 8"></circle></g>
+      <text x="120" y="308" text-anchor="middle" font-family="'Noto Serif',serif" font-size="20" font-weight="800" fill="#5a7248">RIDGE</text>
+      <g fill="none" stroke="#2f6b4f" stroke-width="4"><circle cx="304" cy="350" r="46" stroke-dasharray="9 8"></circle></g>
+      <text x="304" y="358" text-anchor="middle" font-family="'Noto Serif',serif" font-size="20" font-weight="800" fill="#2f6b4f">BOOKS</text>
+      <g fill="none" stroke="#a8407a" stroke-width="4"><circle cx="112" cy="444" r="44" stroke-dasharray="9 8"></circle></g>
+      <text x="112" y="452" text-anchor="middle" font-family="'Noto Serif',serif" font-size="19" font-weight="800" fill="#a8407a">WORDS</text>
+      <g fill="none" stroke="#8c1800" stroke-width="4"><circle cx="300" cy="462" r="40" stroke-dasharray="9 8"></circle></g>
+      <text x="300" y="470" text-anchor="middle" font-family="'Noto Serif',serif" font-size="18" font-weight="800" fill="#8c1800">WORK</text>
+    </svg>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div style="display:flex; justify-content:space-between; gap:36px; border-bottom:2px solid #28414e; padding-bottom:14px;"><span style="font-family:'Noto Serif',serif; font-size:36px; font-weight:800;">Cartographer</span><span style="font-size:28px; color:#a7ccda;">visit all six regions</span></div>
+      <div style="display:flex; justify-content:space-between; gap:36px; border-bottom:2px solid #28414e; padding-bottom:14px;"><span style="font-family:'Noto Serif',serif; font-size:36px; font-weight:800;">Bibliophile</span><span style="font-size:28px; color:#a7ccda;">open five books</span></div>
+      <div style="display:flex; justify-content:space-between; gap:36px; border-bottom:2px solid #28414e; padding-bottom:14px;"><span style="font-family:'Noto Serif',serif; font-size:36px; font-weight:800;">Roadrunner</span><span style="font-size:28px; color:#a7ccda;">open five races</span></div>
+      <div style="display:flex; justify-content:space-between; gap:36px; border-bottom:2px solid #28414e; padding-bottom:14px;"><span style="font-family:'Noto Serif',serif; font-size:36px; font-weight:800;">Summiteer</span><span style="font-size:28px; color:#a7ccda;">open five treks</span></div>
+      <div style="display:flex; justify-content:space-between; gap:36px; border-bottom:2px solid #28414e; padding-bottom:14px;"><span style="font-family:'Noto Serif',serif; font-size:36px; font-weight:800;">Wordsmith</span><span style="font-size:28px; color:#a7ccda;">open five blog posts</span></div>
+      <div style="display:flex; justify-content:space-between; gap:36px; border-bottom:2px solid #28414e; padding-bottom:14px;"><span style="font-family:'Noto Serif',serif; font-size:36px; font-weight:800;">Tinkerer</span><span style="font-size:28px; color:#a7ccda;">open three projects</span></div>
+      <div style="display:flex; justify-content:space-between; gap:36px;"><span style="font-family:'Noto Serif',serif; font-size:36px; font-weight:800; color:#ffb4a4;">Curious Wanderer</span><span style="font-size:28px; color:#ffb4a4;">find all five secrets</span></div>
+      <p style="margin:12px 0 0; font-family:'Noto Serif',serif; font-style:italic; font-size:30px; color:#ffb4a4;">What are the five secrets hiding?</p>
+    </div>
+  </div>
+</section>
+
+<section aria-label="Slide 21: Five Secrets" data-label="Five Secrets" data-screen-label="21" data-speaker-notes="The slide I care about most: each secret is a real biographical detail, not a generic collectible. The reward for exploring is learning something true. Click the stars if you have not found them yet." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:28px; position:relative; overflow:hidden;">
+  <svg viewBox="0 0 1920 1080" aria-hidden="true" style="position:absolute; inset:0; width:100%; height:100%; opacity:0.85;">
+    <g style="animation:om-twinkle 6s ease-in-out infinite;"><circle cx="1500" cy="180" r="3" fill="#ffd9a0"></circle><circle cx="1620" cy="260" r="2.4" fill="#ffd9a0"></circle><circle cx="1400" cy="320" r="2.4" fill="#ffd9a0"></circle><circle cx="1720" cy="400" r="3" fill="#ffd9a0"></circle><circle cx="1560" cy="460" r="2.2" fill="#ffd9a0"></circle></g>
+    <path d="M1500 180 L1620 260 L1720 400 M1620 260 L1400 320 L1560 460" stroke="#ffd9a0" stroke-width="2" fill="none" opacity="0.5"></path>
+  </svg>
+  <div style="position:relative; display:flex; justify-content:space-between; align-items:flex-end; gap:40px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#a7ccda;">Five secrets · <span data-t="secretsFound"></span></div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:66px; font-weight:900; line-height:1.03;">Every hidden glint is a true story</h2>
+    </div>
+  </div>
+  <div style="position:relative; display:flex; flex-direction:column; gap:20px; flex:1; justify-content:center;">
+    <button type="button" data-on="findMedal" style="background:transparent; border:none; border-bottom:2px solid #28414e; padding:0 0 18px; cursor:pointer; color:inherit; display:grid; grid-template-columns:96px 460px 1fr; gap:34px; align-items:center; text-align:left;" class="hv7">
+      <svg width="76" height="76" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="38" r="17" fill="#ffd9a0" stroke="#b22200" stroke-width="4"></circle><path d="M22 20 l8 -16 8 16" fill="#b22200"></path></svg>
+      <span style="font-family:'Noto Serif',serif; font-size:38px; font-weight:800;">A medal on the coast</span>
+      <span style="font-size:30px; color:#c3e8f7;">The Tata Ultra 50K finish.</span>
+    </button>
+    <button type="button" data-on="findTent" style="background:transparent; border:none; border-bottom:2px solid #28414e; padding:0 0 18px; cursor:pointer; color:inherit; display:grid; grid-template-columns:96px 460px 1fr; gap:34px; align-items:center; text-align:left;" class="hv7">
+      <svg width="76" height="76" viewBox="0 0 60 60" aria-hidden="true"><path d="M8 48 l22 -36 22 36 z" fill="#ffd9a0"></path><path d="M30 12 v36" stroke="#b22200" stroke-width="4"></path></svg>
+      <span style="font-family:'Noto Serif',serif; font-size:38px; font-weight:800;">A lone tent</span>
+      <span style="font-size:30px; color:#c3e8f7;">The 22-hour Panhala to Pawankhind night trek.</span>
+    </button>
+    <button type="button" data-on="findBoat" style="background:transparent; border:none; border-bottom:2px solid #28414e; padding:0 0 18px; cursor:pointer; color:inherit; display:grid; grid-template-columns:96px 460px 1fr; gap:34px; align-items:center; text-align:left;" class="hv7">
+      <svg width="76" height="76" viewBox="0 0 60 60" aria-hidden="true"><path d="M10 38 l36 -14 -10 24 z" fill="#ffd9a0" stroke="#b22200" stroke-width="3"></path><path d="M8 50 q24 10 48 0" stroke="#a7ccda" stroke-width="4" fill="none"></path></svg>
+      <span style="font-family:'Noto Serif',serif; font-size:38px; font-weight:800;">A paper boat</span>
+      <span style="font-size:30px; color:#c3e8f7;">The newsletter — <em>The Wanderer's Technical Anecdotes</em>.</span>
+    </button>
+    <button type="button" data-on="findSapling" style="background:transparent; border:none; border-bottom:2px solid #28414e; padding:0 0 18px; cursor:pointer; color:inherit; display:grid; grid-template-columns:96px 460px 1fr; gap:34px; align-items:center; text-align:left;" class="hv7">
+      <svg width="76" height="76" viewBox="0 0 60 60" aria-hidden="true"><rect x="27" y="34" width="6" height="22" fill="#6b4a2a"></rect><circle cx="30" cy="26" r="15" fill="#8ed39a"></circle><circle cx="18" cy="34" r="9" fill="#4f8f5c"></circle><circle cx="42" cy="34" r="9" fill="#4f8f5c"></circle></svg>
+      <span style="font-family:'Noto Serif',serif; font-size:38px; font-weight:800;">A sapling in the square</span>
+      <span style="font-size:30px; color:#c3e8f7;">Tree plantations and social work with Nirman.</span>
+    </button>
+    <button type="button" data-on="findStars" style="background:transparent; border:none; padding:0; cursor:pointer; color:inherit; display:grid; grid-template-columns:96px 460px 1fr; gap:34px; align-items:center; text-align:left;">
+      <svg width="76" height="76" viewBox="0 0 60 60" aria-hidden="true"><circle cx="14" cy="18" r="3.5" fill="#ffd9a0"></circle><circle cx="32" cy="10" r="3" fill="#ffd9a0"></circle><circle cx="44" cy="26" r="3.5" fill="#ffd9a0"></circle><circle cx="24" cy="38" r="3" fill="#ffd9a0"></circle><path d="M14 18 L32 10 L44 26 L24 38 Z" stroke="#ffd9a0" stroke-width="2" fill="none"></path></svg>
+      <span style="font-family:'Noto Serif',serif; font-size:38px; font-weight:800;">A constellation</span>
+      <span style="font-size:30px; color:#c3e8f7;">A birthday, over the Book Forest — visible at night only.</span>
+    </button>
+  </div>
+  <p style="position:relative; margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:#ffb4a4; border-top:3px solid #28414e; padding-top:20px;">All of that sits on something. What's under the floor?</p>
+</section>
+
+<section aria-label="Slide 22: Architecture" data-label="Architecture" data-screen-label="22" data-speaker-notes="Read it as a landscape: Postgres is bedrock, the edge is weather, the client is what you see. No server to run, no markdown pipeline, no third-party CMS." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:66px 76px 54px; display:flex; flex-direction:column; gap:24px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:44px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">Architecture as a landscape</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">Four layers, no server to run</h2>
+    </div>
+    <p style="margin:0; font-size:27px; line-height:1.45; color:var(--muted,#5c6a66); max-width:520px;">On 13 June 2026 the whole site moved into Supabase — and every later feature, the chatbot included, stands on that move.</p>
+  </div>
+  <div style="flex:1; border:3px solid var(--line,#d6cdbc); overflow:hidden;">
+    <svg viewBox="0 0 1700 620" aria-hidden="true" style="width:100%; height:100%; display:block;">
+      <rect width="1700" height="620" fill="var(--sky,#cfe9f2)"></rect>
+      <g style="animation:om-drift 22s ease-in-out infinite alternate;" opacity="0.9">
+        <ellipse cx="380" cy="120" rx="150" ry="44" fill="#ffffff"></ellipse>
+        <ellipse cx="1180" cy="100" rx="170" ry="48" fill="#ffffff"></ellipse>
+      </g>
+      <text x="380" y="132" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="25" font-weight="800" fill="#12505f">EDGE · CLOUDFLARE PAGES</text>
+      <text x="1180" y="112" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="25" font-weight="800" fill="#12505f">HTMLRewriter · OG INJECTION</text>
+      <g>
+        <rect x="120" y="230" width="460" height="130" fill="#ffffff" stroke="#17211f" stroke-width="5"></rect>
+        <text x="152" y="278" font-family="'Noto Serif',serif" font-size="34" font-weight="900" fill="#17211f">Client</text>
+        <text x="152" y="318" font-family="'Inter',sans-serif" font-size="25" fill="#5c6a66">React 18 · Vite · Tailwind</text>
+        <text x="152" y="348" font-family="'Inter',sans-serif" font-size="25" fill="#5c6a66">Two shells · Three.js code-split</text>
+      </g>
+      <g>
+        <rect x="700" y="230" width="420" height="130" fill="#ffffff" stroke="#17211f" stroke-width="5"></rect>
+        <text x="732" y="278" font-family="'Noto Serif',serif" font-size="34" font-weight="900" fill="#17211f">Ask worker</text>
+        <text x="732" y="318" font-family="'Inter',sans-serif" font-size="25" fill="#5c6a66">Hybrid search · 4-rung ladder</text>
+        <text x="732" y="348" font-family="'Inter',sans-serif" font-size="25" fill="#5c6a66">SSE stream · link allow-list</text>
+      </g>
+      <g>
+        <rect x="1240" y="230" width="340" height="130" fill="#ffffff" stroke="#17211f" stroke-width="5"></rect>
+        <text x="1272" y="278" font-family="'Noto Serif',serif" font-size="34" font-weight="900" fill="#17211f">/admin</text>
+        <text x="1272" y="318" font-family="'Inter',sans-serif" font-size="25" fill="#5c6a66">Schema-driven forms</text>
+        <text x="1272" y="348" font-family="'Inter',sans-serif" font-size="25" fill="#5c6a66">One owner login</text>
+      </g>
+      <g stroke="#b22200" stroke-width="5" stroke-dasharray="14 12"><path d="M350 360 V430"></path><path d="M910 360 V430"></path><path d="M1410 360 V430"></path></g>
+      <path d="M0 430 Q300 402 620 432 T1240 424 T1700 440 L1700 620 L0 620 Z" fill="#8a6a3a"></path>
+      <path d="M0 486 Q360 462 760 492 T1360 480 T1700 500 L1700 620 L0 620 Z" fill="#6b4a2a"></path>
+      <g font-family="'Plus Jakarta Sans',sans-serif" fill="#f3ede2">
+        <text x="70" y="540" font-size="34" font-weight="800" letter-spacing="3">BEDROCK · SUPABASE POSTGRES</text>
+        <text x="70" y="584" font-size="26" font-weight="700" fill="#e8dfc9">15 content tables · row-level security · 213 tags · 2,702 chunks · media bucket</text>
+      </g>
+    </svg>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:var(--rust,#b22200);">What stops any of that from lying?</p>
+</section>
+
+<section aria-label="Slide 23: Rules in Postgres" data-label="Rules in Postgres" data-screen-label="23" data-speaker-notes="Every guarantee the chatbot relies on is enforced below the application, so no code path can forget it. A hidden project never reaches a page, a share card — or the index." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:30px; position:relative;">
+  <div style="display:flex; flex-direction:column; gap:14px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#a7ccda;">Rules held by the database</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:66px; font-weight:900; line-height:1.03;">The database, not React, keeps the promises</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:32px 48px; flex:1;">
+    <div style="border-top:6px solid #b22200; padding-top:26px; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffb4a4;">v15 · migration 0005</div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:44px; font-weight:800;">Drafts stay drafts</h3>
+      <p style="margin:0; font-size:29px; line-height:1.45; color:#c3e8f7;">The projects read policy is <strong>visible or is_owner()</strong> — a hidden project never reaches a page, a tag list, a share card, or the search index.</p>
+    </div>
+    <div style="border-top:6px solid #b22200; padding-top:26px; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffb4a4;">v14 · migration 0003</div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:44px; font-weight:800;">Tags are central</h3>
+      <p style="margin:0; font-size:29px; line-height:1.45; color:#c3e8f7;">213 tags in one table, linked polymorphically, with a function that replaces a row's whole tag set atomically.</p>
+    </div>
+    <div style="border-top:6px solid #b22200; padding-top:26px; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffb4a4;">v15 – v16</div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:44px; font-weight:800;">Dates are real</h3>
+      <p style="margin:0; font-size:29px; line-height:1.45; color:#c3e8f7;">Project dates became a Postgres date; book finish dates carry a precision flag. Sorting stopped lying.</p>
+    </div>
+    <div style="border-top:6px solid #b22200; padding-top:26px; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffb4a4;">v17 · migration 0012</div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:44px; font-weight:800;">The log is owner-only</h3>
+      <p style="margin:0; font-size:29px; line-height:1.45; color:#c3e8f7;">Visitors write the conversation log through a definer function and can never read it back.</p>
+    </div>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:#ffb4a4; border-top:3px solid #28414e; padding-top:22px;">With all that in place — what happens when you ask a question?</p>
+</section>
+
+<section aria-label="Slide 24: A Question's Journey" data-label="A Question's Journey" data-screen-label="24" data-speaker-notes="Six stations, about four seconds: retrieval 1.81s, generation 2.39s, 4.20s end to end. Logging happens after the answer is already streaming, so it can never slow one down." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:66px 76px 54px; display:flex; flex-direction:column; gap:26px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:44px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">Ask the Archive · the pipeline</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">Six stations, about four seconds</h2>
+    </div>
+    <div style="font-family:'Noto Serif',serif; font-size:78px; font-weight:900; color:var(--rust,#b22200); line-height:1;">4.20s</div>
+  </div>
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:26px;">
+    <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:20px;">
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); border-top:10px solid #1e6f8c; padding:26px 22px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s ease;" class="hv8">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; color:var(--muted,#5c6a66);">01</div>
+        <div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800; line-height:1.1;">Question</div>
+        <div style="font-size:24px; line-height:1.35; color:var(--muted,#5c6a66);">Turnstile token, quota cap</div>
+      </div>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); border-top:10px solid #1e6f8c; padding:26px 22px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s ease;" class="hv8">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; color:var(--muted,#5c6a66);">02</div>
+        <div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800; line-height:1.1;">Embed</div>
+        <div style="font-size:24px; line-height:1.35; color:var(--muted,#5c6a66);">bge-m3, 1024 dims</div>
+      </div>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); border-top:10px solid #a8407a; padding:26px 22px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s ease;" class="hv8">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; color:var(--muted,#5c6a66);">03</div>
+        <div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800; line-height:1.1;">Retrieve</div>
+        <div style="font-size:24px; line-height:1.35; color:var(--muted,#5c6a66);">Keyword + meaning</div>
+      </div>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); border-top:10px solid #a8407a; padding:26px 22px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s ease;" class="hv8">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; color:var(--muted,#5c6a66);">04</div>
+        <div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800; line-height:1.1;">Ground</div>
+        <div style="font-size:24px; line-height:1.35; color:var(--muted,#5c6a66);">The facts card</div>
+      </div>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); border-top:10px solid #b22200; padding:26px 22px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s ease;" class="hv8">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; color:var(--muted,#5c6a66);">05</div>
+        <div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800; line-height:1.1;">Generate</div>
+        <div style="font-size:24px; line-height:1.35; color:var(--muted,#5c6a66);">Four-rung ladder</div>
+      </div>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); border-top:10px solid #b22200; padding:26px 22px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s ease;" class="hv8">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; color:var(--muted,#5c6a66);">06</div>
+        <div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800; line-height:1.1;">Clean + stream</div>
+        <div style="font-size:24px; line-height:1.35; color:var(--muted,#5c6a66);">SSE, sources first</div>
+      </div>
+    </div>
+    <svg viewBox="0 0 1700 120" aria-hidden="true" style="width:100%; height:110px;">
+      <rect x="0" y="46" width="1700" height="28" fill="var(--line,#d6cdbc)"></rect>
+      <rect x="0" y="46" width="730" height="28" fill="#a8407a"></rect>
+      <rect x="730" y="46" width="960" height="28" fill="#b22200"></rect>
+      <g font-family="'Plus Jakarta Sans',sans-serif" font-size="24" font-weight="800" fill="var(--ink,#17211f)">
+        <text x="20" y="34">RETRIEVAL · 1.81s</text>
+        <text x="750" y="34">GENERATION · 2.39s</text>
+        <text x="20" y="104" fill="#5c6a66" font-size="22" font-weight="700">Logging runs after the answer is on its way — it can never slow one down.</text>
+      </g>
+    </svg>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:var(--rust,#b22200);">But how does it find the right rows at all?</p>
+</section>
+
+<section aria-label="Slide 25: Two Searches" data-label="Two Searches" data-screen-label="25" data-speaker-notes="Keyword search knows Ghangad is a word. Vector search knows 'forts near Pune' means Ghangad. Both run, and Reciprocal Rank Fusion adds up one over k plus rank from each list. And because vectors cannot count, every prompt also carries a card of aggregates." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:66px 76px 54px; display:flex; flex-direction:column; gap:26px; position:relative;">
+  <div style="display:flex; flex-direction:column; gap:14px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">Retrieval</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">Two searches, one ranking — and a card of facts</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:1.25fr 0.75fr; gap:40px; flex:1;">
+    <div style="border:3px solid var(--line,#d6cdbc); background:var(--card,#ffffff); padding:30px 32px;">
+      <svg viewBox="0 0 900 460" aria-hidden="true" style="width:100%; height:100%; display:block;">
+        <g>
+          <rect x="20" y="40" width="300" height="150" fill="none" stroke="#1e6f8c" stroke-width="5"></rect>
+          <text x="44" y="86" font-family="'Noto Serif',serif" font-size="34" font-weight="900" fill="#1e6f8c">Keyword</text>
+          <text x="44" y="126" font-family="'Inter',sans-serif" font-size="24" fill="#5c6a66">tsvector · simple config</text>
+          <text x="44" y="160" font-family="'Inter',sans-serif" font-size="24" fill="#5c6a66">prefix-matched, ORed</text>
+        </g>
+        <g>
+          <rect x="20" y="250" width="300" height="150" fill="none" stroke="#a8407a" stroke-width="5"></rect>
+          <text x="44" y="296" font-family="'Noto Serif',serif" font-size="34" font-weight="900" fill="#a8407a">Meaning</text>
+          <text x="44" y="336" font-family="'Inter',sans-serif" font-size="24" fill="#5c6a66">pgvector · HNSW</text>
+          <text x="44" y="370" font-family="'Inter',sans-serif" font-size="24" fill="#5c6a66">bge-m3, multilingual</text>
+        </g>
+        <path d="M320 115 C430 115, 460 200, 560 220" stroke="#1e6f8c" stroke-width="5" fill="none"></path>
+        <path d="M320 325 C430 325, 460 240, 560 220" stroke="#a8407a" stroke-width="5" fill="none"></path>
+        <g>
+          <rect x="560" y="150" width="310" height="140" fill="#b22200"></rect>
+          <text x="715" y="204" text-anchor="middle" font-family="'Noto Serif',serif" font-size="34" font-weight="900" fill="#ffffff">One ranking</text>
+          <text x="715" y="248" text-anchor="middle" font-family="'Inter',sans-serif" font-size="25" fill="#ffd9cf">RRF · 1 / (k + rank)</text>
+        </g>
+        <text x="560" y="400" font-family="'Inter',sans-serif" font-size="24" fill="#5c6a66">No embedding budget? Pass a null vector — the same</text>
+        <text x="560" y="432" font-family="'Inter',sans-serif" font-size="24" fill="#5c6a66">function degrades to keyword-only. No second path to rot.</text>
+      </svg>
+    </div>
+    <div style="background:var(--deep,#00222b); color:#f3ede2; padding:36px 34px; display:flex; flex-direction:column; gap:20px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffb4a4;">Vectors cannot count</div>
+      <h3 style="margin:0; font-family:'Noto Serif',serif; font-size:42px; font-weight:800; line-height:1.12;">So every prompt carries the facts card</h3>
+      <p style="margin:0; font-size:27px; line-height:1.45; color:#c3e8f7;">“How many books?” would return eight books that <em>feel</em> like the question. The card ships the real aggregates instead — the same numbers /stats shows, from one hourly snapshot.</p>
+      <div style="margin-top:auto; display:flex; flex-direction:column; gap:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:24px; font-weight:700;">
+        <div style="display:flex; justify-content:space-between; border-top:2px solid #28414e; padding-top:12px;"><span style="color:#a7ccda;">One module</span><span>siteStats.js</span></div>
+        <div style="display:flex; justify-content:space-between; border-top:2px solid #28414e; padding-top:12px;"><span style="color:#a7ccda;">Edge-cached</span><span>3,600s</span></div>
+        <div style="display:flex; justify-content:space-between; border-top:2px solid #28414e; padding-top:12px;"><span style="color:#a7ccda;">Disagreement</span><span>impossible</span></div>
+      </div>
+    </div>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:var(--rust,#b22200);">What stops it inventing a link?</p>
+</section>
+
+<section aria-label="Slide 26: Guardrails" data-label="Guardrails" data-screen-label="26" data-speaker-notes="The micro-post archive is full of reblogged third-party text that goes into every prompt. So retrieved rows are fenced as inert data, and any URL or image not in a retrieved row is stripped — in the worker and again in the page." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:66px 76px 54px; display:flex; flex-direction:column; gap:26px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:44px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#a7ccda;">Guardrails &amp; the ladder</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">It cannot link to anything it did not retrieve</h2>
+    </div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1;">
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <div style="background:#0a2f3c; border:3px solid #28414e; padding:26px 28px;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ff9d84; margin-bottom:14px;">What the model wrote</div>
+        <p style="margin:0; font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; line-height:1.5; color:#c3e8f7;">PB <strong>1:59:57</strong> at [NMDC Hyderabad Marathon 2025](/sports/15). Read more at [this link](https://evil.example/x). ![Finish](https://evil.example/pixel.png)</p>
+      </div>
+      <div style="background:#0a2f3c; border:3px solid #28414e; border-left:10px solid #b22200; padding:26px 28px;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffb4a4; margin-bottom:14px;">What the reader sees</div>
+        <p style="margin:0; font-size:27px; line-height:1.5; color:#f3ede2;">PB <strong>1:59:57</strong> at <span style="text-decoration:underline; text-decoration-thickness:3px; text-underline-offset:5px; color:#ffb4a4;">NMDC Hyderabad Marathon 2025</span>. Read more at this link.</p>
+        <p style="margin:16px 0 0; font-size:24px; color:#a7ccda;">The words stay; the invented URL and the tracking pixel are gone.</p>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+        <div style="border-top:5px solid #b22200; padding-top:14px;"><div style="font-family:'Noto Serif',serif; font-size:30px; font-weight:800;">Caps fail closed</div><p style="margin:6px 0 0; font-size:23px; line-height:1.4; color:#a7ccda;">If the quota check is down, the request is refused.</p></div>
+        <div style="border-top:5px solid #b22200; padding-top:14px;"><div style="font-family:'Noto Serif',serif; font-size:30px; font-weight:800;">Data, never instructions</div><p style="margin:6px 0 0; font-size:23px; line-height:1.4; color:#a7ccda;">Retrieved rows sit in delimiters the prompt declares inert.</p></div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:18px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffb4a4;">Four rungs · tried top to bottom</div>
+      <div style="display:flex; align-items:center; gap:22px; border-bottom:2px solid #28414e; padding-bottom:16px;"><span style="font-family:'Noto Serif',serif; font-size:48px; font-weight:900; color:#ffb4a4; min-width:56px;">1</span><div><div style="font-size:31px; font-weight:600;">Gemini Flash-Lite</div><div style="font-size:24px; color:#a7ccda;">Best quality · falls over on 429, 5xx or a 6s timeout</div></div></div>
+      <div style="display:flex; align-items:center; gap:22px; border-bottom:2px solid #28414e; padding-bottom:16px;"><span style="font-family:'Noto Serif',serif; font-size:48px; font-weight:900; color:#ffb4a4; min-width:56px;">2</span><div><div style="font-size:31px; font-weight:600;">Workers AI · gpt-oss-20b</div><div style="font-size:24px; color:#a7ccda;">No key, runs beside the worker</div></div></div>
+      <div style="display:flex; align-items:center; gap:22px; border-bottom:2px solid #28414e; padding-bottom:16px;"><span style="font-family:'Noto Serif',serif; font-size:48px; font-weight:900; color:#ffb4a4; min-width:56px;">3</span><div><div style="font-size:31px; font-weight:600;">Workers AI · llama-3.2-3b</div><div style="font-size:24px; color:#a7ccda;">Same neuron pool, about five times cheaper</div></div></div>
+      <div style="display:flex; align-items:center; gap:22px; border-bottom:2px solid #28414e; padding-bottom:16px;"><span style="font-family:'Noto Serif',serif; font-size:48px; font-weight:900; color:#ffb4a4; min-width:56px;">4</span><div><div style="font-size:31px; font-weight:600;">Search-only</div><div style="font-size:24px; color:#a7ccda;">The matching pages and one honest line — never an error page</div></div></div>
+      <p style="margin:auto 0 0; font-size:27px; line-height:1.45; color:#c3e8f7;">Order, model ids, timeouts and switches are rows in a settings table — when a model was retired mid-build, the fix was editing a field. Every answer logged so far came from rung one.</p>
+    </div>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:#ffb4a4;">And when it does get something wrong?</p>
+</section>
+
+<section aria-label="Slide 27: Feedback → Evals" data-label="Feedback → Evals" data-screen-label="27" data-speaker-notes="Readers grade every answer, and each verdict is written onto that answer's row beside its tier, model, timings and sources — so a bad answer can be traced to its cause and exported as a test case." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:66px 76px 54px; display:flex; flex-direction:column; gap:26px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:44px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">Feedback as evals</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">Every verdict becomes a test case</h2>
+    </div>
+    <p style="margin:0; font-size:27px; line-height:1.45; color:var(--muted,#5c6a66); max-width:540px;">Thirty exchanges logged, two rated — one up, one down. Small numbers, honest signal.</p>
+  </div>
+  <div style="display:grid; grid-template-columns:0.9fr 1.1fr; gap:40px; flex:1;">
+    <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:34px 32px; display:flex; flex-direction:column; gap:20px;">
+      <div style="display:flex; gap:14px; font-family:'Plus Jakarta Sans',sans-serif; font-size:23px; font-weight:800;">
+        <span style="border:3px solid #2f6b4f; color:#2f6b4f; padding:12px 20px;">▲ Good answer</span>
+        <span style="border:3px solid var(--rust,#b22200); color:var(--rust,#b22200); padding:12px 20px;">▼ Poor answer</span>
+      </div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted,#5c6a66);">What could be better?</div>
+      <div style="display:flex; flex-wrap:wrap; gap:12px;">
+        <span style="font-size:23px; border:2px solid var(--line,#d6cdbc); padding:10px 18px;">Wrong facts</span>
+        <span style="font-size:23px; border:2px solid var(--rust,#b22200); background:#f7e4e0; color:#8c1800; padding:10px 18px;">Missing data</span>
+        <span style="font-size:23px; border:2px solid var(--line,#d6cdbc); padding:10px 18px;">Bad links</span>
+        <span style="font-size:23px; border:2px solid var(--line,#d6cdbc); padding:10px 18px;">Formatting</span>
+        <span style="font-size:23px; border:2px solid var(--line,#d6cdbc); padding:10px 18px;">Too long</span>
+      </div>
+      <div style="border:2px solid var(--line,#d6cdbc); padding:20px 22px; font-size:26px; color:var(--ink,#17211f);">It missed the 50 km ultra.</div>
+      <p style="margin:auto 0 0; font-size:25px; line-height:1.45; color:var(--muted,#5c6a66);">Only the reader who owns the conversation can rate it, and comments cap at 1,000 characters.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:22px;">
+      <svg viewBox="0 0 860 300" aria-hidden="true" style="width:100%; height:270px;">
+        <g font-family="'Plus Jakarta Sans',sans-serif" font-size="22" font-weight="800" fill="var(--ink,#17211f)">
+          <rect x="10" y="110" width="170" height="80" fill="none" stroke="var(--muted,#5c6a66)" stroke-width="4"></rect>
+          <text x="95" y="145" text-anchor="middle">Answer</text><text x="95" y="172" text-anchor="middle" font-size="19" font-weight="600" fill="#5c6a66">messageId</text>
+          <path d="M180 150 H250" stroke="var(--rust,#b22200)" stroke-width="4"></path><path d="M240 143 l12 7 -12 7" fill="var(--rust,#b22200)"></path>
+          <rect x="252" y="110" width="180" height="80" fill="none" stroke="var(--muted,#5c6a66)" stroke-width="4"></rect>
+          <text x="342" y="145" text-anchor="middle">Reader rates</text><text x="342" y="172" text-anchor="middle" font-size="19" font-weight="600" fill="#5c6a66">tags + comment</text>
+          <path d="M432 150 H502" stroke="var(--rust,#b22200)" stroke-width="4"></path><path d="M492 143 l12 7 -12 7" fill="var(--rust,#b22200)"></path>
+          <rect x="504" y="110" width="170" height="80" fill="none" stroke="var(--muted,#5c6a66)" stroke-width="4"></rect>
+          <text x="589" y="145" text-anchor="middle">Written to</text><text x="589" y="172" text-anchor="middle" font-size="19" font-weight="600" fill="#5c6a66">the answer's row</text>
+          <path d="M674 150 H744" stroke="var(--rust,#b22200)" stroke-width="4"></path><path d="M734 143 l12 7 -12 7" fill="var(--rust,#b22200)"></path>
+          <rect x="746" y="110" width="104" height="80" fill="var(--rust,#b22200)"></rect>
+          <text x="798" y="145" text-anchor="middle" fill="#ffffff">Evals</text><text x="798" y="172" text-anchor="middle" font-size="19" fill="#ffd9cf">JSONL</text>
+        </g>
+      </svg>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+        <div style="border-top:5px solid var(--rust,#b22200); padding-top:16px;"><div style="font-family:'Noto Serif',serif; font-size:32px; font-weight:800;">“Missing data”</div><p style="margin:6px 0 0; font-size:25px; line-height:1.4; color:var(--muted,#5c6a66);">→ ingest a new source.</p></div>
+        <div style="border-top:5px solid var(--rust,#b22200); padding-top:16px;"><div style="font-family:'Noto Serif',serif; font-size:32px; font-weight:800;">“Wrong facts”</div><p style="margin:6px 0 0; font-size:25px; line-height:1.4; color:var(--muted,#5c6a66);">→ tighten the prompt.</p></div>
+      </div>
+      <p style="margin:auto 0 0; font-size:27px; line-height:1.45; color:var(--ink,#17211f); border-left:8px solid var(--rust,#b22200); padding-left:28px;">The foundation is data, not the model. The next moves are chosen by what readers mark as wrong.</p>
+    </div>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:var(--rust,#b22200);">Who turns those dials?</p>
+</section>
+
+<section aria-label="Slide 28: Admin" data-label="Admin" data-screen-label="28" data-speaker-notes="One owner login runs everything — content, tags, the résumé, and every dial of the chatbot. Settings are read with a 60-second cache, so a change is live within a minute, with no redeploy." style="background:var(--paper,#f3ede2); color:var(--ink,#17211f); font-family:'Inter',sans-serif; padding:66px 76px 54px; display:flex; flex-direction:column; gap:26px; position:relative;">
+  <div style="display:flex; flex-direction:column; gap:14px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--rust,#b22200);">/admin</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">Every dial is a form field</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:0.62fr 1.38fr; gap:40px; flex:1;">
+    <div style="background:#232248; color:#e0e3fb; padding:34px 30px; display:flex; flex-direction:column; gap:18px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#a5aaf1;">One workspace</div>
+      <div style="font-size:27px; line-height:1.6;">Overview<br />Content · 8 tables<br />Now · months &amp; meta<br />Ask · settings &amp; conversations<br />Résumé · experience, skills<br />Tags · rename, merge, recolour</div>
+      <p style="margin:auto 0 0; font-size:24px; line-height:1.45; color:#a5aaf1;">The dashboard drops the site's rust accent for indigo — it is a workspace, not a page of the site.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:28px 26px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s ease;" class="hv8">
+        <div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800;">Switches &amp; caps</div>
+        <p style="margin:0; font-size:25px; line-height:1.4; color:var(--muted,#5c6a66);">Second brain on/off, Turnstile required, questions per day globally and per visitor, max question length, turns of history sent.</p>
+      </div>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:28px 26px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s ease;" class="hv8">
+        <div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800;">Retrieval weights</div>
+        <p style="margin:0; font-size:25px; line-height:1.4; color:var(--muted,#5c6a66);">Items retrieved, keyword weight, meaning weight — the ranking is tunable without a deploy.</p>
+      </div>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:28px 26px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s ease;" class="hv8">
+        <div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800;">The model ladder</div>
+        <p style="margin:0; font-size:25px; line-height:1.4; color:var(--muted,#5c6a66);">Label, provider, model, timeout and on/off per rung — reorderable, with a 14-day usage chart by tier.</p>
+      </div>
+      <div style="background:var(--card,#ffffff); border:3px solid var(--line,#d6cdbc); padding:28px 26px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s ease;" class="hv8">
+        <div style="font-family:'Noto Serif',serif; font-size:34px; font-weight:800;">Conversations</div>
+        <p style="margin:0; font-size:25px; line-height:1.4; color:var(--muted,#5c6a66);">Fourteen filters, a 30-minute gap that splits chats, three exports, and p50/p95 latency by stage.</p>
+      </div>
+    </div>
+  </div>
+  <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:31px; color:var(--rust,#b22200);">How long did all of this take?</p>
+</section>
+
+<section aria-label="Slide 29: Eight Years" data-label="Eight Years" data-screen-label="29" data-speaker-notes="Read the order: the chatbot is the last layer, not the first. Three years of occasional updates, then a summer where the site was rebuilt around its data — June 2026 alone shipped 22 versions." style="background:var(--deep,#00222b); color:var(--onDeep,#f3ede2); font-family:'Inter',sans-serif; padding:66px 76px 54px; display:flex; flex-direction:column; gap:26px; position:relative;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:44px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:25px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#a7ccda;">The trail · 83 releases</div>
+      <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:64px; font-weight:900; line-height:1.03;">A template became an archive</h2>
+    </div>
+    <p style="margin:0; font-size:27px; line-height:1.45; color:#a7ccda; max-width:520px;">Data first, then the brain. Each step made the next one possible.</p>
+  </div>
+  <div style="flex:1; border:3px solid #28414e; overflow:hidden;">
+    <svg viewBox="0 0 1700 480" aria-hidden="true" style="width:100%; height:100%; display:block;">
+      <rect width="1700" height="480" fill="#012530"></rect>
+      <path d="M60 400 C300 400, 340 330, 520 322 S780 300, 900 250 S1180 190, 1330 140 S1560 96, 1650 70" stroke="#b22200" stroke-width="6" fill="none" stroke-dasharray="18 14"></path>
+      <g font-family="'Plus Jakarta Sans',sans-serif" font-size="23" font-weight="800" fill="#c3e8f7" text-anchor="middle">
+        <g><circle cx="60" cy="400" r="13" fill="#4f9db4"></circle><text x="70" y="444">2023 · v1.0</text><text x="70" y="372" font-size="21" fill="#9fb3ba">a forked template</text></g>
+        <g><circle cx="520" cy="322" r="13" fill="#4f9db4"></circle><text x="520" y="366">2025 · v3.5</text><text x="520" y="294" font-size="21" fill="#9fb3ba">books, stats, dark mode</text></g>
+        <g><circle cx="900" cy="250" r="17" fill="#8a6a3a"></circle><text x="900" y="294">13 Jun 2026 · v9–v10</text><text x="900" y="220" font-size="21" fill="#e8dfc9">Supabase · 1,600-post import</text></g>
+        <g><circle cx="1330" cy="140" r="15" fill="#a8407a"></circle><text x="1330" y="184">Jul 2026 · v11–v13</text><text x="1330" y="110" font-size="21" fill="#e6c4d8">Atlas · almanac · admin</text></g>
+        <g><circle cx="1650" cy="70" r="19" fill="#b22200"></circle><text x="1600" y="42" text-anchor="end">Sep 2026 · v17.1</text><text x="1600" y="112" text-anchor="end" font-size="21" fill="#ffb4a4">Ask the Archive</text></g>
+      </g>
+      <g transform="translate(1650,70)" style="animation:om-bob 4s ease-in-out infinite;">
+        <circle cx="0" cy="-58" r="13" fill="#f3ede2"></circle>
+        <path d="M0 -45 v30" stroke="#f3ede2" stroke-width="8" stroke-linecap="round"></path>
+        <path d="M0 -36 l-15 10" stroke="#f3ede2" stroke-width="6" stroke-linecap="round"></path>
+        <path d="M0 -37 l16 9" stroke="#f3ede2" stroke-width="6" stroke-linecap="round"></path>
+        <path d="M0 -15 l-11 26" stroke="#f3ede2" stroke-width="7" stroke-linecap="round"></path>
+        <path d="M0 -15 l11 26" stroke="#f3ede2" stroke-width="7" stroke-linecap="round"></path>
+      </g>
+    </svg>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:28px;">
+    <div style="border-top:5px solid #b22200; padding-top:16px;"><div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#ffb4a4;">Jun · Move</div><p style="margin:8px 0 0; font-size:25px; line-height:1.4; color:#c3e8f7;">Vite, Supabase, storage, the Tumblr import.</p></div>
+    <div style="border-top:5px solid #b22200; padding-top:16px;"><div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#ffb4a4;">Jul · Show</div><p style="margin:8px 0 0; font-size:25px; line-height:1.4; color:#c3e8f7;">The Atlas, the Stats Almanac, the admin workspace.</p></div>
+    <div style="border-top:5px solid #b22200; padding-top:16px;"><div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#ffb4a4;">Aug · Tidy</div><p style="margin:8px 0 0; font-size:25px; line-height:1.4; color:#c3e8f7;">Image compression, canonical domain.</p></div>
+    <div style="border-top:5px solid #b22200; padding-top:16px;"><div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#ffb4a4;">Sep · Ask</div><p style="margin:8px 0 0; font-size:25px; line-height:1.4; color:#c3e8f7;">Central tags, projects, books — then the archive learned to answer.</p></div>
+  </div>
+</section>
+
+<section aria-label="Slide 30: Ask Me Anything" data-label="Ask Me Anything" data-screen-label="30" data-speaker-notes="Close where we opened: the whole tour exists so that one question can be answered in four seconds, for zero a month. Then the links." style="background:var(--rust,#b22200); color:#ffffff; font-family:'Inter',sans-serif; padding:70px 80px 58px; display:flex; flex-direction:column; gap:30px; position:relative; overflow:hidden;">
+  <svg viewBox="0 0 1920 1080" aria-hidden="true" style="position:absolute; inset:0; width:100%; height:100%; opacity:0.16;">
+    <circle cx="1560" cy="300" r="260" fill="none" stroke="#ffffff" stroke-width="8" stroke-dasharray="26 22"></circle>
+    <circle cx="1560" cy="300" r="150" fill="none" stroke="#ffffff" stroke-width="8"></circle>
+    <path d="M0 980 Q480 900 960 960 T1920 900" stroke="#ffffff" stroke-width="8" fill="none" stroke-dasharray="22 18"></path>
+  </svg>
+  <div style="position:relative; display:flex; flex-direction:column; gap:26px; max-width:1420px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:#ffd9cf;">The last door · /ask</div>
+    <h2 style="margin:0; font-family:'Noto Serif',serif; font-size:96px; font-weight:900; line-height:1.02; letter-spacing:-0.02em;">Don't read the archive. Ask it.</h2>
+    <p style="margin:0; font-size:36px; line-height:1.45; color:#ffe6df; max-width:1200px;">Eight years of books, races, forts, essays and short posts — in one database, answerable in a sentence, in English or Marathi, with every claim linking back to its row.</p>
+  </div>
+  <div style="position:relative; display:flex; align-items:flex-end; gap:24px; margin-top:auto;">
+    <svg width="96" height="152" viewBox="0 0 48 76" aria-hidden="true" style="animation:om-bob 4.2s ease-in-out infinite;">
+      <circle cx="23" cy="13" r="11" fill="#ffffff"></circle>
+      <path d="M23 24 v28" stroke="#ffffff" stroke-width="7" stroke-linecap="round"></path>
+      <path d="M23 32 l-12 8" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round"></path>
+      <path d="M23 31 l13 7" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round"></path>
+      <path d="M23 52 l-10 23" stroke="#ffffff" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M23 52 l10 23" stroke="#ffffff" stroke-width="6" stroke-linecap="round"></path>
+      <path d="M38 22 l-5 54" stroke="#ffd9cf" stroke-width="4" stroke-linecap="round"></path>
+    </svg>
+    <div style="display:flex; flex-direction:column; gap:22px; flex:1;">
+      <div style="background:#ffffff; border:4px solid #7d1600; padding:26px 32px; max-width:1000px;">
+        <p style="margin:0; font-family:'Noto Serif',serif; font-style:italic; font-size:34px; line-height:1.3; color:#17211f;">Ask me anything — or ask the archive, which remembers more than I do.</p>
+      </div>
+      <div style="display:flex; gap:56px; flex-wrap:wrap; align-items:flex-end;">
+        <div><div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffd9cf;">Ask</div><a href="https://sankettambare.in/ask" target="_blank" rel="noopener" style="display:block; margin-top:10px; font-family:'Noto Serif',serif; font-size:34px; font-weight:700; color:#ffffff;">sankettambare.in/ask</a></div>
+        <div><div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffd9cf;">Site</div><a href="https://sankettambare.in" target="_blank" rel="noopener" style="display:block; margin-top:10px; font-family:'Noto Serif',serif; font-size:34px; font-weight:700; color:#ffffff;">sankettambare.in</a></div>
+        <div><div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffd9cf;">GitHub</div><a href="https://github.com/daredavil01" target="_blank" rel="noopener" style="display:block; margin-top:10px; font-family:'Noto Serif',serif; font-size:34px; font-weight:700; color:#ffffff;">daredavil01</a></div>
+        <div><div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffd9cf;">Newsletter</div><a href="https://sankettambare.substack.com" target="_blank" rel="noopener" style="display:block; margin-top:10px; font-family:'Noto Serif',serif; font-size:34px; font-weight:700; color:#ffffff;">sankettambare.substack.com</a></div>
+        <div><div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#ffd9cf;">Everything else</div><a href="https://linktr.ee/daredavil" target="_blank" rel="noopener" style="display:block; margin-top:10px; font-family:'Noto Serif',serif; font-size:34px; font-weight:700; color:#ffffff;">linktr.ee/daredavil</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<nav class="nav" id="nav" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <span id="count">01 / 30</span>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+</nav>
+
+<script>
+(function () {
+  // --- Content: the handoff's component state, unchanged -------------------
+  var REGIONS = {
+    home: { chapter:'Chapter One', name:'Hometown Square', color:'#b06000', stat:'8 yrs', statLabel:'Of logging one life', blurb:'About, Now and the résumé. Where the person behind the archive introduces himself.', route:'/about' },
+    coast: { chapter:'Chapter Two', name:'The Coast', color:'#1e6f8c', stat:'25', statLabel:'Races · 577 km', blurb:'Every race from a first 10K to the Tata Ultra 50K, with personal bests and timing certificates.', route:'/sports' },
+    ridge: { chapter:'Chapter Three', name:'The Ridge', color:'#5a7248', stat:'20', statLabel:'Fort treks', blurb:'Sahyadri forts by year and difficulty — including a 22-hour night march from Panhala to Pawankhind.', route:'/treks' },
+    forest: { chapter:'Chapter Four', name:'Book Forest', color:'#2f6b4f', stat:'51', statLabel:'Books · 30 EN / 21 MR', blurb:'A bilingual reading log where the year recorded is the year read, not the year published.', route:'/books' },
+    scriptorium: { chapter:'Chapter Five', name:'The Scriptorium', color:'#a8407a', stat:'1,661', statLabel:'Micro posts · 104 essays', blurb:'A rescued Tumblr archive, a 100-day writing challenge, and 100,199 words of essays.', route:'/100-days' },
+    workshop: { chapter:'Chapter Six', name:'The Workshop', color:'#8c1800', stat:'13', statLabel:'Projects', blurb:'What got built — including the site itself, its admin workspace and Ask the Archive.', route:'/projects' }
+  };
+  var RING = { home:'translate(365,600)', coast:'translate(120,548)', ridge:'translate(410,368)', forest:'translate(716,392)', scriptorium:'translate(735,606)', workshop:'translate(995,424)' };
+  var CHAPTER_SLIDES = { 4:'home', 8:'coast', 10:'ridge', 12:'forest', 14:'scriptorium', 16:'workshop' };
+  var SECRETS = { medal:'A medal on the coast — the Tata Ultra 50K finish', tent:'A lone tent — the 22-hour Panhala to Pawankhind night trek', boat:'A paper boat — the Substack newsletter', sapling:'A sapling in the square — tree plantations with Nirman', stars:'A constellation — a birthday over the Book Forest' };
+  var TARGETS = { chunks:2702, posts:1661, words:100199, books:51, races:25, treks:20, essays:104, versions:83 };
+  var DAY = { '--paper':'#f3ede2','--ink':'#17211f','--muted':'#5c6a66','--deep':'#00222b','--onDeep':'#f3ede2','--rust':'#b22200','--card':'#ffffff','--line':'#d6cdbc','--sky':'#cfe9f2' };
+  var NIGHT = { '--paper':'#10202a','--ink':'#eaf2f4','--muted':'#9fb3ba','--deep':'#061014','--onDeep':'#eaf2f4','--rust':'#ff7554','--card':'#162a35','--line':'#2f4a58','--sky':'#101b3c' };
+  var BEATS = [
+    { title:'It starts at home', body:'Hometown Square — the person behind every row.' },
+    { title:'He runs', body:'25 races, 577 km, a half-marathon best of 1:59:57.' },
+    { title:'He climbs', body:'20 Sahyadri forts, one of them through the night.' },
+    { title:'He reads', body:'51 books, almost evenly split English and Marathi.' },
+    { title:'He writes', body:'1,661 micro posts and 100,199 words of essays.' },
+    { title:'He builds', body:'13 projects — including the world you are standing in.' },
+    { title:'It all goes underground', body:'Fifteen tables in one Postgres, one tag axis, one index.' },
+    { title:'And then you can ask it', body:'2,702 chunks, hybrid search, an answer in four seconds.' }
+  ];
+  var PATH = [[340,600],[150,548],[420,370],[726,396],[742,606],[996,430],[600,720],[600,780]];
+  var CHAPTERS = ['home','coast','ridge','forest','scriptorium','workshop'];
+
+  // --- State and render ----------------------------------------------------
+  var h = new Date().getHours();
+  var s = { night: h >= 19 || h < 6, region: 'home', stamps: [], counts: Object.assign({}, TARGETS), beat: 0, playing: false };
+  var timer = null;
+  var canvas = document.getElementById('canvas');
+  var texts = [].slice.call(canvas.querySelectorAll('[data-t]'));
+  var moves = [].slice.call(canvas.querySelectorAll('[data-transform]'));
+  var trail = document.getElementById('trail');
+  var dots = CHAPTERS.concat(Object.keys(SECRETS)).map(function () {
+    return trail.appendChild(document.createElement('span'));
+  });
+
+  function has(id) { return s.stamps.indexOf(id) >= 0; }
+  function fmt(n) { return Number(n).toLocaleString('en-US'); }
+  function cap(k) { return k[0].toUpperCase() + k.slice(1); }
+  function get(o, path) { return path.split('.').reduce(function (a, k) { return a[k]; }, o); }
+
+  function render() {
+    var vars = s.night ? NIGHT : DAY;
+    Object.keys(vars).forEach(function (k) { canvas.style.setProperty(k, vars[k]); });
+    var region = REGIONS[s.region];
+    canvas.style.setProperty('--region', region.color);
+    var b = BEATS[Math.min(s.beat, 7)];
+    var p = PATH[Math.min(s.beat, 7)];
+    var c = s.counts;
+    var v = {
+      themeLabel: s.night ? '☾ Night' : '☀ Day',
+      stampText: s.stamps.length + ' / 11',
+      secretsFound: Object.keys(SECRETS).filter(function (k) { return has('secret:' + k); }).length + ' / 5 found',
+      region: region,
+      ringT: RING[s.region],
+      guideT: 'translate(' + p[0] + ',' + p[1] + ')',
+      beatNum: 'Beat ' + (s.beat + 1) + ' of 8',
+      beatTitle: b.title,
+      beatBody: b.body,
+      playLabel: s.playing ? '■ Playing' : '▶ Replay the journey',
+      counts: { chunks: fmt(c.chunks), posts: fmt(c.posts), words: fmt(c.words), books: c.books, races: c.races, treks: c.treks, essays: c.essays, versions: c.versions }
+    };
+    texts.forEach(function (el) {
+      var t = String(get(v, el.getAttribute('data-t')));
+      if (el.textContent !== t) el.textContent = t;
+    });
+    moves.forEach(function (el) { el.setAttribute('transform', v[el.getAttribute('data-transform')]); });
+    CHAPTERS.forEach(function (k, i) {
+      var on = has('chapter:' + k);
+      dots[i].title = REGIONS[k].name + (on ? ' — stamped' : ' — not yet');
+      dots[i].style.background = on ? REGIONS[k].color : 'rgba(159,179,186,0.35)';
+    });
+    Object.keys(SECRETS).forEach(function (k, i) {
+      var on = has('secret:' + k);
+      dots[CHAPTERS.length + i].title = on ? SECRETS[k] : 'A secret, still hidden';
+      dots[CHAPTERS.length + i].style.background = on ? '#ffd9a0' : 'rgba(159,179,186,0.35)';
+    });
+  }
+
+  function stamp(id) { if (!has(id)) { s.stamps.push(id); render(); } }
+
+  function play() {
+    clearInterval(timer);
+    s.beat = 0; s.playing = true; render();
+    timer = setInterval(function () {
+      if (s.beat >= 7) { clearInterval(timer); s.playing = false; }
+      else s.beat++;
+      render();
+    }, 2100);
+  }
+
+  // Count a number up from zero over 1.1 s, easing out.
+  function bump(key) {
+    var start = performance.now();
+    (function step(t) {
+      var p = Math.min(1, (t - start) / 1100);
+      s.counts[key] = Math.round(TARGETS[key] * (1 - Math.pow(1 - p, 3)));
+      render();
+      if (p < 1) requestAnimationFrame(step);
+    })(start);
+  }
+
+  var ACTIONS = { toggleTheme: function () { s.night = !s.night; render(); }, play: play };
+  Object.keys(REGIONS).forEach(function (k) { ACTIONS['pick' + cap(k)] = function () { s.region = k; render(); }; });
+  Object.keys(SECRETS).forEach(function (k) { ACTIONS['find' + cap(k)] = function () { stamp('secret:' + k); }; });
+  Object.keys(TARGETS).forEach(function (k) { ACTIONS['count' + cap(k)] = function () { bump(k); }; });
+
+  // --- Deck: scale, navigate, deep-link ------------------------------------
+  var slides = [].slice.call(canvas.querySelectorAll(':scope > section'));
+  var nav = document.getElementById('nav');
+  var count = document.getElementById('count');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var current = -1;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  // clientWidth, not innerWidth: on phones an overflowing canvas widens innerWidth.
+  var root = document.documentElement;
+  function fit() { canvas.style.setProperty('--s', Math.min(root.clientWidth / 1920, root.clientHeight / 1080)); }
+
+  function go(i) {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (i === current) return;
+    if (current >= 0) slides[current].removeAttribute('data-deck-active');
+    slides[i].setAttribute('data-deck-active', '');
+    current = i;
+    count.textContent = pad(i + 1) + ' / ' + pad(slides.length);
+    prev.disabled = i === 0;
+    next.disabled = i === slides.length - 1;
+    history.replaceState(null, '', '#' + (i + 1));
+    // Arriving on a chapter stamps the passport; the map resets; the journey plays.
+    if (CHAPTER_SLIDES[i]) stamp('chapter:' + CHAPTER_SLIDES[i]);
+    if (i === 2) { s.region = 'home'; render(); }
+    if (i === 3) play();
+  }
+
+  canvas.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-on]');
+    if (t) return ACTIONS[t.getAttribute('data-on')]();
+    // On touch, a tap on the left or right half of a slide turns the page.
+    if (e.pointerType === 'touch' && !e.target.closest('a,button')) go(current + (e.clientX < root.clientWidth / 2 ? -1 : 1));
+  });
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if ((k === ' ' || k === 'Enter') && e.target.closest && e.target.closest('a,button')) return;
+    var to = { ArrowRight: 1, ArrowDown: 1, PageDown: 1, ' ': 1, ArrowLeft: -1, ArrowUp: -1, PageUp: -1 }[k];
+    if (to) go(current + to);
+    else if (k === 'Home') go(0);
+    else if (k === 'End') go(slides.length - 1);
+    else return;
+    e.preventDefault();
+  });
+
+  var idle;
+  function wake() {
+    nav.classList.add('on');
+    clearTimeout(idle);
+    idle = setTimeout(function () { nav.classList.remove('on'); }, 2200);
+  }
+  addEventListener('pointermove', wake);
+  addEventListener('pointerdown', wake);
+  addEventListener('resize', fit);
+  addEventListener('hashchange', function () { go(parseInt(location.hash.slice(1), 10) - 1 || 0); });
+
+  fit();
+  render();
+  go(parseInt(location.hash.slice(1), 10) - 1 || 0);
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="island"></script>
+</body>
+</html>

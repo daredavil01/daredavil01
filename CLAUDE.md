@@ -68,6 +68,10 @@ presentations/
                                    rebuilt — every prompt and design question,
                                    the paths not taken, the ink renderer, the bugs
   assets/day-island/              Screenshots used by that deck (webp)
+  digital-hub.html                The Digital Hub: the 30-slide illustrated tour
+                                   of sankettambare.in — map, journey, passport,
+                                   architecture, Ask the Archive (fixed 1920×1080
+                                   canvas, ported from a Claude Design handoff)
   e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
                                    ethanol/sugar trade-off and how the site was built
   projects-page-revamp.html       Projects, Reborn: the 12-slide deck on
