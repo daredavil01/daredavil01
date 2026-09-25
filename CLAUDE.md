@@ -72,6 +72,10 @@ presentations/
                                    of sankettambare.in — map, journey, passport,
                                    architecture, Ask the Archive (fixed 1920×1080
                                    canvas, ported from a Claude Design handoff)
+  learning-hub.html               Learning Hub: the 15-slide illustrated deck on
+                                   the AI Architect 60-day plan tracker at
+                                   learn.sankettambare.in — idea, app tour, build
+  assets/learning-hub/            Screenshots used by that deck (webp)
   e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
                                    ethanol/sugar trade-off and how the site was built
   projects-page-revamp.html       Projects, Reborn: the 12-slide deck on

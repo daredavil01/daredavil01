@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A 15-slide illustrated deck on Learning Hub, the public tracker for the AI Architect 60-Day Plan at learn.sankettambare.in: the idea, a tour of the app, and how it was built.">
+<title>Sixty Days, in Public</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;600;700&family=Caveat:wght@500;700&display=swap">
+
+<script>
+// Runs before first paint: a stored theme must be on <html> already, or the
+// deck flashes the system theme before switching.
+(function(){
+  try{
+    var t = localStorage.getItem('deck-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ /* private mode, blocked storage — fall through to system */ }
+})();
+</script>
+
+<style>
+/* ---------------------------------------------------------------------------
+ * Tokens lifted from Learning Hub itself: src/styles/organic.css (light) and
+ * the [data-theme="dark"] block in src/styles/hub.css — warm paper, ink,
+ * terracotta and sage, Caprasimo over Figtree — so the deck and the app it
+ * describes look like one product. The --i-* tokens colour the drawings.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#f5ead8; --surface:#ebddc5; --raised:#f9f4ed; --sunk:#eee7db;
+  --rule:color-mix(in srgb,#201e1d 16%,transparent);
+  --text:#201e1d; --prose:#2e2b25; --muted:#645c50; --faint:#82796a;
+  --accent:#c67139; --accent-text:#8c491a; --accent-soft:#ffe1d0;
+  --sage:#7a8a5e; --sage-text:#56633f; --sage-soft:#e1eecc;
+  --shadow:0 3px 10px color-mix(in srgb,#2e2b25 16%,transparent);
+  --focus:#c67139;
+
+  --i-paper:#fbf5ea; --i-ink:#2e2b25; --i-body:#fffaf2; --i-screen:#2e2b25; --i-eye:#fffaf2;
+  --i-acc:#c67139; --i-acc-soft:#ffc6a5; --i-acc-text:#b2622d; --i-sec:#7a8a5e; --i-sec-soft:#ccdbb2;
+
+  --font-display:"Caprasimo",Georgia,serif;
+  --font-body:"Figtree",system-ui,-apple-system,sans-serif;
+  --font-hand:"Caveat",cursive;
+  --font-mono:ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#1c1915; --surface:#28231d; --raised:#2e2b25; --sunk:#3b362f;
+    --rule:color-mix(in srgb,#f2e8d8 16%,transparent);
+    --text:#f2e8d8; --prose:#e6dccb; --muted:#c0b6a5; --faint:#a19786;
+    --accent:#d67f48; --accent-text:#f6a06b; --accent-soft:#643312;
+    --sage:#aebf92; --sage-text:#ccdbb2; --sage-soft:#3d472b;
+    --shadow:0 3px 10px rgba(0,0,0,.45);
+    --focus:#f6a06b;
+    --i-paper:#28231d; --i-ink:#f2e8d8; --i-body:#3b362f; --i-screen:#14110e; --i-eye:#f2e8d8;
+    --i-acc:#e08a52; --i-acc-soft:#8c491a; --i-acc-text:#f6a06b; --i-sec:#aebf92; --i-sec-soft:#3d472b;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#1c1915; --surface:#28231d; --raised:#2e2b25; --sunk:#3b362f;
+  --rule:color-mix(in srgb,#f2e8d8 16%,transparent);
+  --text:#f2e8d8; --prose:#e6dccb; --muted:#c0b6a5; --faint:#a19786;
+  --accent:#d67f48; --accent-text:#f6a06b; --accent-soft:#643312;
+  --sage:#aebf92; --sage-text:#ccdbb2; --sage-soft:#3d472b;
+  --shadow:0 3px 10px rgba(0,0,0,.45);
+  --focus:#f6a06b;
+  --i-paper:#28231d; --i-ink:#f2e8d8; --i-body:#3b362f; --i-screen:#14110e; --i-eye:#f2e8d8;
+  --i-acc:#e08a52; --i-acc-soft:#8c491a; --i-acc-text:#f6a06b; --i-sec:#aebf92; --i-sec-soft:#3d472b;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--paper);color:var(--text);
+  font-family:var(--font-body);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+a{color:var(--accent-text);text-underline-offset:3px;}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  height:100dvh;scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100%;width:100%;height:100dvh;scroll-snap-align:start;
+  display:flex;align-items:center;justify-content:center;
+  padding:68px 28px 96px;overflow-y:auto;
+}
+/* Tall slides must start at the top, not be clipped above it. */
+.slide > .inner{margin:auto 0;}
+.inner{width:100%;max-width:1120px;}
+
+.eyebrow{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-size:12px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:14px;
+}
+.eyebrow .num{
+  color:var(--accent-text);background:var(--accent-soft);
+  border-radius:999px;padding:2px 10px;letter-spacing:.06em;
+}
+h1,h2{font-family:var(--font-display);font-weight:400;letter-spacing:-.015em;margin:0 0 14px;}
+h1{font-size:clamp(42px,6.4vw,78px);line-height:1.02;}
+h2{font-size:clamp(28px,3.6vw,44px);line-height:1.1;}
+h3{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
+p{margin:0 0 12px;color:var(--prose);}
+.lead{font-size:clamp(16px,1.7vw,19px);color:var(--muted);max-width:64ch;}
+.note{font-size:13.5px;color:var(--muted);}
+strong{color:var(--text);font-weight:700;}
+code{
+  font-family:var(--font-mono);font-size:.86em;background:var(--sunk);
+  border-radius:6px;padding:1px 6px;color:var(--text);
+}
+pre{
+  font-family:var(--font-mono);font-size:12.5px;line-height:1.6;
+  background:var(--raised);border:1px solid var(--rule);border-radius:16px;
+  padding:14px 16px;overflow-x:auto;margin:0;color:var(--prose);
+}
+pre .c{color:var(--faint);}
+pre .k{color:var(--accent-text);}
+pre .s{color:var(--sage-text);}
+
+/* --- Layout helpers ------------------------------------------------------ */
+.split{display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:center;}
+.split.wide-right{grid-template-columns:.8fr 1.2fr;}
+.split.wide-left{grid-template-columns:1.25fr .75fr;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.stack > * + *{margin-top:14px;}
+@media (max-width:900px){
+  .split,.split.wide-right,.split.wide-left,.two,.three{grid-template-columns:1fr;gap:22px;}
+  .four{grid-template-columns:1fr 1fr;}
+  .slide{padding:64px 16px 92px;}
+}
+
+.panel{background:var(--surface);border-radius:28px;padding:18px 22px;}
+.panel.raised{background:var(--raised);border:1px solid var(--rule);}
+.panel p:last-child{margin-bottom:0;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media (max-width:600px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--surface);border-radius:20px;padding:14px 16px;}
+.stat .v{font-family:var(--font-display);font-size:30px;line-height:1;color:var(--text);}
+.stat .k{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+
+ul.plain{list-style:none;margin:0;padding:0;}
+ul.plain li{position:relative;padding-left:20px;margin-bottom:9px;color:var(--prose);font-size:15px;}
+ul.plain li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:50%;background:var(--accent);}
+ul.plain li:last-child{margin-bottom:0;}
+
+.pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;}
+.pill.learn{background:var(--accent-soft);color:var(--accent-text);}
+.pill.build{background:var(--sage-soft);color:var(--sage-text);}
+.pill.interview{background:var(--sunk);color:var(--text);}
+
+.flag{
+  border-left:3px solid var(--accent);background:var(--raised);
+  border-radius:0 14px 14px 0;padding:12px 16px;margin-top:16px;
+}
+.flag p{margin:0;font-size:14.5px;color:var(--prose);}
+
+/* Title */
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.brand svg{width:48px;height:48px;flex:none;}
+.brand span{font-family:var(--font-display);font-size:24px;}
+.title-meta{
+  display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:22px;
+  font-size:13.5px;color:var(--muted);
+}
+
+/* Screenshots */
+.shot{margin:0;}
+.shot img{
+  display:block;width:100%;height:auto;border-radius:16px;
+  border:1px solid var(--rule);box-shadow:var(--shadow);background:var(--surface);
+}
+.shot figcaption{font-size:13px;color:var(--muted);margin-top:8px;}
+.shot.crop img{aspect-ratio:16/10;object-fit:cover;object-position:top left;}
+.phone img{max-width:260px;margin:0 auto;}
+
+/* Week strip */
+.weeks{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:18px;}
+.wk{background:var(--surface);border-radius:14px;padding:10px 9px;min-height:118px;}
+.wk b{display:block;font-family:var(--font-display);font-weight:400;font-size:18px;}
+.wk .d{display:block;font-size:11px;color:var(--muted);margin:2px 0 6px;}
+.wk span.t{display:block;font-size:12.5px;line-height:1.3;color:var(--prose);}
+.wk.race{background:var(--accent-soft);}
+.wk.final{background:var(--sage-soft);}
+@media (max-width:900px){.weeks{grid-template-columns:repeat(5,1fr);}}
+@media (max-width:520px){.weeks{grid-template-columns:repeat(2,1fr);}.wk{min-height:0;}}
+
+.track-card .h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.track-card .hrs{font-family:var(--font-display);font-size:26px;}
+
+/* Nav groups on the tour slide */
+.groups{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.groups span{font-size:12.5px;background:var(--raised);border:1px solid var(--rule);border-radius:999px;padding:3px 11px;color:var(--prose);}
+.groups b{color:var(--accent-text);font-weight:700;}
+
+/* Lessons */
+.lesson{background:var(--surface);border-radius:22px;padding:16px 18px;}
+.lesson h4{font-family:var(--font-display);font-weight:400;font-size:20px;margin:0 0 6px;}
+.lesson p{font-size:14px;margin:0;}
+.modes .panel{padding:14px 16px;border-radius:22px;}
+.modes p{font-size:14px;}
+
+/* --- Illustrations: illo methodology, drawn by hand ------------------------
+ * Blip, the screen-faced robot, performs each idea. Light body and ink
+ * outline, a charcoal screen with two dot eyes, one antenna whose ball carries
+ * the accent. The accent otherwise marks one or two things per scene.
+ * ------------------------------------------------------------------------- */
+.illo{margin:0;border-radius:24px;overflow:hidden;background:var(--i-paper);border:1px solid var(--rule);}
+.illo svg{display:block;width:100%;height:auto;}
+.il-bg{fill:var(--i-paper)}
+.il-w{fill:var(--i-body);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.il-p{fill:var(--i-paper);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.il-a{fill:var(--i-acc);stroke:var(--i-ink);stroke-width:3.5;stroke-linejoin:round}
+.il-as{fill:var(--i-acc-soft);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round}
+.il-ss{fill:var(--i-sec-soft);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round}
+.il-k{fill:none;stroke:var(--i-ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.il-thin{fill:none;stroke:var(--i-ink);stroke-width:2.5;stroke-linecap:round;opacity:.55}
+.il-ka{fill:none;stroke:var(--i-acc);stroke-width:14;stroke-linecap:round}
+.il-dash{stroke-dasharray:10 10}
+.il-scr{fill:var(--i-screen)}
+.il-eye{fill:var(--i-eye)}
+.il-off{fill:var(--i-acc-soft);opacity:.75}
+.il-mark{fill:var(--i-ink)}
+.lo{fill:none;stroke:var(--i-ink);stroke-width:17;stroke-linecap:round;stroke-linejoin:round}
+.li{fill:none;stroke:var(--i-body);stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.il-t{font-family:var(--font-hand);font-weight:600;fill:var(--i-ink)}
+.il-ta{font-family:var(--font-hand);font-weight:700;fill:var(--i-acc-text)}
+.il-m{font-family:var(--font-mono);font-size:16px;fill:var(--i-ink)}
+.il-grain{pointer-events:none}
+:root[data-theme="dark"] .il-grain{opacity:.45}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .il-grain{opacity:.45}}
+
+/* --- Home link + rail ---------------------------------------------------- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 18px;pointer-events:none;
+}
+.topbar > *{pointer-events:auto;}
+.home,.theme{
+  font-family:var(--font-body);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;
+  background:var(--raised);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;
+}
+.home:hover,.theme:hover{color:var(--accent-text);border-color:var(--accent);}
+.theme{display:inline-flex;align-items:center;gap:7px;cursor:pointer;line-height:1;}
+.theme .ico{font-size:13px;line-height:1;}
+
+.rail{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;background:var(--surface);border-top:1px solid var(--rule);
+}
+.rail button{
+  font:inherit;font-size:15px;line-height:1;cursor:pointer;
+  background:var(--raised);color:var(--prose);
+  border:1px solid var(--rule);border-radius:999px;padding:7px 13px;
+}
+.rail button:hover:not(:disabled){border-color:var(--accent);color:var(--accent-text);}
+.rail button:disabled{opacity:.35;cursor:default;}
+.ticks{display:flex;gap:5px;flex:1;overflow:hidden;}
+.ticks button{flex:1;min-width:0;height:6px;padding:0;border-radius:999px;background:var(--sunk);border:none;}
+.ticks button[aria-current="true"]{background:var(--accent);}
+.counter{font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
+
+@media (max-width:760px){
+  .topbar{background:var(--paper);border-bottom:1px solid var(--rule);padding:9px 14px;}
+  .home,.theme{border-color:transparent;background:transparent;padding:4px 6px;}
+}
+@media (prefers-reduced-motion: reduce){.track{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+
+<!-- Blip, the grain and the arrowhead: defined once, reused by every drawing.
+     Shapes carry no colour of their own, so each <use> paints them by class. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="blip-torso" d="M-28,-40 Q-28,-54 -14,-54 L14,-54 Q28,-54 28,-40 L26,-18 Q25,-12 22,-10 L22,-4 Q22,0 18,0 L10,0 Q6,0 6,-4 L6,-10 L-6,-10 L-6,-4 Q-6,0 -10,0 L-18,0 Q-22,0 -22,-4 L-22,-10 Q-25,-12 -26,-18 Z"/>
+    <rect id="blip-skull" x="-58" y="-150" width="116" height="98" rx="30"/>
+    <g id="blip-shadow" class="il-off">
+      <use href="#blip-torso" transform="translate(6 4)"/>
+      <use href="#blip-skull" transform="translate(6 4)"/>
+    </g>
+    <g id="blip">
+      <use href="#blip-torso" class="il-w"/>
+      <line class="il-k" x1="0" y1="-150" x2="0" y2="-172"/>
+      <circle class="il-a" cx="0" cy="-181" r="10"/>
+      <use href="#blip-skull" class="il-w"/>
+      <rect class="il-scr" x="-42" y="-136" width="84" height="70" rx="20"/>
+    </g>
+    <g id="blip-eyes" class="il-eye">
+      <ellipse cx="-15" cy="0" rx="5" ry="7"/><ellipse cx="15" cy="0" rx="5" ry="7"/>
+    </g>
+    <filter id="il-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0.12 0"/>
+    </filter>
+    <marker id="il-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="il-mark"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <a class="home" data-island-return href="../index.html#build/learning-hub-deck">&larr; Home</a>
+  <button class="theme" type="button" id="theme" aria-label="Theme: follow system. Activate to change.">
+    <span class="ico" id="theme-ico" aria-hidden="true">&#9681;</span><span id="theme-lab">Auto</span>
+  </button>
+</div>
+
+<div class="track" id="track" tabindex="-1">
+
+  <!-- 01 · Title ----------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 1: Title">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="brand">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="32" fill="#c67139"/>
+              <circle cx="32" cy="32" r="22" fill="none" stroke="#fffaf2" stroke-opacity=".28" stroke-width="4.5"/>
+              <path d="M32 10a22 22 0 1 1-22 22" fill="none" stroke="#fffaf2" stroke-width="4.5" stroke-linecap="round"/>
+              <path d="M32 32V21M32 32l9.5 5.5M32 32l-9.5 5.5" stroke="#fffaf2" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="32" cy="21" r="3.8" fill="#ffc6a5"/>
+              <circle cx="41.5" cy="37.5" r="3.8" fill="#ccdbb2"/>
+              <circle cx="22.5" cy="37.5" r="3.8" fill="#fffaf2"/>
+              <circle cx="32" cy="32" r="4.6" fill="#fffaf2"/>
+            </svg>
+            <span>Learning Hub</span>
+          </div>
+          <div class="eyebrow"><span class="num">01</span><span>The deck &middot; September 2026</span></div>
+          <h1>Sixty days, tracked in public</h1>
+          <p class="lead">Learning Hub turns the AI Architect 60-Day Plan into an app that tells you what to do today. Tasks, a focus timer, hours and spend, 55 resources, four portfolio projects and interview prep, all read from one YAML file. This deck covers the idea, a tour of the app and how it was built.</p>
+          <div class="title-meta">
+            <a href="https://learn.sankettambare.in">learn.sankettambare.in &#8599;</a>
+            <span>Astro 7 &middot; React 19 &middot; Supabase &middot; Cloudflare</span>
+            <span>Day 1: 28 September 2026</span>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip, a small robot with a screen for a face, leans into a giant wheel and rolls it forward. The wheel is the Learning Hub logo: sixty tick marks around the rim, a terracotta progress arc, and three spokes to nodes labelled learn, build and interview. A flag marked day 1 is behind, a flag marked day 60 is ahead.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="398" x2="776" y2="398"/>
+            <path class="il-thin il-dash" d="M96,410 L330,410"/>
+            <line class="il-k" x1="80" y1="398" x2="80" y2="300"/>
+            <path class="il-p" d="M80,302 L132,316 L80,331 Z"/>
+            <text class="il-t" x="54" y="436" font-size="28">day 1</text>
+            <line class="il-k" x1="742" y1="398" x2="742" y2="282"/>
+            <path class="il-ss" d="M742,284 L694,298 L742,313 Z"/>
+            <text class="il-t" x="700" y="436" font-size="28">day 60</text>
+            <!-- the wheel: the logo, sixty days round the rim -->
+            <circle class="il-w" cx="470" cy="245" r="150"/>
+            <circle class="il-p" cx="470" cy="245" r="112"/>
+            <path class="il-thin" style="opacity:.8" d="M607.0,245.0L620.0,245.0M612.2,259.9L619.2,260.7M609.9,274.7L616.7,276.2M606.0,289.2L612.7,291.4M600.6,303.2L607.0,306.0M588.6,313.5L599.9,320.0M585.7,329.1L591.4,333.2M576.3,340.7L581.5,345.4M565.7,351.3L570.4,356.5M554.1,360.7L558.2,366.4M538.5,363.6L545.0,374.9M528.2,375.6L531.0,382.0M514.2,381.0L516.4,387.7M499.7,384.9L501.2,391.7M484.9,387.2L485.7,394.2M470.0,382.0L470.0,395.0M455.1,387.2L454.3,394.2M440.3,384.9L438.8,391.7M425.8,381.0L423.6,387.7M411.8,375.6L409.0,382.0M401.5,363.6L395.0,374.9M385.9,360.7L381.8,366.4M374.3,351.3L369.6,356.5M363.7,340.7L358.5,345.4M354.3,329.1L348.6,333.2M351.4,313.5L340.1,320.0M339.4,303.2L333.0,306.0M334.0,289.2L327.3,291.4M330.1,274.7L323.3,276.2M327.8,259.9L320.8,260.7M333.0,245.0L320.0,245.0M327.8,230.1L320.8,229.3M330.1,215.3L323.3,213.8M334.0,200.8L327.3,198.6M339.4,186.8L333.0,184.0M351.4,176.5L340.1,170.0M354.3,160.9L348.6,156.8M363.7,149.3L358.5,144.6M374.3,138.7L369.6,133.5M385.9,129.3L381.8,123.6M401.5,126.4L395.0,115.1M411.8,114.4L409.0,108.0M425.8,109.0L423.6,102.3M440.3,105.1L438.8,98.3M455.1,102.8L454.3,95.8M470.0,108.0L470.0,95.0M484.9,102.8L485.7,95.8M499.7,105.1L501.2,98.3M514.2,109.0L516.4,102.3M528.2,114.4L531.0,108.0M538.5,126.4L545.0,115.1M554.1,129.3L558.2,123.6M565.7,138.7L570.4,133.5M576.3,149.3L581.5,144.6M585.7,160.9L591.4,156.8M588.6,176.5L599.9,170.0M600.6,186.8L607.0,184.0M606.0,200.8L612.7,198.6M609.9,215.3L616.7,213.8M612.2,230.1L619.2,229.3"/>
+            <path class="il-ka" d="M470,117 A128,128 0 0 1 598,245"/>
+            <path class="il-k" d="M470,245 L470,200 M470,245 L512,269 M470,245 L428,269"/>
+            <circle class="il-as" cx="470" cy="186" r="16"/>
+            <circle class="il-ss" cx="522" cy="275" r="16"/>
+            <circle class="il-w" cx="418" cy="275" r="16"/>
+            <circle class="il-w" cx="470" cy="245" r="11"/>
+            <text class="il-t" x="470" y="162" font-size="24" text-anchor="middle">learn</text>
+            <text class="il-t" x="524" y="318" font-size="22" text-anchor="middle">build</text>
+            <text class="il-t" x="426" y="316" font-size="20" text-anchor="middle">interview</text>
+            <!-- Blip leans in and pushes -->
+            <path class="il-thin" d="M186,318 L220,318 M176,342 L214,342 M192,366 L222,366"/>
+            <g transform="translate(292 398) rotate(7) scale(1.2)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-42 L70,-40"/><path class="li" d="M18,-42 L70,-40"/>
+              <path class="lo" d="M-8,-34 L74,-28"/><path class="li" d="M-8,-34 L74,-28"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(7 -101)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · The problem ----------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 2: The problem">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">02</span><span>The problem</span></div>
+          <h2>A plan is a document. A day needs a to-do list.</h2>
+          <p class="lead">The plan is thorough: eight themed weeks, 55 resources, four portfolio projects, seven checkpoints and an interview track, merged with September 2026 research. As a document, though, it can&rsquo;t tell you what to do on a Tuesday evening with two free hours.</p>
+          <div class="stats" style="margin-top:18px;">
+            <div class="stat"><div class="v">60</div><div class="k">Days</div></div>
+            <div class="stat"><div class="v">145</div><div class="k">Hours, about</div></div>
+            <div class="stat"><div class="v">$20</div><div class="k">Monthly cap</div></div>
+            <div class="stat"><div class="v">4</div><div class="k">Projects</div></div>
+          </div>
+          <div class="flag"><p><strong>The goal:</strong> be interview-ready for senior AI roles at product companies and GCCs by 26 November. One fixed date sits inside it: the Khadakwasla Ultra on day 56, so days 55 and 56 are rest.</p></div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip stands at the foot of a huge plan document that hangs from above the frame and runs off along the floor, past week 3 and week 6. Blip holds the bottom corner and looks up. Handwritten beside it: 8 weeks, 55 resources, 4 projects, about 145 hours. A thought reads: so what do I do today?">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <path class="il-w" d="M360,-10 L590,-10 L590,338 Q590,378 632,380 L812,380 L812,410 L384,410 Q360,410 360,386 Z"/>
+            <text class="il-t" x="384" y="48" font-size="30">AI Architect</text>
+            <text class="il-t" x="384" y="80" font-size="30">60-Day Plan</text>
+            <g class="il-thin"><line x1="386" y1="108" x2="560" y2="108"/><line x1="386" y1="128" x2="540" y2="128"/><line x1="386" y1="148" x2="566" y2="148"/></g>
+            <rect class="il-p" x="386" y="170" width="178" height="92" rx="4"/>
+            <g class="il-thin"><line x1="386" y1="193" x2="564" y2="193"/><line x1="386" y1="216" x2="564" y2="216"/><line x1="386" y1="239" x2="564" y2="239"/><line x1="440" y1="170" x2="440" y2="262"/><line x1="502" y1="170" x2="502" y2="262"/></g>
+            <g class="il-thin"><line x1="386" y1="288" x2="566" y2="288"/><line x1="386" y1="308" x2="548" y2="308"/><line x1="386" y1="328" x2="560" y2="328"/></g>
+            <text class="il-t" x="612" y="402" font-size="21">wk 3 &middot;&middot;&middot;</text>
+            <text class="il-t" x="700" y="402" font-size="21">wk 6 &middot;&middot;&middot;</text>
+            <text class="il-t" x="620" y="84" font-size="28">8 weeks</text>
+            <text class="il-t" x="620" y="120" font-size="28">55 resources</text>
+            <text class="il-t" x="620" y="156" font-size="28">4 projects</text>
+            <text class="il-t" x="620" y="192" font-size="28">~145 hours</text>
+            <text class="il-t" x="36" y="104" font-size="32">so what do I</text>
+            <text class="il-t" x="36" y="140" font-size="32">do <tspan class="il-ta">today?</tspan></text>
+            <path class="il-thin" d="M150,160 Q190,186 214,222"/>
+            <g transform="translate(300 410) scale(1.15)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-42 L60,-44"/><path class="li" d="M18,-42 L60,-44"/>
+              <path class="lo" d="M-18,-40 L-38,-18"/><path class="li" d="M-18,-40 L-38,-18"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(5 -110)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · The plan's shape ------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 3: The plan's shape">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">03</span><span>The plan&rsquo;s shape</span></div>
+      <h2>Three tracks, every week</h2>
+      <div class="three">
+        <div class="panel track-card">
+          <div class="h"><span class="pill learn">Learn</span><span class="hrs">45 h</span></div>
+          <p>One lecture, chapter, essay or course module at a time. Finish the Must resources; keep the rest as references.</p>
+        </div>
+        <div class="panel track-card">
+          <div class="h"><span class="pill build">Build</span><span class="hrs">65 h</span></div>
+          <p>One project at a time. Build carries the most weight, because product-company interviews probe what you shipped and measured.</p>
+        </div>
+        <div class="panel track-card">
+          <div class="h"><span class="pill interview">Interview</span><span class="hrs">35 h</span></div>
+          <p>System design, low-level design, a little DSA, four mocks and a bank of eight STAR stories.</p>
+        </div>
+      </div>
+      <div class="weeks" role="list" aria-label="The 60 days, phase by phase">
+        <div class="wk" role="listitem"><b>W1</b><span class="d">Days 1&ndash;7</span><span class="t">How LLMs work + APIs</span></div>
+        <div class="wk" role="listitem"><b>W2</b><span class="d">Days 8&ndash;14</span><span class="t">Prompting, outputs, embeddings, evals</span></div>
+        <div class="wk" role="listitem"><b>W3</b><span class="d">Days 15&ndash;21</span><span class="t">RAG core</span></div>
+        <div class="wk" role="listitem"><b>W4</b><span class="d">Days 22&ndash;28</span><span class="t">Advanced RAG + RAG evals</span></div>
+        <div class="wk" role="listitem"><b>W5</b><span class="d">Days 29&ndash;35</span><span class="t">Agents, MCP, context, security</span></div>
+        <div class="wk" role="listitem"><b>W6</b><span class="d">Days 36&ndash;42</span><span class="t">Frameworks, human-in-the-loop, tracing</span></div>
+        <div class="wk" role="listitem"><b>W7</b><span class="d">Days 43&ndash;49</span><span class="t">Data + AI platform</span></div>
+        <div class="wk" role="listitem"><b>W8</b><span class="d">Days 50&ndash;54</span><span class="t">LLMOps, security, cost</span></div>
+        <div class="wk race" role="listitem"><b>Race</b><span class="d">Days 55&ndash;56</span><span class="t">Rest + Khadakwasla Ultra</span></div>
+        <div class="wk final" role="listitem"><b>Final</b><span class="d">Days 57&ndash;60</span><span class="t">Revise, polish, stories</span></div>
+      </div>
+      <div class="two" style="margin-top:16px;">
+        <div class="panel raised">
+          <h3>Weekdays &middot; 2 h</h3>
+          <p style="margin:0;">50 min learn, 55 min build (30 of them go to DSA on Tuesday and Thursday), 15 min capturing what you learned.</p>
+        </div>
+        <div class="panel raised">
+          <h3>Weekends &middot; 3&ndash;4 h</h3>
+          <p style="margin:0;">A 2&ndash;2.5 h deep build block, 45 min of design or LLD practice, and a 30 min weekly review.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · The idea -------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 4: The idea">
+    <div class="inner">
+      <div class="split wide-right">
+        <div>
+          <div class="eyebrow"><span class="num">04</span><span>The idea</span></div>
+          <h2>One YAML file in, one day out</h2>
+          <ul class="plain" style="margin-top:14px;">
+            <li><code>data/roadmap.yaml</code> holds every week, resource, project, checkpoint, flashcard and cost. Screens only read it.</li>
+            <li>Zod checks it at build time. A bad entry fails <code>npm test</code> and <code>npm run build</code>, never a reader&rsquo;s browser.</li>
+            <li><code>plan.ts</code> turns a start date into 60 days of task blocks: learn, build, DSA on Tuesday and Thursday, capture; deep build and review at weekends.</li>
+            <li>Ticks, hours and notes are stored apart from the plan, keyed by ids that never change.</li>
+          </ul>
+          <div class="flag"><p>Week 1&rsquo;s build is <strong>&ldquo;Learning hub v0, timeboxed to 6 h&rdquo;</strong>. The tracker is the first project of the plan it tracks.</p></div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="An explainer drawn by hand. A sheet labelled roadmap.yaml goes into the hopper of a machine labelled plan.ts. A dial marked Zod shows a tick; a crumpled bad entry falls into a bin, labelled bad entry equals build fails. Blip turns the crank, and a card comes out of the chute: Day 9, learn 50 min ticked, build 55 min, capture 15 min, labelled today's blocks.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-t" x="38" y="96" font-size="26">roadmap.yaml</text>
+            <path class="il-w" d="M40,110 L135,110 L160,135 L160,250 L40,250 Z"/>
+            <path class="il-k" d="M135,110 L135,135 L160,135"/>
+            <g class="il-thin"><line x1="56" y1="146" x2="116" y2="146"/><line x1="70" y1="168" x2="140" y2="168"/><line x1="70" y1="190" x2="128" y2="190"/><line x1="56" y1="212" x2="112" y2="212"/><line x1="70" y1="234" x2="140" y2="234"/></g>
+            <text class="il-t" x="38" y="282" font-size="24">one YAML file</text>
+            <path class="il-k" d="M168,168 Q208,132 256,118" marker-end="url(#il-arrow)"/>
+            <path class="il-w" d="M250,116 L346,116 L324,172 L272,172 Z"/>
+            <rect class="il-w" x="240" y="170" width="242" height="162" rx="14"/>
+            <text class="il-t" x="372" y="214" font-size="34" text-anchor="middle">plan.ts</text>
+            <circle class="il-p" cx="300" cy="256" r="26"/>
+            <path class="il-k" d="M288,257 L297,267 L313,246"/>
+            <text class="il-t" x="300" y="306" font-size="22" text-anchor="middle">Zod</text>
+            <circle class="il-p" cx="420" cy="264" r="24"/>
+            <path class="il-thin" d="M420,240 L420,288 M396,264 L444,264 M403,247 L437,281 M437,247 L403,281"/>
+            <rect class="il-w" x="480" y="192" width="54" height="28" rx="4"/>
+            <circle class="il-w" cx="482" cy="318" r="7"/>
+            <path class="il-k" style="stroke-width:7" d="M482,318 L500,350"/>
+            <circle class="il-w" cx="502" cy="354" r="8"/>
+            <path class="il-p" d="M170,368 L250,368 L242,410 L178,410 Z"/>
+            <path class="il-w" d="M200,340 l9,-10 l10,5 l7,-6 l6,12 l-4,10 l-12,4 l-11,-4 z"/>
+            <path class="il-thin" d="M228,318 L222,330 M240,324 L232,334"/>
+            <text class="il-t" x="30" y="440" font-size="22">bad entry = build fails</text>
+            <path class="il-k" d="M538,204 Q566,196 584,176" marker-end="url(#il-arrow)"/>
+            <rect class="il-w" x="586" y="40" width="184" height="152" rx="12"/>
+            <text class="il-t" x="604" y="76" font-size="30">Day 9</text>
+            <rect class="il-a" x="604" y="94" width="16" height="16" rx="3"/>
+            <path class="il-k" style="stroke-width:3" d="M607,102 L611,106 L618,97"/>
+            <text class="il-t" x="630" y="108" font-size="22">learn &middot; 50 min</text>
+            <rect class="il-p" style="stroke-width:3" x="604" y="124" width="16" height="16" rx="3"/>
+            <text class="il-t" x="630" y="138" font-size="22">build &middot; 55 min</text>
+            <rect class="il-p" style="stroke-width:3" x="604" y="154" width="16" height="16" rx="3"/>
+            <text class="il-t" x="630" y="168" font-size="22">capture &middot; 15 min</text>
+            <text class="il-t" x="612" y="224" font-size="24">today&rsquo;s blocks</text>
+            <g transform="translate(566 410)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-18,-42 L-62,-52"/><path class="li" d="M-18,-42 L-62,-52"/>
+              <path class="lo" d="M18,-40 L36,-20"/><path class="li" d="M18,-40 L36,-20"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(-6 -101)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · Today ----------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 5: Tour, Today">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">05</span><span>Tour &middot; Today</span></div>
+      <div class="split wide-left">
+        <figure class="shot">
+          <img src="assets/learning-hub/today.webp" width="1280" height="800" alt="The Today screen on day 9 of 60: week 2's theme, a learn block already ticked, the build block with its seven build steps, and a side column for logging time against 45, 65 and 35 hour budgets, this week's tracks and this week's resources">
+          <figcaption>Demo mode, seeded with nine days of sample progress.</figcaption>
+        </figure>
+        <div>
+          <h2>Open it and it says what to do</h2>
+          <ul class="plain">
+            <li><strong>Day 9 of 60</strong>, the week&rsquo;s theme, and today&rsquo;s blocks with their minutes. Step back and forward through any day.</li>
+            <li><strong>Focus</strong> runs a timer on a block. When it ends, the hours are logged and the block can be ticked for you.</li>
+            <li><strong>Build steps</strong> for the week, tickable, with reference links.</li>
+            <li><strong>Log time</strong> in 15-minute taps against the track budgets.</li>
+            <li><strong>This week&rsquo;s resources</strong>, with Must and Recommended tags.</li>
+            <li>A daily capture note. Days 55 and 56 get their own rest and race screens.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · Dashboard and Plan ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 6: Tour, Dashboard and Plan">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">06</span><span>Tour &middot; Dashboard and Plan</span></div>
+      <h2>All sixty days on one screen</h2>
+      <div class="two" style="margin-top:14px;">
+        <figure class="shot">
+          <img src="assets/learning-hub/dashboard.webp" width="1280" height="800" loading="lazy" alt="The Dashboard: 15% plan progress, 19.8 hours logged, a 9-day streak, 1 of 7 checkpoints, 6 of 55 resources and 4 of 12 flashcards; a 60-day grid with days 1 to 8 done; hours by track; the four core projects">
+          <figcaption><strong>Dashboard.</strong> Progress, hours, streak, checkpoints, resources and flashcards; a 60-day grid with checkpoint dots; hours by track; the four core projects.</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="assets/learning-hub/plan.webp" width="1280" height="800" loading="lazy" alt="The Plan screen: a list of weeks W1 to W8 with progress bars, and week 1 open on the right with its learn, build and interview tracks, six ticked build steps, references and its days">
+          <figcaption><strong>Plan.</strong> Every week&rsquo;s learn, build and interview, its build steps, references and days. Dates follow each user&rsquo;s own start date.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · Resources and Projects ------------------------------------------ -->
+  <section class="slide" aria-label="Slide 7: Tour, Resources and Projects">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">07</span><span>Tour &middot; Resources and Projects</span></div>
+      <h2>55 resources, four projects</h2>
+      <div class="two" style="margin-top:14px;">
+        <figure class="shot">
+          <img src="assets/learning-hub/resources.webp" width="1280" height="800" loading="lazy" alt="The Resources library as a table: search, week, type and priority filters; rows with week, type, cost, time, a priority tag and a Verified or Recheck status">
+          <figcaption><strong>Resources.</strong> Search and filter by week, type and priority, as a table or cards. <em>Verified</em> means checked against a first-party page; <em>Recheck</em> means confirm before relying on it.</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="assets/learning-hub/projects.webp" width="1280" height="800" loading="lazy" alt="The Projects screen: four numbered cards, Ask Sanket RAG v2, RunCoach AI v2, Research Desk and LLM Gateway plus hardening, each with what it proves, what to study first and four deliverables to tick">
+          <figcaption><strong>Projects.</strong> Four upgrades to things already built, each with a README, an architecture diagram, eval results and a 2-minute demo to tick off. Below: a README template and verdicts on seven other ideas.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · Interview and the rest ------------------------------------------ -->
+  <section class="slide" aria-label="Slide 8: Tour, Interview and the rest">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">08</span><span>Tour &middot; Interview and the rest</span></div>
+      <div class="split wide-left">
+        <figure class="shot">
+          <img src="assets/learning-hub/interview.webp" width="1280" height="800" loading="lazy" alt="Interview prep: a flashcard asking to design RAG over 10 million documents with per-user access control, with again, good and easy counts; DSA counters for eight topics; four mocks">
+          <figcaption><strong>Interview prep.</strong> 12 flashcards with outlines and again/good/easy ratings, DSA counters for 8 topics, 4 mocks.</figcaption>
+        </figure>
+        <div>
+          <h2>Prep, next to the work</h2>
+          <div class="two" style="gap:12px;">
+            <figure class="shot crop"><img src="assets/learning-hub/stars.webp" width="1280" height="800" loading="lazy" alt="STAR stories: eight slots, two filled with samples"><figcaption>STAR stories: 8 slots, 2 samples</figcaption></figure>
+            <figure class="shot crop"><img src="assets/learning-hub/checkpoints.webp" width="1280" height="800" loading="lazy" alt="Checkpoints: a timeline of seven dated milestones, the first one done"><figcaption>Checkpoints: 7 on a timeline</figcaption></figure>
+            <figure class="shot crop"><img src="assets/learning-hub/budget.webp" width="1280" height="800" loading="lazy" alt="Budget: $1.84 of API spend logged against a $20 cap, a spend log and a table of where the money goes"><figcaption>Budget: spend against $20</figcaption></figure>
+            <figure class="shot crop"><img src="assets/learning-hub/ask.webp" width="1280" height="800" loading="lazy" alt="Ask my learnings, marked coming soon, with suggested questions and a chat box"><figcaption>Ask my learnings: coming soon</figcaption></figure>
+          </div>
+          <p class="note" style="margin:14px 0 6px;">14 screens in five groups. The header keeps four; the menu has them all.</p>
+          <div class="groups">
+            <span><b>Plan</b> Today &middot; Dashboard &middot; Plan &middot; Checkpoints</span>
+            <span><b>Learn and build</b> Resources &middot; Projects &middot; Daily log &middot; Budget</span>
+            <span><b>Interview</b> Interview prep &middot; STAR stories</span>
+            <span><b>Explore</b> Ecosystem &middot; Ask my learnings</span>
+            <span><b>About</b> About &middot; Created by</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 · Three ways in --------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 9: Three ways in">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">09</span><span>Three ways in</span></div>
+      <h2>Browse, try the demo, or sign in</h2>
+      <div class="split wide-left" style="align-items:start;">
+        <div class="stack">
+          <div class="three modes">
+            <div class="panel"><h3>Browse</h3><p>The whole plan is public. No account needed to read every week, resource and project.</p></div>
+            <div class="panel"><h3>Demo</h3><p>&ldquo;Continue as demo&rdquo; saves progress in <code>localStorage</code> on this device. A fork without Supabase still gets a working tracker.</p></div>
+            <div class="panel"><h3>Signed in</h3><p>Email and password through Supabase. Sign-up signs you straight in, and progress follows you across devices.</p></div>
+          </div>
+          <figure class="shot">
+            <img src="assets/learning-hub/today-dark.webp" width="1280" height="800" loading="lazy" alt="The Today screen in dark mode on day 9, in demo mode">
+            <figcaption>Dark mode, remembered per device. Settings change your start date, restart from today, or skip the race days.</figcaption>
+          </figure>
+        </div>
+        <figure class="shot phone">
+          <img src="assets/learning-hub/today-phone.webp" width="390" height="844" loading="lazy" alt="The Today screen on a 390 pixel wide phone: day 9 of 60, the week chip, and the learn and build blocks stacked in one column">
+          <figcaption style="text-align:center;">At phone width, one column. Layout switches are CSS media queries, not JavaScript.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · Build: design first --------------------------------------------- -->
+  <section class="slide" aria-label="Slide 10: Build, design first">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">10</span><span>Build &middot; Design first</span></div>
+          <h2>Read the design, then pick the stack</h2>
+          <p class="lead">The plan had picked Astro Starlight, a docs framework, before any design existed. The Claude Design export turned out to be a 12-screen interactive app with no docs pages at all.</p>
+          <ul class="plain">
+            <li><strong>Astro 7</strong> static site with <strong>one React 19 island</strong>: <code>index.astro</code> mounts <code>App.tsx</code>, and each screen is one file.</li>
+            <li>The design&rsquo;s inline styles became tokens in <code>organic.css</code> and classes in <code>hub.css</code>.</li>
+            <li><code>support.js</code> in the export is the Claude Design runtime, not app code. The logic was ported; the runtime was not shipped.</li>
+            <li>Sign-in changed too: GitHub OAuth gave way to email and password.</li>
+          </ul>
+          <div class="flag"><p>v0 went in on <strong>25 September 2026</strong>, three days before day 1, and is live at learn.sankettambare.in.</p></div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip has opened a parcel labelled design export, and three app screens float up out of it, labelled 12 screens and 0 docs pages. With its other hand Blip nudges away a suitcase labelled docs kit, under a note that reads Starlight: not needed.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <rect class="il-p" x="196" y="96" width="156" height="104" rx="12"/>
+            <rect class="il-p" x="214" y="120" width="156" height="104" rx="12"/>
+            <rect class="il-w" x="232" y="144" width="156" height="104" rx="12"/>
+            <line class="il-thin" x1="232" y1="166" x2="388" y2="166"/>
+            <rect class="il-ss" style="stroke-width:3" x="246" y="178" width="58" height="56" rx="8"/>
+            <g class="il-thin"><line x1="318" y1="184" x2="374" y2="184"/><line x1="318" y1="202" x2="366" y2="202"/><line x1="318" y1="220" x2="374" y2="220"/></g>
+            <path class="il-thin" d="M200,258 L190,272 M236,266 L236,282 M300,266 L304,282"/>
+            <path class="il-w" d="M170,320 L130,292 L230,292 L270,320 Z"/>
+            <path class="il-w" d="M370,320 L410,292 L310,292 L270,320 Z"/>
+            <rect class="il-w" x="170" y="320" width="200" height="90"/>
+            <text class="il-t" x="270" y="374" font-size="28" text-anchor="middle">design export</text>
+            <text class="il-t" x="408" y="112" font-size="30">12 screens</text>
+            <text class="il-t" x="408" y="146" font-size="30">0 docs pages</text>
+            <text class="il-t" x="566" y="282" font-size="26">Starlight: not needed</text>
+            <g transform="rotate(4 650 360)">
+              <path class="il-k" d="M626,312 L626,296 Q626,290 632,290 L668,290 Q674,290 674,296 L674,312"/>
+              <rect class="il-p" x="560" y="312" width="180" height="96" rx="14"/>
+              <text class="il-t" x="650" y="370" font-size="28" text-anchor="middle">docs kit</text>
+            </g>
+            <path class="il-thin" d="M752,334 L774,334 M756,356 L782,356 M752,378 L772,378"/>
+            <g transform="translate(470 410) scale(1.1)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-18,-42 L-62,-50"/><path class="li" d="M-18,-42 L-62,-50"/>
+              <path class="lo" d="M18,-40 L70,-34"/><path class="li" d="M18,-40 L70,-34"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(-7 -108)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · Build: content as data ------------------------------------------ -->
+  <section class="slide" aria-label="Slide 11: Build, content as data">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">11</span><span>Build &middot; Content as data</span></div>
+      <h2>One file holds the plan</h2>
+      <p class="lead"><code>data/roadmap.yaml</code> is the only source of plan content: 1,065 lines covering ten phases, 55 resources, four projects, seven checkpoints, 12 flashcards, eight DSA topics, four mocks, costs and ecosystem notes.</p>
+      <div class="two" style="margin-top:14px;">
+<pre><span class="k">weeks:</span>
+  - <span class="k">id:</span> w1            <span class="c"># never changes once published</span>
+    <span class="k">number:</span> 1
+    <span class="k">start:</span> 1
+    <span class="k">end:</span> 7
+    <span class="k">title:</span> <span class="s">How LLMs work + APIs</span>
+    <span class="k">learn:</span> <span class="s">Tokens, attention, sampling, …</span>
+    <span class="k">build:</span> <span class="s">Learning hub v0, timeboxed to 6 h</span>
+    <span class="k">interview:</span> <span class="s">OOP and SOLID; DSA arrays and hashing</span>
+    <span class="k">build_steps:</span>
+      - <span class="s">Scaffold Astro with one React island; …</span>
+    <span class="k">build_links:</span>
+      - { <span class="k">label:</span> <span class="s">Astro docs</span>, <span class="k">url:</span> <span class="s">"https://docs.astro.build"</span> }</pre>
+        <div class="stack">
+          <div class="panel">
+            <h3>Rules the file keeps</h3>
+            <ul class="plain">
+              <li><strong>Ids never change.</strong> Saved progress points at them with no foreign key. Task ids are <code>d{day}-{index}</code>, made by <code>plan.ts</code>.</li>
+              <li><strong>Append build steps at the end</strong>, so saved ticks keep matching.</li>
+              <li><code>verified_on</code> only after checking a first-party page.</li>
+              <li><code>license: link-only</code> resources are linked, never copied.</li>
+              <li>Personal progress never goes in git.</li>
+            </ul>
+          </div>
+          <div class="flag" style="margin-top:0;"><p>Zod parses the file at build time in <code>roadmap.ts</code>. Break one field and <code>npm test</code> fails before anything deploys.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · Build: where progress lives ------------------------------------- -->
+  <section class="slide" aria-label="Slide 12: Build, where progress lives">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">12</span><span>Build &middot; Where progress lives</span></div>
+      <div class="split">
+        <div>
+          <h2>One flat map, two backends</h2>
+          <p class="lead">Every checkbox, note, story, spend entry and hours entry is one row: <code>kind:item_id &rarr; JSON value</code>. The same shape works in <code>localStorage</code> and in Postgres.</p>
+<pre><span class="k">create table</span> public.progress (
+  user_id uuid <span class="k">default</span> auth.uid(),
+  kind    text <span class="k">check</span> (kind <span class="k">in</span> (<span class="s">'task'</span>, <span class="s">'note'</span>, …)),
+  item_id text,
+  value   jsonb,
+  <span class="k">primary key</span> (user_id, kind, item_id)
+);
+<span class="k">create policy</span> <span class="s">"Users read own progress"</span> …
+  <span class="k">using</span> ((<span class="k">select</span> auth.uid()) = user_id);</pre>
+          <ul class="plain" style="margin-top:14px;">
+            <li>One row per item, so two devices never overwrite each other&rsquo;s work.</li>
+            <li>Writes are optimistic and revert on failure. Hours and spend are append-only.</li>
+            <li>A trigger caps each user at 5,000 rows. Sixty heavy days is about 1,500.</li>
+            <li><code>rls_check.sql</code> proves user B sees none of user A&rsquo;s rows.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip holds up a card that reads task:d9-0 → true. From the card a track splits in two: up to a cloud with a padlock, labelled signed in: Supabase and RLS, and down to a drawer labelled demo: localStorage. A note says same key either way.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <path class="il-k" d="M420,357 L478,357"/>
+            <path class="il-k" d="M478,357 C530,357 536,196 590,188" marker-end="url(#il-arrow)"/>
+            <path class="il-k" d="M478,357 C520,357 548,378 590,378" marker-end="url(#il-arrow)"/>
+            <circle class="il-w" cx="478" cy="357" r="7"/>
+            <path class="il-w" d="M600,184 Q588,146 628,138 Q640,104 684,110 Q720,90 746,124 Q784,128 776,166 Q782,196 744,198 L628,198 Q600,198 600,184 Z"/>
+            <path class="il-k" style="stroke-width:3.5" d="M674,152 L674,142 Q684,128 694,142 L694,152"/>
+            <rect class="il-a" x="666" y="150" width="36" height="28" rx="5"/>
+            <text class="il-t" x="712" y="176" font-size="24">RLS</text>
+            <text class="il-t" x="596" y="234" font-size="26">signed in: Supabase</text>
+            <rect class="il-p" x="600" y="340" width="164" height="70" rx="6"/>
+            <line class="il-k" x1="600" y1="374" x2="764" y2="374"/>
+            <circle class="il-k" cx="682" cy="392" r="5"/>
+            <rect class="il-w" style="stroke-width:3" x="644" y="324" width="62" height="20" rx="3"/>
+            <text class="il-t" x="596" y="440" font-size="26">demo: localStorage</text>
+            <text class="il-t" x="364" y="440" font-size="24">same key either way</text>
+            <text class="il-t" x="40" y="78" font-size="26">12 kinds of row:</text>
+            <text class="il-t" x="40" y="110" font-size="24">task &middot; resource &middot; note &middot; star</text>
+            <text class="il-t" x="40" y="140" font-size="24">spend &middot; hours &middot; setting &middot; &hellip;</text>
+            <g transform="translate(170 410) scale(1.1)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-42 L66,-50"/><path class="li" d="M18,-42 L66,-50"/>
+              <path class="lo" d="M-18,-40 L-38,-18"/><path class="li" d="M-18,-40 L-38,-18"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(6 -101)"/>
+            </g>
+            <rect class="il-w" x="236" y="330" width="186" height="54" rx="10"/>
+            <text class="il-m" x="250" y="363">task:d9-0 &#8594; true</text>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · Build: shipping and forking ------------------------------------- -->
+  <section class="slide" aria-label="Slide 13: Build, shipping and forking">
+    <div class="inner">
+      <div class="split">
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="On the left, a potted plant labelled the hub, with a small copy of the logo ring as its flower. A dashed arrow labelled fork curves from it to a small new pot that Blip carries, labelled yours, with a sprout in it. On the right, a sheet labelled roadmap.yaml with a pencil lies under the note edit one file.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <path class="il-k" d="M120,330 C118,280 128,236 120,196"/>
+            <path class="il-k" d="M121,288 C140,270 156,262 170,262"/>
+            <path class="il-k" d="M120,254 C100,240 84,236 70,238"/>
+            <ellipse class="il-ss" cx="176" cy="258" rx="24" ry="13" transform="rotate(-20 176 258)"/>
+            <ellipse class="il-ss" cx="64" cy="236" rx="24" ry="13" transform="rotate(20 64 236)"/>
+            <circle class="il-w" cx="120" cy="170" r="28"/>
+            <circle class="il-p" cx="120" cy="170" r="15"/>
+            <path class="il-k" style="stroke:var(--i-acc);stroke-width:7" d="M120,148 A22,22 0 1 1 98,170"/>
+            <path class="il-p" d="M60,330 L180,330 L166,410 L74,410 Z"/>
+            <text class="il-t" x="120" y="380" font-size="26" text-anchor="middle">the hub</text>
+            <path class="il-k il-dash" d="M162,150 C230,110 300,140 318,268" marker-end="url(#il-arrow)"/>
+            <text class="il-t" x="218" y="112" font-size="32">fork</text>
+            <g transform="translate(424 410) scale(1.1)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-18,-42 L-66,-36"/><path class="li" d="M-18,-42 L-66,-36"/>
+              <path class="lo" d="M18,-40 L36,-20"/><path class="li" d="M18,-40 L36,-20"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(-7 -101)"/>
+            </g>
+            <path class="il-k" d="M330,352 C328,330 334,312 330,290"/>
+            <ellipse class="il-ss" cx="346" cy="304" rx="15" ry="8" transform="rotate(-25 346 304)"/>
+            <ellipse class="il-ss" cx="316" cy="318" rx="14" ry="8" transform="rotate(25 316 318)"/>
+            <path class="il-p" d="M298,350 L362,350 L354,398 L306,398 Z"/>
+            <text class="il-t" x="330" y="384" font-size="20" text-anchor="middle">yours</text>
+            <text class="il-t" x="560" y="146" font-size="30">edit one file</text>
+            <g transform="rotate(-3 650 250)">
+              <path class="il-w" d="M570,168 L706,168 L730,192 L730,330 L570,330 Z"/>
+              <path class="il-k" d="M706,168 L706,192 L730,192"/>
+              <text class="il-t" x="588" y="204" font-size="22">roadmap.yaml</text>
+              <g class="il-thin"><line x1="588" y1="232" x2="700" y2="232"/><line x1="600" y1="256" x2="712" y2="256"/><line x1="600" y1="304" x2="690" y2="304"/></g>
+              <path class="il-k" style="stroke:var(--i-acc);stroke-width:5" d="M600,282 L676,282"/>
+            </g>
+            <g transform="rotate(-38 700 300)">
+              <rect class="il-w" x="676" y="292" width="92" height="16" rx="3"/>
+              <path class="il-p" d="M676,292 L660,300 L676,308 Z"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+        <div>
+          <div class="eyebrow"><span class="num">13</span><span>Build &middot; Shipping and forking</span></div>
+          <h2>Fork it, edit one file, deploy</h2>
+          <ul class="plain">
+            <li><strong>Edit <code>data/roadmap.yaml</code></strong>: your weeks, resources, start date and budget cap; <code>author</code> fills the Created by page.</li>
+            <li><strong>Supabase is optional.</strong> Add <code>PUBLIC_SUPABASE_URL</code> and <code>PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> for accounts; without them the fork runs in demo mode.</li>
+            <li><strong>Push.</strong> Cloudflare&rsquo;s git integration builds the static <code>dist/</code>. Hosting costs $0.</li>
+          </ul>
+          <div class="three" style="margin-top:16px;">
+            <div class="panel raised"><h3>CI</h3><p style="font-size:14px;">Tests and build on every pull request.</p></div>
+            <div class="panel raised"><h3>Links</h3><p style="font-size:14px;">Weekly lychee check; a broken link opens an issue.</p></div>
+            <div class="panel raised"><h3>Licence</h3><p style="font-size:14px;">Code MIT, notes CC BY 4.0.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · What bit -------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 14: What bit">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">14</span><span>From docs/lessons.md</span></div>
+      <h2>Six things that cost time</h2>
+      <div class="three" style="margin-top:14px;">
+        <div class="lesson"><h4>Stack before design</h4><p>Starlight was chosen before the design arrived, then dropped for a React island. Get the design first.</p></div>
+        <div class="lesson"><h4>PGRST205</h4><p>Sign-in worked but loading failed: auth was ready before the <code>progress</code> table existed. The app now names the missing migration.</p></div>
+        <div class="lesson"><h4>A quiet deadlock</h4><p>Calling Supabase inside <code>onAuthStateChange</code> can deadlock. Defer the call with <code>setTimeout(&hellip;, 0)</code>.</p></div>
+        <div class="lesson"><h4>1,000 rows per request</h4><p>PostgREST returns at most 1,000 rows by default, so <code>load()</code> pages with <code>.range()</code>.</p></div>
+        <div class="lesson"><h4>npm 10 on Cloudflare</h4><p>A lockfile written by npm 11 failed <code>npm ci</code> there. Regenerate with <code>npx npm@10.9.2 install --package-lock-only</code>.</p></div>
+        <div class="lesson"><h4>YAML commas</h4><p>In flow style, <code>{ cost: ~₹1,900 }</code> splits at the comma. Quote such values.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 · Next ------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 15: What's next">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">15</span><span>Next</span></div>
+          <h2>Day 1 is 28 September</h2>
+          <div class="panel" style="margin-top:6px;">
+            <h3>Ask my learnings, for real</h3>
+            <p style="font-size:15px;">Cloudflare AI Search over <code>roadmap.yaml</code>, the plan and future notes, behind a small Worker at <code>/api/ask</code> that answers with source chips. Guardrails: a per-IP rate limit, a question length cap, a hard monthly spend cap, and retrieved text treated as data. It doubles as a small RAG project.</p>
+          </div>
+          <div class="panel raised" style="margin-top:12px;">
+            <h3>Backlog</h3>
+            <ul class="plain">
+              <li>Import demo progress into Supabase on first sign-in</li>
+              <li>Flag resources not verified in 90 days</li>
+              <li>Markdown notes, and a public read-only progress page</li>
+            </ul>
+          </div>
+          <div class="title-meta">
+            <a href="https://learn.sankettambare.in">Open Learning Hub &#8599;</a>
+            <span>Checkpoint 1: hub live by day 7, 4 October</span>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip crouches at a start line under a banner that reads start, day 1, 28 Sep. A dashed trail winds away over a hill to a terracotta flag labelled day 60.">
+            <rect class="il-bg" width="800" height="450"/>
+            <path class="il-ss" d="M470,410 C556,300 626,262 704,236 C742,224 780,226 812,232 L812,410 Z"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <path class="il-thin il-dash" style="opacity:.8" d="M540,404 C600,360 640,300 740,236"/>
+            <line class="il-k" x1="748" y1="234" x2="748" y2="172"/>
+            <path class="il-a" d="M748,174 L704,186 L748,200 Z"/>
+            <text class="il-t" x="660" y="160" font-size="30">day 60</text>
+            <line class="il-k" x1="120" y1="410" x2="120" y2="86"/>
+            <line class="il-k" x1="520" y1="410" x2="520" y2="86"/>
+            <path class="il-w" d="M120,96 Q320,118 520,96 L520,150 Q320,172 120,150 Z"/>
+            <text class="il-t" x="320" y="142" font-size="34" text-anchor="middle">start &middot; day 1 &middot; 28 Sep</text>
+            <path class="il-k" style="stroke-width:6;stroke-dasharray:16 10" d="M132,416 L508,416"/>
+            <g transform="translate(320 410) rotate(6) scale(1.15)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-42 L54,-28"/><path class="li" d="M18,-42 L54,-28"/>
+              <path class="lo" d="M-18,-42 L-50,-24"/><path class="li" d="M-18,-42 L-50,-24"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(8 -101)"/>
+            </g>
+            <path class="il-thin" d="M218,318 L246,318 M210,342 L240,342"/>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <div class="ticks" id="ticks"></div>
+  <span class="counter" id="counter">01 / 15</span>
+</nav>
+
+<script>
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var counter = document.getElementById('counter');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var current = 0;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  slides.forEach(function (slide, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', slide.getAttribute('aria-label'));
+    b.addEventListener('click', function () { go(i); });
+    ticks.appendChild(b);
+  });
+  var tickButtons = Array.prototype.slice.call(ticks.children);
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    tickButtons.forEach(function (b, i) {
+      b.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+    paint();
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  // A resize changes what offsetLeft means; stay on the slide the reader was on.
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' });
+    }, 120);
+  });
+
+  paint();
+})();
+
+// --- Theme toggle ---------------------------------------------------------
+// Three states, not two: with no data-theme the deck follows the OS setting,
+// and a two-way switch would throw that away.
+(function () {
+  var KEY = 'deck-theme';
+  var MODES = ['auto', 'light', 'dark'];
+  var META = {
+    auto:  { ico: '◑', lab: 'Auto',  say: 'follow system' },
+    light: { ico: '☀', lab: 'Light', say: 'light' },
+    dark:  { ico: '☾', lab: 'Dark',  say: 'dark' }
+  };
+
+  var btn = document.getElementById('theme');
+  var ico = document.getElementById('theme-ico');
+  var lab = document.getElementById('theme-lab');
+
+  function stored() {
+    try { return localStorage.getItem(KEY); } catch (e) { return null; }
+  }
+
+  var mode = MODES.indexOf(stored()) > -1 ? stored() : 'auto';
+
+  function apply(next, persist) {
+    mode = next;
+    if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', mode);
+
+    ico.textContent = META[mode].ico;
+    lab.textContent = META[mode].lab;
+    btn.setAttribute('aria-label', 'Theme: ' + META[mode].say + '. Activate to change.');
+
+    if (persist) {
+      // Storage can throw in a private window; the toggle must still work.
+      try {
+        if (mode === 'auto') localStorage.removeItem(KEY);
+        else localStorage.setItem(KEY, mode);
+      } catch (e) { /* ignored */ }
+    }
+  }
+
+  btn.addEventListener('click', function () {
+    apply(MODES[(MODES.indexOf(mode) + 1) % MODES.length], true);
+  });
+
+  apply(mode, false);
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="build"></script>
+</body>
+</html>
