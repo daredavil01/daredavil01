@@ -76,6 +76,11 @@ presentations/
                                    the AI Architect 60-day plan tracker at
                                    learn.sankettambare.in — idea, app tour, build
   assets/learning-hub/            Screenshots used by that deck (webp)
+  newsletter.html                 A Month, in One Letter: the 21-slide animated
+                                   deck on the monthly newsletter at
+                                   sankettambare.in/newsletter — workflow, entity
+                                   map, both layouts, feedback, ask focus
+  assets/newsletter/              Screenshots and share cards used by that deck (webp)
   e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
                                    ethanol/sugar trade-off and how the site was built
   projects-page-revamp.html       Projects, Reborn: the 12-slide deck on
