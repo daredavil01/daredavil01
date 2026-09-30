@@ -6,41 +6,44 @@
     <title>Yung Foundation website — what it is and how it is built</title>
     <meta
       name="description"
-      content="A single-page overview of the Yung Foundation website: every page, what staff can edit, and the architecture underneath."
+      content="A single-page overview of the Yung Foundation website: every page, what staff can edit, the AI helpers in the admin, and the architecture underneath."
     />
 
     <!--
       ===================================================================
-      site-overview.html — one page describing the whole website.
+      yung-foundation-site-overview.html — one page describing the whole
+      website.
 
       HAND-MAINTAINED. Nothing generates this file, so nothing will notice
-      when it goes stale. If you add a route, an admin tab or a table,
-      update it here too. The numbers below were read out of the repo on
-      2026-08-07 at v0.5.0; their sources are named in the colophon.
+      when it goes stale. If the site gains a route, an admin tab, a table
+      or an AI task, update it here too. Every number below was read out of
+      the site's repo on 2026-09-30, with migrations 0001–0018 applied; the
+      sources are named in the colophon. The byte counts come from a dist/
+      built that day.
 
-      SELF-CONTAINED BY DESIGN. No script, no build step — open it from disk
-      and it works. The only external references are the two web fonts (see
-      the note above the <link> tags), and the "← Home" link back to the hub.
+      SELF-CONTAINED BY DESIGN. No script of its own, no build step — open
+      it from disk and it works. The only external references are the two
+      web fonts (see the note above the <link> tags), the "← Home" link back
+      to the hub and its chrome script, and one link to the AI deck.
 
-      THE TOKENS BELOW ARE A COPY, not an import. src/styles/global.css is
-      the source of truth; the values are duplicated here because this file
-      has to stand alone. If a colour changes there, it changes here too.
-      This duplication is deliberate and visible rather than discovered.
+      THE TOKENS BELOW ARE A COPY, not an import. The site's
+      src/styles/global.css is the source of truth; the values are
+      duplicated here because this file has to stand alone. If a colour
+      changes there, it changes here too. They were re-checked against it on
+      2026-09-30 and had not moved.
 
-      This file is inside the dev-docs/ block in .prettierignore, so the
-      hand-laid SVG grids below are not reflowed. That is why they stay
-      readable.
+      The SVG figures are laid out by hand on a fixed grid. Do not run a
+      formatter over them; it reflows the coordinates into something nobody
+      can read.
       ===================================================================
     -->
 
     <!-- --- Fonts ---------------------------------------------------------
-         The original of this file lived in the Yung Foundation repo's
-         dev-docs/ and loaded both families by relative path out of
-         ../public/fonts/. Those files do not exist in this repo, so the
-         @font-face blocks were swapped for the same two families off Google
-         Fonts — otherwise the Devanagari fell back to whatever the system
-         had. Full weight range, no unicode-range gating: the same reasoning
-         as before, a partial range would silently drop glyphs. -->
+         The site self-hosts both families out of public/fonts/. Those files
+         do not exist in this repo, so the same two families come off Google
+         Fonts instead — otherwise the Devanagari falls back to whatever the
+         system has. Full weight range, no unicode-range gating: a partial
+         range would silently drop glyphs. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -76,11 +79,7 @@
            uppercase kickers (12px/700) — both under WCAG's large-text
            threshold, so both need 4.5:1 and both miss it. Darkened to clear it
            on all three grounds this page uses: paper 5.11, white 5.42,
-           cream 4.72.
-
-           Worth knowing when the site's own AA pass happens: --bronze is a real
-           token there too, and this is evidence about the colour, not about
-           this file. */
+           cream 4.72. */
         --bronze-aa: #8e6034;
         --wash-warm: #f5ead9;
         --wash-green: #eaf0e9;
@@ -106,6 +105,12 @@
       }
       html {
         -webkit-text-size-adjust: 100%;
+        scroll-behavior: smooth;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
       }
       body {
         margin: 0;
@@ -140,6 +145,7 @@
         background: var(--paper-warm);
         border-radius: 4px;
         padding: 0.1em 0.36em;
+        overflow-wrap: anywhere;
       }
 
       .wrap {
@@ -203,11 +209,22 @@
       /* --- Headline tiles ---------------------------------------------- */
       .tiles {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        /* Six tiles: 2×3, 3×2 or 1×6 — never five and an orphan. */
+        grid-template-columns: repeat(2, 1fr);
         gap: 14px;
         margin: -34px 0 0;
         padding: 0;
         list-style: none;
+      }
+      @media (min-width: 700px) {
+        .tiles {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (min-width: 1100px) {
+        .tiles {
+          grid-template-columns: repeat(6, 1fr);
+        }
       }
       .tile {
         background: #fff;
@@ -238,6 +255,57 @@
         margin-top: 7px;
       }
 
+      /* --- Contents ---------------------------------------------------- */
+      .toc {
+        margin: 40px 0 0;
+        padding: 20px 22px;
+        background: var(--cream);
+        border: 1px solid var(--rule);
+        border-radius: var(--r-panel);
+      }
+      .toc h2 {
+        margin: 0 0 10px;
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--bronze-aa);
+      }
+      .toc ol {
+        margin: 0;
+        padding: 0 0 0 22px;
+        columns: 2 240px;
+        column-gap: 34px;
+        font-size: 15px;
+      }
+      .toc li {
+        margin: 3px 0;
+        break-inside: avoid;
+      }
+      .toc li.group {
+        list-style: none;
+        margin: 8px 0 4px -22px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+        break-after: avoid;
+      }
+      .toc li.group:first-child {
+        margin-top: 0;
+      }
+      .toc a {
+        color: var(--forest);
+        text-decoration: none;
+        display: inline-block;
+        padding: 3px 0;
+      }
+      .toc a:hover,
+      .toc a:focus-visible {
+        color: var(--terracotta);
+        text-decoration: underline;
+      }
+
       /* --- Tier banners ------------------------------------------------ */
       .tier {
         margin: 64px 0 0;
@@ -265,6 +333,7 @@
       /* --- Sections ---------------------------------------------------- */
       section {
         margin: 44px 0;
+        scroll-margin-top: 20px;
       }
       section > h3 {
         font-size: 21px;
@@ -283,6 +352,11 @@
       section > h3 + .sub {
         margin: 0 0 20px;
         color: var(--ink-muted);
+      }
+      h4.minor {
+        margin: 26px 0 12px;
+        font-size: 15px;
+        color: var(--forest-ink);
       }
 
       /* --- Figures ------------------------------------------------------ */
@@ -341,8 +415,21 @@
       .rows li > .v {
         color: var(--ink-soft);
       }
+      .rows li > .v code {
+        font-size: 0.84em;
+      }
+      .rows.wide {
+        grid-template-columns: 1fr;
+      }
+      .rows.wide li {
+        grid-template-columns: minmax(0, 22ch) 1fr;
+      }
       @media (max-width: 560px) {
-        .rows li {
+        .rows {
+          grid-template-columns: 1fr;
+        }
+        .rows li,
+        .rows.wide li {
           grid-template-columns: 1fr;
         }
       }
@@ -355,6 +442,9 @@
         list-style: none;
         margin: 0;
         padding: 0;
+      }
+      .cards + .cards {
+        margin-top: 16px;
       }
       .card {
         background: var(--cream);
@@ -371,6 +461,9 @@
         margin: 0;
         font-size: 14.5px;
         color: var(--ink-soft);
+      }
+      .card p + p {
+        margin-top: 9px;
       }
       .card .count {
         display: inline-block;
@@ -433,6 +526,11 @@
         border-radius: var(--r-tile);
         padding: 14px 16px;
       }
+      .stack.light li {
+        background: var(--cream);
+        color: var(--ink);
+        border: 1px solid var(--rule);
+      }
       .stack b {
         display: block;
         font-size: 15px;
@@ -442,6 +540,12 @@
         font-size: 13px;
         color: var(--on-forest-soft);
         margin-top: 3px;
+      }
+      .stack.light span {
+        color: var(--ink-muted);
+      }
+      .stack + .stack {
+        margin-top: 12px;
       }
 
       /* --- Colophon ------------------------------------------------------ */
@@ -466,6 +570,9 @@
       }
       .colophon code {
         background: rgba(255, 255, 255, 0.09);
+        color: var(--gold-soft);
+      }
+      .colophon a {
         color: var(--gold-soft);
       }
 
@@ -494,6 +601,9 @@
         .tiles {
           margin-top: 20px;
         }
+        .toc {
+          display: none;
+        }
       }
     </style>
   </head>
@@ -505,28 +615,34 @@
         <p class="mark" lang="mr">यंग फाउंडेशन</p>
         <h1>The Yung Foundation website, end to end</h1>
         <p class="lede">
-          Every page a visitor can reach, everything staff can edit, and the architecture underneath
-          — on one page.
+          Every page a visitor can reach, everything staff can edit, the AI that drafts for them,
+          and the architecture underneath — on one page.
         </p>
-        <p class="dateline">As built at v0.5.0 · 7 August 2026</p>
+        <p class="dateline">As built on 30 September 2026 · migrations 0001–0018</p>
       </div>
     </header>
 
     <div class="wrap">
       <ul class="tiles">
         <li class="tile">
-          <b>0 bytes</b><span>of JavaScript downloaded on the public site</span
-          ><em>measured on all 15 routes</em>
+          <b>16</b><span>public pages, in two languages each</span
+          ><em>6 in the header, the rest in the footer</em>
         </li>
         <li class="tile">
-          <b>15</b><span>public pages, plus sitemap and robots</span><em>10 in the main menu</em>
+          <b>23</b><span>admin tabs, drawn from one registry</span
+          ><em>every word and photograph is editable</em>
         </li>
         <li class="tile">
-          <b>2</b><span>languages — Marathi is the default</span><em>English is the alternative</em>
+          <b>26</b><span>database tables, each with its own access policy</span
+          ><em>enforced by the database</em>
         </li>
         <li class="tile">
-          <b>18</b><span>database tables, each with its own access policy</span
-          ><em>enforced in the database</em>
+          <b>8</b><span>AI helpers in the admin, through one endpoint</span
+          ><em>they draft; only an editor saves</em>
+        </li>
+        <li class="tile">
+          <b>0</b><span>script bundles on any public page</span
+          ><em>a few hundred inline bytes where needed</em>
         </li>
         <li class="tile">
           <b>44px</b><span>minimum size for anything a finger has to hit</span
@@ -534,34 +650,62 @@
         </li>
       </ul>
 
+      <nav class="toc" aria-labelledby="toc-title">
+        <h2 id="toc-title">Contents</h2>
+        <ol>
+          <li class="group">Tier one · the site</li>
+          <li><a href="#map">Site map</a></li>
+          <li><a href="#pages">What each page does</a></li>
+          <li><a href="#shared">Found and shared</a></li>
+          <li><a href="#languages">Two languages</a></li>
+          <li><a href="#admin">What staff can edit</a></li>
+          <li><a href="#ai-helpers">The AI helpers</a></li>
+          <li><a href="#phones">Built for phones on slow networks</a></li>
+          <li class="group">Tier two · how it is built</li>
+          <li><a href="#stack">The stack</a></li>
+          <li><a href="#request">What happens on a request</a></li>
+          <li><a href="#data">The data model</a></li>
+          <li><a href="#access">Who can read what</a></li>
+          <li><a href="#media">Media is referenced by ID</a></li>
+          <li><a href="#writes">Where an editor's save goes</a></li>
+          <li><a href="#ai-layer">The AI layer</a></li>
+          <li><a href="#preview">The live preview</a></li>
+          <li><a href="#budget">The JavaScript budget</a></li>
+          <li><a href="#checks">How it stays honest</a></li>
+        </ol>
+      </nav>
+
       <!-- ============================================================ -->
       <!-- TIER ONE — the site, in plain language                        -->
       <!-- ============================================================ -->
       <div class="tier">
         <p class="kicker">Tier one</p>
         <h2>The site</h2>
-        <p>What is on it, what it does, and who can change it. No technical background assumed.</p>
+        <p>
+          What is on it, what it does, who can change it, and what the AI does for them. No
+          technical background assumed.
+        </p>
       </div>
 
-      <section>
+      <section id="map">
         <h3>Site map <span class="mr" lang="mr">साइटचा नकाशा</span></h3>
         <p class="sub">
-          Fifteen public pages in four groups, plus the three files search engines read.
+          Sixteen public pages in four groups, plus the files machines read and the door staff use.
         </p>
 
         <figure>
           <svg
-            viewBox="0 0 920 545"
+            viewBox="0 0 920 560"
             xmlns="http://www.w3.org/2000/svg"
             role="img"
-            aria-label="A tree of every public URL on the site, grouped into Core, Content, Action and Legal, with two routes generated from database slugs and three machine-readable files at the bottom."
+            aria-label="A tree of every public URL on the site, grouped into Core, Content, Take action and Legal. Two routes are generated from database rows. Six pages are marked as header links. Below, the files that are not in the menus: 404, robots.txt, sitemap.xml, the health check and the staff-only admin."
           >
             <!-- No marker defs: this figure is a containment tree, not a flow.
                  Its connectors are plain lines because nothing here moves. -->
 
             <!-- root -->
-            <rect x="360" y="8" width="200" height="36" rx="8" fill="var(--forest)" />
-            <text x="460" y="31" text-anchor="middle" font-size="14" font-weight="600" fill="var(--on-forest)">yungfoundation.org</text>
+            <rect x="335" y="8" width="250" height="36" rx="8" fill="var(--forest)" />
+            <text x="460" y="31" text-anchor="middle" font-size="14" font-weight="600" fill="var(--on-forest)">Yung Foundation · public site</text>
 
             <!-- connectors: root down, across, into each column head -->
             <path d="M460,44 V68" stroke="currentColor" stroke-width="1.4" fill="none" />
@@ -580,16 +724,19 @@
 
             <!-- Core: 3 leaves, pitch 38 from y=124 -->
             <rect x="15" y="124" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
-            <text x="27" y="144" font-size="12.5" fill="var(--ink)">/ &#8202;— home</text>
+            <text x="27" y="144" font-size="12.5" fill="var(--ink)">/ &#8202;— home <tspan fill="var(--ink-muted)" font-size="11">(the logo)</tspan></text>
             <rect x="15" y="162" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
             <text x="27" y="182" font-size="12.5" fill="var(--ink)">/about</text>
+            <circle cx="200" cy="177" r="5" fill="var(--gold)" stroke="var(--bronze-aa)" />
             <rect x="15" y="200" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
             <text x="27" y="220" font-size="12.5" fill="var(--ink)">/satpuda</text>
+            <circle cx="200" cy="215" r="5" fill="var(--gold)" stroke="var(--bronze-aa)" />
             <path d="M25,110 V215 M25,139 H15 M25,177 H15 M25,215 H15" stroke="currentColor" stroke-width="1" fill="none" opacity="0.5" />
 
-            <!-- Content: 8 leaves -->
+            <!-- Content: 9 leaves -->
             <rect x="245" y="124" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
             <text x="257" y="144" font-size="12.5" fill="var(--ink)">/programs</text>
+            <circle cx="430" cy="139" r="5" fill="var(--gold)" stroke="var(--bronze-aa)" />
             <rect x="245" y="162" width="200" height="30" rx="6" fill="var(--wash-warm)" stroke="var(--gold)" stroke-dasharray="4 3" />
             <text x="257" y="182" font-size="12.5" fill="var(--ink)">/programs/&#8202;:slug</text>
             <rect x="245" y="200" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
@@ -597,20 +744,26 @@
             <rect x="245" y="238" width="200" height="30" rx="6" fill="var(--wash-warm)" stroke="var(--gold)" stroke-dasharray="4 3" />
             <text x="257" y="258" font-size="12.5" fill="var(--ink)">/blog/&#8202;:slug</text>
             <rect x="245" y="276" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
-            <text x="257" y="296" font-size="12.5" fill="var(--ink)">/gallery</text>
+            <text x="257" y="296" font-size="12.5" fill="var(--ink)">/news <tspan fill="var(--ink-muted)" font-size="11">&#8202;?item=N opens a story</tspan></text>
             <rect x="245" y="314" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
-            <text x="257" y="334" font-size="12.5" fill="var(--ink)">/events</text>
+            <text x="257" y="334" font-size="12.5" fill="var(--ink)">/gallery</text>
+            <circle cx="430" cy="329" r="5" fill="var(--gold)" stroke="var(--bronze-aa)" />
             <rect x="245" y="352" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
-            <text x="257" y="372" font-size="12.5" fill="var(--ink)">/team</text>
+            <text x="257" y="372" font-size="12.5" fill="var(--ink)">/events</text>
+            <circle cx="430" cy="367" r="5" fill="var(--gold)" stroke="var(--bronze-aa)" />
             <rect x="245" y="390" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
-            <text x="257" y="410" font-size="12.5" fill="var(--ink)">/resources</text>
-            <path d="M255,110 V405 M255,139 H245 M255,177 H245 M255,215 H245 M255,253 H245 M255,291 H245 M255,329 H245 M255,367 H245 M255,405 H245" stroke="currentColor" stroke-width="1" fill="none" opacity="0.5" />
+            <text x="257" y="410" font-size="12.5" fill="var(--ink)">/team</text>
+            <rect x="245" y="428" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
+            <text x="257" y="448" font-size="12.5" fill="var(--ink)">/resources</text>
+            <path d="M255,110 V443 M255,139 H245 M255,177 H245 M255,215 H245 M255,253 H245 M255,291 H245 M255,329 H245 M255,367 H245 M255,405 H245 M255,443 H245" stroke="currentColor" stroke-width="1" fill="none" opacity="0.5" />
 
             <!-- Action: 3 leaves -->
             <rect x="475" y="124" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
-            <text x="487" y="144" font-size="12.5" fill="var(--ink)">/donate</text>
+            <text x="487" y="144" font-size="12.5" fill="var(--ink)">/donate <tspan fill="var(--ink-muted)" font-size="11">(a button)</tspan></text>
+            <circle cx="660" cy="139" r="5" fill="var(--gold)" stroke="var(--bronze-aa)" />
             <rect x="475" y="162" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
             <text x="487" y="182" font-size="12.5" fill="var(--ink)">/contact</text>
+            <circle cx="660" cy="177" r="5" fill="var(--gold)" stroke="var(--bronze-aa)" />
             <rect x="475" y="200" width="200" height="30" rx="6" fill="#fff" stroke="var(--edge)" />
             <text x="487" y="220" font-size="12.5" fill="var(--ink)">/volunteer</text>
             <text x="487" y="252" font-size="11.5" fill="var(--ink-muted)">the last two accept a form</text>
@@ -625,79 +778,94 @@
             <text x="717" y="220" font-size="12.5" fill="var(--ink)">/legal/accessibility</text>
             <path d="M715,110 V215 M715,139 H705 M715,177 H705 M715,215 H705" stroke="currentColor" stroke-width="1" fill="none" opacity="0.5" />
 
-            <!-- machine-readable row -->
-            <path d="M15,452 H905" stroke="var(--edge)" stroke-width="1" fill="none" />
-            <text x="15" y="478" font-size="12" font-weight="700" fill="var(--bronze-aa)">NOT LINKED FROM THE MENU</text>
-            <rect x="15" y="490" width="180" height="30" rx="6" fill="var(--sand)" stroke="var(--edge)" />
-            <text x="27" y="510" font-size="12.5" fill="var(--ink)">/404</text>
-            <rect x="210" y="490" width="180" height="30" rx="6" fill="var(--sand)" stroke="var(--edge)" />
-            <text x="222" y="510" font-size="12.5" fill="var(--ink)">/robots.txt</text>
-            <rect x="405" y="490" width="180" height="30" rx="6" fill="var(--sand)" stroke="var(--edge)" />
-            <text x="417" y="510" font-size="12.5" fill="var(--ink)">/sitemap.xml</text>
-            <rect x="600" y="490" width="305" height="30" rx="6" fill="var(--forest-lift)" />
-            <text x="612" y="510" font-size="12.5" fill="var(--on-forest)">/admin &#8202;— staff only, behind a login</text>
-
             <!-- legend -->
-            <rect x="600" y="452" width="26" height="14" rx="4" fill="var(--wash-warm)" stroke="var(--gold)" stroke-dasharray="4 3" />
-            <text x="634" y="464" font-size="11.5" fill="var(--ink-muted)">one page per row in the database</text>
+            <rect x="475" y="300" width="26" height="14" rx="4" fill="var(--wash-warm)" stroke="var(--gold)" stroke-dasharray="4 3" />
+            <text x="509" y="312" font-size="11.5" fill="var(--ink-muted)">one page per published row in the database</text>
+            <circle cx="488" cy="335" r="5" fill="var(--gold)" stroke="var(--bronze-aa)" />
+            <text x="509" y="339" font-size="11.5" fill="var(--ink-muted)">in the header; the footer's three columns carry the rest</text>
+
+            <!-- machine-readable row -->
+            <path d="M15,478 H905" stroke="var(--edge)" stroke-width="1" fill="none" />
+            <text x="15" y="502" font-size="12" font-weight="700" fill="var(--bronze-aa)">NOT IN THE MENUS</text>
+            <rect x="15" y="514" width="140" height="30" rx="6" fill="var(--sand)" stroke="var(--edge)" />
+            <text x="27" y="534" font-size="12.5" fill="var(--ink)">/404</text>
+            <rect x="165" y="514" width="140" height="30" rx="6" fill="var(--sand)" stroke="var(--edge)" />
+            <text x="177" y="534" font-size="12.5" fill="var(--ink)">/robots.txt</text>
+            <rect x="315" y="514" width="140" height="30" rx="6" fill="var(--sand)" stroke="var(--edge)" />
+            <text x="327" y="534" font-size="12.5" fill="var(--ink)">/sitemap.xml</text>
+            <rect x="465" y="514" width="140" height="30" rx="6" fill="var(--sand)" stroke="var(--edge)" />
+            <text x="477" y="534" font-size="12.5" fill="var(--ink)">/api/health</text>
+            <rect x="615" y="514" width="290" height="30" rx="6" fill="var(--forest-lift)" />
+            <text x="627" y="534" font-size="12.5" fill="var(--on-forest)">/admin &#8202;— staff only, behind a login</text>
           </svg>
           <figcaption>
             <b>Figure 1 — every URL a visitor can reach.</b> The two gold, dashed routes are not
-            files; one page is generated for each published programme and each blog post, so adding
-            a programme in the admin adds a page to the site. <code>/sitemap.xml</code> lists 50
-            URLs — 25 pages in two languages each — and no admin path.
+            files: one page is generated for each published programme and each blog post, so adding
+            a programme in the admin adds a page to the site. The header carries six links, with
+            the logo as Home and Donate as a button beside them; Blog, News &amp; media, Team and
+            Resources live in the footer's three columns with the rest, so nothing left the site when
+            the header was trimmed. <code>/sitemap.xml</code> names every page twice, once per
+            language, and no admin path.
           </figcaption>
         </figure>
       </section>
 
-      <section>
+      <section id="pages">
         <h3>What each page does <span class="mr" lang="mr">प्रत्येक पान</span></h3>
-        <p class="sub">One line each, in the order they appear in the menu.</p>
+        <p class="sub">One line each, roughly in the order a visitor meets them.</p>
         <ul class="rows">
           <li>
             <span class="k">/</span
             ><span class="v"
-              >Home. Hero with the Marathi tagline as the headline, the impact figures, the mission
-              statement, and the first six programmes as cards.</span
+              >Home. The Marathi tagline as the headline (in one of two hero layouts the admin
+              switches between), the impact figures counting up, the mission beside a photograph,
+              the first six programmes as cards with their icons, the latest three news stories,
+              and a closing band asking readers to give or volunteer.</span
             >
           </li>
           <li>
             <span class="k">/about</span
             ><span class="v"
-              >The foundation's story in three parts, the mission, a list of key facts, and the
-              values.</span
+              >The foundation's story in three parts with its photograph and caption, the mission,
+              a list of key facts, and the values.</span
             >
           </li>
           <li>
             <span class="k">/programs</span
-            ><span class="v">Every published programme as a card with its cover photograph.</span>
+            ><span class="v"
+              >Every published programme as a card with its cover photograph and its icon.</span
+            >
           </li>
           <li>
             <span class="k">/programs/:slug</span
             ><span class="v"
-              >One programme in full: the write-up, the region, the focus area, the year it started,
-              and a donate prompt.</span
+              >One programme in full: the write-up — headings, lists, quotes and photographs placed
+              between paragraphs — the region, the focus area, the year it started, and a donate
+              prompt.</span
             >
           </li>
           <li>
             <span class="k">/satpuda</span
             ><span class="v"
-              >"Come to Satpuda" — the three steps to arranging a visit, what to expect, and
-              testimonials from people who have been.</span
+              >"Come to Satpuda": the three steps to arranging a visit, what to expect, and
+              testimonials from people who have been — with their photographs and links to the
+              related blog post, a Facebook post, a YouTube video or any other page.</span
             >
           </li>
           <li>
             <span class="k">/events</span
             ><span class="v"
-              >Upcoming, ongoing and past events. Which is which is worked out on every visit from
-              the current Indian date, so nothing is ever stale.</span
+              >Upcoming, ongoing and past events, sorted on every visit from the current Indian
+              date so nothing is ever stale. An event can carry an "Open in Google Maps ↗"
+              link.</span
             >
           </li>
           <li>
             <span class="k">/gallery</span
             ><span class="v"
-              >Photographs in a masonry grid, filterable by category, with a tap-to-enlarge
-              viewer.</span
+              >One tab per category and, inside each, photographs grouped into albums — three per
+              group, the rest behind "Show more photos". Search the captions, pick an album, sort by
+              newest or oldest; tap a photograph to enlarge it.</span
             >
           </li>
           <li>
@@ -706,7 +874,19 @@
           </li>
           <li>
             <span class="k">/blog/:slug</span
-            ><span class="v">One post in full, with prompts to donate or volunteer at the end.</span>
+            ><span class="v"
+              >One post in full, with photographs between paragraphs, a "Share on WhatsApp" button
+              and a prompt to donate at the end.</span
+            >
+          </li>
+          <li>
+            <span class="k">/news</span
+            ><span class="v"
+              >Coverage of the foundation by others — newspaper cuttings, online articles, TV and
+              video. Tabs by type; search, year, outlet and sort. Each story opens in a detail view
+              with its own link and share buttons. A video is a link to YouTube, not an
+              embed.</span
+            >
           </li>
           <li>
             <span class="k">/team</span
@@ -726,15 +906,15 @@
             <span class="k">/donate</span
             ><span class="v"
               >Suggested amounts, how to give, the UPI QR code, bank details, and the registration
-              numbers donors need for tax. Each block appears only when its own details are
-              filled in.</span
+              numbers donors need for tax. Each block appears only when its own details are filled
+              in.</span
             >
           </li>
           <li>
             <span class="k">/contact</span
             ><span class="v"
-              >Email, phone numbers and office addresses, plus a message form that also emails the
-              office.</span
+              >Email, phone numbers and office addresses; "Follow us" icons for WhatsApp, Facebook,
+              Instagram and YouTube; the trust's registration number; and a message form.</span
             >
           </li>
           <li>
@@ -746,7 +926,10 @@
           </li>
           <li>
             <span class="k">/legal/…</span
-            ><span class="v">Privacy, terms and an accessibility statement, as three tabs.</span>
+            ><span class="v"
+              >Privacy, terms and an accessibility statement, as three tabs. The contact address in
+              them is read from the site settings, so it cannot drift from the real one.</span
+            >
           </li>
         </ul>
 
@@ -756,12 +939,71 @@
             <code>/donate</code>, <code>/about</code> and <code>/satpuda</code> is tied to its own
             data and disappears when that data is absent. An empty "80G —" line would read as a
             claim the foundation cannot back, and donors rely on those numbers, so the whole line is
-            suppressed instead.
+            suppressed instead. Links follow the same rule: a social icon appears only when its
+            address is set, a Maps link only when an event has one, and a testimonial's "Read the
+            story" only while that post is published.
           </p>
         </div>
       </section>
 
-      <section>
+      <section id="shared">
+        <h3>Found and shared <span class="mr" lang="mr">शेअर आणि शोध</span></h3>
+        <p class="sub">
+          Most visitors arrive from a forwarded WhatsApp message or a search. Both are designed for.
+        </p>
+        <ul class="cards">
+          <li class="card">
+            <h4>A picture in every preview</h4>
+            <p>
+              A page with a photograph of its own — a programme, a post, a news story — shares that
+              photograph as a large card, with its alt text. Every other page shares the
+              foundation's logo, which is also the icon in the browser tab and on a phone's home
+              screen.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Sharing without anyone else's code</h4>
+            <p>
+              "Share on WhatsApp" is a plain link with the message already written: a post uses its
+              own WhatsApp message field, a news story builds one from its headline, outlet, date
+              and summary. "Share on Facebook" is a plain link too. Nothing reaches either company
+              until the reader taps.
+            </p>
+          </li>
+          <li class="card">
+            <h4>A shared story opens on that story</h4>
+            <p>
+              <code>/news?item=N</code> renders the news page with that story already open, and
+              the page's title, description and preview image become the story's — so the
+              preview in a chat shows the cutting itself.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Two addresses per page, both findable</h4>
+            <p>
+              Each page tells search engines its canonical address and its twin in the other
+              language. The sitemap is written from the database, so a new programme is listed the
+              moment it is published and a draft never is.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Links, not embeds</h4>
+            <p>
+              YouTube videos and Google Maps are links that open in their own apps. No page loads
+              Google's or YouTube's code, and the privacy notice's list of providers stays short.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Counted without cookies</h4>
+            <p>
+              Visits are counted by Cloudflare's cookieless analytics, so there is no consent banner
+              to dismiss. The admin and the editors' preview are not counted.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <section id="languages">
         <h3>Two languages <span class="mr" lang="mr">दोन भाषा</span></h3>
         <p class="sub">
           Marathi is the site's own language. English is the translation — not the other way round.
@@ -772,16 +1014,16 @@
             <h4>Switching is a link</h4>
             <p>
               The toggle in the header is an ordinary link to <code>?lang=en</code>. It works with
-              JavaScript off, the choice is remembered for a year, and both language versions have
-              their own shareable, searchable address.
+              JavaScript off, the choice is remembered for a year, and each language version has its
+              own shareable, searchable address.
             </p>
           </li>
           <li class="card">
             <h4>Everything is translatable</h4>
             <p>
               Every piece of text on the site — page copy, menu labels, dates, button words — exists
-              in both languages. Dates are formatted by hand rather than by the browser, so the
-              numbers stay legible in both.
+              in both languages. Dates are formatted by hand rather than by the browser, and digits
+              are Latin in both, so numbers read the same to everyone.
             </p>
           </li>
           <li class="card">
@@ -806,7 +1048,7 @@
                 <!-- context-stroke, not currentColor: a marker's contents inherit
                      from <defs>, not from the line that references it, so
                      currentColor would give every arrowhead the same dark fill
-                     and the terracotta and gold arrows would lose their meaning. -->
+                     and the coloured arrows would lose their meaning. -->
                 <path d="M0,0 L10,5 L0,10 z" fill="context-stroke" />
               </marker>
             </defs>
@@ -861,12 +1103,14 @@
         </figure>
       </section>
 
-      <section>
+      <section id="admin">
         <h3>What staff can edit <span class="mr" lang="mr">संपादन</span></h3>
         <p class="sub">
-          Sixteen sections in the admin, behind a login at <code>/admin</code>. Between them they
-          cover every word and every photograph on the public site — there is nothing an editor has
-          to ask a developer to change.
+          Twenty-three tabs behind a login at <code>/admin</code>, every one drawn from a single
+          registry of fields. Between them they cover every word and every photograph on the public
+          site — there is nothing an editor has to ask a developer to change. The admin itself
+          switches between Marathi and English, because the people editing it are in Dhule and
+          Nandurbar.
         </p>
 
         <ul class="cards">
@@ -874,35 +1118,45 @@
             <h4>Single-record forms <span class="count">3</span></h4>
             <p>One long form each, for settings that exist exactly once.</p>
             <ul>
-              <li><b>Site settings</b> — titles, tagline, hero copy and its A/B variant, logo, contact email, phone numbers, offices, social links</li>
-              <li><b>About page</b> — the story paragraphs, mission, and the story photograph</li>
-              <li><b>Donation info</b> — UPI ID, QR code, bank details, 80G / 12A / PAN, the domestic-only notice</li>
+              <li><b>Site &amp; hero</b> — titles, tagline, hero copy and its layout, logo, email, phones, and the WhatsApp, Facebook, Instagram and YouTube links</li>
+              <li><b>About page</b> — the story paragraphs, mission and story photograph</li>
+              <li><b>Donation info</b> — UPI ID, QR code, bank details, 80G / 12A / trust registration / PAN, the domestic-only notice</li>
             </ul>
           </li>
           <li class="card">
-            <h4>Ordered lists <span class="count">9</span></h4>
+            <h4>Page text <span class="count">1</span></h4>
+            <p>
+              The 73 lines of the foundation's own words that sit around the content — every
+              page's kicker, title and introduction, the Satpuda steps, the ways to volunteer, the
+              donate how-to. All on one screen, grouped by page; one Save writes only the lines
+              that changed.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Ordered lists <span class="count">12</span></h4>
             <p>
               Add, edit, reorder, publish or unpublish rows. Order on the page is the order here.
             </p>
             <ul>
-              <li>Key facts · Values · Impact figures</li>
-              <li>Programmes · Blog posts · Events</li>
-              <li>Team members · Testimonials · Resources</li>
+              <li>Offices · Donation amounts · Key facts · Values · Impact stats</li>
+              <li>Programs · Blog · News &amp; media · Events</li>
+              <li>Team · Testimonials · Resources</li>
             </ul>
           </li>
           <li class="card">
-            <h4>Gallery <span class="count">1</span></h4>
+            <h4>Gallery <span class="count">3</span></h4>
             <p>
-              Photograph, category and caption per tile. A tile is public only when both the tile
-              and the photograph itself are published.
+              <b>Gallery categories</b> are the page's tabs, <b>Gallery albums</b> group photographs
+              inside a category, and <b>Gallery</b> places each photograph. Unpublishing a category
+              or an album hides everything inside it, not just its heading.
             </p>
           </li>
           <li class="card">
-            <h4>Media library <span class="count">1</span></h4>
+            <h4>Photos &amp; media <span class="count">1</span></h4>
             <p>
-              Every image, video and document in one place: search, filter, bulk publish, alt text
-              and captions in both languages, and a "used in" line showing every page a file appears
-              on before you delete it.
+              Every image, video and document in one library: search, filter, bulk publish, alt
+              text and captions in both languages, several sections per photograph, and a "Used in"
+              line naming every page a file appears on before anyone deletes it.
             </p>
           </li>
           <li class="card">
@@ -912,9 +1166,18 @@
               nobody outside the login can read them back.
             </p>
           </li>
+          <li class="card">
+            <h4>AI <span class="count">1</span></h4>
+            <p>
+              Which provider and model the AI helpers use, a fallback, the prices used to estimate
+              cost, a Test button, and a year of usage by task, model and person. Only admins can
+              change it.
+            </p>
+          </li>
         </ul>
 
-        <ul class="cards" style="margin-top: 16px">
+        <h4 class="minor">What editing feels like</h4>
+        <ul class="cards">
           <li class="card">
             <h4>Both languages, side by side</h4>
             <p>
@@ -923,24 +1186,175 @@
             </p>
           </li>
           <li class="card">
-            <h4>A draft English translation on request</h4>
+            <h4>A real editor for long text</h4>
             <p>
-              A button next to an English box drafts it from the Marathi. It fills the box for an
-              editor to correct — it never saves on its own.
+              Programme and blog bodies get headings, bold and italic, lists, quotes, dividers,
+              links, and photographs from the library placed between paragraphs with a caption.
+              Pasting from Word or a web page keeps the text and drops what the site cannot show.
+            </p>
+          </li>
+          <li class="card">
+            <h4>"Appears on", and the real page beside the form</h4>
+            <p>
+              Every tab says where its rows show on the site. "See it on the site" opens that page
+              beside the editor, with the row outlined and unsaved typing already in it — in Marathi
+              or English.
             </p>
           </li>
           <li class="card">
             <h4>Nothing is public until it is published</h4>
             <p>
-              New rows start unpublished. A photograph is resized and re-encoded in the browser
-              before it uploads, so a 4 MB phone picture does not become a 4 MB download for every
-              visitor.
+              New rows start unpublished, and so do new photographs. Picking a draft photograph for
+              a page is flagged in amber at the moment it happens, because a draft renders as a
+              placeholder and the editor would otherwise never know.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Photographs shrink before they upload</h4>
+            <p>
+              A phone picture is resized and re-encoded in the browser, and the form shows the
+              saving before anything is sent — "3.8 MB → 184 KB". SVGs, animated GIFs and images
+              already small go up untouched, which keeps the donation QR code exact.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Words while it waits</h4>
+            <p>
+              Anything slow shows a turning ✻ and a changing verb — "Marinating…",
+              "Reticulating…". A screen reader hears the plain label once instead, and the mark
+              stops turning for anyone who has asked for less motion.
             </p>
           </li>
         </ul>
       </section>
 
-      <section>
+      <section id="ai-helpers">
+        <h3>The AI helpers <span class="mr" lang="mr">AI ची मदत</span></h3>
+        <p class="sub">
+          Eight helpers in the admin. Every one of them writes a draft into the form; none of them
+          saves anything. The editor reads the draft, changes it, and presses Save — or presses
+          Undo.
+        </p>
+
+        <ul class="rows wide">
+          <li>
+            <span class="k">Draft English · Draft Marathi</span
+            ><span class="v"
+              >Translation in both directions, on every bilingual field and on a photograph's alt
+              text and caption. "Draft Marathi" appears whenever the English half has text.</span
+            >
+          </li>
+          <li>
+            <span class="k">Write · Expand · Shorten</span
+            ><span class="v"
+              >Writing help under each bilingual field, with an optional one-line note ("mention the
+              Dhadgaon school"). The rest of the row is the context, and nothing else is
+              sent.</span
+            >
+          </li>
+          <li>
+            <span class="k">Fill empty fields</span
+            ><span class="v"
+              >One press drafts every empty field of a programme, post, event or value in both
+              languages, from what the row already says. It refuses a row with no text at all —
+              "write a title first" — because a draft from nothing is invention.</span
+            >
+          </li>
+          <li>
+            <span class="k">Describe with AI</span
+            ><span class="v"
+              >For one photograph in the library: alt text and a caption in both languages, and up
+              to three sections it belongs in.</span
+            >
+          </li>
+          <li>
+            <span class="k">Describe photos missing alt text</span
+            ><span class="v"
+              >The same, for up to fifty photographs at a time, paced one every few seconds, with a
+              counter and a Stop button. The results arrive as a list to tick; a save fills only
+              what was empty.</span
+            >
+          </li>
+          <li>
+            <span class="k">Suggest from library</span
+            ><span class="v"
+              >On the gallery tabs: a category and album for each photograph not yet in the gallery,
+              plus any new categories and albums worth creating. Everything it creates is a
+              draft.</span
+            >
+          </li>
+          <li>
+            <span class="k">Read a news clipping</span
+            ><span class="v"
+              >On News &amp; media: reads the chosen photograph of a cutting or article and fills in
+              the headline and outlet as printed and translated, a short summary, the type, and the
+              date — only if one is printed.</span
+            >
+          </li>
+          <li>
+            <span class="k">Pull news from the library</span
+            ><span class="v"
+              >Reads library photographs one at a time and proposes a draft news item for each that
+              is coverage. It skips photographs already used, and a headline that matches an
+              existing story is flagged "looks already added" and left unticked.</span
+            >
+          </li>
+        </ul>
+
+        <h4 class="minor">The rules every helper keeps</h4>
+        <ul class="cards">
+          <li class="card">
+            <h4>A draft, never a decision</h4>
+            <p>
+              A result lands in the form with one level of Undo. It fills only fields that are
+              still empty when it arrives, so nothing an editor typed meanwhile is overwritten.
+              Bulk results go to a review list, and whatever is created from them starts as a draft.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Quotes and figures are translate-only</h4>
+            <p>
+              A testimonial's quote, a key fact's value, an impact figure's label and a news story's
+              headline and outlet can be translated but never rewritten. Nor can the page text. The
+              server checks this again rather than trusting the button.
+            </p>
+          </li>
+          <li class="card">
+            <h4>No invented numbers</h4>
+            <p>
+              Every number in a draft is compared with what the model was given, and any that
+              were not in it are listed under the field — "check them before saving: 2015". Digits
+              written in Devanagari are turned into Latin ones, as the site uses everywhere.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Photographs, not people</h4>
+            <p>
+              A description covers only what is visible. It never identifies anyone, never guesses
+              age, caste, tribe or religion, and never guesses a place, date or event unless it is
+              written in the picture.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Nothing from nothing</h4>
+            <p>
+              A cutting with no printed date comes back with no date, and its row cannot be ticked
+              until someone types one. A photograph that is not news comes back empty rather than
+              as a plausible story.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Garbled script is refused</h4>
+            <p>
+              Marathi containing another Indic script — a model once mixed Bengali into an alt text
+              — is dropped, so the field shows "needs translation" instead of a convincing
+              mistake.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <section id="phones">
         <h3>Built for phones on slow networks <span class="mr" lang="mr">फोनसाठी</span></h3>
         <p class="sub">
           The audience is in the Satpuda hills — Dhadgaon and Shirpur, in Nandurbar and Dhule
@@ -948,10 +1362,11 @@
         </p>
         <ul class="rows">
           <li>
-            <span class="k">No JavaScript</span
+            <span class="k">Finished HTML</span
             ><span class="v"
-              >The public pages download none. They arrive as finished HTML, so they render on a
-              slow connection and on an old phone, and they work if a script fails.</span
+              >Public pages arrive already built and download no script bundle, so they render on a
+              slow connection and an old phone, and they work if a script fails. The menu, the
+              photo viewer and the news story view are HTML and CSS.</span
             >
           </li>
           <li>
@@ -966,15 +1381,30 @@
             <span class="k">Capped images</span
             ><span class="v"
               >Every uploaded photograph is resized to 1600px and squeezed under 250 KB before it is
-              stored, because how much a photo costs to serve is fixed at upload time, not at
-              display time.</span
+              stored, because what a photo costs to serve is fixed at upload time, not at display
+              time.</span
+            >
+          </li>
+          <li>
+            <span class="k">Photos on demand</span
+            ><span class="v"
+              >The gallery shows three photographs per group. The rest are hidden until "Show more"
+              is opened, and a hidden photograph is not downloaded until then.</span
+            >
+          </li>
+          <li>
+            <span class="k">Filters are addresses</span
+            ><span class="v"
+              >Search and filters on News and Gallery are ordinary forms, so every view has its own
+              link and works with scripting off. Picking from a dropdown applies at once.</span
             >
           </li>
           <li>
             <span class="k">44px targets</span
             ><span class="v"
-              >Nothing tappable is smaller than that at any screen width. A layout that does not fit
-              gets changed; the button does not get smaller.</span
+              >Nothing tappable is smaller than that at any screen width, the editor's toolbar
+              included. A layout that does not fit gets changed; the button does not get
+              smaller.</span
             >
           </li>
           <li>
@@ -995,41 +1425,50 @@
         <p class="kicker">Tier two</p>
         <h2>How it is built</h2>
         <p>
-          The stack, the data model, and the three decisions that shape everything else. Written for
-          whoever maintains this next.
+          The stack, the data model, the AI layer, and the decisions that shape everything else.
+          Written for whoever maintains this next.
         </p>
       </div>
 
-      <section>
+      <section id="stack">
         <h3>The stack <span class="mr" lang="mr">तंत्रज्ञान</span></h3>
         <p class="sub">Read out of <code>package.json</code> and <code>astro.config.mjs</code>.</p>
         <ul class="stack">
           <li><b>Astro 7</b><span>server-rendered, no static build</span></li>
           <li><b>React 19</b><span>admin only, never on a public page</span></li>
-          <li><b>Supabase</b><span>Postgres + object storage</span></li>
+          <li><b>Tiptap 3</b><span>the body editor, loaded only when opened</span></li>
+          <li><b>Supabase</b><span>Postgres, storage and sign-in</span></li>
           <li><b>Cloudflare Workers</b><span>the deploy runtime</span></li>
           <li><b>TypeScript</b><span>strict, with null checks</span></li>
+        </ul>
+        <ul class="stack light">
+          <li><b>Turnstile</b><span>bot check on the two public forms</span></li>
+          <li><b>Resend</b><span>emails the office about a new submission</span></li>
+          <li><b>Web Analytics</b><span>Cloudflare's, cookieless, public pages only</span></li>
+          <li><b>Gemini · Anthropic · AgentRouter</b><span>the admin's AI providers</span></li>
         </ul>
         <div class="note green">
           <p>
             <strong>Server-rendered rather than statically built, on purpose.</strong> Every word of
-            page furniture — the menu labels, the site title, the footer — comes out of the CMS, so
-            a static build would have to be regenerated every time an editor changed a comma. The
-            cost is that every request hits the database, which is a known and recorded trade.
+            page furniture — the menu labels, the site title, the page text — comes out of the
+            database, so a static build would have to be regenerated every time an editor changed a
+            comma. The cost is that every request reads the database, a known and recorded trade.
           </p>
         </div>
         <div class="note">
           <p>
             <strong>The development server and the production runtime are different engines.</strong>
-            <code>npm run dev</code> runs on Node; production runs on Cloudflare's workerd. Code
-            that works on one can fail on the other, so any change to the server side is verified
-            with <code>npm run build &amp;&amp; npm run preview</code>, which runs the real runtime
-            locally.
+            <code>npm run dev</code> runs on Node; production runs on Cloudflare's workerd, which
+            has no DOM, no <code>Image</code> and no canvas. Code that works on one can fail on the
+            other, so any server-side change is verified with
+            <code>npm run build &amp;&amp; npm run preview</code>, which runs the real runtime
+            locally. It is also why photographs are resized in the browser: it is the only machine
+            in the path that can.
           </p>
         </div>
       </section>
 
-      <section>
+      <section id="request">
         <h3>What happens on a request <span class="mr" lang="mr">विनंतीचा प्रवास</span></h3>
         <p class="sub">
           One page view, from the tap to the HTML. Everything below happens inside a single
@@ -1038,27 +1477,23 @@
 
         <figure>
           <svg
-            viewBox="0 0 940 390"
+            viewBox="0 0 940 392"
             xmlns="http://www.w3.org/2000/svg"
             role="img"
-            aria-label="A request travels from the browser into a Cloudflare Worker, where middleware resolves the language and then the admin gate. Public requests reach the Astro page, which queries Postgres with the anonymous key while row-level security filters the rows. Admin requests without a session are redirected to the login page. The Worker returns finished HTML to the browser."
+            aria-label="A request travels from the browser into a Cloudflare Worker, where middleware resolves the language, then the admin gate, then whether a preview was asked for by a writer. Public requests reach the Astro page, which queries Postgres with the anonymous key while row-level security filters the rows. Admin requests without a session are redirected to the login page. The Worker returns finished HTML to the browser."
           >
             <defs>
               <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <!-- context-stroke, not currentColor: a marker's contents inherit
-                     from <defs>, not from the line that references it, so
-                     currentColor would give every arrowhead the same dark fill
-                     and the terracotta and gold arrows would lose their meaning. -->
                 <path d="M0,0 L10,5 L0,10 z" fill="context-stroke" />
               </marker>
             </defs>
 
             <!-- worker container -->
-            <rect x="185" y="34" width="420" height="240" rx="12" fill="var(--paper-warm)" stroke="var(--edge)" stroke-dasharray="5 4" />
+            <rect x="185" y="34" width="420" height="252" rx="12" fill="var(--paper-warm)" stroke="var(--edge)" stroke-dasharray="5 4" />
             <text x="197" y="54" font-size="12" font-weight="700" fill="var(--bronze-aa)">CLOUDFLARE WORKER</text>
 
             <!-- supabase container -->
-            <rect x="660" y="34" width="266" height="240" rx="12" fill="var(--paper-warm)" stroke="var(--edge)" stroke-dasharray="5 4" />
+            <rect x="660" y="34" width="266" height="252" rx="12" fill="var(--paper-warm)" stroke="var(--edge)" stroke-dasharray="5 4" />
             <text x="672" y="54" font-size="12" font-weight="700" fill="var(--bronze-aa)">SUPABASE</text>
 
             <!-- browser -->
@@ -1071,27 +1506,28 @@
             <text x="179" y="115" text-anchor="middle" font-size="11" fill="var(--ink-muted)">GET</text>
 
             <!-- middleware -->
-            <rect x="210" y="80" width="165" height="90" rx="9" fill="#fff" stroke="var(--forest)" stroke-width="1.6" />
-            <text x="292" y="103" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--forest-ink)">Middleware</text>
-            <text x="224" y="126" font-size="11.5" fill="var(--ink-soft)">1 · pick the language</text>
-            <text x="224" y="145" font-size="11.5" fill="var(--ink-soft)">2 · check the admin gate</text>
-            <text x="224" y="162" font-size="11" fill="var(--ink-muted)">before any HTML exists</text>
+            <rect x="210" y="70" width="170" height="116" rx="9" fill="#fff" stroke="var(--forest)" stroke-width="1.6" />
+            <text x="295" y="93" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--forest-ink)">Middleware</text>
+            <text x="222" y="116" font-size="11.5" fill="var(--ink-soft)">1 · pick the language</text>
+            <text x="222" y="135" font-size="11.5" fill="var(--ink-soft)">2 · check the admin gate</text>
+            <text x="222" y="154" font-size="11.5" fill="var(--ink-soft)">3 · preview? writers only</text>
+            <text x="222" y="175" font-size="11" fill="var(--ink-muted)">before any HTML exists</text>
 
             <!-- middleware -> page -->
-            <path d="M375,110 H433" stroke="currentColor" stroke-width="1.8" marker-end="url(#a3)" fill="none" />
-            <text x="404" y="101" text-anchor="middle" font-size="11" fill="var(--ink-muted)">public</text>
+            <path d="M380,110 H433" stroke="currentColor" stroke-width="1.8" marker-end="url(#a3)" fill="none" />
+            <text x="406" y="101" text-anchor="middle" font-size="11" fill="var(--ink-muted)">public</text>
 
             <!-- page -->
-            <rect x="440" y="80" width="150" height="90" rx="9" fill="#fff" stroke="var(--forest)" stroke-width="1.6" />
-            <text x="515" y="112" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--forest-ink)">Astro page</text>
-            <text x="515" y="132" text-anchor="middle" font-size="11.5" fill="var(--ink-soft)">renders on the</text>
-            <text x="515" y="148" text-anchor="middle" font-size="11.5" fill="var(--ink-soft)">server</text>
+            <rect x="440" y="70" width="150" height="116" rx="9" fill="#fff" stroke="var(--forest)" stroke-width="1.6" />
+            <text x="515" y="116" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--forest-ink)">Astro page</text>
+            <text x="515" y="136" text-anchor="middle" font-size="11.5" fill="var(--ink-soft)">renders on the</text>
+            <text x="515" y="152" text-anchor="middle" font-size="11.5" fill="var(--ink-soft)">server</text>
 
             <!-- gate branch -->
-            <path d="M292,170 V212" stroke="var(--terracotta)" stroke-width="1.8" marker-end="url(#a3)" fill="none" color="var(--terracotta)" />
-            <text x="302" y="196" font-size="11" fill="var(--terracotta)">no valid session</text>
-            <rect x="210" y="218" width="165" height="42" rx="9" fill="var(--wash-warm)" stroke="var(--terracotta)" />
-            <text x="292" y="244" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--terracotta)">303 &#8594; /admin/login</text>
+            <path d="M295,186 V224" stroke="var(--terracotta)" stroke-width="1.8" marker-end="url(#a3)" fill="none" color="var(--terracotta)" />
+            <text x="305" y="210" font-size="11" fill="var(--terracotta)">no valid session</text>
+            <rect x="210" y="230" width="170" height="42" rx="9" fill="var(--wash-warm)" stroke="var(--terracotta)" />
+            <text x="295" y="256" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--terracotta)">303 &#8594; /admin/login</text>
 
             <!-- page -> postgres -->
             <path d="M590,110 H678" stroke="currentColor" stroke-width="1.8" marker-end="url(#a3)" fill="none" />
@@ -1113,32 +1549,37 @@
             <path d="M740,142 V158 M859,142 V158" stroke="var(--terracotta)" stroke-width="1.6" fill="none" />
 
             <!-- return: routed below both containers so it crosses nothing -->
-            <path d="M515,170 V300 H85 V162" stroke="var(--gold)" stroke-width="2" marker-end="url(#a3)" fill="none" color="var(--gold)" />
-            <text x="300" y="292" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--bronze-aa)">finished HTML — 0 bytes of JavaScript</text>
+            <path d="M515,186 V306 H85 V162" stroke="var(--gold)" stroke-width="2" marker-end="url(#a3)" fill="none" color="var(--gold)" />
+            <text x="300" y="298" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--bronze-aa)">finished HTML — no script bundle</text>
 
-            <text x="15" y="340" font-size="12" fill="var(--ink-muted)">The gate runs before any markup is produced, and it fails closed: if the check itself errors, the answer is the login page,</text>
-            <text x="15" y="360" font-size="12" fill="var(--ink-muted)">not a server error. It also revalidates the session against the auth server rather than trusting the cookie it was sent.</text>
+            <text x="15" y="346" font-size="12" fill="var(--ink-muted)">The gate runs before any markup is produced, and it fails closed: if the check itself errors, the answer is the login page,</text>
+            <text x="15" y="366" font-size="12" fill="var(--ink-muted)">not a server error. It also revalidates the session against the auth server rather than trusting the cookie it was sent.</text>
           </svg>
           <figcaption>
             <b>Figure 3 — one request, start to finish.</b> The page never filters for "published"
-            itself. It asks for programmes and the database returns only the published ones, because
-            the policy says so. A redundant filter in the query would hide a broken policy — the app
-            would look correct while the database leaked.
+            itself. It asks for programmes and the database returns only the published ones,
+            because the policy says so. A redundant filter in the query would hide a broken policy —
+            the app would look correct while the database leaked. Step 3 matters only to editors:
+            <code>?preview=1</code> from a signed-in writer marks the page up for the admin's live
+            preview and is never cached; from anyone else it is ignored.
           </figcaption>
         </figure>
       </section>
 
-      <section>
+      <section id="data">
         <h3>The data model <span class="mr" lang="mr">माहितीची रचना</span></h3>
-        <p class="sub">Eighteen tables, grouped by what they are for.</p>
+        <p class="sub">
+          Twenty-six tables, grouped by what they are for, from eighteen migrations.
+        </p>
 
         <ul class="cards">
           <li class="card">
-            <h4>Settings, exactly one row each <span class="count">3</span></h4>
+            <h4>Settings, exactly one row each <span class="count">4</span></h4>
             <ul>
               <li><code>site_settings</code> — titles, hero, contacts, socials</li>
               <li><code>about_page</code> — story and mission copy</li>
               <li><code>donation_info</code> — UPI, bank, registrations</li>
+              <li><code>ai_settings</code> — provider, model, fallback, prices</li>
             </ul>
             <p style="margin-top: 9px">
               Constrained to a single row in the schema, so "there is only one" is a fact about the
@@ -1146,19 +1587,21 @@
             </p>
           </li>
           <li class="card">
-            <h4>Content lists <span class="count">11</span></h4>
+            <h4>Content <span class="count">16</span></h4>
             <ul>
-              <li><code>programs</code> · <code>blog_posts</code> · <code>events</code></li>
-              <li><code>gallery_items</code> · <code>team_members</code> · <code>testimonials</code></li>
-              <li><code>resources</code> · <code>key_facts</code> · <code>org_values</code></li>
-              <li><code>impact_stats</code> · <code>profiles</code></li>
+              <li><code>programs</code> · <code>blog_posts</code> · <code>events</code> · <code>news_items</code></li>
+              <li><code>gallery_categories</code> · <code>gallery_albums</code> · <code>gallery_items</code></li>
+              <li><code>team_members</code> · <code>testimonials</code> · <code>resources</code></li>
+              <li><code>key_facts</code> · <code>org_values</code> · <code>impact_stats</code></li>
+              <li><code>offices</code> · <code>donation_asks</code> · <code>page_copy</code></li>
             </ul>
           </li>
           <li class="card">
             <h4>Media <span class="count">1</span></h4>
             <p>
-              <code>media</code> — one row per image, video or document, with its description in
-              both languages. Everything else points at it.
+              <code>media</code> — one row per image, video or document, with its alt text and
+              caption in both languages, its size, and the sections it belongs to. Everything else
+              points at it.
             </p>
           </li>
           <li class="card">
@@ -1173,15 +1616,39 @@
               column the database refuses to accept as false.
             </p>
           </li>
+          <li class="card">
+            <h4>People and the AI log <span class="count">2</span></h4>
+            <ul>
+              <li><code>profiles</code> — each staff account's role</li>
+              <li><code>ai_usage</code> — one row per AI attempt</li>
+            </ul>
+            <p style="margin-top: 9px">
+              Plus one view, <code>ai_usage_monthly</code>, which totals the log by month in the
+              database, because the API returns at most 1,000 rows at a time.
+            </p>
+          </li>
         </ul>
 
         <div class="note green">
           <p>
-            <strong>Two rules the schema enforces rather than documents.</strong> Every content table
+            <strong>Rules the schema enforces rather than documents.</strong> Every content table
             carries its own <code>sort_order</code> and an <code>is_published</code> flag that
-            defaults to off, so nothing is ever accidentally live. And <em>no table has a path
+            defaults to off, so nothing is ever accidentally live. <em>No table has a path
             column</em> — there is no <code>cover_path</code> anywhere, because a path is something
-            you can type wrongly and a foreign key is not.
+            you can type wrongly and a foreign key is not. And every web address an editor can type
+            is checked by the database: WhatsApp, Facebook, YouTube and Google Maps links must be
+            https on those companies' own hosts, and a testimonial's extra links must be https with
+            no spaces. A <code>javascript:</code> link is refused for every writer, not just by this
+            form.
+          </p>
+        </div>
+        <div class="note green">
+          <p>
+            <strong>Relationships the database keeps.</strong> An album and its photographs share a
+            category through a two-column foreign key, so a photograph cannot sit in an album from
+            another category, and moving an album moves its photographs. A category still in use
+            cannot be deleted. A testimonial links to a blog post by ID, so renaming the post's
+            address cannot break the link, and deleting the post only detaches it.
           </p>
         </div>
         <div class="note">
@@ -1194,7 +1661,7 @@
         </div>
       </section>
 
-      <section>
+      <section id="access">
         <h3>Who can read what <span class="mr" lang="mr">प्रवेश नियंत्रण</span></h3>
         <p class="sub">
           Permission is enforced by the database on every statement, not by the code that asks.
@@ -1202,13 +1669,23 @@
         <ul class="rows">
           <li>
             <span class="k">Settings</span
-            ><span class="v">Readable by anyone. There is nothing private in them.</span>
+            ><span class="v"
+              >Readable by anyone — there is nothing private in them — except the AI settings,
+              which only staff can read and only admins can change.</span
+            >
           </li>
           <li>
             <span class="k">Content</span
             ><span class="v"
               >Readable by anyone <em>if published</em>. A draft is invisible to the public site and
-              404s by direct URL.</span
+              404s by direct URL. Page text has no drafts and is always readable.</span
+            >
+          </li>
+          <li>
+            <span class="k">Parents</span
+            ><span class="v"
+              >A gallery photograph is public only if its media row, its album and its category are
+              all published too. Unpublishing any one of them hides it.</span
             >
           </li>
           <li>
@@ -1219,17 +1696,18 @@
             >
           </li>
           <li>
-            <span class="k">Staff</span
+            <span class="k">AI log</span
             ><span class="v"
-              >A signed-in editor may read and write everything, checked against a role stored in
-              the database rather than a claim in the token.</span
+              >A writer may add rows only under their own account; only admins read the log. The
+              public cannot see it or the monthly view.</span
             >
           </li>
           <li>
-            <span class="k">Two exceptions</span
+            <span class="k">Staff</span
             ><span class="v"
-              >A gallery tile is public only if the photograph it points at is also published. And
-              staff accounts are self-read, admin-managed.</span
+              >A signed-in writer may read and write content, checked against a role stored in the
+              database rather than a claim in the token. A <em>viewer</em> can look but cannot save
+              or use the AI.</span
             >
           </li>
         </ul>
@@ -1238,91 +1716,118 @@
           <p>
             <strong>The all-powerful database key is used nowhere.</strong> It is declared to the
             build as server-only and secret, so importing it into anything the browser sees is a
-            build error rather than a review comment. On top of that, continuous integration
-            searches the built output for a leaked key on every push, in both the old and current key
-            formats, and fails the build if it finds one.
+            build error rather than a review comment. On top of that, continuous integration searches
+            the built output on every push for six kinds of leaked key — both formats of the
+            database key, and the Anthropic, Google (old and new format) and AgentRouter key shapes
+            — and fails the build if it finds one.
           </p>
         </div>
       </section>
 
-      <section>
-        <h3>Two decisions worth a diagram <span class="mr" lang="mr">दोन निर्णय</span></h3>
+      <section id="media">
+        <h3>Media is referenced by ID <span class="mr" lang="mr">ओळख क्रमांकाने</span></h3>
         <p class="sub">
-          The parts of this codebase that are least like the obvious version, and why.
+          The part of this codebase least like the obvious version, and the one the most features
+          now stand on.
         </p>
 
         <figure>
           <svg
-            viewBox="0 0 900 356"
+            viewBox="0 0 900 452"
             xmlns="http://www.w3.org/2000/svg"
             role="img"
-            aria-label="A programme's cover image is resolved by following a foreign key to a media row, reading its storage path, and passing it through a helper that only accepts the public bucket. The private files bucket is outside that helper's accepted types, so linking a private document from a public page fails to compile."
+            aria-label="Four kinds of reference — a programme's cover, a gallery photograph, a testimonial's list of photographs, and a figure inside a blog body — all point at a media row by its ID. The media row holds the storage path and the alt text, and a helper that accepts only the public bucket turns the path into a URL. The private files bucket is outside that helper's accepted types, so linking a private document from a public page fails to compile."
           >
             <defs>
               <marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <!-- context-stroke, not currentColor: a marker's contents inherit
-                     from <defs>, not from the line that references it, so
-                     currentColor would give every arrowhead the same dark fill
-                     and the terracotta and gold arrows would lose their meaning. -->
                 <path d="M0,0 L10,5 L0,10 z" fill="context-stroke" />
               </marker>
             </defs>
 
             <text x="15" y="20" font-size="12" font-weight="700" fill="var(--bronze-aa)">HOW AN IMAGE URL IS PRODUCED</text>
 
-            <rect x="15" y="34" width="185" height="60" rx="8" fill="#fff" stroke="var(--forest)" stroke-width="1.5" />
-            <text x="27" y="56" font-size="12.5" font-family="monospace" fill="var(--ink)">programs</text>
-            <text x="27" y="76" font-size="12" font-family="monospace" fill="var(--forest)">.cover_media_id</text>
+            <!-- sources -->
+            <rect x="15" y="34" width="235" height="34" rx="7" fill="#fff" stroke="var(--forest)" stroke-width="1.4" />
+            <text x="27" y="56" font-size="12" font-family="monospace" fill="var(--ink)">programs.<tspan fill="var(--forest)">cover_media_id</tspan></text>
+            <rect x="15" y="76" width="235" height="34" rx="7" fill="#fff" stroke="var(--forest)" stroke-width="1.4" />
+            <text x="27" y="98" font-size="12" font-family="monospace" fill="var(--ink)">gallery_items.<tspan fill="var(--forest)">media_id</tspan></text>
+            <rect x="15" y="118" width="235" height="34" rx="7" fill="#fff" stroke="var(--forest)" stroke-width="1.4" />
+            <text x="27" y="140" font-size="12" font-family="monospace" fill="var(--ink)">testimonials.<tspan fill="var(--forest)">media_ids[]</tspan></text>
+            <rect x="15" y="160" width="235" height="34" rx="7" fill="var(--wash-warm)" stroke="var(--gold)" stroke-width="1.4" />
+            <text x="27" y="182" font-size="12" font-family="monospace" fill="var(--ink)">&lt;figure <tspan fill="var(--forest)">data-media-id</tspan>&gt;</text>
+            <text x="15" y="214" font-size="11" fill="var(--ink-muted)">17 media columns on 12 tables, plus figures in bodies</text>
 
-            <path d="M200,64 H243" stroke="currentColor" stroke-width="1.6" marker-end="url(#a4)" fill="none" />
-            <text x="221" y="55" text-anchor="middle" font-size="10.5" fill="var(--ink-muted)">FK</text>
+            <!-- converge -->
+            <path d="M250,51 L293,104" stroke="currentColor" stroke-width="1.4" marker-end="url(#a4)" fill="none" />
+            <path d="M250,93 L293,108" stroke="currentColor" stroke-width="1.4" marker-end="url(#a4)" fill="none" />
+            <path d="M250,135 L293,114" stroke="currentColor" stroke-width="1.4" marker-end="url(#a4)" fill="none" />
+            <path d="M250,177 L293,118" stroke="var(--gold)" stroke-width="1.4" marker-end="url(#a4)" fill="none" color="var(--gold)" />
 
-            <rect x="250" y="34" width="185" height="60" rx="8" fill="#fff" stroke="var(--forest)" stroke-width="1.5" />
-            <text x="262" y="56" font-size="12.5" font-family="monospace" fill="var(--ink)">media</text>
-            <text x="262" y="76" font-size="12" font-family="monospace" fill="var(--forest)">.storage_path</text>
+            <!-- media row -->
+            <rect x="300" y="80" width="170" height="60" rx="8" fill="#fff" stroke="var(--forest)" stroke-width="1.5" />
+            <text x="312" y="102" font-size="12.5" font-family="monospace" fill="var(--ink)">media</text>
+            <text x="312" y="122" font-size="12" font-family="monospace" fill="var(--forest)">.storage_path</text>
+            <text x="300" y="158" font-size="11" fill="var(--ink-muted)">alt text and caption live here,</text>
+            <text x="300" y="173" font-size="11" fill="var(--ink-muted)">once, in both languages</text>
 
-            <path d="M435,64 H478" stroke="currentColor" stroke-width="1.6" marker-end="url(#a4)" fill="none" />
+            <path d="M470,110 H513" stroke="currentColor" stroke-width="1.6" marker-end="url(#a4)" fill="none" />
 
-            <rect x="485" y="34" width="200" height="60" rx="8" fill="var(--wash-green)" stroke="var(--forest)" stroke-width="1.5" />
-            <text x="497" y="58" font-size="12.5" font-family="monospace" fill="var(--ink)">publicUrl(</text>
-            <text x="497" y="78" font-size="12" font-family="monospace" fill="var(--ink)">&#160;&#160;'media', path)</text>
+            <rect x="520" y="80" width="195" height="60" rx="8" fill="var(--wash-green)" stroke="var(--forest)" stroke-width="1.5" />
+            <text x="532" y="104" font-size="12.5" font-family="monospace" fill="var(--ink)">publicUrl(</text>
+            <text x="532" y="124" font-size="12" font-family="monospace" fill="var(--ink)">&#160;&#160;'media', path)</text>
 
-            <path d="M685,64 H728" stroke="currentColor" stroke-width="1.6" marker-end="url(#a4)" fill="none" />
+            <path d="M715,110 H748" stroke="currentColor" stroke-width="1.6" marker-end="url(#a4)" fill="none" />
 
-            <rect x="735" y="34" width="150" height="60" rx="8" fill="var(--forest)" />
-            <text x="810" y="60" text-anchor="middle" font-size="12.5" fill="var(--on-forest)">a real URL</text>
-            <text x="810" y="79" text-anchor="middle" font-size="11" fill="var(--on-forest-soft)">the only way one exists</text>
+            <rect x="755" y="80" width="130" height="60" rx="8" fill="var(--forest)" />
+            <text x="820" y="106" text-anchor="middle" font-size="12.5" fill="var(--on-forest)">a real URL</text>
+            <text x="820" y="124" text-anchor="middle" font-size="11" fill="var(--on-forest-soft)">the only way in</text>
 
             <!-- buckets -->
-            <text x="15" y="140" font-size="12" font-weight="700" fill="var(--bronze-aa)">THE TWO BUCKETS</text>
-            <rect x="15" y="152" width="330" height="94" rx="10" fill="none" stroke="var(--forest)" stroke-dasharray="5 4" stroke-width="1.5" />
-            <text x="29" y="172" font-size="11.5" font-weight="600" fill="var(--forest)">what publicUrl() will accept</text>
-            <rect x="33" y="182" width="290" height="46" rx="8" fill="var(--wash-green)" stroke="var(--forest)" />
-            <text x="47" y="200" font-size="12.5" font-family="monospace" fill="var(--ink)">media</text>
-            <text x="47" y="218" font-size="11.5" fill="var(--ink-muted)">public — photographs, covers, the donation QR</text>
+            <text x="15" y="258" font-size="12" font-weight="700" fill="var(--bronze-aa)">THE TWO BUCKETS</text>
+            <rect x="15" y="270" width="330" height="94" rx="10" fill="none" stroke="var(--forest)" stroke-dasharray="5 4" stroke-width="1.5" />
+            <text x="29" y="290" font-size="11.5" font-weight="600" fill="var(--forest)">what publicUrl() will accept</text>
+            <rect x="33" y="300" width="290" height="46" rx="8" fill="var(--wash-green)" stroke="var(--forest)" />
+            <text x="47" y="318" font-size="12.5" font-family="monospace" fill="var(--ink)">media</text>
+            <text x="47" y="336" font-size="11.5" fill="var(--ink-muted)">public — photographs, covers, the donation QR</text>
 
-            <rect x="375" y="182" width="300" height="46" rx="8" fill="var(--wash-warm)" stroke="var(--terracotta)" />
-            <text x="389" y="200" font-size="12.5" font-family="monospace" fill="var(--terracotta)">files</text>
-            <text x="389" y="218" font-size="11.5" fill="var(--ink-soft)">private — no public read policy of any kind</text>
-            <text x="375" y="248" font-size="11.5" fill="var(--terracotta)">outside the helper's accepted types, so linking one from a public page does not compile</text>
+            <rect x="375" y="300" width="300" height="46" rx="8" fill="var(--wash-warm)" stroke="var(--terracotta)" />
+            <text x="389" y="318" font-size="12.5" font-family="monospace" fill="var(--terracotta)">files</text>
+            <text x="389" y="336" font-size="11.5" fill="var(--ink-soft)">private — no public read policy of any kind</text>
+            <text x="375" y="366" font-size="11.5" fill="var(--terracotta)">outside the helper's accepted types, so linking one from a public page does not compile</text>
 
             <!-- the absent column -->
-            <text x="15" y="292" font-size="12" font-weight="700" fill="var(--bronze-aa)">THE COLUMN THIS SCHEMA DOES NOT HAVE</text>
-            <rect x="15" y="304" width="230" height="38" rx="8" fill="none" stroke="var(--ink-muted)" stroke-dasharray="4 4" />
-            <text x="30" y="328" font-size="12.5" font-family="monospace" fill="var(--ink-muted)">programs.cover_path</text>
-            <path d="M22,340 L238,308" stroke="var(--terracotta)" stroke-width="1.6" />
-            <text x="262" y="320" font-size="12" fill="var(--ink-soft)">A path can be typed wrongly, can point at a file nobody uploaded, and</text>
-            <text x="262" y="338" font-size="12" fill="var(--ink-soft)">gives no way to ask which pages use a photograph before deleting it.</text>
+            <text x="15" y="398" font-size="12" font-weight="700" fill="var(--bronze-aa)">THE COLUMN THIS SCHEMA DOES NOT HAVE</text>
+            <rect x="15" y="410" width="230" height="38" rx="8" fill="none" stroke="var(--ink-muted)" stroke-dasharray="4 4" />
+            <text x="30" y="434" font-size="12.5" font-family="monospace" fill="var(--ink-muted)">programs.cover_path</text>
+            <path d="M22,446 L238,414" stroke="var(--terracotta)" stroke-width="1.6" />
+            <text x="262" y="426" font-size="12" fill="var(--ink-soft)">A path can be typed wrongly, can point at a file nobody uploaded, and</text>
+            <text x="262" y="444" font-size="12" fill="var(--ink-soft)">gives no way to ask which pages use a photograph before deleting it.</text>
           </svg>
           <figcaption>
-            <b>Figure 4 — media is referenced by ID, never by path.</b> Because every reference is a
-            foreign key, the admin can tell an editor exactly which pages use a photograph before
-            they delete it, correcting one description corrects every page it appears on, and the
-            same file used in four places is one upload and one row. The private bucket sits outside
-            the URL helper's accepted types on purpose: publishing a private document is a
-            compile error rather than something a reviewer has to catch.
+            <b>Figure 4 — every picture on the site is a foreign key.</b> Covers, icons, gallery
+            tiles, testimonial photographs and even a photograph placed inside a blog post are
+            stored as the ID of a media row, never as a path. That one decision is what the "Used
+            in" line, the alt text written once and shown everywhere, and the captions that travel
+            with a photograph all stand on. A figure whose photograph becomes a draft or is deleted
+            simply disappears from the page rather than rendering broken.
           </figcaption>
         </figure>
+
+        <div class="note">
+          <p>
+            <strong>One reference deletes, the rest detach.</strong> Removing a photograph from the
+            library empties every cover, icon and slot that used it — except a gallery tile, which
+            is nothing without its photograph and is deleted with it. The library's delete warning
+            says which, per page, before anyone confirms.
+          </p>
+        </div>
+      </section>
+
+      <section id="writes">
+        <h3>Where an editor's save goes <span class="mr" lang="mr">बदल कुठे जातात</span></h3>
+        <p class="sub">
+          There is no content API. The one admin endpoint drafts text; it never saves a page.
+        </p>
 
         <figure>
           <svg
@@ -1333,10 +1838,6 @@
           >
             <defs>
               <marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <!-- context-stroke, not currentColor: a marker's contents inherit
-                     from <defs>, not from the line that references it, so
-                     currentColor would give every arrowhead the same dark fill
-                     and the terracotta and gold arrows would lose their meaning. -->
                 <path d="M0,0 L10,5 L0,10 z" fill="context-stroke" />
               </marker>
             </defs>
@@ -1386,28 +1887,439 @@
             not post to an API that then talks to Postgres; the editor's browser writes directly,
             carrying their own session, and the same policy that hides a draft from a visitor is what
             decides whether the write is allowed. One check instead of two, and no second place for
-            the two to disagree.
+            the two to disagree. The AI endpoint in Figure 6 sits beside this lane, not in it: its
+            drafts come back to the form, and they reach the database only through this same save.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="ai-layer">
+        <h3>The AI layer <span class="mr" lang="mr">AI ची रचना</span></h3>
+        <p class="sub">
+          Eight helpers, six tasks, one endpoint: <code>/api/admin/ai</code>. Everything the
+          helpers do passes through it, and it is the only place a provider key is ever used.
+        </p>
+
+        <figure>
+          <svg
+            viewBox="0 0 940 500"
+            xmlns="http://www.w3.org/2000/svg"
+            role="img"
+            aria-label="An editor's AI request enters the Worker at /api/admin/ai. It is refused, in order, if no provider key is set, the body is not JSON, nobody is signed in, the user is not a writer, the request fails validation, or no model is chosen. Otherwise it tries the active model, then the same model on a backup Gemini key, then the fallback model, moving down only on a retryable error. Each attempt is one call to Gemini, Anthropic or AgentRouter and one row in the ai_usage table. The answer is checked for invented numbers, Devanagari digits, stray scripts and unsafe HTML, and returned to the form as an unsaved draft with one Undo."
+          >
+            <defs>
+              <marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="context-stroke" />
+              </marker>
+            </defs>
+
+            <!-- browser -->
+            <rect x="15" y="70" width="160" height="76" rx="9" fill="var(--forest)" />
+            <text x="95" y="96" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--on-forest)">Admin form</text>
+            <text x="95" y="115" text-anchor="middle" font-size="11" fill="var(--on-forest-soft)">a signed-in editor</text>
+            <text x="95" y="132" text-anchor="middle" font-size="11" fill="var(--on-forest-soft)">presses "Draft English"</text>
+
+            <!-- worker container: drawn before the arrow so its fill does not cover the label -->
+            <rect x="200" y="30" width="428" height="410" rx="12" fill="var(--paper-warm)" stroke="var(--edge)" stroke-dasharray="5 4" />
+            <text x="212" y="50" font-size="12" font-weight="700" fill="var(--bronze-aa)">CLOUDFLARE WORKER · /api/admin/ai</text>
+
+            <path d="M175,100 H213" stroke="currentColor" stroke-width="1.8" marker-end="url(#a6)" fill="none" />
+            <text x="186" y="91" text-anchor="middle" font-size="10.5" fill="var(--ink-muted)">POST</text>
+
+            <!-- refusals -->
+            <rect x="220" y="66" width="180" height="190" rx="9" fill="#fff" stroke="var(--terracotta)" stroke-width="1.4" />
+            <text x="232" y="88" font-size="12.5" font-weight="700" fill="var(--terracotta)">Refused, in this order</text>
+            <text x="232" y="112" font-size="11.5" fill="var(--ink-soft)">501 · no provider key set</text>
+            <text x="232" y="134" font-size="11.5" fill="var(--ink-soft)">415 · body is not JSON</text>
+            <text x="232" y="156" font-size="11.5" fill="var(--ink-soft)">401 · nobody signed in</text>
+            <text x="232" y="178" font-size="11.5" fill="var(--ink-soft)">403 · not a writer</text>
+            <text x="232" y="200" font-size="11.5" fill="var(--ink-soft)">400 · fails validation</text>
+            <text x="232" y="222" font-size="11.5" fill="var(--ink-soft)">503 · no model chosen</text>
+            <text x="232" y="244" font-size="11" font-style="italic" fill="var(--ink-muted)">then, and only then, a call</text>
+
+            <path d="M400,97 H423" stroke="currentColor" stroke-width="1.6" marker-end="url(#a6)" fill="none" />
+
+            <!-- the chain -->
+            <rect x="430" y="74" width="180" height="46" rx="8" fill="#fff" stroke="var(--forest)" stroke-width="1.5" />
+            <text x="442" y="94" font-size="12.5" font-weight="600" fill="var(--forest-ink)">1 · the active model</text>
+            <text x="442" y="111" font-size="11" fill="var(--ink-muted)">chosen in the AI tab</text>
+
+            <path d="M520,120 V144" stroke="var(--terracotta)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a6)" fill="none" color="var(--terracotta)" />
+            <text x="528" y="137" font-size="10.5" fill="var(--terracotta)">if retryable</text>
+
+            <rect x="430" y="150" width="180" height="46" rx="8" fill="#fff" stroke="var(--forest)" stroke-width="1.5" />
+            <text x="442" y="170" font-size="12.5" font-weight="600" fill="var(--forest-ink)">2 · the backup key</text>
+            <text x="442" y="187" font-size="11" fill="var(--ink-muted)">same model · Gemini only</text>
+
+            <path d="M520,196 V220" stroke="var(--terracotta)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a6)" fill="none" color="var(--terracotta)" />
+            <text x="528" y="213" font-size="10.5" fill="var(--terracotta)">if retryable</text>
+
+            <rect x="430" y="226" width="180" height="46" rx="8" fill="#fff" stroke="var(--forest)" stroke-width="1.5" />
+            <text x="442" y="246" font-size="12.5" font-weight="600" fill="var(--forest-ink)">3 · the fallback model</text>
+            <text x="442" y="263" font-size="11" fill="var(--ink-muted)">+ backup key if Gemini</text>
+
+            <!-- bus to providers and to the log -->
+            <path d="M610,97 H618 M610,173 H618 M610,249 H618 M618,97 V249" stroke="currentColor" stroke-width="1.4" fill="none" />
+            <path d="M618,173 H673" stroke="currentColor" stroke-width="1.6" marker-end="url(#a6)" fill="none" />
+            <path d="M618,249 V344 H648" stroke="var(--forest)" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#a6)" fill="none" color="var(--forest)" />
+
+            <!-- providers -->
+            <rect x="660" y="30" width="265" height="254" rx="12" fill="var(--paper-warm)" stroke="var(--edge)" stroke-dasharray="5 4" />
+            <text x="672" y="50" font-size="12" font-weight="700" fill="var(--bronze-aa)">PROVIDERS</text>
+            <rect x="680" y="66" width="230" height="50" rx="8" fill="#fff" stroke="var(--forest)" stroke-width="1.4" />
+            <text x="692" y="87" font-size="13" font-weight="600" fill="var(--forest-ink)">Gemini</text>
+            <text x="692" y="105" font-size="11" fill="var(--ink-muted)">Google AI Studio · x-goog-api-key</text>
+            <rect x="680" y="128" width="230" height="50" rx="8" fill="#fff" stroke="var(--forest)" stroke-width="1.4" />
+            <text x="692" y="149" font-size="13" font-weight="600" fill="var(--forest-ink)">Anthropic</text>
+            <text x="692" y="167" font-size="11" fill="var(--ink-muted)">Messages API · x-api-key</text>
+            <rect x="680" y="190" width="230" height="50" rx="8" fill="#fff" stroke="var(--forest)" stroke-width="1.4" />
+            <text x="692" y="211" font-size="13" font-weight="600" fill="var(--forest-ink)">AgentRouter</text>
+            <text x="692" y="229" font-size="11" fill="var(--ink-muted)">OpenAI-compatible · Bearer token</text>
+            <text x="680" y="266" font-size="11" fill="var(--ink-muted)">one call per attempt · 60 s timeout</text>
+
+            <!-- checks -->
+            <path d="M520,272 V293" stroke="currentColor" stroke-width="1.6" marker-end="url(#a6)" fill="none" />
+            <rect x="220" y="300" width="390" height="112" rx="9" fill="var(--wash-green)" stroke="var(--forest)" stroke-width="1.4" />
+            <text x="234" y="322" font-size="12.5" font-weight="600" fill="var(--forest-ink)">Every answer is checked on its way back</text>
+            <text x="234" y="344" font-size="11.5" fill="var(--ink-soft)">· numbers not in the source are listed beside the draft</text>
+            <text x="234" y="363" font-size="11.5" fill="var(--ink-soft)">· Devanagari digits → Latin; other Indic scripts refused</text>
+            <text x="234" y="382" font-size="11.5" fill="var(--ink-soft)">· captions equal to the alt text dropped; slugs checked</text>
+            <text x="234" y="401" font-size="11.5" fill="var(--ink-soft)">· HTML sanitised in the browser before it enters a field</text>
+
+            <!-- usage log -->
+            <text x="672" y="302" font-size="12" font-weight="700" fill="var(--bronze-aa)">SUPABASE</text>
+            <rect x="655" y="312" width="270" height="100" rx="9" fill="#fff" stroke="var(--forest)" stroke-width="1.4" />
+            <text x="669" y="336" font-size="13" font-family="monospace" font-weight="600" fill="var(--forest-ink)">ai_usage</text>
+            <text x="669" y="356" font-size="11" fill="var(--ink-muted)">one row per attempt: who, task, tab,</text>
+            <text x="669" y="372" font-size="11" fill="var(--ink-muted)">provider, model, tokens in and out,</text>
+            <text x="669" y="388" font-size="11" fill="var(--ink-muted)">cost, ok, fallback, backup key and</text>
+            <text x="669" y="404" font-size="11" fill="var(--ink-muted)">a short error code — never a reply</text>
+
+            <!-- return -->
+            <path d="M220,380 H95 V153" stroke="var(--gold)" stroke-width="2" marker-end="url(#a6)" fill="none" color="var(--gold)" />
+            <text x="104" y="262" font-size="11.5" font-weight="600" fill="var(--bronze-aa)">a draft in</text>
+            <text x="104" y="278" font-size="11.5" font-weight="600" fill="var(--bronze-aa)">the field,</text>
+            <text x="104" y="294" font-size="11.5" font-weight="600" fill="var(--bronze-aa)">unsaved, with</text>
+            <text x="104" y="310" font-size="11.5" font-weight="600" fill="var(--bronze-aa)">one Undo</text>
+
+            <text x="15" y="468" font-size="12" fill="var(--ink-muted)">Retryable means quota (402), rate limit (429), a server error, a timeout or an empty answer. A refused key or a misspelt model stops at once,</text>
+            <text x="15" y="488" font-size="12" fill="var(--ink-muted)">because a second provider answering would hide the misconfiguration. Provider replies never reach the browser, only the checked draft.</text>
+          </svg>
+          <figcaption>
+            <b>Figure 6 — one AI call, start to finish.</b> The endpoint runs under the editor's own
+            session, with no all-powerful key, so it can read only what that editor could read. It
+            returns a draft and writes nothing but its own log row. Saving the draft is the ordinary
+            write in Figure 5.
           </figcaption>
         </figure>
 
+        <h4 class="minor">The six tasks</h4>
+        <ul class="rows wide">
+          <li>
+            <span class="k">translate</span
+            ><span class="v"
+              >Marathi to English or back, for one field or one photograph's alt text and caption.
+              Rich text comes back as HTML and is sanitised before it touches the editor.</span
+            >
+          </li>
+          <li>
+            <span class="k">rewrite</span
+            ><span class="v"
+              >Write, Expand or Shorten one bilingual field. The context is built from the tab's own
+              registry fields only — inbox, media and AI tabs are never sent — and the endpoint
+              re-checks that the field is not translate-only.</span
+            >
+          </li>
+          <li>
+            <span class="k">fill</span
+            ><span class="v"
+              >One call for every empty writable field on a row, in both languages. Refused when
+              the row has no text to draft from.</span
+            >
+          </li>
+          <li>
+            <span class="k">describe</span
+            ><span class="v"
+              >Alt text, caption and sections for one photograph. The bulk "missing alt text" run
+              calls this once per photograph, paced, and waits and retries once on a rate
+              limit.</span
+            >
+          </li>
+          <li>
+            <span class="k">clipping</span
+            ><span class="v"
+              >Headline, outlet, summary, type and printed date from a photograph of coverage.
+              "Pull news from the library" calls this once per photograph over a chosen range,
+              skipping any already used by a story.</span
+            >
+          </li>
+          <li>
+            <span class="k">gallery</span
+            ><span class="v"
+              >Category and album suggestions for up to 150 photographs per call. It sends the
+              photographs' <em>descriptions</em>, not the images, so a suggestion costs a few
+              hundred tokens; undescribed photographs are counted and left out.</span
+            >
+          </li>
+        </ul>
+
+        <ul class="cards" style="margin-top: 22px">
+          <li class="card">
+            <h4>Photographs are fetched by the server, by ID</h4>
+            <p>
+              For describe and clipping the browser sends only a media ID. The server looks up the
+              row under the editor's session and fetches the file itself — JPEG, PNG or WebP, at
+              most 1.5 MB — so the browser can never point the AI at an arbitrary address.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Keys are secrets, not settings</h4>
+            <p>
+              The provider keys, the backup Gemini key and AgentRouter's base address are
+              Cloudflare secrets. None is a column an admin can edit: an editable address is one an
+              admin could point at their own server, and the key would follow it.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Chosen, tested and counted in the AI tab</h4>
+            <p>
+              Model names are suggested from each provider's live list. A Test button calls exactly
+              what is typed, with no fallback, so a test never reports the wrong model as working.
+              Usage shows twelve months of totals, a month by task, model and person, an estimated
+              cost, and the last twenty failures.
+            </p>
+          </li>
+          <li class="card">
+            <h4>Checked in code, not just asked for in prompts</h4>
+            <p>
+              Each prompt states its rules, and each rule a model broke on a real run became a
+              check in code as well — the number list, the digit conversion, the script filter, the
+              caption and slug rules. <code>/api/health</code> runs fixtures through the number,
+              digit, script and gallery checks on every call.
+            </p>
+          </li>
+        </ul>
+
         <div class="note green">
           <p>
-            <strong>JavaScript is spent where it earns its place.</strong> The public site is HTML —
-            the mobile menu is a native disclosure widget, the gallery viewer is a CSS selector
-            reacting to the address bar, the language toggle is a link. All three are keyboard- and
-            screen-reader-correct for free, and all three work with scripting disabled. The one
-            exception is the animated impact figures on the home page: 468 bytes written inline,
-            because the framework version of the same effect costs 184 KB.
+            <strong>The story behind this section, slide by slide.</strong> How each helper was
+            asked for, built and caught out is told in
+            <a href="../presentations/yung-foundation-ai.html">Drafts, Not Decisions</a>, the
+            23-slide deck on the AI in this admin.
           </p>
         </div>
+      </section>
+
+      <section id="preview">
+        <h3>The live preview <span class="mr" lang="mr">थेट पूर्वावलोकन</span></h3>
+        <p class="sub">
+          "See it on the site" shows the real public page, not a copy of it — with what the editor
+          is typing already in place.
+        </p>
+
+        <figure>
+          <svg
+            viewBox="0 0 900 330"
+            xmlns="http://www.w3.org/2000/svg"
+            role="img"
+            aria-label="Inside the admin, the editor sends unsaved text to a frame showing the real public page with ?preview=1. The Worker's middleware checks that the viewer is a writer and adds row markers and a listener script, sent as private and not indexable. A visitor who adds ?preview=1 gets the ordinary page with no markers and no script."
+          >
+            <defs>
+              <marker id="a7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="context-stroke" />
+              </marker>
+            </defs>
+
+            <!-- admin container -->
+            <rect x="15" y="30" width="420" height="220" rx="12" fill="var(--paper-warm)" stroke="var(--edge)" stroke-dasharray="5 4" />
+            <text x="27" y="50" font-size="12" font-weight="700" fill="var(--bronze-aa)">THE ADMIN · SIGNED IN</text>
+
+            <rect x="35" y="66" width="150" height="160" rx="9" fill="#fff" stroke="var(--forest)" stroke-width="1.5" />
+            <text x="110" y="90" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--forest-ink)">Editor</text>
+            <text x="47" y="114" font-size="11.5" fill="var(--ink-soft)">typing, not saved</text>
+            <text x="47" y="134" font-size="11.5" fill="var(--ink-soft)">Marathi or English</text>
+            <text x="47" y="170" font-size="11" font-weight="600" fill="var(--bronze-aa)">Appears on:</text>
+            <text x="47" y="187" font-size="11" fill="var(--ink-muted)">its own page ·</text>
+            <text x="47" y="203" font-size="11" fill="var(--ink-muted)">the list · home cards</text>
+
+            <path d="M185,122 H248" stroke="var(--forest)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#a7)" fill="none" color="var(--forest)" />
+            <text x="216" y="113" text-anchor="middle" font-size="11" fill="var(--forest)">as you type</text>
+            <text x="216" y="140" text-anchor="middle" font-size="10.5" fill="var(--ink-muted)">same origin</text>
+
+            <rect x="255" y="62" width="165" height="170" rx="9" fill="var(--wash-green)" stroke="var(--forest)" stroke-width="1.5" />
+            <text x="337" y="86" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--forest-ink)">Frame</text>
+            <text x="337" y="105" text-anchor="middle" font-size="11.5" fill="var(--ink-soft)">the real page</text>
+            <text x="337" y="123" text-anchor="middle" font-size="11.5" font-family="monospace" fill="var(--forest)">?preview=1</text>
+            <rect x="271" y="142" width="133" height="46" rx="6" fill="#fff" stroke="var(--terracotta)" stroke-width="1.6" />
+            <text x="337" y="162" text-anchor="middle" font-size="11" fill="var(--terracotta)">the edited row,</text>
+            <text x="337" y="178" text-anchor="middle" font-size="11" fill="var(--terracotta)">outlined, in view</text>
+            <text x="337" y="214" text-anchor="middle" font-size="10.5" fill="var(--ink-muted)">own language switch</text>
+
+            <!-- frame <-> worker -->
+            <path d="M420,100 H493" stroke="currentColor" stroke-width="1.6" marker-end="url(#a7)" fill="none" />
+            <text x="457" y="91" text-anchor="middle" font-size="11" fill="var(--ink-muted)">GET</text>
+            <path d="M500,180 H427" stroke="var(--gold)" stroke-width="2" marker-end="url(#a7)" fill="none" color="var(--gold)" />
+            <text x="460" y="198" text-anchor="middle" font-size="11" fill="var(--bronze-aa)">HTML</text>
+
+            <!-- worker -->
+            <rect x="500" y="62" width="190" height="150" rx="9" fill="#fff" stroke="var(--forest)" stroke-width="1.5" />
+            <text x="595" y="86" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--forest-ink)">Middleware</text>
+            <text x="512" y="110" font-size="11.5" fill="var(--ink-soft)">asks is_writer()</text>
+            <text x="512" y="130" font-size="11.5" fill="var(--ink-soft)">yes: row markers +</text>
+            <text x="512" y="148" font-size="11.5" fill="var(--ink-soft)">a listener script</text>
+            <text x="512" y="176" font-size="10.5" fill="var(--ink-muted)">private · no-store · noindex</text>
+            <text x="512" y="194" font-size="10.5" fill="var(--ink-muted)">drafts shown · not counted</text>
+
+            <!-- visitor -->
+            <path d="M718,137 H697" stroke="currentColor" stroke-width="1.6" marker-end="url(#a7)" fill="none" />
+            <rect x="720" y="62" width="165" height="150" rx="9" fill="#fff" stroke="var(--edge)" stroke-width="1.5" />
+            <text x="802" y="86" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--forest-ink)">A visitor</text>
+            <text x="732" y="110" font-size="11.5" fill="var(--ink-soft)">who adds ?preview=1</text>
+            <text x="732" y="140" font-size="11.5" fill="var(--ink-soft)">gets the ordinary</text>
+            <text x="732" y="158" font-size="11.5" fill="var(--ink-soft)">page: no markers,</text>
+            <text x="732" y="176" font-size="11.5" fill="var(--ink-soft)">no script, no drafts</text>
+
+            <text x="15" y="286" font-size="12" fill="var(--ink-muted)">Fields are found by matching their saved text inside the marked row, so only eleven row containers carry a marker and the</text>
+            <text x="15" y="306" font-size="12" fill="var(--ink-muted)">roughly ninety places that print text carry nothing. Visitors are sent no extra bytes at all.</text>
+          </svg>
+          <figcaption>
+            <b>Figure 7 — the preview is the site itself.</b> Rendering the real page means the
+            preview can never drift from what visitors see. Switching the frame's language renders
+            that language without writing the cookie, so the admin's own language is left alone. A
+            new, unsaved row says "save as draft first". Impact stats, Key facts and Values also
+            keep a small instant preview drawn in the admin, because those change with every
+            keystroke.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="budget">
+        <h3>The JavaScript budget <span class="mr" lang="mr">JavaScript चा हिशोब</span></h3>
+        <p class="sub">
+          Spent where it earns its place, and measured from the build rather than estimated.
+        </p>
+
+        <h4 class="minor">The public site</h4>
+        <ul class="rows">
+          <li>
+            <span class="k">Bundles</span
+            ><span class="v"
+              >None, on any page. The mobile menu is a native disclosure widget, the photo viewer
+              and the news story view are CSS reacting to the address bar, and the language toggle
+              is a link — all keyboard- and screen-reader-correct for free.</span
+            >
+          </li>
+          <li>
+            <span class="k">Home · 468 B</span
+            ><span class="v"
+              >Inline, for the impact figures counting up — and only when there are figures to
+              count. The framework version of the same effect costs 184 KB.</span
+            >
+          </li>
+          <li>
+            <span class="k">News · 334 B</span
+            ><span class="v"
+              >Inline, only while a story is open: it reveals a "Share" button where the phone can
+              share or copy. Without it, the WhatsApp, Facebook and plain links remain.</span
+            >
+          </li>
+          <li>
+            <span class="k">Filters</span
+            ><span class="v"
+              >One <code>onchange</code> attribute on each filter form, so a dropdown applies when
+              picked. With scripting off, the Apply button does the same.</span
+            >
+          </li>
+          <li>
+            <span class="k">Cloudflare's</span
+            ><span class="v"
+              >The Turnstile check on the contact and volunteer forms, and the cookieless analytics
+              beacon — both loaded deferred, neither on the admin.</span
+            >
+          </li>
+        </ul>
+
+        <h4 class="minor">The admin, behind the login</h4>
+        <ul class="rows">
+          <li>
+            <span class="k">First load</span
+            ><span class="v"
+              >504 KB (143 KB compressed): the React runtime 184 KB, Astro's integration 8 KB, the
+              tab shell 41 KB, and the shared forms-and-library chunk 270 KB.</span
+            >
+          </li>
+          <li>
+            <span class="k">Body editor</span
+            ><span class="v"
+              >405 KB (126 KB compressed) more, fetched only when a rich-text field opens, so the
+              twenty tabs without one never carry it.</span
+            >
+          </li>
+          <li>
+            <span class="k">Preview script</span
+            ><span class="v"
+              >Inside the preview frame only, and only for a signed-in writer.</span
+            >
+          </li>
+        </ul>
         <div class="note">
           <p>
-            <strong>The admin pays what the public site does not.</strong> It costs about 447 KB of
-            JavaScript on first load — a deliberate trade, since it sits behind a login, is used by a
-            handful of staff on desktops, and caches after the first visit. It is measured from the
-            build output on every change rather than estimated.
+            <strong>The admin pays what the public site does not.</strong> It sits behind a login,
+            is used by a handful of staff, and caches after the first visit, so its size is a
+            deliberate trade. Every change to it is measured off the build, with and without the
+            change, and the difference is written down.
           </p>
         </div>
+      </section>
+
+      <section id="checks">
+        <h3>How it stays honest <span class="mr" lang="mr">तपासण्या</span></h3>
+        <p class="sub">
+          The checks that run without anyone remembering to run them, and the habits behind the
+          rest.
+        </p>
+        <ul class="rows wide">
+          <li>
+            <span class="k">On every push</span
+            ><span class="v"
+              >Type-check, format check, build, then a search of the built output for six shapes of
+              leaked key. Any one failing stops the deploy.</span
+            >
+          </li>
+          <li>
+            <span class="k">/api/health</span
+            ><span class="v"
+              >Nine checks — database, sign-in, languages, content, media, schema, forms, AI and
+              body photographs — each written so that it can actually fail. A missing optional key
+              is a warning, not an outage, so the check never gets deleted for blocking a
+              deploy.</span
+            >
+          </li>
+          <li>
+            <span class="k">npm run probe:rls</span
+            ><span class="v"
+              >Signs in as nobody and asserts what can and cannot be read, table by table, against
+              the real database — including that drafts, inboxes and the AI log stay
+              invisible.</span
+            >
+          </li>
+          <li>
+            <span class="k">Every migration</span
+            ><span class="v"
+              >Run first inside a transaction that is thrown away, with checks under simulated
+              roles; then a dry run that must list only that file; then applied. The recorded
+              history matches production, <code>0001</code>–<code>0018</code>.</span
+            >
+          </li>
+          <li>
+            <span class="k">On the real runtime</span
+            ><span class="v"
+              >Server changes are exercised under workerd with <code>npm run preview</code>, not
+              only under Node — and anything visual is checked in a screenshot, because a passing
+              build once shipped an invisible home-page heading.</span
+            >
+          </li>
+        </ul>
       </section>
     </div>
 
@@ -1416,22 +2328,26 @@
         <h3>Where these facts come from</h3>
         <p>
           Nothing on this page was written from memory. Each claim was read out of the file that owns
-          it:
+          it, in the site's repo:
         </p>
         <ul>
-          <li><code>src/pages/</code> — the route list and what each page renders</li>
-          <li><code>src/lib/admin/schema.ts</code> — the sixteen admin tabs and their fields</li>
-          <li><code>supabase/migrations/0001_schema.sql</code> — the tables and the access policies</li>
-          <li><code>src/styles/global.css</code> — the design tokens copied into this file, and the font strategy</li>
-          <li><code>package.json</code>, <code>astro.config.mjs</code> — versions and the environment contract</li>
-          <li><code>status.md</code> — the measured byte counts, taken from a browser's network panel rather than estimated</li>
+          <li><code>src/pages/</code>, <code>src/lib/nav.ts</code>, <code>src/lib/seo.ts</code> — the routes, the header and footer, and the sitemap</li>
+          <li><code>src/lib/admin/schema.ts</code> — the twenty-three admin tabs, their fields, and which ones the AI may rewrite</li>
+          <li><code>src/lib/admin/media.ts</code> — every media reference, and the "Used in" line built from them</li>
+          <li><code>src/pages/api/admin/ai.ts</code>, <code>src/lib/ai/</code> — the AI endpoint, its tasks, providers and checks</li>
+          <li><code>src/middleware.ts</code>, <code>src/lib/preview.ts</code> — the admin gate and the live preview</li>
+          <li><code>supabase/migrations/0001</code>–<code>0018</code> — the tables, the access policies and the address checks</li>
+          <li><code>src/styles/global.css</code> — the design tokens copied into this file</li>
+          <li><code>package.json</code>, <code>.github/workflows/ci.yml</code> — versions and the CI steps</li>
+          <li><code>dist/client/_astro/</code> — the admin byte counts, from a build on 30 September 2026</li>
+          <li><code>CHANGELOG.md</code>, <code>status.md</code>, <code>dev-docs/yung-foundation-ai-features-plan.md</code> — the measured public byte counts, and why each piece is the way it is</li>
         </ul>
         <p style="margin-top: 18px">
           <strong style="color: var(--gold-soft)">This page is maintained by hand.</strong> Nothing
-          generates it and nothing will warn you when it drifts. Add a route, an admin tab or a
-          table, and update it here in the same change. It describes the site as built at v0.5.0 on
-          7 August 2026; for what is deployed and what is still open, read
-          <code>status.md</code>.
+          generates it and nothing will warn you when it drifts. Add a route, an admin tab, a table
+          or an AI task, and update it here in the same change. It describes the site as built on
+          30 September 2026, with migrations <code>0001</code>–<code>0018</code> applied; for what
+          is deployed and what is still open, read <code>status.md</code>.
         </p>
         <p>
           The Marathi headings on this page were written for this document and have not been
