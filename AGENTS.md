@@ -90,6 +90,10 @@ presentations/
                                    scrollytelling piece — the MET model, the
                                    320M-pixel scroll, the tiers, and what
                                    deriving the numbers caught
+  yung-foundation-ai.html         Drafts, Not Decisions: the 23-slide illustrated
+                                   deck on the AI added to the Yung Foundation
+                                   admin — use cases, the provider layer, the
+                                   code checks, keys and privacy (inline SVG only)
 developer-infographic/
   index.html                      "A Developer, Measured" — scroll-through
                                    infographic (career gantt, rated stack,

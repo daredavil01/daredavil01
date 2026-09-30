@@ -1,0 +1,1775 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A 23-slide illustrated deck on the AI features added to the Yung Foundation admin in September 2026: translation both ways, writing help, photo descriptions, gallery and news from the library, a body editor with photos, WhatsApp sharing, map links, a live preview, and how the provider layer, checks and keys work.">
+<title>Drafts, Not Decisions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700;800&family=Noto+Serif+Devanagari:wght@600&family=Caveat:wght@500;700&display=swap">
+
+<script>
+// Runs before first paint: a stored theme must be on <html> already, or the
+// deck flashes the system theme before switching.
+(function(){
+  try{
+    var t = localStorage.getItem('deck-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ /* private mode, blocked storage — fall through to system */ }
+})();
+</script>
+
+<style>
+/* ---------------------------------------------------------------------------
+ * Tokens lifted from the Yung Foundation site itself (src/styles/global.css):
+ * forest, terracotta and gold on warm paper, Public Sans with a Devanagari
+ * serif — so the deck and the admin it describes look like one product.
+ * Dark mode is the site's forest band. The --i-* tokens colour the drawings.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#f4efe1; --surface:#ebe4d2; --raised:#fbf8f1; --sunk:#e4dcc7;
+  --rule:color-mix(in srgb,#17342a 15%,transparent);
+  --text:#17342a; --prose:#3b3a33; --muted:#5f5a4f; --faint:#8a8274;
+  --accent:#b24a24; --accent-text:#9c3f1e; --accent-soft:#f5dccf;
+  --forest:#1f4536; --forest-text:#1f4536; --forest-soft:#dde8df;
+  --gold-soft:#f4d68a;
+  --ok:#23845a; --bad:#c9542c;
+  --shadow:0 3px 10px color-mix(in srgb,#17342a 14%,transparent);
+  --focus:#b24a24;
+
+  --i-paper:#fbf8f1; --i-ink:#2f3a33; --i-body:#fffdf7; --i-screen:#2f3a33; --i-eye:#fbf8f1;
+  --i-acc:#b24a24; --i-acc-soft:#f2c8b3; --i-acc-text:#9c3f1e; --i-sec:#1f4536; --i-sec-soft:#cfe0d5; --i-gold:#f4d68a;
+
+  --font-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mr:"Noto Serif Devanagari",serif;
+  --font-hand:"Caveat",cursive;
+  --font-mono:ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#132a22; --surface:#17342a; --raised:#1f4536; --sunk:#0f231c;
+    --rule:color-mix(in srgb,#f4efe1 16%,transparent);
+    --text:#f4efe1; --prose:#e7e0cf; --muted:#bcc6bd; --faint:#94a198;
+    --accent:#e0865a; --accent-text:#f0a27c; --accent-soft:#5a2716;
+    --forest:#9ccbb0; --forest-text:#b7dcc6; --forest-soft:#20463a;
+    --gold-soft:#6b5418;
+    --ok:#4fa877; --bad:#d4643a;
+    --shadow:0 3px 10px rgba(0,0,0,.45);
+    --focus:#f0a27c;
+    --i-paper:#17342a; --i-ink:#f1ead6; --i-body:#20463a; --i-screen:#0c1f18; --i-eye:#f1ead6;
+    --i-acc:#e0865a; --i-acc-soft:#7a3419; --i-acc-text:#f0a27c; --i-sec:#9ccbb0; --i-sec-soft:#2c5c48; --i-gold:#6b5418;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#132a22; --surface:#17342a; --raised:#1f4536; --sunk:#0f231c;
+  --rule:color-mix(in srgb,#f4efe1 16%,transparent);
+  --text:#f4efe1; --prose:#e7e0cf; --muted:#bcc6bd; --faint:#94a198;
+  --accent:#e0865a; --accent-text:#f0a27c; --accent-soft:#5a2716;
+  --forest:#9ccbb0; --forest-text:#b7dcc6; --forest-soft:#20463a;
+  --gold-soft:#6b5418;
+  --ok:#4fa877; --bad:#d4643a;
+  --shadow:0 3px 10px rgba(0,0,0,.45);
+  --focus:#f0a27c;
+  --i-paper:#17342a; --i-ink:#f1ead6; --i-body:#20463a; --i-screen:#0c1f18; --i-eye:#f1ead6;
+  --i-acc:#e0865a; --i-acc-soft:#7a3419; --i-acc-text:#f0a27c; --i-sec:#9ccbb0; --i-sec-soft:#2c5c48; --i-gold:#6b5418;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--paper);color:var(--text);
+  font-family:var(--font-body);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+:lang(mr){font-family:var(--font-mr);}
+span:lang(mr){line-height:1;}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+a{color:var(--accent-text);text-underline-offset:3px;}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  height:100dvh;scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100%;width:100%;height:100dvh;scroll-snap-align:start;
+  display:flex;align-items:center;justify-content:center;
+  padding:68px 28px 96px;overflow-y:auto;
+}
+/* Tall slides must start at the top, not be clipped above it. */
+.slide > .inner{margin:auto 0;}
+.inner{width:100%;max-width:1140px;}
+
+.eyebrow{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-size:12px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:14px;
+}
+.eyebrow .num{
+  color:var(--accent-text);background:var(--accent-soft);
+  border-radius:999px;padding:2px 10px;letter-spacing:.06em;
+}
+.eyebrow .tag{color:var(--forest-text);background:var(--forest-soft);border-radius:999px;padding:2px 10px;letter-spacing:.06em;}
+h1,h2{font-weight:800;letter-spacing:-.025em;margin:0 0 14px;color:var(--text);}
+h1{font-size:clamp(42px,6.2vw,76px);line-height:1.02;}
+h2{font-size:clamp(27px,3.4vw,42px);line-height:1.1;}
+h3{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
+p{margin:0 0 12px;color:var(--prose);}
+.lead{font-size:clamp(16px,1.6vw,18.5px);color:var(--muted);max-width:66ch;}
+.note{font-size:13.5px;color:var(--muted);}
+strong{color:var(--text);font-weight:700;}
+code{
+  font-family:var(--font-mono);font-size:.84em;background:var(--sunk);
+  border-radius:6px;padding:1px 6px;color:var(--text);
+}
+pre{
+  font-family:var(--font-mono);font-size:12.5px;line-height:1.6;
+  background:var(--raised);border:1px solid var(--rule);border-radius:14px;
+  padding:12px 14px;overflow-x:auto;margin:0;color:var(--prose);
+}
+pre .k{color:var(--accent-text);}
+pre .s{color:var(--forest-text);}
+
+/* --- Layout helpers ------------------------------------------------------ */
+.split{display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:center;}
+.split.wide-right{grid-template-columns:.85fr 1.15fr;}
+/* Grid items default to min-width:auto, so a wide table would stretch the column past the screen. */
+.split > *,.two > *{min-width:0;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.stack > * + *{margin-top:14px;}
+@media (max-width:900px){
+  .split,.split.wide-right,.two,.three{grid-template-columns:1fr;gap:22px;}
+  .four{grid-template-columns:1fr 1fr;}
+  .slide{padding:64px 16px 92px;}
+}
+
+.panel{background:var(--surface);border-radius:20px;padding:16px 20px;}
+.panel.raised{background:var(--raised);border:1px solid var(--rule);}
+.panel p:last-child{margin-bottom:0;}
+.panel h4{font-size:16px;font-weight:700;margin:0 0 6px;color:var(--text);}
+.panel p{font-size:14.5px;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media (max-width:600px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--surface);border-radius:18px;padding:14px 16px;}
+.stat .v{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1;color:var(--text);}
+.stat .k{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+
+ul.plain{list-style:none;margin:0;padding:0;}
+ul.plain li{position:relative;padding-left:20px;margin-bottom:9px;color:var(--prose);font-size:15px;}
+ul.plain li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:50%;background:var(--accent);}
+ul.plain li:last-child{margin-bottom:0;}
+ul.plain.tight li{font-size:14.5px;margin-bottom:7px;}
+
+.flag{
+  border-left:3px solid var(--accent);background:var(--raised);
+  border-radius:0 14px 14px 0;padding:12px 16px;margin-top:16px;
+}
+.flag p{margin:0;font-size:14.5px;color:var(--prose);}
+.flag.forest{border-left-color:var(--forest);}
+
+.pill{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 9px;letter-spacing:.02em;}
+.pill.ai{background:var(--accent-soft);color:var(--accent-text);}
+.pill.no{background:var(--forest-soft);color:var(--forest-text);}
+
+/* Title */
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.brand .mark{width:48px;height:48px;border-radius:12px;background:#1f4536;color:#f4d68a;display:grid;place-items:center;font-family:var(--font-mr);font-size:24px;line-height:1;}
+.brand span.name{font-size:20px;font-weight:800;letter-spacing:-.01em;}
+.title-meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:22px;font-size:13.5px;color:var(--muted);}
+
+/* The rule: a flow of chips */
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:18px;}
+.flow span{background:var(--raised);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;font-size:13.5px;color:var(--prose);}
+.flow span.hot{background:var(--accent-soft);border-color:transparent;color:var(--accent-text);font-weight:700;}
+.flow span.cool{background:var(--forest-soft);border-color:transparent;color:var(--forest-text);font-weight:700;}
+.flow i{font-style:normal;color:var(--faint);}
+.rule-card{background:var(--surface);border-radius:20px;padding:14px 16px;}
+.rule-card b{display:block;font-size:30px;font-weight:800;color:var(--accent);line-height:1;margin-bottom:8px;}
+.rule-card h4{font-size:15.5px;margin:0 0 5px;font-weight:700;}
+.rule-card p{font-size:13.5px;margin:0;}
+
+/* Feature map */
+.fmap{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:8px;}
+.fcol{background:var(--surface);border-radius:20px;padding:14px;}
+.fcol h3{margin-bottom:10px;}
+.fcol ol{list-style:none;margin:0;padding:0;counter-reset:f;}
+.fcol li{background:var(--raised);border:1px solid var(--rule);border-radius:12px;padding:8px 10px;margin-bottom:8px;font-size:13.5px;line-height:1.35;color:var(--prose);}
+.fcol li:last-child{margin-bottom:0;}
+.fcol li .pill{margin-top:5px;}
+@media (max-width:1000px){.fmap{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:520px){.fmap{grid-template-columns:1fr;}}
+
+/* Tables */
+table.t{width:100%;border-collapse:collapse;font-size:13.5px;}
+table.t th,table.t td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--prose);}
+table.t th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+table.t td:first-child{font-weight:700;color:var(--text);white-space:nowrap;}
+.tw{overflow-x:auto;background:var(--raised);border:1px solid var(--rule);border-radius:16px;padding:6px 8px;}
+
+/* Guard grid */
+.guard{background:var(--surface);border-radius:16px;padding:12px 14px;}
+.guard h4{font-size:14.5px;margin:0 0 4px;font-weight:700;}
+.guard p{font-size:13px;margin:0;}
+.guard .ex{font-family:var(--font-mono);font-size:12px;color:var(--accent-text);display:block;margin-top:6px;}
+
+/* Chart */
+.chart{background:var(--raised);border:1px solid var(--rule);border-radius:18px;padding:14px 16px;}
+.chart h4{font-size:14.5px;margin:0 0 2px;font-weight:700;}
+.chart .sub{font-size:12.5px;color:var(--muted);margin:0 0 8px;}
+.legend{display:flex;gap:16px;font-size:12.5px;color:var(--prose);margin:4px 0 6px;flex-wrap:wrap;}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+.c-ok{fill:var(--ok);}
+.c-bad{fill:var(--bad);}
+.c-hatch{fill:url(#hatch);}
+.c-lab{font-family:var(--font-body);font-size:13px;fill:var(--text);font-weight:600;}
+.c-val{font-family:var(--font-body);font-size:12.5px;fill:var(--muted);}
+.c-axis{stroke:var(--rule);stroke-width:1;}
+.chart svg rect.hit{fill:transparent;}
+.chart svg g.bar:hover rect:not(.hit){opacity:.85;}
+details.tv{margin-top:8px;font-size:13px;color:var(--muted);}
+details.tv summary{cursor:pointer;}
+
+/* --- Illustrations: illo methodology, drawn by hand ------------------------
+ * Blip, the screen-faced robot, performs each idea. Light body and ink
+ * outline, a charcoal screen with two dot eyes, one antenna whose ball carries
+ * the accent. The accent otherwise marks one or two things per scene.
+ * ------------------------------------------------------------------------- */
+.illo{margin:0;border-radius:22px;overflow:hidden;background:var(--i-paper);border:1px solid var(--rule);}
+.illo svg{display:block;width:100%;height:auto;}
+.il-bg{fill:var(--i-paper)}
+.il-w{fill:var(--i-body);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.il-p{fill:var(--i-paper);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.il-a{fill:var(--i-acc);stroke:var(--i-ink);stroke-width:3.5;stroke-linejoin:round}
+.il-as{fill:var(--i-acc-soft);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round}
+.il-ss{fill:var(--i-sec-soft);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round}
+.il-gs{fill:var(--i-gold);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round}
+.il-k{fill:none;stroke:var(--i-ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.il-k3{fill:none;stroke:var(--i-ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.il-thin{fill:none;stroke:var(--i-ink);stroke-width:2.5;stroke-linecap:round;opacity:.55}
+.il-ka{fill:none;stroke:var(--i-acc);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.il-dash{stroke-dasharray:10 10}
+.il-scr{fill:var(--i-screen)}
+.il-eye{fill:var(--i-eye)}
+.il-off{fill:var(--i-acc-soft);opacity:.75}
+.il-mark{fill:var(--i-ink)}
+.lo{fill:none;stroke:var(--i-ink);stroke-width:17;stroke-linecap:round;stroke-linejoin:round}
+.li{fill:none;stroke:var(--i-body);stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.il-t{font-family:var(--font-hand);font-weight:600;fill:var(--i-ink)}
+.il-ta{font-family:var(--font-hand);font-weight:700;fill:var(--i-acc-text)}
+.il-mr{font-family:var(--font-mr);font-weight:600;fill:var(--i-ink)}
+.il-m{font-family:var(--font-mono);font-size:15px;fill:var(--i-ink)}
+.il-ma{font-family:var(--font-mono);font-size:15px;fill:var(--i-acc-text)}
+.il-grain{pointer-events:none}
+:root[data-theme="dark"] .il-grain{opacity:.45}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .il-grain{opacity:.45}}
+
+/* --- Home link + rail ---------------------------------------------------- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 18px;pointer-events:none;
+}
+.topbar > *{pointer-events:auto;}
+.home,.theme{
+  font-family:var(--font-body);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;
+  background:var(--raised);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;
+}
+.home:hover,.theme:hover{color:var(--accent-text);border-color:var(--accent);}
+.theme{display:inline-flex;align-items:center;gap:7px;cursor:pointer;line-height:1;}
+.theme .ico{font-size:13px;line-height:1;}
+
+.rail{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;background:var(--surface);border-top:1px solid var(--rule);
+}
+.rail button{
+  font:inherit;font-size:15px;line-height:1;cursor:pointer;
+  background:var(--raised);color:var(--prose);
+  border:1px solid var(--rule);border-radius:999px;padding:7px 13px;
+}
+.rail button:hover:not(:disabled){border-color:var(--accent);color:var(--accent-text);}
+.rail button:disabled{opacity:.35;cursor:default;}
+.ticks{display:flex;gap:5px;flex:1;overflow:hidden;}
+.ticks button{flex:1;min-width:0;height:6px;padding:0;border-radius:999px;background:var(--sunk);border:none;}
+.ticks button[aria-current="true"]{background:var(--accent);}
+.counter{font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
+
+@media (max-width:760px){
+  .topbar{background:var(--paper);border-bottom:1px solid var(--rule);padding:9px 14px;}
+  .home,.theme{border-color:transparent;background:transparent;padding:4px 6px;}
+}
+@media (prefers-reduced-motion: reduce){.track{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+
+<!-- Blip, the grain, the arrowhead, a photo and the chart hatch: defined once,
+     reused by every drawing. Shapes carry no colour of their own, so each
+     <use> paints them by class. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="blip-torso" d="M-28,-40 Q-28,-54 -14,-54 L14,-54 Q28,-54 28,-40 L26,-18 Q25,-12 22,-10 L22,-4 Q22,0 18,0 L10,0 Q6,0 6,-4 L6,-10 L-6,-10 L-6,-4 Q-6,0 -10,0 L-18,0 Q-22,0 -22,-4 L-22,-10 Q-25,-12 -26,-18 Z"/>
+    <rect id="blip-skull" x="-58" y="-150" width="116" height="98" rx="30"/>
+    <g id="blip-shadow" class="il-off">
+      <use href="#blip-torso" transform="translate(6 4)"/>
+      <use href="#blip-skull" transform="translate(6 4)"/>
+    </g>
+    <g id="blip">
+      <use href="#blip-torso" class="il-w"/>
+      <line class="il-k" x1="0" y1="-150" x2="0" y2="-172"/>
+      <circle class="il-a" cx="0" cy="-181" r="10"/>
+      <use href="#blip-skull" class="il-w"/>
+      <rect class="il-scr" x="-42" y="-136" width="84" height="70" rx="20"/>
+    </g>
+    <g id="blip-eyes" class="il-eye">
+      <ellipse cx="-15" cy="0" rx="5" ry="7"/><ellipse cx="15" cy="0" rx="5" ry="7"/>
+    </g>
+    <!-- A photograph from the library, drawn as the Satpuda: two ridges and a sun. 100×72. -->
+    <g id="photo">
+      <rect class="il-p" x="0" y="0" width="100" height="72" rx="6"/>
+      <circle class="il-gs" cx="72" cy="22" r="9" style="stroke-width:3"/>
+      <path class="il-ss" style="stroke-width:3" d="M3,62 L30,34 L46,48 L64,30 L97,62 L97,66 Q97,69 94,69 L6,69 Q3,69 3,66 Z"/>
+    </g>
+    <filter id="il-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.3 0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0.12 0"/>
+    </filter>
+    <marker id="il-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="il-mark"/>
+    </marker>
+    <!-- Texture for the chart's "failed" segments, so they are told apart without colour. -->
+    <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" class="c-bad"/>
+      <line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--raised);stroke-width:2.4"/>
+    </pattern>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <a class="home" data-island-return href="../index.html#commons/yung-foundation-ai-deck">&larr; Home</a>
+  <button class="theme" type="button" id="theme" aria-label="Theme: follow system. Activate to change.">
+    <span class="ico" id="theme-ico" aria-hidden="true">&#9681;</span><span id="theme-lab">Auto</span>
+  </button>
+</div>
+
+<div class="track" id="track" tabindex="-1">
+
+  <!-- 01 · Title ----------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 1: Title">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="brand">
+            <span class="mark" lang="mr" aria-hidden="true">यं</span>
+            <span class="name">Yung Foundation &middot; admin</span>
+          </div>
+          <div class="eyebrow"><span class="num">01</span><span>The deck &middot; September 2026</span></div>
+          <h1>Drafts, not decisions</h1>
+          <p class="lead">The Yung Foundation&rsquo;s admin is bilingual: every title, summary and caption is written twice, Marathi first. In September 2026 it gained AI help &mdash; translation both ways, writing help, photo descriptions, gallery and news suggestions from the photo library &mdash; plus a real body editor, WhatsApp sharing, map links and a live preview. One rule sits under all of it: the AI drafts, an editor decides.</p>
+          <div class="title-meta">
+            <span>Astro 7 &middot; Supabase &middot; Cloudflare Workers</span>
+            <span>Gemini &middot; Anthropic &middot; AgentRouter</span>
+            <span>6 deploys + 2 follow-ups &middot; migrations 0014&ndash;0017</span>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip, a small robot with a screen for a face, leans in and pushes a large card marked draft, in Marathi and English, into a tray labelled for review. On the far side stands a big rubber stamp labelled Save, with a note: a person presses this.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="400" x2="776" y2="400"/>
+            <text class="il-t" x="60" y="92" font-size="34">the AI drafts&hellip;</text>
+            <text class="il-t" x="560" y="200" font-size="30">&hellip;a person saves</text>
+            <path class="il-thin" d="M650,212 Q684,236 694,272"/>
+            <!-- the card, going into the tray -->
+            <g transform="translate(528 292) rotate(-7)">
+              <rect class="il-w" x="-78" y="-66" width="156" height="116" rx="8"/>
+              <text class="il-mr" x="-60" y="-30" font-size="22" lang="mr">मसुदा</text>
+              <text class="il-ta" x="10" y="-30" font-size="26">draft</text>
+              <g class="il-thin"><line x1="-60" y1="-6" x2="58" y2="-6"/><line x1="-60" y1="14" x2="40" y2="14"/><line x1="-60" y1="34" x2="52" y2="34"/></g>
+            </g>
+            <!-- the tray -->
+            <path class="il-k" d="M444,344 L452,332 L628,332 L636,344"/>
+            <rect class="il-w" x="436" y="342" width="208" height="58" rx="6"/>
+            <text class="il-t" x="486" y="380" font-size="26">for review</text>
+            <!-- the stamp: the editor's -->
+            <rect class="il-as" x="656" y="370" width="92" height="30" rx="6"/>
+            <text class="il-t" x="680" y="393" font-size="22">Save</text>
+            <rect class="il-w" x="690" y="318" width="24" height="54" rx="4"/>
+            <circle class="il-w" cx="702" cy="304" r="19"/>
+            <!-- Blip leans in and pushes -->
+            <path class="il-thin" d="M196,300 L236,300 M186,326 L230,326 M204,352 L240,352"/>
+            <g transform="translate(350 400) rotate(7) scale(1.15)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-44 L74,-97"/><path class="li" d="M18,-44 L74,-97"/>
+              <path class="lo" d="M10,-34 L81,-71"/><path class="li" d="M10,-34 L81,-71"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(8 -101)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · The problem ----------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 2: The problem">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">02</span><span>The problem</span></div>
+          <h2>Every field, twice</h2>
+          <p class="lead">The site speaks Marathi first, to readers in the Satpuda hills around Dhadgaon and Shirpur, and English second. Almost every text field in the admin is a <span lang="mr">मराठी</span> / English pair, and a small team fills them in after field work, often from a phone.</p>
+          <div class="stats" style="margin-top:18px;">
+            <div class="stat"><div class="v">23</div><div class="k">Admin tabs</div></div>
+            <div class="stat"><div class="v">149</div><div class="k">Library files</div></div>
+            <div class="stat"><div class="v">2</div><div class="k">Languages a field</div></div>
+            <div class="stat"><div class="v">0 B</div><div class="k">Public JavaScript</div></div>
+          </div>
+          <div class="flag"><p><strong>What piled up:</strong> English halves left empty, photos with no alt text (a screen reader gets nothing), newspaper cuttings on someone&rsquo;s phone waiting to become news items, and a body editor that could not put a photo between two paragraphs.</p></div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Two tall forms stand side by side. The left one, headed Marathi, has every box filled with lines of text. The right one, headed English, has empty boxes and a blinking cursor. Blip stands in front of them and looks up at the empty one. Beside them lies a small pile of photographs tagged alt text: none.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="400" x2="776" y2="400"/>
+            <text class="il-ta" x="40" y="62" font-size="34">every field, twice</text>
+            <!-- Marathi form, full -->
+            <rect class="il-w" x="150" y="92" width="220" height="308" rx="10"/>
+            <text class="il-mr" x="172" y="130" font-size="24" lang="mr">मराठी</text>
+            <g>
+              <rect class="il-p" x="166" y="148" width="188" height="40" rx="6"/>
+              <rect class="il-p" x="166" y="200" width="188" height="40" rx="6"/>
+              <rect class="il-p" x="166" y="252" width="188" height="60" rx="6"/>
+              <rect class="il-p" x="166" y="324" width="188" height="40" rx="6"/>
+            </g>
+            <g class="il-thin"><line x1="178" y1="168" x2="316" y2="168"/><line x1="178" y1="220" x2="300" y2="220"/><line x1="178" y1="272" x2="336" y2="272"/><line x1="178" y1="292" x2="290" y2="292"/><line x1="178" y1="344" x2="320" y2="344"/></g>
+            <!-- English form, empty -->
+            <rect class="il-w" x="430" y="92" width="220" height="308" rx="10"/>
+            <text class="il-t" x="452" y="132" font-size="30">English</text>
+            <rect class="il-p" x="446" y="148" width="188" height="40" rx="6"/>
+            <rect class="il-p" x="446" y="200" width="188" height="40" rx="6"/>
+            <rect class="il-p" x="446" y="252" width="188" height="60" rx="6"/>
+            <rect class="il-p" x="446" y="324" width="188" height="40" rx="6"/>
+            <line class="il-ka" x1="458" y1="156" x2="458" y2="180"/>
+            <!-- photos with no alt text -->
+            <g transform="translate(676 318) rotate(-8) scale(.62)"><use href="#photo"/></g>
+            <g transform="translate(690 330) rotate(5) scale(.62)"><use href="#photo"/></g>
+            <text class="il-t" x="664" y="300" font-size="21">alt text: &mdash;</text>
+            <!-- Blip looks up at the empty half -->
+            <g transform="translate(400 400) scale(.86)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-22,-42 L-80,-74"/><path class="li" d="M-22,-42 L-80,-74"/>
+              <path class="lo" d="M22,-42 L80,-74"/><path class="li" d="M22,-42 L80,-74"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(10 -106)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · The rule -------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 3: The rule">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">03</span><span>The rule</span></div>
+      <h2>The AI drafts. An editor decides.</h2>
+      <p class="lead">A foundation&rsquo;s site makes claims about real people and real numbers, and donors rely on them. So no AI result reaches the public site on its own. Five rules, each enforced in code rather than left to good behaviour:</p>
+      <div class="three" style="grid-template-columns:repeat(5,1fr);margin-top:6px;" id="rules">
+        <div class="rule-card"><b>1</b><h4>It lands unsaved</h4><p>Every result goes into the form, not the database, with one level of Undo. A reload throws it away.</p></div>
+        <div class="rule-card"><b>2</b><h4>Bulk means a review list</h4><p>Fifty photo descriptions or twelve clippings come back as a list with ticks. Nothing is written until it is ticked and saved.</p></div>
+        <div class="rule-card"><b>3</b><h4>It creates drafts only</h4><p>Suggested categories, albums, gallery photos and news items are created unpublished.</p></div>
+        <div class="rule-card"><b>4</b><h4>It must not invent</h4><p>The prompt forbids new facts, figures, names, dates, places and quotes. Code checks the ones a model writes anyway.</p></div>
+        <div class="rule-card"><b>5</b><h4>Some words stay human</h4><p>Quotes and figures are translate-only. Public inbox messages never reach a provider.</p></div>
+      </div>
+      <div class="flow" aria-label="The path of an AI result">
+        <span class="hot">AI drafts</span><i>&rarr;</i>
+        <span>unsaved, in the form</span><i>&rarr;</i>
+        <span>editor reads and fixes</span><i>&rarr;</i>
+        <span class="cool">Save</span><i>&rarr;</i>
+        <span>still hidden until published</span>
+      </div>
+    </div>
+  </section>
+  <style>@media (max-width:1000px){#rules{grid-template-columns:1fr 1fr !important;}}@media (max-width:520px){#rules{grid-template-columns:1fr !important;}}</style>
+
+  <!-- 04 · The map --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 4: The map">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">04</span><span>The map</span></div>
+      <h2>Fourteen tools, five jobs</h2>
+      <p class="lead">Ten use a model, four don&rsquo;t. They all shipped together because each one leans on another: the gallery suggestions read the photo descriptions, the editor&rsquo;s photos need the preview, and translation has to keep the editor&rsquo;s photos in place.</p>
+      <div class="fmap">
+        <div class="fcol"><h3>Writing</h3><ol>
+          <li>Translate both ways<br><span class="pill ai">AI</span></li>
+          <li>Write, expand, shorten<br><span class="pill ai">AI</span></li>
+          <li>Fill empty fields<br><span class="pill ai">AI</span></li>
+        </ol></div>
+        <div class="fcol"><h3>Photos</h3><ol>
+          <li>Describe a photo<br><span class="pill ai">AI</span></li>
+          <li>Describe fifty at once<br><span class="pill ai">AI</span></li>
+          <li>Several sections a photo<br><span class="pill no">no AI</span></li>
+        </ol></div>
+        <div class="fcol"><h3>Gallery &amp; news</h3><ol>
+          <li>Gallery from the library<br><span class="pill ai">AI</span></li>
+          <li>Read a news clipping<br><span class="pill ai">AI</span></li>
+          <li>News from the library<br><span class="pill ai">AI</span></li>
+        </ol></div>
+        <div class="fcol"><h3>Publishing</h3><ol>
+          <li>Editor with photos<br><span class="pill no">no AI</span></li>
+          <li>Share on WhatsApp<br><span class="pill ai">AI text</span></li>
+          <li>Google Maps link<br><span class="pill no">no AI</span></li>
+          <li>Appears on + live preview<br><span class="pill no">no AI</span></li>
+        </ol></div>
+        <div class="fcol"><h3>Control</h3><ol>
+          <li>The AI tab: model, fallback, prices, usage<br><span class="pill ai">AI</span></li>
+        </ol></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · Translate ------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 5: Translation both ways">
+    <div class="inner">
+      <div class="split wide-right">
+        <div>
+          <div class="eyebrow"><span class="num">05</span><span>Writing</span><span class="tag">AI</span></div>
+          <h2>Translation, both directions</h2>
+          <p class="lead">Under every bilingual field: <strong>Draft English</strong> once the Marathi half has text, <strong>Draft Marathi</strong> once the English half does. Rich bodies translate as HTML and keep their photos where they were.</p>
+          <h3 style="margin-top:18px;">Where it gets used</h3>
+          <ul class="plain">
+            <li>A programme written up in Marathi after a camp: the English half in one click, then corrected.</li>
+            <li>A board member&rsquo;s English note for the About page: a Marathi draft to fix, not a blank box to fill.</li>
+            <li>Alt text and captions in the photo library: the same two buttons.</li>
+          </ul>
+          <div class="flag"><p>One <strong>Undo</strong> puts back the value from before the last AI change. Nothing is saved until the editor presses Save.</p></div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A hand-drawn bilingual field. The Marathi box reads: an annual youth dialogue and leadership camp. An arrow leads to the English box, which holds the same sentence in English and a tag saying AI draft. Below, Blip stands on a big floor pedal labelled Draft English; beside it are pedals labelled Draft Marathi and Undo.">
+            <rect class="il-bg" width="800" height="450"/>
+            <text class="il-m" x="40" y="56" font-size="13" letter-spacing="2">MARATHI</text>
+            <text class="il-m" x="430" y="56" font-size="13" letter-spacing="2">ENGLISH</text>
+            <rect class="il-w" x="40" y="66" width="330" height="108" rx="10"/>
+            <text class="il-mr" x="58" y="108" font-size="21" lang="mr">वार्षिक युवा संवाद व</text>
+            <text class="il-mr" x="58" y="144" font-size="21" lang="mr">नेतृत्व शिबिर.</text>
+            <rect class="il-w" x="430" y="66" width="330" height="108" rx="10"/>
+            <text class="il-t" x="448" y="110" font-size="26">An annual youth dialogue</text>
+            <text class="il-t" x="448" y="146" font-size="26">and leadership camp.</text>
+            <rect class="il-as" x="664" y="50" width="94" height="28" rx="8"/>
+            <text class="il-t" x="678" y="71" font-size="20">AI draft</text>
+            <path class="il-k" d="M378,120 L420,120" marker-end="url(#il-arrow)"/>
+            <text class="il-t" x="430" y="216" font-size="24">one click, then read it</text>
+            <text class="il-t" x="430" y="248" font-size="21">Undo puts the old words back</text>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <!-- pedals -->
+            <path class="il-as" d="M250,410 L250,396 Q250,380 270,380 L370,380 Q390,380 390,396 L390,410 Z"/>
+            <path class="il-p" d="M450,410 L450,396 Q450,380 470,380 L570,380 Q590,380 590,396 L590,410 Z"/>
+            <path class="il-p" d="M640,410 L640,398 Q640,386 654,386 L706,386 Q720,386 720,398 L720,410 Z"/>
+            <text class="il-t" x="320" y="440" font-size="22" text-anchor="middle">Draft English</text>
+            <text class="il-t" x="520" y="440" font-size="22" text-anchor="middle">Draft Marathi</text>
+            <text class="il-t" x="680" y="440" font-size="22" text-anchor="middle">Undo</text>
+            <path class="il-thin" d="M232,392 L244,398 M234,376 L246,386 M408,392 L396,398 M406,376 L394,386"/>
+            <!-- Blip presses Draft English with its feet -->
+            <g transform="translate(320 381) scale(.8)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-20,-40 L-42,-18"/><path class="li" d="M-20,-40 L-42,-18"/>
+              <path class="lo" d="M22,-42 L76,-76"/><path class="li" d="M22,-42 L76,-76"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(9 -106)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · Writing help ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 6: Writing help and the number check">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">06</span><span>Writing</span><span class="tag">AI</span></div>
+          <h2>Write, expand, shorten, and every number checked</h2>
+          <p class="lead">&ldquo;AI writing help&rdquo; opens under each field the AI may write: <strong>Write</strong>, <strong>Expand</strong>, <strong>Shorten</strong>, and an optional one-line note (&ldquo;mention the Dhadgaon school&rdquo;). The rest of the row is the context &mdash; only the tab&rsquo;s own fields, read from the registry, so nothing else in the request can reach a provider.</p>
+          <ul class="plain tight">
+            <li>A summary too long for a home-page card: <strong>Shorten</strong>.</li>
+            <li>A one-line event description: <strong>Expand</strong>, from what the body already says.</li>
+            <li>An empty WhatsApp message for a post: <strong>Write</strong>.</li>
+          </ul>
+          <div class="flag"><p><strong>The first real run:</strong> asked about a programme running &ldquo;since 2019&rdquo;, a Flash-Lite model wrote <span lang="mr">२०१५</span> in the Marathi and 2019 in the English. Now every draft is compared with its source, and a number that isn&rsquo;t in the source is listed under the field: &ldquo;check them before saving: 2015&rdquo;. Devanagari digits become Latin digits, in code.</p></div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip stands between two cards and touches both. The left card, labelled given, says since 2019. The right card, labelled draft, shows Devanagari digits for 2015 turned into Latin 2015, circled, with a tag above: not in the source, check before saving.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-ta" x="40" y="62" font-size="32">checked against the source</text>
+            <!-- given -->
+            <rect class="il-p" x="96" y="250" width="204" height="130" rx="8"/>
+            <text class="il-t" x="114" y="278" font-size="21">given</text>
+            <text class="il-t" x="114" y="330" font-size="34">since 2019</text>
+            <!-- draft -->
+            <rect class="il-w" x="500" y="250" width="220" height="130" rx="8"/>
+            <text class="il-t" x="518" y="278" font-size="21">draft</text>
+            <text class="il-mr" x="518" y="326" font-size="24" lang="mr">२०१५</text>
+            <text class="il-t" x="576" y="326" font-size="28">&rarr;</text>
+            <text class="il-ta" x="620" y="328" font-size="32">2015</text>
+            <ellipse class="il-ka" cx="648" cy="316" rx="38" ry="24"/>
+            <text class="il-t" x="518" y="366" font-size="17">digits made Latin, in code</text>
+            <!-- the flag -->
+            <rect class="il-as" x="520" y="130" width="210" height="66" rx="10"/>
+            <text class="il-t" x="536" y="158" font-size="22">not in the source &mdash;</text>
+            <text class="il-t" x="536" y="184" font-size="22">check before saving</text>
+            <path class="il-k3" d="M640,198 L646,290"/>
+            <!-- Blip compares -->
+            <g transform="translate(400 410) scale(.95)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-20,-40 L-100,-48"/><path class="li" d="M-20,-40 L-100,-48"/>
+              <path class="lo" d="M20,-40 L100,-48"/><path class="li" d="M20,-40 L100,-48"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(10 -103)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · Fill empty fields ----------------------------------------------- -->
+  <section class="slide" aria-label="Slide 7: Fill empty fields">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">07</span><span>Writing</span><span class="tag">AI</span></div>
+          <h2>Fill the empty fields in one call</h2>
+          <p class="lead">A new programme with only a title: <strong>Fill empty fields with AI</strong> drafts the summary, body and region in both languages from what the row already says. That is the &ldquo;generate programme text&rdquo; feature, and it works the same on blog posts, events and values.</p>
+          <ul class="plain">
+            <li><strong>No text, no draft.</strong> A row with nothing in it is refused &mdash; &ldquo;write a title first&rdquo; &mdash; because a draft from nothing is invention.</li>
+            <li><strong>Only what is still empty.</strong> The reply lands in fields that are empty when it <em>arrives</em>, so anything typed while it ran wins.</li>
+            <li><strong>Undo is exact.</strong> It lists what it filled, and Undo restores exactly those fields.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A form with four fields. The title field is filled in Marathi and marked kept. The summary, body and region fields are empty and dashed. Blip walks towards the form carrying three small cards on its arms, labelled summary, body and region.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-ta" x="40" y="62" font-size="30">one call &middot; empty fields only</text>
+            <text class="il-t" x="40" y="100" font-size="22">nothing written yet? &ldquo;write a title first&rdquo;</text>
+            <!-- the form -->
+            <rect class="il-w" x="386" y="122" width="376" height="280" rx="12"/>
+            <text class="il-t" x="404" y="150" font-size="20">title</text>
+            <text class="il-t" x="660" y="150" font-size="18">yours &mdash; kept</text>
+            <rect class="il-ss" x="404" y="158" width="340" height="38" rx="6"/>
+            <text class="il-mr" x="416" y="184" font-size="18" lang="mr">वाचनालय व NEET</text>
+            <text class="il-t" x="404" y="220" font-size="20">summary</text>
+            <rect class="il-p il-dash" x="404" y="228" width="340" height="38" rx="6"/>
+            <text class="il-t" x="404" y="290" font-size="20">body</text>
+            <rect class="il-p il-dash" x="404" y="298" width="340" height="52" rx="6"/>
+            <text class="il-t" x="404" y="372" font-size="20">region</text>
+            <rect class="il-p il-dash" x="470" y="358" width="274" height="30" rx="6"/>
+            <path class="il-k3 il-dash" d="M320,300 Q350,252 398,248" marker-end="url(#il-arrow)"/>
+            <!-- Blip pushes a cart of drafts -->
+            <g transform="translate(140 410) scale(.9)">
+              <use href="#blip-shadow"/>
+              <g transform="translate(80 -136) rotate(-3)"><rect class="il-as" width="112" height="28" rx="5"/><text class="il-t" x="12" y="21" font-size="20">summary</text></g>
+              <g transform="translate(90 -108) rotate(2)"><rect class="il-p" width="112" height="28" rx="5"/><text class="il-t" x="12" y="21" font-size="20">body</text></g>
+              <g transform="translate(82 -80) rotate(-1)"><rect class="il-p" width="112" height="28" rx="5"/><text class="il-t" x="12" y="21" font-size="20">region</text></g>
+              <rect class="il-w" x="72" y="-54" width="136" height="42" rx="5"/>
+              <circle class="il-p" cx="98" cy="-8" r="10"/><circle class="il-p" cx="182" cy="-8" r="10"/>
+              <path class="il-k" d="M74,-48 L60,-68"/>
+              <path class="lo" d="M18,-42 L60,-68"/><path class="li" d="M18,-42 L60,-68"/>
+              <path class="lo" d="M12,-30 L68,-56"/><path class="li" d="M12,-30 L68,-56"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(12 -101)"/>
+            </g>
+            <text class="il-t" x="40" y="440" font-size="20">Undo restores exactly what it filled</text>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · Off limits ------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 8: Where the AI may only translate">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">08</span><span>Writing</span></div>
+          <h2>Where the AI may only translate</h2>
+          <p class="lead">Some words have to be the foundation&rsquo;s own, or somebody else&rsquo;s exactly. Five fields carry <code>aiWrite: false</code>: they show the translate buttons and nothing else, and the endpoint re-checks the registry rather than trusting the browser.</p>
+          <div class="tw" style="margin-top:14px;">
+            <table class="t">
+              <tr><th>Field</th><th>Why</th></tr>
+              <tr><td><code>testimonials.quote</code></td><td>A beneficiary&rsquo;s own words. An invented quote is a consent problem.</td></tr>
+              <tr><td><code>key_facts.value</code><br><code>impact_stats.label</code></td><td>Figures donors rely on.</td></tr>
+              <tr><td><code>news_items.title</code><br><code>news_items.outlet</code></td><td>Somebody else&rsquo;s headline and masthead.</td></tr>
+            </table>
+          </div>
+          <div class="flag forest"><p>The Page text tab is translate-only too. The Volunteer and Contact inboxes, the photo tab and the AI tab are refused outright, so a message from the public never reaches a provider.</p></div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Behind a rope between two posts stand a speech bubble with a quotation mark, labelled a beneficiary's words, a plaque with a figure, and a newspaper headline, labelled someone else's headline. In front of the rope Blip holds up a sign that reads translate only.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="420" x2="776" y2="420"/>
+            <!-- what stays human -->
+            <path class="il-w" d="M110,90 L300,90 Q316,90 316,106 L316,178 Q316,194 300,194 L170,194 L142,222 L146,194 L110,194 Q94,194 94,178 L94,106 Q94,90 110,90 Z"/>
+            <text class="il-t" x="126" y="170" font-size="86">&ldquo;</text>
+            <g class="il-thin"><line x1="186" y1="130" x2="292" y2="130"/><line x1="186" y1="152" x2="276" y2="152"/></g>
+            <text class="il-t" x="96" y="250" font-size="21">a beneficiary&rsquo;s words</text>
+            <rect class="il-gs" x="352" y="96" width="150" height="98" rx="8"/>
+            <text class="il-t" x="378" y="164" font-size="58">123</text>
+            <text class="il-t" x="376" y="224" font-size="21">a figure</text>
+            <rect class="il-w" x="540" y="84" width="180" height="124" rx="4"/>
+            <rect class="il-p" x="556" y="98" width="148" height="30" rx="2"/>
+            <g class="il-thin"><line x1="562" y1="113" x2="696" y2="113"/><line x1="556" y1="148" x2="704" y2="148"/><line x1="556" y1="168" x2="690" y2="168"/><line x1="556" y1="188" x2="700" y2="188"/></g>
+            <text class="il-t" x="540" y="240" font-size="21">someone else&rsquo;s headline</text>
+            <!-- the rope -->
+            <rect class="il-w" x="112" y="286" width="16" height="134" rx="4"/><circle class="il-gs" cx="120" cy="280" r="12"/>
+            <rect class="il-w" x="672" y="286" width="16" height="134" rx="4"/><circle class="il-gs" cx="680" cy="280" r="12"/>
+            <path d="M128,296 Q400,380 672,296" style="fill:none;stroke:var(--i-acc);stroke-width:10;stroke-linecap:round"/>
+            <!-- Blip with the sign -->
+            <g transform="translate(400 420) scale(.84)">
+              <use href="#blip-shadow"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(0 -101)"/>
+              <path class="lo" d="M-22,-40 L-88,-42"/><path class="li" d="M-22,-40 L-88,-42"/>
+              <path class="lo" d="M22,-40 L88,-42"/><path class="li" d="M22,-40 L88,-42"/>
+              <rect class="il-p" x="-78" y="-66" width="156" height="50" rx="8"/>
+              <text class="il-t" x="0" y="-32" font-size="27" text-anchor="middle">translate only</text>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 · Describe a photo ------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 9: Describe a photo">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">09</span><span>Photos</span><span class="tag">AI</span></div>
+          <h2>A photo, described in two languages</h2>
+          <p class="lead"><strong>Describe with AI</strong> in the photo library&rsquo;s edit dialog drafts alt text (125 characters at most) and a caption in Marathi and English, and suggests up to three sections &mdash; Gallery, Program, Event and so on &mdash; added to whatever is already ticked.</p>
+          <ul class="plain tight">
+            <li>Describe only what is visible. Never identify anyone, or guess age, caste, tribe or religion.</li>
+            <li>Never guess a place, date or event unless it is written in the picture.</li>
+            <li>Code drops a caption that repeats the alt text, and Marathi that slips into another Indic script &mdash; Flash-Lite once wrote <span lang="mr">शिलीमুক্ত</span>, half of it Bengali.</li>
+            <li>The server loads the image by media id, under the editor&rsquo;s own session; the browser never supplies a URL. JPEG, PNG or WebP, 1.5&nbsp;MB at most.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A photograph of two hills and a sun stands on an easel. Blip stands beside it and touches the frame. Three tags hang from it on strings: alt text in Marathi and English, a caption, and sections with Gallery and Program ticked and Event unticked. A note reads: only what is visible.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-ta" x="50" y="66" font-size="30">only what is visible</text>
+            <!-- easel -->
+            <path class="il-k" d="M150,410 L200,300 M290,410 L240,300 M220,330 L220,410"/>
+            <g transform="translate(90 120) scale(2.4)"><use href="#photo"/></g>
+            <!-- strings to the tags -->
+            <g class="il-thin"><path d="M320,160 Q430,110 520,100"/><path d="M322,210 Q430,200 520,190"/><path d="M320,260 Q430,300 520,290"/></g>
+            <!-- tags -->
+            <rect class="il-w" x="520" y="70" width="250" height="60" rx="10"/>
+            <text class="il-t" x="538" y="98" font-size="22">alt text</text>
+            <text class="il-mr" x="538" y="122" font-size="15" lang="mr">मराठी</text>
+            <text class="il-t" x="596" y="122" font-size="19">/ English</text>
+            <rect class="il-w" x="520" y="164" width="250" height="52" rx="10"/>
+            <text class="il-t" x="538" y="198" font-size="22">caption &middot; both languages</text>
+            <rect class="il-w" x="520" y="250" width="250" height="84" rx="10"/>
+            <text class="il-t" x="538" y="278" font-size="22">sections, up to three</text>
+            <rect class="il-p" x="538" y="294" width="20" height="20" rx="4" style="stroke-width:3"/><path class="il-ka" style="stroke-width:4" d="M542,304 L547,310 L556,297"/>
+            <text class="il-t" x="564" y="311" font-size="18">gallery</text>
+            <rect class="il-p" x="620" y="294" width="20" height="20" rx="4" style="stroke-width:3"/><path class="il-ka" style="stroke-width:4" d="M624,304 L629,310 L638,297"/>
+            <text class="il-t" x="646" y="311" font-size="18">program</text>
+            <rect class="il-p" x="704" y="294" width="20" height="20" rx="4" style="stroke-width:3"/>
+            <text class="il-t" x="728" y="311" font-size="18">event</text>
+            <!-- Blip at the frame -->
+            <g transform="translate(430 410) scale(.8)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-20,-42 L-104,-104"/><path class="li" d="M-20,-42 L-104,-104"/>
+              <path class="lo" d="M20,-40 L44,-18"/><path class="li" d="M20,-40 L44,-18"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(-10 -104)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · Bulk ------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 10: Fifty photos at a time">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">10</span><span>Photos</span><span class="tag">AI</span></div>
+          <h2>Fifty photos, one at a time</h2>
+          <p class="lead"><strong>Describe photos missing alt text</strong> takes up to fifty images that have none, describes them seven seconds apart &mdash; the free tier&rsquo;s per-minute limit &mdash; and shows a review list with a counter and Stop.</p>
+          <ul class="plain tight">
+            <li>A 429 waits thirty seconds and retries once. A photo it cannot read is skipped, not fatal.</li>
+            <li><strong>Save ticked</strong> fills only what was empty; sections only where none are ticked.</li>
+          </ul>
+          <div class="panel raised" style="margin-top:16px;">
+            <h4>A photo can belong to several sections</h4>
+            <p>A health-camp photo can be Gallery, Program and Event at once. The library&rsquo;s single &ldquo;Context&rdquo; dropdown became a row of checkboxes over <code>media.contexts text[]</code>, GIN-indexed for the filter&rsquo;s <code>@&gt;</code>. The old <code>context</code> column stays until the deployed code stops writing it; a trigger bridges the gap. <span class="pill no">no AI</span></p>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A conveyor belt carries photographs from left to right. Untagged photos come in on the left; Blip, standing behind the belt, presses a tag onto each one as it passes; tagged photos leave on the right and go into a review list with tick boxes. A clock reads 7 seconds apart, a counter reads 12 of 50, and a button reads Stop.">
+            <rect class="il-bg" width="800" height="450"/>
+            <text class="il-ta" x="40" y="60" font-size="28">one by one, then a list to tick</text>
+            <!-- clock -->
+            <circle class="il-p" cx="92" cy="134" r="34"/>
+            <path class="il-k" d="M92,134 L92,112 M92,134 L108,142"/>
+            <text class="il-t" x="136" y="130" font-size="24">7 s apart</text>
+            <text class="il-t" x="136" y="158" font-size="19">429? wait 30 s, retry once</text>
+            <!-- counter + stop -->
+            <rect class="il-p" x="430" y="96" width="104" height="40" rx="8"/>
+            <text class="il-t" x="446" y="124" font-size="24">12 / 50</text>
+            <rect class="il-as" x="446" y="148" width="72" height="34" rx="17"/>
+            <text class="il-t" x="462" y="172" font-size="21">Stop</text>
+            <!-- review list -->
+            <rect class="il-w" x="580" y="80" width="190" height="150" rx="10"/>
+            <text class="il-t" x="598" y="110" font-size="22">review list</text>
+            <g>
+              <rect class="il-p" x="598" y="126" width="18" height="18" rx="4" style="stroke-width:3"/><path class="il-ka" style="stroke-width:4" d="M601,135 L606,141 L614,128"/>
+              <rect class="il-p" x="598" y="160" width="18" height="18" rx="4" style="stroke-width:3"/><path class="il-ka" style="stroke-width:4" d="M601,169 L606,175 L614,162"/>
+              <rect class="il-p" x="598" y="194" width="18" height="18" rx="4" style="stroke-width:3"/>
+            </g>
+            <g class="il-thin"><line x1="628" y1="136" x2="746" y2="136"/><line x1="628" y1="170" x2="732" y2="170"/><line x1="628" y1="204" x2="740" y2="204"/></g>
+            <path class="il-k3 il-dash" d="M712,300 Q736,272 700,238" marker-end="url(#il-arrow)"/>
+            <!-- Blip behind the belt -->
+            <g transform="translate(400 322) scale(.8)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M20,-42 L62,-2"/><path class="li" d="M20,-42 L62,-2"/>
+              <path class="lo" d="M-20,-42 L-44,-16"/><path class="li" d="M-20,-42 L-44,-16"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(8 -96)"/>
+            </g>
+            <!-- the belt -->
+            <rect class="il-w" x="50" y="326" width="700" height="32" rx="16"/>
+            <circle class="il-p" cx="68" cy="342" r="11"/><circle class="il-p" cx="732" cy="342" r="11"/>
+            <circle class="il-p" cx="400" cy="342" r="8"/>
+            <g transform="translate(96 286) scale(.5)"><use href="#photo"/></g>
+            <g transform="translate(176 286) scale(.5)"><use href="#photo"/></g>
+            <g transform="translate(256 286) scale(.5)"><use href="#photo"/></g>
+            <g transform="translate(424 286) scale(.5)"><use href="#photo"/></g>
+            <rect class="il-as" x="456" y="304" width="22" height="16" rx="3" style="stroke-width:3"/>
+            <g transform="translate(560 286) scale(.5)"><use href="#photo"/></g>
+            <rect class="il-as" x="592" y="304" width="22" height="16" rx="3" style="stroke-width:3"/>
+            <g transform="translate(640 286) scale(.5)"><use href="#photo"/></g>
+            <rect class="il-as" x="672" y="304" width="22" height="16" rx="3" style="stroke-width:3"/>
+            <path class="il-thin" d="M320,380 L480,380" marker-end="url(#il-arrow)"/>
+            <text class="il-t" x="40" y="420" font-size="21">up to 50 a run &middot; nothing saved until ticked</text>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · Gallery --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 11: A gallery arranged from the library">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">11</span><span>Gallery</span><span class="tag">AI</span></div>
+          <h2>A gallery arranged from the library</h2>
+          <p class="lead"><strong>Suggest from library with AI</strong> on the three gallery tabs proposes a category and album for each photo not yet in the gallery, and new categories and albums where the photos need them.</p>
+          <ul class="plain tight">
+            <li><strong>Descriptions, not images.</strong> Each photo is described once; a suggestion then costs a few hundred tokens. Undescribed photos are counted and left out, with a pointer to the bulk describe.</li>
+            <li><strong>Code keeps it sane:</strong> a proposed album needs two photos and a category three, or they are dropped; a photo stays in its album&rsquo;s category (the <code>(album_id, category)</code> key); slugs must match the CHECK.</li>
+            <li><strong>Drafts, in foreign-key order.</strong> Ticking a photo ticks the album and category it needs; everything is created unpublished, categories first, then albums, then photos.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="On the left lies a pile of description cards, each a few lines of text with a tiny photo. Blip carries one card towards two open boxes labelled category, each holding folders labelled album. Notes read: descriptions, not images; album needs 2 photos, category 3; created as drafts.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-ta" x="360" y="66" font-size="28">album &ge; 2 photos &middot; category &ge; 3</text>
+            <text class="il-t" x="360" y="104" font-size="22">created as drafts: categories, albums, photos</text>
+            <!-- the pile of descriptions -->
+            <text class="il-t" x="30" y="232" font-size="22">descriptions,</text>
+            <text class="il-t" x="30" y="258" font-size="22">not images</text>
+            <g transform="translate(36 358) rotate(-6)"><rect class="il-p" width="120" height="44" rx="5"/><g class="il-thin"><line x1="34" y1="16" x2="108" y2="16"/><line x1="34" y1="30" x2="96" y2="30"/></g><rect class="il-ss" x="8" y="10" width="18" height="24" rx="3" style="stroke-width:2.5"/></g>
+            <g transform="translate(30 326) rotate(4)"><rect class="il-p" width="120" height="44" rx="5"/><g class="il-thin"><line x1="34" y1="16" x2="108" y2="16"/><line x1="34" y1="30" x2="92" y2="30"/></g><rect class="il-ss" x="8" y="10" width="18" height="24" rx="3" style="stroke-width:2.5"/></g>
+            <g transform="translate(40 290) rotate(-2)"><rect class="il-p" width="120" height="44" rx="5"/><g class="il-thin"><line x1="34" y1="16" x2="108" y2="16"/><line x1="34" y1="30" x2="100" y2="30"/></g><rect class="il-ss" x="8" y="10" width="18" height="24" rx="3" style="stroke-width:2.5"/></g>
+            <!-- boxes -->
+            <rect class="il-ss" x="384" y="278" width="62" height="58" rx="4"/><text class="il-t" x="392" y="302" font-size="17">album</text>
+            <rect class="il-ss" x="456" y="268" width="62" height="68" rx="4"/><text class="il-t" x="464" y="292" font-size="17">album</text>
+            <path class="il-k" d="M372,322 L380,312 L534,312 L542,322"/>
+            <rect class="il-w" x="364" y="320" width="186" height="90" rx="6"/>
+            <text class="il-t" x="412" y="374" font-size="24">category</text>
+            <rect class="il-ss" x="620" y="272" width="62" height="64" rx="4"/><text class="il-t" x="628" y="296" font-size="17">album</text>
+            <path class="il-k" d="M592,322 L600,312 L754,312 L762,322"/>
+            <rect class="il-w" x="584" y="320" width="186" height="90" rx="6"/>
+            <text class="il-t" x="632" y="374" font-size="24">category</text>
+            <!-- Blip carries a card -->
+            <g transform="translate(250 410) scale(.85)">
+              <use href="#blip-shadow"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(12 -101)"/>
+              <g transform="translate(64 -70) rotate(-5)"><rect class="il-p" width="104" height="40" rx="5"/><g class="il-thin"><line x1="30" y1="15" x2="94" y2="15"/><line x1="30" y1="27" x2="82" y2="27"/></g><rect class="il-ss" x="7" y="9" width="16" height="22" rx="3" style="stroke-width:2.5"/></g>
+              <path class="lo" d="M18,-42 L66,-54"/><path class="li" d="M18,-42 L66,-54"/>
+              <path class="lo" d="M14,-30 L68,-36"/><path class="li" d="M14,-30 L68,-36"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · Read a clipping ------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 12: Reading a newspaper clipping">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">12</span><span>News</span><span class="tag">AI</span></div>
+          <h2>Reading a newspaper clipping</h2>
+          <p class="lead">In News &amp; media, <strong>Read a news clipping with AI</strong> reads the photo chosen as the item&rsquo;s image &mdash; a cutting, or a screenshot of an article &mdash; and fills the fields that are still empty.</p>
+          <ul class="plain tight">
+            <li>Headline and outlet, as printed and translated.</li>
+            <li>A two-to-three sentence summary in its own words, and the coverage type.</li>
+            <li>The date only if one is printed, and never in the future. A photo that is not news comes back empty.</li>
+          </ul>
+          <div class="flag"><p><strong>Real run, 29 September:</strong> two Marathi cuttings came back with headline, outlet (Divya Marathi, Sakal), a printed date and summaries in both languages; the third had no printed date and came back without one. One summary named &ldquo;Prabodhan Foundation&rdquo;. Misread or not, catching that is what the review is for.</p></div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A newspaper cutting with a Marathi masthead, a two-line headline, a photo and columns of text. A magnifier circle over the corner asks: date? Blip stands beside the cutting with one arm on its edge. Notes on the right list what comes out: headline as printed and translated, outlet, summary in its own words, type, and the date only if printed.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <g transform="rotate(-3 225 230)">
+              <path class="il-w" d="M72,70 L378,70 L376,160 L382,250 L374,390 L76,390 L70,300 L76,210 Z"/>
+              <rect class="il-p" x="92" y="86" width="266" height="34" rx="3"/>
+              <text class="il-mr" x="104" y="112" font-size="19" lang="mr">वृत्तपत्र</text>
+              <path class="il-k" style="stroke-width:7" d="M94,146 L352,146 M94,168 L300,168"/>
+              <g transform="translate(236 190) scale(1.1)"><use href="#photo"/></g>
+              <g class="il-thin"><line x1="94" y1="196" x2="220" y2="196"/><line x1="94" y1="214" x2="214" y2="214"/><line x1="94" y1="232" x2="220" y2="232"/><line x1="94" y1="250" x2="206" y2="250"/><line x1="94" y1="268" x2="218" y2="268"/><line x1="94" y1="300" x2="356" y2="300"/><line x1="94" y1="318" x2="346" y2="318"/><line x1="94" y1="336" x2="352" y2="336"/><line x1="94" y1="354" x2="300" y2="354"/></g>
+            </g>
+            <!-- magnifier on the date corner -->
+            <circle class="il-p" cx="340" cy="92" r="36" style="fill-opacity:.85"/>
+            <path class="il-k" style="stroke-width:7" d="M366,118 L392,146"/>
+            <text class="il-ta" x="314" y="100" font-size="26">date?</text>
+            <!-- what comes out -->
+            <g>
+              <text class="il-t" x="540" y="104" font-size="23">headline &mdash; as printed</text>
+              <text class="il-t" x="562" y="130" font-size="19">and translated</text>
+              <text class="il-t" x="540" y="168" font-size="23">outlet</text>
+              <text class="il-t" x="540" y="206" font-size="23">summary, in its own words</text>
+              <text class="il-t" x="540" y="244" font-size="23">type: print / online / TV</text>
+              <text class="il-ta" x="540" y="286" font-size="24">date: only if printed</text>
+              <g class="il-mark"><circle cx="526" cy="97" r="4"/><circle cx="526" cy="161" r="4"/><circle cx="526" cy="199" r="4"/><circle cx="526" cy="237" r="4"/><circle cx="526" cy="279" r="4"/></g>
+            </g>
+            <!-- Blip -->
+            <g transform="translate(446 410) scale(.8)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-20,-42 L-74,-104"/><path class="li" d="M-20,-42 L-74,-104"/>
+              <path class="lo" d="M20,-40 L44,-18"/><path class="li" d="M20,-40 L44,-18"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(-10 -103)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · Pull news from the library -------------------------------------- -->
+  <section class="slide" aria-label="Slide 13: News items from the library">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">13</span><span>News</span><span class="tag">AI</span></div>
+          <h2>News from the library, without duplicates</h2>
+          <p class="lead"><strong>Pull news from the library with AI</strong> reads photos one at a time &mdash; the News-section photos by default, or the whole library at one call a photo &mdash; and proposes a draft item for each real clipping.</p>
+          <ul class="plain tight">
+            <li><strong>Skips what is already there:</strong> a photo that is already some news item&rsquo;s image, drafts included, is never read.</li>
+            <li><strong>Drops what is not news</strong>, and says how many.</li>
+            <li><strong>Flags a repeat:</strong> a headline matching an existing item letter for letter is marked &ldquo;looks already added&rdquo; and left unticked &mdash; the same article, scanned twice.</li>
+            <li><strong>Won&rsquo;t guess a date:</strong> a row without a printed one can&rsquo;t be ticked until a date is typed.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Labelled stages. Blip pushes a stack of photos onto a track. They pass four arches. At the first, already used, some drop into a bin marked skipped. At the second, is it news, some drop into a bin marked not news. At the third, same headline, a card gets a flag. At the fourth, date printed, a note says type one. The rest arrive in a tray marked drafts.">
+            <rect class="il-bg" width="800" height="450"/>
+            <text class="il-ta" x="40" y="58" font-size="27">one photo at a time, four questions</text>
+            <line class="il-k" x1="150" y1="300" x2="740" y2="300"/>
+            <!-- gates -->
+            <g>
+              <path class="il-w" d="M212,300 L212,236 Q212,208 240,208 Q268,208 268,236 L268,300"/>
+              <path class="il-w" d="M342,300 L342,236 Q342,208 370,208 Q398,208 398,236 L398,300"/>
+              <path class="il-w" d="M472,300 L472,236 Q472,208 500,208 Q528,208 528,236 L528,300"/>
+              <path class="il-w" d="M602,300 L602,236 Q602,208 630,208 Q658,208 658,236 L658,300"/>
+            </g>
+            <text class="il-t" x="240" y="166" font-size="20" text-anchor="middle">already</text>
+            <text class="il-t" x="240" y="190" font-size="20" text-anchor="middle">used?</text>
+            <text class="il-t" x="370" y="190" font-size="20" text-anchor="middle">news?</text>
+            <text class="il-t" x="500" y="166" font-size="20" text-anchor="middle">same</text>
+            <text class="il-t" x="500" y="190" font-size="20" text-anchor="middle">headline?</text>
+            <text class="il-t" x="630" y="166" font-size="20" text-anchor="middle">date</text>
+            <text class="il-t" x="630" y="190" font-size="20" text-anchor="middle">printed?</text>
+            <!-- bins -->
+            <path class="il-k3 il-dash" d="M240,306 L240,348" marker-end="url(#il-arrow)"/>
+            <path class="il-p" d="M214,356 L266,356 L260,398 L220,398 Z"/>
+            <text class="il-t" x="240" y="428" font-size="19" text-anchor="middle">skipped</text>
+            <path class="il-k3 il-dash" d="M370,306 L370,348" marker-end="url(#il-arrow)"/>
+            <path class="il-p" d="M344,356 L396,356 L390,398 L350,398 Z"/>
+            <text class="il-t" x="370" y="428" font-size="19" text-anchor="middle">not news</text>
+            <text class="il-t" x="500" y="344" font-size="19" text-anchor="middle">flag it,</text>
+            <text class="il-t" x="500" y="366" font-size="19" text-anchor="middle">leave unticked</text>
+            <text class="il-t" x="630" y="344" font-size="19" text-anchor="middle">no? type one</text>
+            <!-- cards on the track -->
+            <g transform="translate(290 276) scale(.3)"><use href="#photo"/></g>
+            <g transform="translate(420 276) scale(.3)"><use href="#photo"/></g>
+            <g transform="translate(546 276) scale(.3)"><use href="#photo"/></g>
+            <path class="il-as" d="M562,276 L562,248 L582,256 L562,264" style="stroke-width:3"/>
+            <!-- drafts tray -->
+            <path class="il-k" d="M684,286 L690,278 L766,278 L772,286"/>
+            <rect class="il-w" x="680" y="284" width="96" height="30" rx="5"/>
+            <text class="il-ta" x="728" y="344" font-size="22" text-anchor="middle">drafts</text>
+            <!-- Blip pushes the stack in -->
+            <g transform="translate(124 270) scale(.42)"><use href="#photo"/></g>
+            <g transform="translate(130 258) scale(.42)"><use href="#photo"/></g>
+            <rect class="il-w" x="30" y="330" width="100" height="80" rx="6"/>
+            <path class="il-thin" d="M30,370 L130,370"/>
+            <g transform="translate(80 330) scale(.66)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-40 L66,-72"/><path class="li" d="M18,-40 L66,-72"/>
+              <path class="lo" d="M14,-28 L68,-48"/><path class="li" d="M14,-28 L68,-48"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(10 -101)"/>
+            </g>
+            <text class="il-t" x="30" y="440" font-size="18">12 News photos</text>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · The editor ------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 14: A body editor with photos between paragraphs">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">14</span><span>Publishing</span><span class="tag">no AI</span></div>
+          <h2>Photos between paragraphs</h2>
+          <p class="lead">Programme and blog bodies moved from a three-button <code>contenteditable</code> to <strong>Tiptap</strong> (ProseMirror): headings, lists, quotes, dividers, links, and library photos placed between paragraphs with a caption. Not an AI feature &mdash; but AI translation has to keep its photos where they are.</p>
+          <pre><span class="k">&lt;figure</span> <span class="s">data-media-id="143"</span><span class="k">&gt;</span>
+  <span class="k">&lt;figcaption&gt;</span>&hellip;<span class="k">&lt;/figcaption&gt;</span>
+<span class="k">&lt;/figure&gt;</span></pre>
+          <ul class="plain tight" style="margin-top:14px;">
+            <li><strong>An id, never a path.</strong> The public page resolves it at render time; a figure whose photo is a draft or deleted disappears instead of rendering broken.</li>
+            <li><strong>The schema is the paste filter:</strong> pasted images, scripts, tables and <code>javascript:</code> links are dropped, the text kept.</li>
+            <li><strong>404,536 bytes (125,972 gzipped)</strong>, loaded only when a rich field opens. Public pages still ship 0 bytes of JavaScript.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A tall page of text with a small toolbar along the top. Between two paragraphs is an empty dashed slot. Blip pushes a framed photograph with a caption into the slot, like laying a brick. Beside it, the stored markup: figure data-media-id 143, and a note: an id, never a path.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-m" x="20" y="56" font-size="10">&lt;figure data-media-id="143"&gt;</text>
+            <text class="il-ta" x="20" y="96" font-size="26">an id, never a path</text>
+            <text class="il-t" x="20" y="130" font-size="19">draft photo? the figure</text>
+            <text class="il-t" x="20" y="154" font-size="19">quietly disappears</text>
+            <!-- the page -->
+            <rect class="il-w" x="262" y="34" width="500" height="376" rx="8"/>
+            <g>
+              <rect class="il-p" x="282" y="48" width="30" height="26" rx="5" style="stroke-width:2.5"/><text class="il-t" x="291" y="68" font-size="18">B</text>
+              <rect class="il-p" x="318" y="48" width="30" height="26" rx="5" style="stroke-width:2.5"/><text class="il-t" x="330" y="68" font-size="18">I</text>
+              <rect class="il-p" x="354" y="48" width="34" height="26" rx="5" style="stroke-width:2.5"/><text class="il-t" x="360" y="68" font-size="17">H2</text>
+              <rect class="il-p" x="394" y="48" width="30" height="26" rx="5" style="stroke-width:2.5"/><text class="il-t" x="403" y="70" font-size="22">&ldquo;</text>
+              <rect class="il-p" x="430" y="48" width="30" height="26" rx="5" style="stroke-width:2.5"/><text class="il-t" x="439" y="67" font-size="18">&mdash;</text>
+              <rect class="il-as" x="466" y="48" width="44" height="26" rx="5" style="stroke-width:2.5"/><text class="il-t" x="474" y="67" font-size="16">photo</text>
+            </g>
+            <g class="il-thin"><line x1="290" y1="104" x2="730" y2="104"/><line x1="290" y1="126" x2="716" y2="126"/><line x1="290" y1="148" x2="726" y2="148"/><line x1="290" y1="170" x2="600" y2="170"/></g>
+            <rect class="il-p il-dash" x="290" y="196" width="440" height="164" rx="6"/>
+            <g class="il-thin"><line x1="290" y1="378" x2="728" y2="378"/><line x1="290" y1="396" x2="640" y2="396"/></g>
+            <!-- the photo being laid in -->
+            <g transform="translate(172 214)">
+              <g transform="scale(1.62)"><use href="#photo"/></g>
+              <line class="il-k3" x1="10" y1="132" x2="96" y2="132"/>
+              <text class="il-t" x="102" y="138" font-size="17">caption</text>
+            </g>
+            <!-- Blip pushes -->
+            <g transform="translate(106 410)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-42 L64,-100"/><path class="li" d="M18,-42 L64,-100"/>
+              <path class="lo" d="M12,-30 L66,-74"/><path class="li" d="M12,-30 L66,-74"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(10 -101)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 · WhatsApp -------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 15: Share on WhatsApp">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">15</span><span>Publishing</span><span class="tag">AI text</span></div>
+          <h2>Share on WhatsApp, with the right words</h2>
+          <p class="lead">In the Satpuda, a post travels by forward, not by feed. Every post now has a <strong>Share on WhatsApp</strong> button: a plain <code>wa.me</code> link, no script.</p>
+          <ul class="plain">
+            <li>The message is the post&rsquo;s new <strong>WhatsApp message</strong> field (<code>blog_posts.share_text</code>) &mdash; bilingual, and draftable by the AI like any other field &mdash; or else the title and excerpt. The post&rsquo;s link is appended, in the reader&rsquo;s language.</li>
+            <li><strong><code>og:image</code></strong> comes from a post&rsquo;s or programme&rsquo;s cover, with its size and alt text, plus <code>summary_large_image</code>. That is what puts a picture in the chat preview.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip launches a paper plane towards a phone. On the phone screen, a chat bubble holds a link preview: a photo of hills, a title line, two lines of message text and a link. Notes read: a wa.me link, no script; og:image is the cover; message in the reader's language.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-ta" x="40" y="66" font-size="28">a wa.me link, no script</text>
+            <text class="il-t" x="40" y="102" font-size="22">og:image = the cover</text>
+            <text class="il-t" x="40" y="132" font-size="22">the message in the reader&rsquo;s language</text>
+            <!-- phone -->
+            <rect class="il-w" x="486" y="34" width="232" height="376" rx="30"/>
+            <rect class="il-p" x="502" y="66" width="200" height="316" rx="12"/>
+            <line class="il-k3" x1="580" y1="50" x2="624" y2="50"/>
+            <path class="il-ss" d="M520,96 L684,96 Q692,96 692,104 L692,332 Q692,340 684,340 L532,340 L518,352 L520,338 Q512,336 512,328 L512,104 Q512,96 520,96 Z"/>
+            <g transform="translate(524 108) scale(1.56)"><use href="#photo"/></g>
+            <path class="il-k" style="stroke-width:6" d="M526,242 L664,242"/>
+            <g class="il-thin"><line x1="526" y1="266" x2="676" y2="266"/><line x1="526" y1="286" x2="650" y2="286"/></g>
+            <text class="il-m" x="526" y="318" font-size="11">&hellip;/blog/&hellip;?lang=mr</text>
+            <!-- plane -->
+            <path class="il-thin il-dash" d="M340,292 Q420,180 488,180" marker-end="url(#il-arrow)"/>
+            <path class="il-p" d="M262,332 L338,294 L290,346 Z"/>
+            <path class="il-k3" d="M290,346 L284,364 L276,338"/>
+            <!-- Blip -->
+            <g transform="translate(200 410)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-42 L66,-80"/><path class="li" d="M18,-42 L66,-80"/>
+              <path class="lo" d="M-20,-40 L-44,-18"/><path class="li" d="M-20,-40 L-44,-18"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(10 -104)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 · Maps ------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 16: A map link for every event">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">16</span><span>Publishing</span><span class="tag">no AI</span></div>
+          <h2>A map link for every event</h2>
+          <p class="lead">The Events tab takes the address Google Maps&rsquo; Share button gives. The events page shows <strong>Open in Google Maps&nbsp;&#8599;</strong> under the location: a 44&nbsp;px link that opens a new tab.</p>
+          <ul class="plain">
+            <li><strong>A link, not an embed.</strong> An embedded map would load Google on every visit and join the privacy notice&rsquo;s list of providers.</li>
+            <li><strong>The database checks the host.</strong> Only https Google Maps addresses get in: <code>maps.app.goo.gl</code>, <code>goo.gl/maps</code>, <code>google.com</code> and <code>google.co.in</code> <code>/maps</code>, <code>maps.google.*</code>. Plain http, a look-alike host, a search URL or <code>javascript:</code> comes back as <code>events_map_url_check</code>.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip stands at a checkpoint. It pushes an accepted ticket reading maps.app.goo.gl towards a signpost whose board says Open in Google Maps, in front of a folded map with a pin. Rejected tickets, reading http, javascript and a look-alike Google host, lie in a bin labelled events_map_url_check.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-ta" x="40" y="64" font-size="28">a link, not an embed</text>
+            <text class="il-t" x="40" y="98" font-size="21">no Google on every page view</text>
+            <!-- folded map with pin -->
+            <path class="il-p" d="M520,250 L600,236 L680,252 L760,238 L760,392 L680,406 L600,390 L520,404 Z"/>
+            <g class="il-thin"><path d="M600,236 L600,390 M680,252 L680,406"/><path d="M530,300 Q580,280 620,310 T740,300"/><path d="M536,340 Q590,322 640,350 T752,344"/></g>
+            <path class="il-a" d="M704,318 Q704,292 724,292 Q744,292 744,318 Q744,334 724,358 Q704,334 704,318 Z"/>
+            <circle class="il-p" cx="724" cy="317" r="7" style="stroke-width:3"/>
+            <!-- signpost -->
+            <rect class="il-w" x="592" y="150" width="16" height="260" rx="4"/>
+            <path class="il-as" d="M500,146 L752,146 L780,172 L752,198 L500,198 Z"/>
+            <text class="il-t" x="516" y="181" font-size="23">Open in Google Maps &#8599;</text>
+            <!-- accepted ticket -->
+            <rect class="il-w" x="340" y="288" width="160" height="30" rx="5"/>
+            <text class="il-m" x="350" y="308" font-size="12">maps.app.goo.gl/&hellip;</text>
+            <path class="il-k3" d="M504,302 L540,258" marker-end="url(#il-arrow)"/>
+            <!-- bin of rejects -->
+            <g transform="translate(58 300) rotate(-14)"><rect class="il-p" width="104" height="24" rx="4" style="stroke-width:3"/><text class="il-m" x="8" y="17" font-size="11">http://maps&hellip;</text></g>
+            <g transform="translate(104 290) rotate(10)"><rect class="il-p" width="104" height="24" rx="4" style="stroke-width:3"/><text class="il-m" x="8" y="17" font-size="11">javascript:</text></g>
+            <g transform="translate(72 318) rotate(3)"><rect class="il-p" width="116" height="24" rx="4" style="stroke-width:3"/><text class="il-m" x="8" y="17" font-size="11">goog1e.com/maps</text></g>
+            <path class="il-w" d="M52,346 L204,346 L194,410 L62,410 Z"/>
+            <text class="il-m" x="36" y="438" font-size="12">events_map_url_check</text>
+            <!-- Blip at the checkpoint -->
+            <g transform="translate(290 410) scale(.9)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-42 L56,-104"/><path class="li" d="M18,-42 L56,-104"/>
+              <path class="lo" d="M-20,-40 L-90,-50"/><path class="li" d="M-20,-40 L-90,-50"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(9 -103)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 · Appears on + live preview --------------------------------------- -->
+  <section class="slide" aria-label="Slide 17: Appears on and the live preview">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">17</span><span>Publishing</span><span class="tag">no AI</span></div>
+          <h2>See where the words land, as you type</h2>
+          <p class="lead">Every content tab now says where its rows appear: &ldquo;Appears on: /programs/youth-dialogue-camp &mdash; its own page &middot; /programs &mdash; the list &middot; / &mdash; home page cards&rdquo;. <strong>See it on the site</strong> opens that real page in a frame, with unsaved text pushed in as you type and the edited row outlined, in Marathi or English.</p>
+          <ul class="plain tight">
+            <li><code>?preview=1</code> works for signed-in writers only &mdash; the middleware asks <code>is_writer()</code>. A visitor who adds it gets the ordinary page: no markers, no script.</li>
+            <li>Preview responses are <code>private, no-store</code> and <code>noindex</code>, and skip the analytics beacon.</li>
+            <li>Fields are found by their saved text inside the row, so only eleven row containers carry a marker.</li>
+            <li>Switching the frame&rsquo;s language doesn&rsquo;t switch the admin&rsquo;s: in preview, <code>?lang=</code> renders without writing the cookie.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="On the left, an admin form: an Appears on line, a title field being typed, a summary and a See it on the site button. On the right, a browser frame showing the real page with one row outlined. Blip stands between them touching both, relaying the typed words; an arrow above says postMessage, as you type.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-ta" x="20" y="40" font-size="24">the real page, not a copy</text>
+            <!-- admin form -->
+            <rect class="il-w" x="20" y="60" width="282" height="270" rx="10"/>
+            <rect class="il-p" x="34" y="74" width="254" height="30" rx="6" style="stroke-width:3"/>
+            <text class="il-t" x="44" y="95" font-size="17">Appears on:</text>
+            <text class="il-m" x="130" y="94" font-size="11">/programs/&hellip; &middot; /</text>
+            <text class="il-t" x="34" y="130" font-size="18">title</text>
+            <rect class="il-p" x="34" y="138" width="254" height="34" rx="6"/>
+            <text class="il-t" x="44" y="162" font-size="19">Youth Dialogue Camp</text>
+            <line class="il-ka" style="stroke-width:3" x1="206" y1="144" x2="206" y2="166"/>
+            <text class="il-t" x="34" y="198" font-size="18">summary</text>
+            <rect class="il-p" x="34" y="206" width="254" height="52" rx="6"/>
+            <g class="il-thin"><line x1="44" y1="224" x2="270" y2="224"/><line x1="44" y1="242" x2="236" y2="242"/></g>
+            <rect class="il-ss" x="34" y="276" width="178" height="34" rx="17"/>
+            <text class="il-t" x="48" y="299" font-size="17">See it on the site</text>
+            <!-- browser frame -->
+            <rect class="il-w" x="470" y="60" width="310" height="270" rx="10"/>
+            <line class="il-k3" x1="470" y1="92" x2="780" y2="92"/>
+            <g class="il-mark"><circle cx="488" cy="76" r="4"/><circle cx="502" cy="76" r="4"/><circle cx="516" cy="76" r="4"/></g>
+            <text class="il-m" x="530" y="81" font-size="11">/programs?preview=1</text>
+            <path class="il-k" style="stroke-width:6" d="M490,118 L640,118"/>
+            <rect class="il-p" x="490" y="136" width="270" height="52" rx="6"/>
+            <rect class="il-p" x="490" y="200" width="270" height="52" rx="6"/>
+            <rect class="il-p" x="490" y="264" width="270" height="52" rx="6"/>
+            <g class="il-thin"><line x1="502" y1="156" x2="690" y2="156"/><line x1="502" y1="172" x2="650" y2="172"/><line x1="502" y1="284" x2="700" y2="284"/><line x1="502" y1="300" x2="640" y2="300"/></g>
+            <rect x="484" y="194" width="282" height="64" rx="9" style="fill:none;stroke:var(--i-acc);stroke-width:4;stroke-dasharray:9 7"/>
+            <text class="il-t" x="502" y="224" font-size="19">Youth Dialogue Camp</text>
+            <line class="il-thin" x1="502" y1="240" x2="664" y2="240"/>
+            <!-- the relay -->
+            <path class="il-k" d="M308,176 L462,176" marker-end="url(#il-arrow)"/>
+            <text class="il-t" x="385" y="130" font-size="20" text-anchor="middle">postMessage,</text>
+            <text class="il-t" x="385" y="156" font-size="20" text-anchor="middle">as you type</text>
+            <g transform="translate(385 410)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-20,-42 L-80,-80"/><path class="li" d="M-20,-42 L-80,-80"/>
+              <path class="lo" d="M20,-42 L80,-80"/><path class="li" d="M20,-42 L80,-80"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(8 -101)"/>
+            </g>
+            <text class="il-t" x="20" y="440" font-size="19">writers only &middot; visitors get the ordinary page</text>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 18 · The AI tab and real usage --------------------------------------- -->
+  <section class="slide" aria-label="Slide 18: The AI tab and a month of usage">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">18</span><span>Control</span><span class="tag">AI</span></div>
+          <h2>One model, one fallback, every call logged</h2>
+          <p class="lead">The <strong>AI</strong> tab picks the provider and model for every feature, plus an optional fallback tried once on 402, 429, 5xx, no answer or an empty answer. A refused key or a misspelt model is not retried: a second provider answering would hide the misconfiguration. <strong>Test</strong> calls what is typed, with no fallback.</p>
+          <div class="stats" style="margin-top:16px;">
+            <div class="stat"><div class="v">130</div><div class="k">Calls, Sept</div></div>
+            <div class="stat"><div class="v">58</div><div class="k">Saved by fallback</div></div>
+            <div class="stat"><div class="v">67k</div><div class="k">Tokens in</div></div>
+            <div class="stat"><div class="v">$0.04</div><div class="k">Estimated</div></div>
+          </div>
+          <p class="note" style="margin-top:12px;">One <code>ai_usage</code> row per attempt: who, task, tab, provider, model, tokens, a short failure code, the fallback flag. Cost is snapshotted at call time from the prices typed in settings, so a price edit never reprices history; the key runs on Gemini&rsquo;s free tier. The monthly view is <code>security_invoker</code>, and only admins can read it.</p>
+        </div>
+        <div class="chart">
+          <h4>September 2026: calls by model</h4>
+          <p class="sub">The active model failed 59 of its 60 calls, nearly all rate limits (429). The fallback answered 58 times and carried the month.</p>
+          <div class="legend" aria-hidden="true"><span><i style="background:var(--ok)"></i>Answered</span><span><i style="background:var(--bad);background-image:repeating-linear-gradient(45deg,transparent 0 3px,var(--raised) 3px 5px)"></i>Failed</span></div>
+          <svg viewBox="0 0 640 250" role="img" aria-label="Horizontal bars, calls by model in September 2026. gemini-3.8-flash, the active model: 60 calls, 1 answered, 59 failed. gemini-3.5-flash-lite, the fallback: 59 calls, 58 answered, 1 failed. gemini-3.5-flash: 10 calls, 2 answered, 8 failed. gemini-3.5-flash through AgentRouter: 1 call, failed." style="width:100%;height:auto;display:block;">
+            <line class="c-axis" x1="0" y1="0" x2="0" y2="250"/>
+            <g class="bar"><title>gemini-3.8-flash (active): 60 calls, 1 answered, 59 failed</title>
+              <text class="c-lab" x="8" y="22">gemini-3.8-flash &middot; active</text>
+              <rect class="c-ok" x="0" y="30" width="8" height="22" rx="3"/>
+              <rect class="c-hatch" x="10" y="30" width="452" height="22" rx="3"/>
+              <text class="c-val" x="470" y="46">1 answered &middot; 59 failed</text>
+              <rect class="hit" x="0" y="6" width="640" height="52"/></g>
+            <g class="bar"><title>gemini-3.5-flash-lite (fallback): 59 calls, 58 answered, 1 failed</title>
+              <text class="c-lab" x="8" y="82">gemini-3.5-flash-lite &middot; fallback</text>
+              <rect class="c-ok" x="0" y="90" width="445" height="22" rx="3"/>
+              <rect class="c-hatch" x="447" y="90" width="8" height="22" rx="3"/>
+              <text class="c-val" x="470" y="106">58 answered &middot; 1 failed</text>
+              <rect class="hit" x="0" y="66" width="640" height="52"/></g>
+            <g class="bar"><title>gemini-3.5-flash: 10 calls, 2 answered, 8 failed</title>
+              <text class="c-lab" x="8" y="142">gemini-3.5-flash</text>
+              <rect class="c-ok" x="0" y="150" width="15" height="22" rx="3"/>
+              <rect class="c-hatch" x="17" y="150" width="61" height="22" rx="3"/>
+              <text class="c-val" x="90" y="166">2 answered &middot; 8 failed</text>
+              <rect class="hit" x="0" y="126" width="640" height="52"/></g>
+            <g class="bar"><title>AgentRouter, gemini-3.5-flash: 1 call, failed (401)</title>
+              <text class="c-lab" x="8" y="202">AgentRouter &middot; gemini-3.5-flash</text>
+              <rect class="c-hatch" x="0" y="210" width="8" height="22" rx="3"/>
+              <text class="c-val" x="20" y="226">1 failed &middot; 401</text>
+              <rect class="hit" x="0" y="186" width="640" height="52"/></g>
+          </svg>
+          <details class="tv"><summary>Show as a table</summary>
+            <table class="t" style="margin-top:8px;">
+              <tr><th>Model</th><th>Calls</th><th>Answered</th><th>Failed</th></tr>
+              <tr><td>gemini-3.8-flash (active)</td><td>60</td><td>1</td><td>59</td></tr>
+              <tr><td>gemini-3.5-flash-lite (fallback)</td><td>59</td><td>58</td><td>1</td></tr>
+              <tr><td>gemini-3.5-flash</td><td>10</td><td>2</td><td>8</td></tr>
+              <tr><td>AgentRouter &middot; gemini-3.5-flash</td><td>1</td><td>0</td><td>1</td></tr>
+            </table>
+            <p style="margin:8px 0 0;">Totals: 130 calls, 69 failed attempts, 58 answered by the fallback; 67,330 tokens in, 7,805 out. By task: describe 76, translate 38, writing help 6, clipping 5, gallery 3, test 2.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 · One endpoint, three providers ----------------------------------- -->
+  <section class="slide" aria-label="Slide 19: One endpoint, three providers">
+    <div class="inner">
+      <div class="split wide-right">
+        <div>
+          <div class="eyebrow"><span class="num">19</span><span>Under the hood</span></div>
+          <h2>One endpoint, three providers, one switch</h2>
+          <p class="lead">Every AI feature posts to <code>/api/admin/ai</code>. It checks in a fixed order, runs the task on the active model, falls back once if it may, and logs every attempt. The provider layer is one plain <code>switch</code> over three <code>fetch</code> branches, with no SDK.</p>
+          <div class="tw" style="margin-top:12px;">
+            <table class="t">
+              <tr><th></th><th>Gemini</th><th>Anthropic</th><th>AgentRouter</th></tr>
+              <tr><td>Auth</td><td><code>x-goog-api-key</code></td><td><code>x-api-key</code></td><td>Bearer</td></tr>
+              <tr><td>Call</td><td><code>:generateContent</code></td><td><code>/v1/messages</code></td><td><code>/chat/completions</code></td></tr>
+              <tr><td>JSON</td><td>response MIME type</td><td>prompt + loose parse</td><td>prompt + loose parse</td></tr>
+              <tr><td>Image</td><td><code>inlineData</code></td><td>base64 block</td><td>data URI</td></tr>
+            </table>
+          </div>
+          <p class="note" style="margin-top:10px;">Upstream error bodies never reach the browser: an editor sees a short code and the provider&rsquo;s name. Gemini&rsquo;s thinking tokens count as output, because they are billed as output.</p>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Labelled stages. A request, POST /api/admin/ai, passes six checks in order: 501 no key set, 415 not JSON, 401 signed out, 403 not a writer, 400 bad input, 503 no model. It reaches a switch whose lever Blip pushes. Three rails lead to Gemini, Anthropic and AgentRouter. A loop arrow says: on 402, 429, 5xx or empty, try the fallback once. A logbook reads ai_usage, a row per attempt.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <!-- the checks -->
+            <rect class="il-w" x="30" y="30" width="190" height="42" rx="8"/>
+            <text class="il-m" x="44" y="56" font-size="13">POST /api/admin/ai</text>
+            <g>
+              <rect class="il-p" x="30" y="86" width="190" height="36" rx="6" style="stroke-width:3"/><text class="il-t" x="42" y="111" font-size="20">501 &middot; no key set</text>
+              <rect class="il-p" x="30" y="128" width="190" height="36" rx="6" style="stroke-width:3"/><text class="il-t" x="42" y="153" font-size="20">415 &middot; not JSON</text>
+              <rect class="il-p" x="30" y="170" width="190" height="36" rx="6" style="stroke-width:3"/><text class="il-t" x="42" y="195" font-size="20">401 &middot; signed out</text>
+              <rect class="il-as" x="30" y="212" width="190" height="36" rx="6" style="stroke-width:3"/><text class="il-t" x="42" y="237" font-size="20">403 &middot; not a writer</text>
+              <rect class="il-p" x="30" y="254" width="190" height="36" rx="6" style="stroke-width:3"/><text class="il-t" x="42" y="279" font-size="20">400 &middot; bad input</text>
+              <rect class="il-p" x="30" y="296" width="190" height="36" rx="6" style="stroke-width:3"/><text class="il-t" x="42" y="321" font-size="20">503 &middot; no model</text>
+            </g>
+            <text class="il-ta" x="30" y="368" font-size="21">in this order &middot; fails closed</text>
+            <path class="il-k3" d="M224,190 Q320,200 364,300" marker-end="url(#il-arrow)"/>
+            <!-- switch and rails -->
+            <path class="il-k3" d="M404,326 L560,146 M404,330 L560,226 M404,334 L560,306"/>
+            <circle class="il-w" cx="386" cy="330" r="24"/>
+            <line class="il-k" style="stroke-width:7" x1="386" y1="330" x2="336" y2="298"/>
+            <circle class="il-gs" cx="332" cy="295" r="12"/>
+            <rect class="il-ss" x="560" y="122" width="210" height="48" rx="10"/>
+            <text class="il-t" x="576" y="146" font-size="23">Gemini</text>
+            <text class="il-m" x="576" y="163" font-size="11">x-goog-api-key</text>
+            <rect class="il-w" x="560" y="202" width="210" height="48" rx="10"/>
+            <text class="il-t" x="576" y="226" font-size="23">Anthropic</text>
+            <text class="il-m" x="576" y="243" font-size="11">x-api-key</text>
+            <rect class="il-w" x="560" y="282" width="210" height="48" rx="10"/>
+            <text class="il-t" x="576" y="306" font-size="23">AgentRouter</text>
+            <text class="il-m" x="576" y="323" font-size="11">Bearer &middot; OpenAI-style</text>
+            <path class="il-ka" d="M772,150 Q800,188 774,222" marker-end="url(#il-arrow)"/>
+            <text class="il-t" x="500" y="62" font-size="19">on 402 &middot; 429 &middot; 5xx &middot; empty:</text>
+            <text class="il-ta" x="500" y="90" font-size="22">try the fallback, once</text>
+            <!-- log -->
+            <rect class="il-w" x="470" y="352" width="300" height="52" rx="6"/>
+            <line class="il-k3" x1="486" y1="352" x2="486" y2="404"/>
+            <text class="il-t" x="500" y="384" font-size="21">ai_usage: a row per attempt</text>
+            <path class="il-thin il-dash" d="M400,356 Q420,380 466,378"/>
+            <!-- Blip on the lever -->
+            <g transform="translate(298 410)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-42 L34,-112"/><path class="li" d="M18,-42 L34,-112"/>
+              <path class="lo" d="M-20,-40 L-44,-18"/><path class="li" d="M-20,-40 L-44,-18"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(10 -104)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 · Prompts ask, code checks ---------------------------------------- -->
+  <section class="slide" aria-label="Slide 20: Prompts ask, code checks">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">20</span><span>Under the hood</span></div>
+          <h2>Prompts ask. Code checks.</h2>
+          <p class="lead">Every rule below is written in the prompt, and a real run broke every one of them before code enforced it. <code>/api/health</code> runs a fixture through each.</p>
+          <div class="two" style="gap:10px;margin-top:12px;">
+            <div class="guard"><h4>Latin digits</h4><p>Devanagari digits become Latin in every task.</p><span class="ex" lang="mr">२०१५ &rarr; 2015</span></div>
+            <div class="guard"><h4>Unverified numbers</h4><p>A number not in the source is listed under the field.</p><span class="ex">check before saving: 2015</span></div>
+            <div class="guard"><h4>One script</h4><p>Marathi with another Indic script in it is dropped, so the field reads &ldquo;needs translation&rdquo;.</p><span class="ex" lang="mr">शिलीमুক্ত</span></div>
+            <div class="guard"><h4>Caption &ne; alt</h4><p>A caption that repeats the alt text is dropped.</p></div>
+            <div class="guard"><h4>Real groups</h4><p>An album needs 2 photos and a category 3; a photo keeps its album&rsquo;s category.</p></div>
+            <div class="guard"><h4>Dates</h4><p>A clipping&rsquo;s date only if printed, and never in the future.</p></div>
+            <div class="guard" style="grid-column:1/-1;"><h4>HTML allowlist</h4><p>AI output ends up in <code>set:html</code> on public pages, so <code>sanitizeRich</code> keeps only <code>p h2 h3 ul ol li blockquote strong em</code>, <code>a</code> with https or mailto, and the editor&rsquo;s <code>figure</code>.</p><span class="ex">&lt;img onerror&gt; &rarr; gone</span></div>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A jug labelled model output pours into a sieve on a stand. Caught in the sieve are a script tag, caption equals alt, an album with one photo, and a Bengali half. Devanagari digits falling in come out below as Latin 2015 and drop into a jar labelled draft. Blip pushes a leg of the stand to shake it. A note reads: prompts ask, code checks.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-ta" x="570" y="70" font-size="28">prompts ask,</text>
+            <text class="il-ta" x="570" y="104" font-size="28">code checks</text>
+            <text class="il-t" x="570" y="140" font-size="19">/api/health runs</text>
+            <text class="il-t" x="570" y="164" font-size="19">a fixture through each</text>
+            <!-- the jug -->
+            <g transform="rotate(28 150 100)">
+              <path class="il-w" d="M92,60 L196,60 L204,150 Q204,164 190,164 L100,164 Q86,164 86,150 Z"/>
+              <path class="il-k" d="M196,78 Q232,86 222,120 Q214,140 200,140"/>
+              <path class="il-p" d="M90,60 L68,50 L96,48 Z"/>
+            </g>
+            <text class="il-t" x="30" y="206" font-size="20">model output</text>
+            <path class="il-thin il-dash" d="M86,100 Q150,140 250,200"/>
+            <text class="il-mr" x="300" y="162" font-size="22" lang="mr">२०१५</text>
+            <!-- the sieve -->
+            <path class="il-k" d="M254,236 L222,410 M506,236 L538,410"/>
+            <path class="il-w" d="M230,226 Q380,330 530,226"/>
+            <g class="il-thin"><path d="M270,238 L330,286 M320,240 L380,292 M370,240 L430,288 M420,238 L474,278 M470,236 L500,258 M290,258 L350,240 M340,280 L420,240 M400,286 L480,244"/></g>
+            <ellipse class="il-p" cx="380" cy="226" rx="150" ry="24" style="fill-opacity:.4"/>
+            <!-- caught -->
+            <rect class="il-p" x="258" y="236" width="74" height="22" rx="4" style="stroke-width:2.5"/><text class="il-m" x="264" y="252" font-size="11">&lt;script&gt;</text>
+            <rect class="il-p" x="338" y="244" width="96" height="22" rx="4" style="stroke-width:2.5"/><text class="il-t" x="344" y="261" font-size="15">caption = alt</text>
+            <rect class="il-p" x="440" y="234" width="80" height="22" rx="4" style="stroke-width:2.5"/><text class="il-t" x="446" y="251" font-size="15">album &middot; 1</text>
+            <rect class="il-as" x="300" y="266" width="112" height="22" rx="4" style="stroke-width:2.5"/><text class="il-t" x="308" y="283" font-size="15">a Bengali half</text>
+            <!-- through -->
+            <text class="il-ta" x="352" y="322" font-size="24">2015</text>
+            <path class="il-k" d="M322,336 L322,400 Q322,410 332,410 L428,410 Q438,410 438,400 L438,336"/>
+            <line class="il-k3" x1="316" y1="336" x2="444" y2="336"/>
+            <text class="il-t" x="350" y="384" font-size="22">draft</text>
+            <!-- Blip shakes the stand -->
+            <g transform="translate(612 410) scale(.9)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-20,-42 L-90,-88"/><path class="li" d="M-20,-42 L-90,-88"/>
+              <path class="lo" d="M-18,-30 L-86,-62"/><path class="li" d="M-18,-30 L-86,-62"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(-10 -101)"/>
+            </g>
+            <path class="il-thin" d="M560,300 L572,292 M560,322 L574,322 M560,344 L572,352"/>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 21 · Keys, privacy, refusals ----------------------------------------- -->
+  <section class="slide" aria-label="Slide 21: Keys, privacy and a gateway that said no">
+    <div class="inner">
+      <div class="split wide-right">
+        <div>
+          <div class="eyebrow"><span class="num">21</span><span>Under the hood</span></div>
+          <h2>Keys, people, and a gateway that said no</h2>
+          <figure class="illo" style="margin-top:14px;">
+            <svg viewBox="0 0 800 450" role="img" aria-label="A dashed line on the floor divides server from browser. On the server side stands a vault labelled secrets, holding GEMINI_API_KEY, ANTHROPIC_API_KEY and AGENTROUTER_API_KEY. Blip presses the vault door shut and holds up its other arm towards the browser side, where a browser window says no key in here and 403, not a writer.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+              <line class="il-thin il-dash" x1="420" y1="40" x2="420" y2="410"/>
+              <text class="il-t" x="330" y="60" font-size="24">server</text>
+              <text class="il-t" x="436" y="60" font-size="24">browser</text>
+              <!-- vault -->
+              <rect class="il-w" x="60" y="150" width="236" height="260" rx="12"/>
+              <rect class="il-p" x="78" y="168" width="200" height="224" rx="8"/>
+              <text class="il-t" x="104" y="206" font-size="26">secrets</text>
+              <circle class="il-w" cx="178" cy="262" r="32"/>
+              <path class="il-k3" d="M178,236 L178,246 M178,278 L178,288 M152,262 L162,262 M194,262 L204,262 M178,262 L192,250"/>
+              <text class="il-m" x="92" y="330" font-size="11">GEMINI_API_KEY</text>
+              <text class="il-m" x="92" y="350" font-size="11">ANTHROPIC_API_KEY</text>
+              <text class="il-m" x="92" y="370" font-size="11">AGENTROUTER_API_KEY</text>
+              <!-- browser -->
+              <rect class="il-w" x="470" y="110" width="290" height="190" rx="10"/>
+              <line class="il-k3" x1="470" y1="140" x2="760" y2="140"/>
+              <g class="il-mark"><circle cx="488" cy="125" r="4"/><circle cx="502" cy="125" r="4"/><circle cx="516" cy="125" r="4"/></g>
+              <text class="il-ta" x="492" y="190" font-size="28">no key in here</text>
+              <rect class="il-p" x="492" y="214" width="150" height="34" rx="17" style="stroke-width:3"/>
+              <text class="il-t" x="506" y="237" font-size="19">Draft English</text>
+              <text class="il-t" x="492" y="280" font-size="19">403 &middot; not a writer</text>
+              <text class="il-t" x="470" y="350" font-size="19">free tier: the owner&rsquo;s call, 29 Sep</text>
+              <text class="il-t" x="470" y="380" font-size="19">AgentRouter: 401, and no disguise</text>
+              <!-- Blip -->
+              <g transform="translate(352 410) scale(.85)">
+                <use href="#blip-shadow"/>
+                <path class="lo" d="M-20,-42 L-62,-62"/><path class="li" d="M-20,-42 L-62,-62"/>
+                <path class="lo" d="M20,-42 L66,-92"/><path class="li" d="M20,-42 L66,-92"/>
+                <use href="#blip"/>
+                <use href="#blip-eyes" transform="translate(9 -103)"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+        </div>
+        <div class="stack">
+          <div class="panel"><h4>Keys stay in Cloudflare</h4><p><code>GEMINI_API_KEY</code>, <code>ANTHROPIC_API_KEY</code> and <code>AGENTROUTER_API_KEY</code> are runtime secrets read through <code>astro:env/server</code>. The AgentRouter base URL is an environment variable too, not a setting: an admin-editable URL would let any admin send the key somewhere else. CI greps <code>dist/</code> for <code>AIza&hellip;</code>, <code>sk-&hellip;</code> and <code>AQ.&hellip;</code> key shapes.</p></div>
+          <div class="panel"><h4>Writers only, and it fails closed</h4><p>The old translate endpoint checked sign-in but not role, so a viewer could spend the key. The new one asks <code>is_writer()</code>, and an error there is a refusal.</p></div>
+          <div class="panel"><h4>Free tier, eyes open</h4><p>On Gemini&rsquo;s free tier, Google may use the text and photos sent to improve its products, and people may review them. The photos show beneficiaries, children among them. The owner accepted this on 29 September 2026; consent wording is flagged to the foundation, and the AI tab says it in plain words.</p></div>
+          <div class="panel"><h4>AgentRouter said no</h4><p>It serves only the coding tools it recognises and answered <code>401 unauthorized client</code>. The site calls it with an honest <code>user-agent: YungFoundationCMS/1.0</code> and won&rsquo;t pretend to be anything else; the tab says so, and the fallback covers it.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 22 · What broke ------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 22: What broke on the way">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">22</span><span>What broke</span></div>
+          <h2>What broke on the way</h2>
+          <ul class="plain tight">
+            <li><strong>The recommended model was gone.</strong> <code>gemini-2.5-flash</code> answered 404 for a new key. The newer Flash models were overloaded (503), then rate-limited: 59 of 60 calls failed with 429.</li>
+            <li><strong>Flash-Lite&rsquo;s first drafts</strong> had Devanagari digits, a wrong year, Bengali letters in Marathi, captions identical to the alt text and a one-photo album. Each one is now a code check.</li>
+            <li><strong>The Cloudflare build refused the lockfile.</strong> npm&nbsp;11 wrote it and <code>npm ci</code> on npm&nbsp;10 rejected it. Lockfiles are now written with npm 10.9.2, the build&rsquo;s own npm, and dry-run before pushing.</li>
+            <li><strong>&ldquo;Saved&rdquo; that wasn&rsquo;t.</strong> A row-level-security refusal on update returns 0 rows and no error, so an editor saving AI settings saw &ldquo;Saved&rdquo;. The save now reads the id back and treats 0 rows as &ldquo;admins only&rdquo;.</li>
+            <li><strong>The old rich-text field ignored AI.</strong> It read its value once on mount, so a translated body never showed, and the next blur wrote the old HTML back. Tiptap replaced it.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A pinboard covered in pinned notes: 404 model retired, 503 overloaded, 429 on 59 of 60, a wrong year 2015, half-Bengali Marathi, caption equals alt text, npm ci lockfile, and 0 rows shown as Saved. Blip presses one more pin into the board.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <rect class="il-w" x="206" y="34" width="560" height="340" rx="10"/>
+            <rect class="il-gs" x="220" y="48" width="532" height="312" rx="6" style="fill-opacity:.35;stroke-width:2.5"/>
+            <g>
+              <g transform="rotate(-3 350 90)"><rect class="il-p" x="236" y="68" width="236" height="46" rx="4" style="stroke-width:3"/><text class="il-t" x="250" y="98" font-size="21">404 &middot; model retired</text></g>
+              <g transform="rotate(2 610 90)"><rect class="il-p" x="500" y="68" width="236" height="46" rx="4" style="stroke-width:3"/><text class="il-t" x="514" y="98" font-size="21">503 &middot; overloaded</text></g>
+              <g transform="rotate(2 350 160)"><rect class="il-as" x="236" y="140" width="236" height="46" rx="4" style="stroke-width:3"/><text class="il-t" x="250" y="170" font-size="21">429 on 59 of 60</text></g>
+              <g transform="rotate(-2 610 160)"><rect class="il-p" x="500" y="140" width="236" height="46" rx="4" style="stroke-width:3"/><text class="il-t" x="514" y="170" font-size="21">a wrong year: 2015</text></g>
+              <g transform="rotate(-2 350 230)"><rect class="il-p" x="236" y="212" width="236" height="46" rx="4" style="stroke-width:3"/><text class="il-t" x="250" y="242" font-size="21">half-Bengali Marathi</text></g>
+              <g transform="rotate(3 610 230)"><rect class="il-p" x="500" y="212" width="236" height="46" rx="4" style="stroke-width:3"/><text class="il-t" x="514" y="242" font-size="21">caption = alt text</text></g>
+              <g transform="rotate(1 350 300)"><rect class="il-p" x="236" y="284" width="236" height="46" rx="4" style="stroke-width:3"/><text class="il-t" x="250" y="314" font-size="21">npm ci &middot; lockfile</text></g>
+              <g transform="rotate(-3 610 300)"><rect class="il-p" x="500" y="284" width="236" height="46" rx="4" style="stroke-width:3"/><text class="il-t" x="514" y="314" font-size="21">0 rows &rarr; &ldquo;Saved&rdquo;</text></g>
+            </g>
+            <g class="il-mark"><circle cx="354" cy="72" r="5"/><circle cx="618" cy="72" r="5"/><circle cx="354" cy="144" r="5"/><circle cx="618" cy="144" r="5"/><circle cx="618" cy="216" r="5"/><circle cx="354" cy="288" r="5"/><circle cx="618" cy="288" r="5"/></g>
+            <circle class="il-a" cx="240" cy="236" r="8"/>
+            <!-- Blip pins the last one -->
+            <g transform="translate(130 410)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-42 L100,-166"/><path class="li" d="M18,-42 L100,-166"/>
+              <path class="lo" d="M-20,-40 L-44,-18"/><path class="li" d="M-20,-40 L-44,-18"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(10 -106)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 23 · What's next ----------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 23: What's next">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">23</span><span>What&rsquo;s next</span></div>
+          <h2>What&rsquo;s next</h2>
+          <ul class="plain">
+            <li><strong>Swap the models.</strong> Make Flash-Lite the active model, or move to the tier the current one needs; the usage table already says which.</li>
+            <li><strong>Finish the sections migration.</strong> Drop <code>media.context</code>, its index and the bridge trigger once the new code is deployed.</li>
+            <li><strong>Consent wording</strong> for photos sent to a free-tier model, from the foundation.</li>
+            <li><strong>Watch Workers CPU</strong> on the first real bulk runs, since images are base64-encoded on the Worker.</li>
+            <li><strong>The accessibility pass</strong> (WCAG 2.1 AA), still the thing between this site and launch.</li>
+          </ul>
+          <div class="title-meta">
+            <a href="../docs/yung-foundation-site-overview.html">The whole site, end to end &rarr;</a>
+            <span>Every figure here is from the repo&rsquo;s changelog and the live usage table, 30 September 2026.</span>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip stands beside a full tray labelled for review and looks up at a signpost with three boards: Flash-Lite first, drop media.context, and consent wording.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <!-- the tray, full -->
+            <g transform="translate(80 336) rotate(-4)"><rect class="il-w" width="150" height="40" rx="5"/></g>
+            <g transform="translate(86 318) rotate(3)"><rect class="il-p" width="150" height="40" rx="5"/></g>
+            <path class="il-k" d="M66,352 L74,342 L246,342 L254,352"/>
+            <rect class="il-w" x="60" y="350" width="200" height="60" rx="6"/>
+            <text class="il-t" x="104" y="388" font-size="24">for review</text>
+            <!-- signpost -->
+            <rect class="il-w" x="580" y="90" width="16" height="320" rx="4"/>
+            <path class="il-as" d="M500,100 L720,100 L748,126 L720,152 L500,152 Z"/>
+            <text class="il-t" x="518" y="135" font-size="23">Flash-Lite first</text>
+            <path class="il-w" d="M676,174 L456,174 L428,200 L456,226 L676,226 Z"/>
+            <text class="il-t" x="470" y="209" font-size="23">drop media.context</text>
+            <path class="il-w" d="M500,248 L720,248 L748,274 L720,300 L500,300 Z"/>
+            <text class="il-t" x="518" y="283" font-size="23">consent wording</text>
+            <!-- Blip -->
+            <g transform="translate(370 410) scale(.95)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-20,-42 L-44,-18"/><path class="li" d="M-20,-42 L-44,-18"/>
+              <path class="lo" d="M20,-42 L44,-18"/><path class="li" d="M20,-42 L44,-18"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(12 -108)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <div class="ticks" id="ticks"></div>
+  <span class="counter" id="counter">01 / 23</span>
+</nav>
+
+<script>
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var counter = document.getElementById('counter');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var current = 0;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  slides.forEach(function (slide, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', slide.getAttribute('aria-label'));
+    b.addEventListener('click', function () { go(i); });
+    ticks.appendChild(b);
+  });
+  var tickButtons = Array.prototype.slice.call(ticks.children);
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    tickButtons.forEach(function (b, i) {
+      b.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+    paint();
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  // A resize changes what offsetLeft means; stay on the slide the reader was on.
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' });
+    }, 120);
+  });
+
+  paint();
+})();
+
+// --- Theme toggle ---------------------------------------------------------
+// Three states, not two: with no data-theme the deck follows the OS setting,
+// and a two-way switch would throw that away.
+(function () {
+  var KEY = 'deck-theme';
+  var MODES = ['auto', 'light', 'dark'];
+  var META = {
+    auto:  { ico: '◑', lab: 'Auto',  say: 'follow system' },
+    light: { ico: '☀', lab: 'Light', say: 'light' },
+    dark:  { ico: '☾', lab: 'Dark',  say: 'dark' }
+  };
+
+  var btn = document.getElementById('theme');
+  var ico = document.getElementById('theme-ico');
+  var lab = document.getElementById('theme-lab');
+
+  function stored() {
+    try { return localStorage.getItem(KEY); } catch (e) { return null; }
+  }
+
+  var mode = MODES.indexOf(stored()) > -1 ? stored() : 'auto';
+
+  function apply(next, persist) {
+    mode = next;
+    if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', mode);
+
+    ico.textContent = META[mode].ico;
+    lab.textContent = META[mode].lab;
+    btn.setAttribute('aria-label', 'Theme: ' + META[mode].say + '. Activate to change.');
+
+    if (persist) {
+      // Storage can throw in a private window; the toggle must still work.
+      try {
+        if (mode === 'auto') localStorage.removeItem(KEY);
+        else localStorage.setItem(KEY, mode);
+      } catch (e) { /* ignored */ }
+    }
+  }
+
+  btn.addEventListener('click', function () {
+    apply(MODES[(MODES.indexOf(mode) + 1) % MODES.length], true);
+  });
+
+  apply(mode, false);
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="commons"></script>
+</body>
+</html>
