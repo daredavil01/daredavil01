@@ -2,217 +2,122 @@
 
 > *"What lies beyond the horizon of your mundane life?"*
 
-A narrative browser-based game about digital wellbeing. No app store. No sign-up. Just a story about your attention, told through choices that actually matter.
+A one-night story about attention. It is 22:47 and your phone is still glowing. Walk out of the feed — through four worlds built from it — and reach a quiet beach by sunrise. Every choice changes the light you carry.
+
+No app store. No sign-up. About twelve minutes, entirely in the browser.
 
 ---
 
-## What Is This?
+## The experience
 
-The Wanderer's Digital Escape is an **interactive wellbeing experience** disguised as a game. You play as a wanderer lost in the digital world — navigating four dangerous worlds that mirror how social media reshapes the mind, one choice at a time.
+- **One continuous night.** A hand-drawn-feeling canvas landscape walks with you from 22:47 to 06:41. The sky is driven by the clock in the corner — midnight blue, the 2am arcade haze, the blue hour, the first light on the trail, sunrise on the beach — so the night itself is the progress bar.
+- **A wanderer with a lantern.** A small figure walks east across parallax worlds. The lantern's size and colour are your four meters; it flares when you choose presence and flickers when Dopamine runs high.
+- **Choices you can feel before you make them.** Point at a choice and the world leans toward it — warm light for presence, a cold screen-glow for the pull.
+- **Acts, not just answers.** Inspired by games like *Florence*, where the gesture is the meaning:
 
-Every decision you make shifts four meters that measure the health of your inner life. Reach the beach at the end, and you receive a personalised **Digital Flourishing Score** with an action plan built around your choices.
+| Scene | What you do |
+|---|---|
+| Prologue | **Hold** to set the phone face down while notifications keep stacking up |
+| A clip or a conversation | Two waveforms — fifteen seconds of jitter or ninety minutes of calm |
+| The Algorithm Mirror | **Hold** to crack your own reflection until it shatters |
+| The reels | A phone that never stops scrolling. Swipe it — the "remembered" counter stays at 0 |
+| The candle room | A real **60-second silence**, breathing in for four and out for six. Move, and the flame wavers |
+| Notification settings | Real switches. Turn them off one by one and the pinging stops |
+| The Streak Counter | **Hold** to break day 847 |
+| Your five | Dunbar's circles — **type the names** of your five people |
+| The account deletion screen | **Hold** for two seconds; the posts dissolve and the counters fall to zero |
+| The notebook | **Write a line** in a paper notebook, in handwriting |
+| The frog in the well | **Drag up** to widen the circle of sky until you see the whole world |
+| The Last Notification | Tap it — or **observe it, untouched**, until it passes. That is the whole skill |
 
-Designed to take **~15 minutes**. No account required. Runs entirely in the browser.
+Every gesture also works from the buttons and the keyboard.
 
----
+## The four worlds
 
-## The Four Worlds
+| # | World | Time | What it mirrors |
+|---|---|---|---|
+| I | **Echo Chamber Swamp** | 23:05 | Algorithm bubbles, confirmation bias, endless scrolling |
+| II | **The Dopamine Arcade** | 00:48 | Reels, AI slop, sleep loss, notifications, streaks |
+| III | **Validation City** | 03:30 | Likes, comparison, Dunbar's five, deleting the account |
+| IV | **The Nomad's Trail** | 05:16 | The 5:30am hour, the run, the notebook, the well |
 
-| # | World | Theme | What It Mirrors |
-|---|-------|-------|-----------------|
-| 01 | **Echo Chamber Swamp** | Fog, dripping trees, familiar paths | Algorithm bubbles, confirmation bias, endless scrolling |
-| 02 | **Dopamine Arcade** | Neon lights, noise, slot-machine loops | Reel addiction, sleep deprivation, AI slop, notification cycles |
-| 03 | **Validation City** | Towers built on likes, comparison mirrors | Follower counts, Instagram anxiety, social media deletion |
-| 04 | **Nomad's Trail** | Wind, birdsong, open horizon | Reclaiming focus, real-world connection, intentional living |
+Each world opens with a title card and ends with a boss: the Algorithm Mirror, the Streak Counter, the Mirror Wall and the Last Notification.
 
-Each world ends with a **Boss Encounter** — a personalised confrontation with the specific trap that world represents.
+## The four meters
 
----
+| Meter | Starts at | Measures |
+|---|---|---|
+| **Focus** | 30 | Your capacity for deep, sustained thought |
+| **Dopamine** | 40 | The reward signal of the scroll — this one works in reverse |
+| **Oneness** | 25 | Your real-world connections and presence |
+| **Tranquility** | 20 | Inner stillness beyond the noise |
 
-## The Four Meters
+Above 75 Dopamine the game enters **Ghost Mode**: the world drains of colour and glitches at the edges.
 
-Every choice you make shifts one or more of these four dimensions. They start partially depleted — because that is where most of us begin.
+The four-petal gauge in the corner opens your **inner light** panel — the meters, where you started, and your satchel of six collectible items (Long-form Mind, Inner Voice, Still Point, True North, 5:30am Hour, The Run).
 
-| Meter | Color | What It Measures |
-|-------|-------|-----------------|
-| **Focus** | Cyan | Your capacity for deep, sustained thought |
-| **Dopamine** | Amber | Your brain's reward signal — high is dangerous |
-| **Oneness** | Violet | Your real-world connections and presence |
-| **Tranquility** | Green | Inner stillness beyond the noise |
+## The beach
 
-> **Ghost Mode:** If your Dopamine exceeds 75, the game enters Ghost Mode — a visual distortion layer representing what it feels like to be permanently elsewhere.
+The ending is a sunrise, then a scroll through where you arrived:
 
----
+- **Digital Flourishing Score** — `(Focus + Oneness + Tranquility + (100 − Dopamine)) ÷ 4`
+- **Your archetype** — the nearest of five wanderers (the Mindless Scroller → the Digital Ascetic)
+- **The light you carried** — each meter from where it started to where it ended
+- **Eight dimensions** (the NIRMAN framework) as an interactive radar
+- **The path you walked** — every choice as a light (toward presence) or a hollow (toward the pull)
+- **What you carried** and **what you wrote down** — your five and your line from the notebook
+- **An action plan** you can commit to, tip by tip
+- **A score card** (1080×1350 PNG), a **printable full report**, and share links
 
-## Features
+Names and notebook lines stay in your browser's local storage and appear only on your own results; nothing is sent anywhere.
 
-### Narrative & Gameplay
+## Sound
 
-- **Typewriter narration** — Scene text animates character by character, making the story feel alive rather than static
-- **Branching choices** — Every scene has 2–3 choices; each one measurably shifts your meters
-- **Four boss encounters** — One per world: the Algorithm Mirror, the Dopamine Loop, the Validation Trap, and the Distraction Current
-- **Special interactive moments:**
-  - **60-Second Silence Timer** — A real countdown you sit through (or skip) during the meditation scene
-  - **Instagram Deletion Flow** — A multi-step confirmation that mirrors the real in-app experience, with dissolving animation
-  - **Frog Zoom-Out** — An animated metaphor: see the frog in the well, then zoom out to the full world
-  - **Algorithm Profile Reveal** — Your data visualised as a bar chart: outrage 34%, actual learning 7%
-  - **Dunbar's Number Moment** — Robin Dunbar's research on the 150-person limit, rendered as an interactive quote
-- **Inventory system** — Collect up to 6 items throughout the journey (📚 Long-form Mind, 📔 Inner Voice, 🧘 Still Point, 🧭 True North, ☕ 5:30am Hour, 👟 The Run)
-- **World Intro Cards** — A full-screen cinematic title card animates at the start of each world
-- **Curiosity XP** — Earn +10 XP each time you choose a reading, podcast, journal, or long-form option
+Every sound is synthesised with the Web Audio API — no audio files. Each world has a slow musical pad plus its own texture (drips and distant pings in the swamp, a restless arpeggio in the arcade, rain and sirens in the city, wind and birds on the trail, waves and gulls at the beach), crossfading as you walk. Interactions have their own sounds: a bell for presence, a blip for the pull, a phone buzz, a tone that climbs while you hold a choice, the shatter of a mirror. Sound starts on your first click (browser autoplay rules) and can be muted from the title, the HUD or with `M`.
 
-### HUD & Progress Tracking
+## Controls
 
-- **Live meter bars** — Four color-coded progress bars update in real time with smooth transitions
-- **Floating delta toasts** — When meters change, `+20 Focus` / `-10 Dopamine` floats up near the HUD so you never miss a consequence
-- **World progress bar** — A thin amber line under the meters fills as you advance through worlds
-- **Inventory tray** — Earned items appear as emoji icons with tooltip descriptions
-- **Item toast** — A pill notification slides up when you collect a new item
+| Key | Action |
+|---|---|
+| `1` `2` `3` | Choose (hold the key for a hold-choice) |
+| `Space` / `Enter` | Show the rest of the text |
+| `I` | Your inner light (meters + satchel) |
+| `M` | Sound on / off |
+| `Esc` | Menu: text pace, read-aloud, chapters, step back, start over |
 
-### Audio
+**Listen** reads any scene aloud (Web Speech API). Progress saves after every choice; the title offers to continue. `prefers-reduced-motion` is respected throughout.
 
-Six procedurally generated ambient soundscapes using the Web Audio API — no audio files, all synthesised in the browser:
-
-| World | Soundscape |
-|-------|-----------|
-| Intro | Room hum, sub drone, breathing LFO, ticking clock |
-| Echo Chamber Swamp | Forest bed, water drips, distant notification pings |
-| Dopamine Arcade | Neon buzz, crowd murmur, coin blips, ascending score arpeggios |
-| Validation City | Traffic rumble, AC hum, rain on glass, distant sirens |
-| Nomad's Trail | Wind layers, melodic bird calls, soft footsteps |
-| Beach (Win) | Dual wave layers, ocean shimmer, seagull glides |
-
-- Audio **auto-starts on first user interaction** (respects browser autoplay policy)
-- **Mute/unmute** toggle in the HUD at any time
-- Smooth **crossfade** between soundscapes on world transition
-
-### Accessibility & UX
-
-- **Keyboard shortcuts** — Press `1`, `2`, or `3` to select choices without touching the mouse. Badge labels `[1]` `[2]` `[3]` shown on each button
-- **Listen button** — Text-to-speech reads the full scene narrative using the Web Speech API
-- **Dark / Light mode** — Toggle with ☀️/🌙 on the homepage or in the HUD. Preference persists across sessions
-- **Scene transition fades** — 550ms opacity transition between scenes prevents jarring snaps
-- **Responsive layout** — Works on mobile, tablet, and desktop
-
-### Persistence & Settings
-
-- **Auto-save** — Progress (scene, meters, inventory, seen worlds) is saved to `localStorage` after every choice
-- **Continue Journey** — The homepage detects an existing save and offers to resume
-- **Confirmed Reset** — The Reset button requires a second click within 3 seconds to avoid accidental progress loss
-- **Settings modal** — ⚙️ gear icon opens a settings panel for storing a Gemini API key (for future AI image/TTS enhancements)
-
-### Win Screen & Flourishing Score
-
-When you reach the beach, you receive a full results breakdown:
-
-**Flourishing Score (0–100)** calculated from:
-```
-Score = (Focus + Oneness + Tranquility + (100 - Dopamine)) / 4
-```
-
-**NIRMAN Framework — 8 Dimensions:**
-- Physical Health
-- Psychological Wellbeing
-- Focus & Attention
-- Social Connection
-- Inner Tranquility
-- Dopamine Freedom
-- Intentionality
-- Digital Flourishing
-
-**Personalised Action Plan** — 4 specific tips generated from your final meter values (e.g. if Focus < 55, you receive a 30-minutes-of-reels-to-podcasts challenge).
-
-**Download options:**
-- 📥 **Score Card** — Canvas-generated PNG with your score, dimension bars, and collected items
-- 📄 **Detailed Report** — Full HTML document (printable as PDF) with meter interpretations, inventory, and action plan
-
-**Share your score:**
-- 𝕏 Twitter / X
-- 💬 WhatsApp
-- in LinkedIn
-- 🔗 Copy link
-
----
-
-## How to Play
-
-### Starting
-
-1. Open `index.html` in a browser (or visit the hosted URL)
-2. Click **Begin Journey →** to start fresh
-3. If you have a saved session, **Continue Journey** will resume where you left off
-
-### Making Choices
-
-- Click any choice button, **or** press the keyboard shortcut shown in `[brackets]`
-- Watch the floating delta toasts to understand how each choice affected your meters
-- Check the progress bar under the HUD to see how far through the journey you are
-
-### Navigation (Dev / Exploration)
-
-The nav bar at the bottom provides extra controls:
-
-| Button | Action |
-|--------|--------|
-| `⏮ World` | Jump to the previous world's start |
-| `← Scene` | Go back one scene (unlimited undo) |
-| `Skip` | Auto-advance with the first choice, no effects |
-| `Scene →` | Auto-advance with the last choice, no effects |
-| `World ⏭` | Jump to the next world's start |
-| `Reset` | Clear all progress (double-click confirmation) |
-| `Finish` | Skip to the win screen |
-
-### Tips
-
-- Choose long-form options (read, podcast, journal) to earn **Curiosity XP** and collect items
-- Sit through the **60-Second Silence** in World 2 for the full cushion bonus
-- Let the **Ghost Mode** distortion wash over you if your dopamine gets high — it's intentional
-- Download the **Detailed Report** at the end and share it with someone you care about
-
----
-
-## Technical Stack
+## How it's built
 
 | Layer | Technology |
-|-------|-----------|
-| UI Framework | React 18 (CDN, no build step) |
-| JSX Transform | Babel Standalone |
-| Styling | Pure CSS (no framework) |
-| Audio | Web Audio API (procedural synthesis) |
-| Speech | Web Speech API |
-| Canvas | HTML5 Canvas (score card export) |
-| Storage | localStorage |
-| Fonts | Crimson Pro · Space Mono (Google Fonts) |
-
-Zero dependencies installed. No Node.js required to run. Open `index.html` directly, or serve with any static HTTP server:
-
-```bash
-python -m http.server 8080 --directory /path/to/digital-wellbeing
-```
-
----
-
-## File Structure
+|---|---|
+| UI | React 18 (production UMD from unpkg) + [htm](https://github.com/developit/htm) tagged templates — no build step, no Babel |
+| World | One 2D `<canvas>`: procedural parallax layers, a clock-driven sky, a walking figure (`world.js`) |
+| Audio | Web Audio API synthesis with a generated reverb (`AudioEngine.js`) |
+| Type | Instrument Serif · Newsreader · IBM Plex Mono · Caveat (Google Fonts) |
+| Storage | `localStorage` (`wde.v2`, `wde.prefs`) |
 
 ```
 digital-wellbeing/
-├── index.html          # App shell + all CSS
-├── Game.jsx            # All React components (Home, HUD, SceneView, WinScreen, App)
-├── game-scenes.js      # Full narrative scene graph (~40 scenes)
-├── AudioEngine.js      # Procedural Web Audio soundscapes
-├── Illustrations.jsx   # SVG illustrations per world
-└── README.md           # This file
+├── index.html          # Shell, static title fallback, scripts
+├── styles.css          # Every view and vignette
+├── world.js            # The canvas night (World.set / walk / pulse)
+├── AudioEngine.js      # Soundscapes and interaction sounds
+├── game-scenes.js      # The story: worlds, items, ~27 scenes, archetypes
+├── vignettes.js        # The interactive object of each scene
+├── game.js             # The app: title, HUD, scenes, panels, ending, field notes
+└── three-orb-prototype.html  # A separate Three.js experiment
 ```
+
+Serve the repository root (`python3 -m http.server 3010`) and open `digital-wellbeing/index.html`. `#how-it-works` opens the field notes; `?scene=w2_reels` jumps straight to a scene for development (that session isn't saved).
 
 ---
 
-## About the Creator
+## About the creator
 
-**Sanket Tambare** — Software Developer · Full-Stack
-
-A developer drawn equally to technology, psychology, society, and design. This project sits at the intersection of all of them: a piece of software that asks a human question.
+**Sanket Tambare** — Software Developer · Full-Stack. A developer drawn equally to technology, psychology, society, and design; this project sits at the intersection of all of them.
 
 - 🌿 [Linktree](https://linktr.ee/daredavil)
 - in [LinkedIn](https://www.linkedin.com/in/sankettambare/)
-- ✦ [Substack](https://sankettambare.substack.com/)
+- ✦ [Substack — Digital Wellbeing](https://sankettambare.substack.com/t/digital-wellbeing)
 - ✉ sanket.tambare01@gmail.com
