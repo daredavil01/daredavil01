@@ -76,6 +76,11 @@ presentations/
                                    the AI Architect 60-day plan tracker at
                                    learn.sankettambare.in — idea, app tour, build
   assets/learning-hub/            Screenshots used by that deck (webp)
+  low-cost-clinic.html            One Tap to the Clinic: the 62-slide illustrated
+                                   deck on the Low Cost Clinic website and admin —
+                                   features, privacy, audit trail, accessibility,
+                                   architecture, and the Claude Code build
+  assets/low-cost-clinic/         Screenshots used by that deck (webp)
   newsletter.html                 A Month, in One Letter: the 21-slide animated
                                    deck on the monthly newsletter at
                                    sankettambare.in/newsletter — workflow, entity
