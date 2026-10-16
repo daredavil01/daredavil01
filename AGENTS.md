@@ -86,6 +86,12 @@ presentations/
                                    sankettambare.in/newsletter — workflow, entity
                                    map, both layouts, feedback, ask focus
   assets/newsletter/              Screenshots and share cards used by that deck (webp)
+  logbook.html                    The Wanderer's Logbook: the 39-slide illustrated
+                                   deck on sankettambare.in/logbook — v22 to the
+                                   field-journal redesign, the data, the bugs and
+                                   the narrated tour film (Blot, inline SVG)
+  assets/logbook/                 Screenshots (webp) plus the tour film, its poster
+                                   and captions
   e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
                                    ethanol/sugar trade-off and how the site was built
   projects-page-revamp.html       Projects, Reborn: the 12-slide deck on

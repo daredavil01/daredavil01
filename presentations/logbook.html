@@ -1,0 +1,1425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A 39-slide illustrated deck on the Wanderer's Logbook at sankettambare.in/logbook: every essay in English and Marathi read as data — a chart, a night sky, a fingerprint, a habit of the hand, letters across years and found poems. The first version, the field-journal redesign, how the data is built, the bugs the work caught, and the narrated tour film.">
+<title>The Wanderer's Logbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@600;700&family=Tiro+Devanagari+Marathi:ital@0;1&display=swap">
+
+<script>
+// Before first paint: the stored theme must already be on <html>, and `js`
+// tells the CSS it may hide things that the script will later reveal.
+(function(){
+  document.documentElement.className += ' js';
+  try{
+    var t = localStorage.getItem('deck-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ /* private mode, blocked storage — follow the system */ }
+})();
+</script>
+
+<style>
+/* ---------------------------------------------------------------------------
+ * The field-journal look, lifted from the feature itself (logbook.css): warm
+ * paper and iron-gall ink by day, a deep indigo night by dark, vermilion for
+ * the route and the UI. English is indigo and a circle, Marathi saffron and a
+ * diamond — on every slide, as on every chapter of the page.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#f4eee3; --paper-2:#ebe3d4; --card:#fbf8f2; --sunk:#e6dccb;
+  --ink:#211b15; --prose:#3b332b; --muted:#6c6155; --faint:#998d7f;
+  --rule:rgba(33,27,21,.16); --hair:rgba(33,27,21,.08);
+  --accent:#b33d19; --accent-text:#9c3314; --accent-soft:rgba(179,61,25,.12);
+  --en:#34508f; --mr:#b06f0c; --ask:#1d7a73; --gold:#a07a2c;
+  --r0:#cf8f68; --r1:#7d9fbc; --r2:#98ad6a; --r3:#bd88a8; --r4:#d4ab57; --r5:#6aa89a;
+  --night:#0d0c1c; --night-2:#1b1838; --star:#f6edd9;
+  --shadow:0 1px 2px rgba(33,27,21,.06),0 14px 34px -12px rgba(33,27,21,.26);
+  --focus:#b33d19;
+  /* illustration inks (riso: paper, one ink, one or two spot colours) */
+  --i-paper:#efe6d5; --i-ink:#211b15; --i-blot:#2a2420; --i-body:#fbf8f2; --i-eye:#fbf8f2;
+  --i-acc:#c4532c; --i-acc-soft:#f0c9b4; --i-acc-text:#9c3314;
+  --i-en:#4e69a8; --i-en-soft:#c9d3ea; --i-mr:#c98a1c; --i-mr-soft:#f1dcb0;
+  --i-teal:#2f8c84; --i-off:rgba(33,27,21,.10); --i-night:#1b1838; --i-star:#f6edd9;
+  --font-display:"Instrument Serif","Tiro Devanagari Marathi",Georgia,serif;
+  --font-mr:"Tiro Devanagari Marathi","Instrument Serif",serif;
+  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-kick:"Plus Jakarta Sans","Inter",sans-serif;
+  --font-hand:"Caveat","Segoe Print",cursive;
+  --font-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#14121d; --paper-2:#1b1827; --card:#1f1c2b; --sunk:#2a2638;
+    --ink:#efe7d7; --prose:#dcd3c3; --muted:#aaa08f; --faint:#7f7768;
+    --rule:rgba(239,231,215,.16); --hair:rgba(239,231,215,.07);
+    --accent:#f08a5d; --accent-text:#f5a37e; --accent-soft:rgba(240,138,93,.14);
+    --en:#94aaf2; --mr:#f0b452; --ask:#52c7b9; --gold:#e2c17d;
+    --r0:#b56c4a; --r1:#4f78a0; --r2:#6d8a45; --r3:#94618a; --r4:#b08b37; --r5:#3f8a7a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 40px -16px rgba(0,0,0,.7);
+    --focus:#f5a37e;
+    --i-paper:#1d1a2a; --i-ink:#efe7d7; --i-blot:#0f0d17; --i-body:#2a2638; --i-eye:#efe7d7;
+    --i-acc:#ea8358; --i-acc-soft:#5a2c1d; --i-acc-text:#f5a37e;
+    --i-en:#94aaf2; --i-en-soft:#2f3a63; --i-mr:#f0b452; --i-mr-soft:#4d3815;
+    --i-teal:#52c7b9; --i-off:rgba(0,0,0,.32); --i-night:#0b0a16; --i-star:#f6edd9;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#14121d; --paper-2:#1b1827; --card:#1f1c2b; --sunk:#2a2638;
+  --ink:#efe7d7; --prose:#dcd3c3; --muted:#aaa08f; --faint:#7f7768;
+  --rule:rgba(239,231,215,.16); --hair:rgba(239,231,215,.07);
+  --accent:#f08a5d; --accent-text:#f5a37e; --accent-soft:rgba(240,138,93,.14);
+  --en:#94aaf2; --mr:#f0b452; --ask:#52c7b9; --gold:#e2c17d;
+  --r0:#b56c4a; --r1:#4f78a0; --r2:#6d8a45; --r3:#94618a; --r4:#b08b37; --r5:#3f8a7a;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 40px -16px rgba(0,0,0,.7);
+  --focus:#f5a37e;
+  --i-paper:#1d1a2a; --i-ink:#efe7d7; --i-blot:#0f0d17; --i-body:#2a2638; --i-eye:#efe7d7;
+  --i-acc:#ea8358; --i-acc-soft:#5a2c1d; --i-acc-text:#f5a37e;
+  --i-en:#94aaf2; --i-en-soft:#2f3a63; --i-mr:#f0b452; --i-mr-soft:#4d3815;
+  --i-teal:#52c7b9; --i-off:rgba(0,0,0,.32); --i-night:#0b0a16; --i-star:#f6edd9;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55;
+  background:var(--paper);
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .13 0 0 0 0 .1 0 0 0 0 .07 0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+a{color:var(--accent-text);text-underline-offset:3px;}
+img{max-width:100%;}
+[lang="mr"],.mr{font-family:var(--font-mr);}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  height:100dvh;scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100%;width:100%;height:100dvh;scroll-snap-align:start;
+  display:flex;align-items:center;justify-content:center;
+  padding:68px 28px 96px;overflow-y:auto;overflow-x:hidden;
+}
+.slide > .inner{margin:auto 0;}
+.inner{width:100%;max-width:1160px;}
+
+.eyebrow{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-family:var(--font-kick);font-size:11px;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--accent-text);margin-bottom:14px;
+}
+.eyebrow .num{
+  color:var(--paper);background:var(--ink);padding:3px 8px;letter-spacing:.08em;border-radius:3px;
+  font-variant-numeric:tabular-nums;
+}
+.eyebrow .part{color:var(--muted);}
+h1,h2{font-family:var(--font-display);font-weight:400;letter-spacing:-.012em;margin:0 0 14px;color:var(--ink);}
+h1{font-size:clamp(56px,8.4vw,118px);line-height:.94;}
+h2{font-size:clamp(34px,4.3vw,58px);line-height:1.02;}
+h1 em,h2 em{font-style:italic;color:var(--accent);}
+h3{font-family:var(--font-kick);font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;}
+p{margin:0 0 12px;color:var(--prose);}
+.lead{font-size:clamp(16px,1.55vw,19px);color:var(--muted);max-width:64ch;}
+.note{font-size:13.5px;color:var(--muted);}
+.hand{font-family:var(--font-hand);font-weight:600;}
+.serif{font-family:var(--font-display);}
+.quote{font-family:var(--font-display);font-style:italic;font-size:clamp(22px,2.4vw,30px);line-height:1.25;color:var(--ink);}
+strong{color:var(--ink);font-weight:650;}
+code{
+  font-family:var(--font-mono);font-size:.84em;background:var(--sunk);
+  border-radius:5px;padding:1px 5px;color:var(--ink);
+}
+pre{
+  font-family:var(--font-mono);font-size:12.5px;line-height:1.62;
+  background:var(--card);border:1px solid var(--rule);border-radius:14px;
+  padding:14px 16px;overflow-x:auto;margin:0;color:var(--prose);
+}
+pre .c{color:var(--faint);} pre .k{color:var(--accent-text);} pre .s{color:var(--ask);} pre .n{color:var(--en);}
+.mt{margin-top:22px;} .mt-s{margin-top:12px;}
+
+/* --- Layout -------------------------------------------------------------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+.split.wide-l{grid-template-columns:1.2fr .8fr;}
+.split.wide-r{grid-template-columns:.82fr 1.18fr;}
+.split.top{align-items:start;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.five{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.stack > * + *{margin-top:14px;}
+.split > *,.two > *,.three > *,.four > *,.five > *{min-width:0;}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+@media (max-width:900px){
+  .split,.split.wide-l,.split.wide-r,.two,.three{grid-template-columns:1fr;gap:24px;}
+  .four,.five{grid-template-columns:1fr 1fr;}
+  .slide{padding:64px 16px 92px;}
+}
+
+.card{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:16px 18px;box-shadow:0 1px 0 var(--hair);}
+.card p:last-child{margin-bottom:0;}
+.card h4{font-family:var(--font-display);font-weight:400;font-size:23px;line-height:1.1;margin:0 0 6px;color:var(--ink);}
+.card .k{font-family:var(--font-kick);font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-text);margin:0 0 6px;}
+.card.ink{background:var(--ink);border-color:var(--ink);}
+.card.ink h4,.card.ink p{color:var(--paper);}
+
+.chip{
+  display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--prose);
+  background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:3px 11px;
+}
+.chip.acc{background:var(--accent-soft);color:var(--accent-text);border-color:transparent;}
+.dot-en,.dot-mr{display:inline-block;width:10px;height:10px;vertical-align:-1px;}
+.dot-en{border-radius:50%;background:var(--en);}
+.dot-mr{background:var(--mr);transform:rotate(45deg) scale(.86);}
+
+/* Big numbers */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);}
+.stats > div{padding:14px 14px 12px 0;}
+.stats b{display:block;font-family:var(--font-display);font-weight:400;font-size:clamp(34px,3.6vw,50px);line-height:1;color:var(--ink);font-variant-numeric:lining-nums tabular-nums;}
+.stats span{display:block;font-family:var(--font-kick);font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+@media (max-width:620px){.stats{grid-template-columns:1fr 1fr;}}
+
+/* Screenshots */
+.shot{margin:0;}
+.shot img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--rule);box-shadow:var(--shadow);background:var(--card);}
+.shot figcaption{font-size:13px;color:var(--muted);margin-top:9px;}
+.shot.crop img{object-fit:cover;object-position:top;}
+.shot.phone{max-width:260px;justify-self:center;}
+.shot.phone img{border-radius:26px;border:7px solid var(--ink);}
+.phones{display:flex;gap:18px;justify-content:center;align-items:flex-start;flex-wrap:wrap;}
+.phones .shot.phone{flex:0 1 230px;}
+.strip{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x proximity;}
+.strip > .shot{flex:0 0 min(300px,72vw);scroll-snap-align:start;}
+
+ul.plain{list-style:none;margin:0;padding:0;}
+ul.plain li{position:relative;padding-left:22px;margin-bottom:9px;color:var(--prose);font-size:15px;}
+ul.plain li::before{content:"";position:absolute;left:3px;top:8px;width:7px;height:7px;background:var(--accent);transform:rotate(45deg);}
+ul.plain li:last-child{margin-bottom:0;}
+ul.plain.en li::before{border-radius:50%;transform:none;background:var(--en);}
+
+.flag{border-left:3px solid var(--accent);background:var(--card);border-radius:0 14px 14px 0;padding:12px 16px;margin-top:16px;}
+.flag p{margin:0;font-size:14.5px;}
+
+/* Bug cards: symptom → cause → fix */
+.bug{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--card);}
+.bug > div{padding:12px 14px;border-right:1px solid var(--rule);}
+.bug > div:last-child{border-right:none;}
+.bug h3{margin-bottom:6px;}
+.bug p{margin:0;font-size:14px;}
+.bug .fix{background:var(--accent-soft);}
+.bug + .bug{margin-top:12px;}
+@media (max-width:760px){.bug{grid-template-columns:1fr;}.bug > div{border-right:none;border-bottom:1px solid var(--rule);}}
+
+/* A table */
+table.t{width:100%;border-collapse:collapse;font-size:14px;}
+table.t th{font-family:var(--font-kick);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:700;padding:0 10px 8px 0;border-bottom:1px solid var(--rule);}
+table.t td{padding:9px 10px 9px 0;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--prose);}
+table.t td:first-child{color:var(--ink);font-weight:600;white-space:nowrap;}
+
+/* Prompt quotes — the user's own words */
+.prompt{position:relative;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:16px 18px 14px 46px;}
+.prompt::before{content:"\201C";position:absolute;left:14px;top:2px;font-family:var(--font-display);font-size:56px;line-height:1;color:var(--accent);}
+.prompt p{font-family:var(--font-display);font-size:clamp(19px,1.9vw,24px);line-height:1.3;color:var(--ink);margin:0;}
+.prompt small{display:block;margin-top:8px;font-family:var(--font-kick);font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+
+/* Timeline */
+.tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;position:relative;margin-top:26px;}
+.tl::before{content:"";position:absolute;left:0;right:0;top:15px;border-top:2px dashed var(--accent);}
+.tl > div{position:relative;padding:36px 16px 0 0;}
+.tl > div::before{content:"";position:absolute;left:0;top:7px;width:16px;height:16px;border-radius:50%;background:var(--paper);border:3px solid var(--accent);}
+.tl b{display:block;font-family:var(--font-display);font-weight:400;font-size:30px;line-height:1;color:var(--ink);}
+.tl i{display:block;font-style:normal;font-family:var(--font-kick);font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-text);margin:6px 0 8px;}
+.tl p{font-size:14px;margin:0;}
+@media (max-width:760px){.tl{grid-template-columns:1fr;}.tl::before{left:7px;right:auto;top:0;bottom:0;border-top:none;border-left:2px dashed var(--accent);}.tl > div{padding:0 0 18px 30px;}.tl > div::before{top:2px;}}
+
+/* Pipeline (data flow) */
+.flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;}
+.flow > .card{flex:1 1 150px;position:relative;margin-right:26px;}
+.flow > .card:not(:last-child)::after{content:"\2192";position:absolute;right:-22px;top:50%;transform:translateY(-50%);color:var(--accent);font-size:20px;}
+.flow > .card:last-child{margin-right:0;}
+@media (max-width:900px){.flow > .card{flex:1 1 100%;margin-right:0;margin-bottom:24px;}.flow > .card:not(:last-child)::after{content:"\2193";right:auto;left:50%;top:auto;bottom:-24px;transform:none;}}
+
+/* Video */
+.film{display:grid;grid-template-columns:minmax(0,330px) minmax(0,1fr);gap:36px;align-items:center;}
+.film video{display:block;width:100%;aspect-ratio:9/16;height:auto;border-radius:24px;border:7px solid var(--ink);background:var(--ink);box-shadow:var(--shadow);}
+.chapters{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+.chapters button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:baseline;width:100%;padding:7px 10px;border-radius:10px;cursor:pointer;}
+.chapters button:hover,.chapters button[aria-pressed="true"]{background:var(--accent-soft);}
+.chapters button:focus-visible{outline:2px solid var(--focus);}
+.chapters .n{font-family:var(--font-display);font-style:italic;color:var(--accent);font-size:19px;}
+.chapters .t{font-family:var(--font-display);font-size:20px;color:var(--ink);}
+.chapters .s{font-family:var(--font-mono);font-size:12px;color:var(--muted);}
+@media (max-width:900px){.film{grid-template-columns:1fr;}.film video{max-width:300px;margin:0 auto;}}
+
+/* --- Illustrations: the illo method, drawn by hand ----------------------- */
+.illo{margin:0;border-radius:20px;overflow:hidden;background:var(--i-paper);border:1px solid var(--rule);}
+.illo svg{display:block;width:100%;height:auto;}
+.illo figcaption{font-size:13px;color:var(--muted);padding:9px 14px 11px;border-top:1px solid var(--rule);background:var(--card);}
+.il-bg{fill:var(--i-paper)}
+.il-grain{pointer-events:none}
+:root[data-theme="dark"] .il-grain{opacity:.5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .il-grain{opacity:.5}}
+
+/* --- Motion --------------------------------------------------------------
+ * The script puts .on on the slide in view (and takes it off when it leaves,
+ * so coming back replays). Anything hidden waits for `.js`, so the deck still
+ * reads with scripts off.
+ * ------------------------------------------------------------------------- */
+.js .rv{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .75s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--d,0) * 110ms);}
+.js .slide.on .rv{opacity:1;transform:none;}
+.js .slide .ink-in{stroke-dasharray:1;stroke-dashoffset:0;}
+.js .slide.on .ink-in{animation:inkIn 1.6s cubic-bezier(.4,0,.2,1) both;animation-delay:calc(var(--d,0) * 120ms);}
+@keyframes inkIn{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.js .slide.on .bob{animation:bob 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.js .slide.on .twinkle{animation:twinkle 2.6s ease-in-out infinite;animation-delay:calc(var(--d,0) * 230ms);}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* --- Topbar + rail (shared with the other decks) ------------------------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;pointer-events:none;}
+.topbar > *{pointer-events:auto;}
+.home,.theme{
+  font-family:var(--font-body);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;
+}
+.home:hover,.theme:hover{color:var(--accent-text);border-color:var(--accent);}
+.theme{display:inline-flex;align-items:center;gap:7px;cursor:pointer;line-height:1;}
+.rail{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;gap:12px;padding:12px 18px;background:var(--paper-2);border-top:1px solid var(--rule);}
+.rail button{font:inherit;font-size:15px;line-height:1;cursor:pointer;background:var(--card);color:var(--prose);border:1px solid var(--rule);border-radius:999px;padding:7px 13px;}
+.rail button:hover:not(:disabled){border-color:var(--accent);color:var(--accent-text);}
+.rail button:disabled{opacity:.35;cursor:default;}
+.part-name{font-family:var(--font-kick);font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.ticks{display:flex;gap:4px;flex:1;overflow:hidden;}
+.ticks button{flex:1;min-width:0;height:6px;padding:0;border-radius:999px;background:var(--sunk);border:none;}
+.ticks button.gap{margin-left:8px;}
+.ticks button[aria-current="true"]{background:var(--accent);}
+.counter{font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
+@media (max-width:760px){
+  .topbar{background:var(--paper);border-bottom:1px solid var(--rule);padding:9px 14px;}
+  .home,.theme{border-color:transparent;background:transparent;padding:4px 6px;}
+  .part-name{display:none;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .track{scroll-behavior:auto;}
+  .js .rv{opacity:1;transform:none;transition:none;}
+  *,*::before,*::after{animation:none!important;}
+}
+
+/* --- Contents (slide 2) and the six-chapter grid ------------------------- */
+.toc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.toc a{display:block;text-decoration:none;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:14px 16px;color:var(--prose);transition:border-color .2s,transform .2s;}
+.toc a:hover{border-color:var(--accent);transform:translateY(-2px);}
+.toc span{display:block;font-family:var(--font-kick);font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-text);}
+.toc b{display:block;font-family:var(--font-display);font-weight:400;font-size:26px;line-height:1.05;color:var(--ink);margin:6px 0 6px;}
+.toc em{display:block;font-style:normal;font-size:14px;color:var(--muted);}
+@media (max-width:900px){.toc{grid-template-columns:1fr;}}
+a.card.ch{display:block;text-decoration:none;color:inherit;position:relative;padding-top:18px;transition:border-color .2s,transform .2s;}
+a.card.ch:hover{border-color:var(--accent);transform:translateY(-2px);}
+a.card.ch .nm{position:absolute;right:16px;top:8px;font-family:var(--font-display);font-style:italic;font-size:42px;line-height:1;color:var(--accent);opacity:.85;}
+a.card.ch h4{font-size:28px;}
+@media (max-width:900px){.chapters-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:520px){.chapters-grid{grid-template-columns:1fr;}}
+
+/* --- Title ---------------------------------------------------------------- */
+.title h1{margin-bottom:22px;}
+.title .lead{max-width:56ch;}
+
+.links a{display:inline-flex;align-items:center;gap:6px;font-weight:600;text-decoration:none;background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:7px 14px;font-size:14px;color:var(--ink);}
+.links a:hover{border-color:var(--accent);color:var(--accent-text);}
+table.t.script td:last-child{font-family:var(--font-display);font-size:17px;line-height:1.3;color:var(--ink);}
+table.t.script td:nth-child(2){font-family:var(--font-mono);font-size:12.5px;color:var(--muted);}
+
+/* A bug card beside an illustration: one row each, label on the left. */
+.split .bug{grid-template-columns:1fr;}
+.split .bug > div{display:grid;grid-template-columns:74px minmax(0,1fr);gap:10px;align-items:baseline;border-right:none;border-bottom:1px solid var(--rule);}
+.split .bug > div:last-child{border-bottom:none;}
+.split .bug h3{margin:0;}
+
+/* Blot, the illo method's deadpan ink-drop, and the props he works with.
+ * Every fill is a token, so the same drawings flip for dark mode: by day an
+ * ink drop with paper eyes, by night a bone-white drop on indigo. Blot's tip
+ * is the only accent on his body; each scene allows one or two more. */
+.il-k{fill:var(--i-ink);stroke:var(--i-ink);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}
+.il-kl{fill:none;stroke:var(--i-ink);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}
+.il-eye{fill:var(--i-paper)}
+.il-tip{fill:var(--i-acc)}
+.il-plate{fill:var(--i-acc);stroke:var(--i-acc);stroke-width:1.4;stroke-linejoin:round;opacity:.8}
+.il-seam{fill:none;stroke:var(--i-paper);stroke-width:2.7;opacity:.42}
+.il-gap{fill:none;stroke:var(--i-paper);stroke-width:2.8}
+.il-crease{fill:none;stroke:var(--i-paper);stroke-width:.5;stroke-linecap:round;opacity:.35}
+/* props: scene units, one line weight to match Blot at 1.6x */
+.il-o{fill:var(--i-paper);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round;stroke-linecap:round}
+.il-l{fill:none;stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round;stroke-linecap:round}
+.il-f{fill:var(--i-ink);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round}
+.il-thin{fill:none;stroke:var(--i-ink);stroke-width:1.5;stroke-linecap:round;opacity:.45}
+.il-a{fill:var(--i-acc);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round}
+.il-as{fill:var(--i-acc-soft);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round}
+.il-al{fill:none;stroke:var(--i-acc);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.il-dots{fill:none;stroke:var(--i-acc);stroke-width:3.2;stroke-linecap:round;stroke-dasharray:0 9}
+.il-en{fill:var(--i-en);stroke:var(--i-ink);stroke-width:1.8}
+.il-mr{fill:var(--i-mr);stroke:var(--i-ink);stroke-width:1.8;stroke-linejoin:round}
+.il-ens{fill:var(--i-en-soft);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round}
+.il-mrs{fill:var(--i-mr-soft);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round}
+.il-off{fill:var(--i-off)}
+.il-night{fill:var(--i-night)}
+.il-star{fill:var(--i-star)}
+.il-t{font-family:var(--font-hand);font-weight:600;font-size:25px;fill:var(--i-ink)}
+.il-ta{font-family:var(--font-hand);font-weight:700;font-size:25px;fill:var(--i-acc-text)}
+.il-m{font-family:var(--font-mono);font-size:14px;fill:var(--i-ink)}
+.il-num{font-family:var(--font-display);font-style:italic;fill:var(--i-ink)}
+.il-tmr{font-family:var(--font-mr);font-weight:400;font-size:24px}
+</style>
+</head>
+<body>
+<!-- Blot, the grain and the arrowheads: defined once, reused by every drawing.
+     Blot's box is 120 x 140 with his feet at y = 131.4; parts carry no colour
+     of their own, so each <use> paints them by class. Hidden with zero size,
+     not display:none, so the pattern and filter still resolve. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="bl-body" d="M56.3 15.5Q60 9.9 63.7 15.5L91.95 58C96.6 65 100.8 78 100.8 93A40.8 28.8 0 0 1 19.2 93C19.2 78 23.4 65 28.05 58Z"/>
+    <path id="bl-tipshape" d="M44.65 33L56.3 15.5Q60 9.9 63.7 15.5L75.35 33Q60 38.2 44.65 33Z"/>
+    <path id="bl-armL" d="M26 63C21 69 8.5 86 8.5 96.6C8.4 101.8 11.6 104.8 15.6 104.6C18.6 104.5 21.4 103.4 23 101.4Z"/>
+    <path id="bl-armR" d="M94 63C99 69 111.5 86 111.5 96.6C111.6 101.8 108.4 104.8 104.4 104.6C101.4 104.5 98.6 103.4 97 101.4Z"/>
+    <path id="bl-bean" d="M-4.5 -3C-6.8 6 -6.6 17 -5.4 22C-4.2 27.4 4.2 27.4 5.4 22C6.6 17 6.8 6 4.5 -3Z"/>
+    <path id="bl-legL" d="M41.6 114V124.7C39.4 125.1 38.6 126.9 39.2 128.9C39.8 130.7 41.6 131.4 43.6 131.4H51.6C53.6 131.4 54.8 130.3 54.8 128.1V114Z"/>
+    <path id="bl-legR" d="M78.4 114V124.7C80.6 125.1 81.4 126.9 80.8 128.9C80.2 130.7 78.4 131.4 76.4 131.4H68.4C66.4 131.4 65.2 130.3 65.2 128.1V114Z"/>
+    <pattern id="il-screen" width="1.5" height="1.5" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+      <circle class="il-eye" cx=".75" cy=".75" r=".34"/>
+    </pattern>
+    <use id="bl-plate" href="#bl-body" class="il-plate" transform="translate(.6 .5)"/>
+    <use id="bl-seam" href="#bl-body" class="il-seam"/>
+    <g id="bl-trunk">
+      <use href="#bl-body" class="il-k"/>
+      <use href="#bl-body" fill="url(#il-screen)" opacity=".06"/>
+      <use href="#bl-tipshape" class="il-tip"/>
+      <use href="#bl-tipshape" fill="url(#il-screen)" opacity=".2"/>
+      <path class="il-kl" d="M44.65 33Q60 38.2 75.35 33M28.05 58L56.3 15.5Q60 9.9 63.7 15.5L91.95 58"/>
+    </g>
+    <g id="bl-eyes" class="il-eye"><circle cx="46.7" cy="59.35" r="4.35"/><circle cx="73.3" cy="59.35" r="4.35"/></g>
+    <filter id="il-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.13 0 0 0 0 0.1 0 0 0 0 0.07 0 0 0 0.16 0"/>
+    </filter>
+    <marker id="il-arrow" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2,2 L9,6 L2,10" fill="none" style="stroke:var(--i-acc);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"/>
+    </marker>
+    <marker id="il-arrow-k" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2,2 L9,6 L2,10" fill="none" style="stroke:var(--i-ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <a class="home" data-island-return href="../index.html#write/logbook-deck">&larr; Home</a>
+  <button class="theme" type="button" id="theme" aria-label="Theme: follow system. Activate to change.">
+    <span id="theme-ico" aria-hidden="true">&#9681;</span><span id="theme-lab">Auto</span>
+  </button>
+</div>
+
+<div class="track" id="track" tabindex="-1">
+
+  <!-- Opening ------------------------------------------------------------- -->
+  <section class="slide title" data-part="open" aria-label="Slide 1: The Wanderer's Logbook">
+    <div class="inner split">
+      <div>
+        <div class="eyebrow"><span class="num">01</span><span>sankettambare.in/logbook · a field journal</span></div>
+        <h1>Wanderer’s <em>Logbook</em></h1>
+        <p class="lead">Every essay I have published — 103 of them, in English and <span lang="mr">मराठी</span>, from 2020 to 2026 — read the way a machine reads them: as a chart, a night sky, a fingerprint, a habit of the hand, a letter across years and a poem. This deck is its whole story: the first version, the redesign, how the data is made, what broke, and the narrated tour.</p>
+        <div class="row mt">
+          <span class="chip">React 18 · SVG · no chart library</span>
+          <span class="chip">UMAP · k-means · bge-m3</span>
+          <span class="chip acc">v22.0.0 → v23.1.0</span>
+          <span class="chip">Built with Claude Code</span>
+        </div>
+      </div>
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="Blot, a small ink-drop with a vermilion tip, stands on a thick closed book titled Logbook, its vermilion ribbon hanging down the cover. A dotted vermilion route pours out of the book's page edge and runs across a large island dotted with indigo circles and saffron diamonds.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><path class="il-o" d="M452 362C430 318 462 270 516 264C556 260 574 222 626 224C686 227 704 270 742 280C786 292 790 344 766 372C744 398 690 394 646 390C600 386 572 402 528 398C488 394 466 384 452 362Z"/><path class="il-thin" d="M470 358C454 322 480 288 522 283C560 279 578 246 624 247C676 249 690 286 726 296C762 306 768 344 750 364C730 384 688 380 646 377C600 373 576 386 532 383C496 380 480 374 470 358Z"/><path class="il-dots" d="M404 334C428 334 440 346 470 346C512 346 528 312 566 312C604 312 616 340 652 336C690 332 704 300 730 296"/><circle class="il-en" cx="470" cy="346" r="8"/><polygon class="il-mr" points="520,314 530,324 520,334 510,324"/><circle class="il-en" cx="566" cy="312" r="7"/><circle class="il-en" cx="612" cy="332" r="9"/><polygon class="il-mr" points="652,327 661,336 652,345 643,336"/><circle class="il-en" cx="690" cy="318" r="6"/><polygon class="il-mr" points="730,288 738,296 730,304 722,296"/><circle class="il-en" cx="560" cy="360" r="6"/><polygon class="il-mr" points="604,283 611,290 604,297 597,290"/><circle class="il-en" cx="700" cy="360" r="7"/><path class="il-o" d="M96 300H392Q402 300 402 310V384Q402 392 392 392H96Z"/><path class="il-o" d="M96 300Q84 300 84 312V380Q84 392 96 392Z"/><path class="il-thin" d="M402 316H96M402 332H96M402 348H96M402 364H96" style="opacity:.3"/><path class="il-o" d="M96 300H392Q402 300 402 310V318H96Z" style="stroke-width:2.3"/><path class="il-a" d="M352 300V352L362 342L372 352V300Z"/><text class="il-num" x="250" y="368" text-anchor="middle" font-size="34">Logbook</text><g transform="translate(134 89.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-armR" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(5 1)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" data-part="open" aria-label="Slide 2: How to read this deck">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">02</span><span>How to read this deck</span></div>
+      <h2>Five parts, <em>front to back</em></h2>
+      <p class="lead">Arrow keys, Space or the rail below move between slides; <strong>R</strong> replays a slide's drawing; <code>#12</code> on the address opens slide 12. Jump to a part:</p>
+      <div class="toc mt">
+        <a href="#4"><span>Part I · slides 4–6</span><b>The first logbook</b><em>v22: a tab strip of six lenses, a scrolly “film”, and the day-one data fix.</em></a>
+        <a href="#7"><span>Part II · slides 7–20</span><b>The field journal</b><em>The redesign, page by page: cover, prologue, contents, six chapters, the entry page, phones and dark.</em></a>
+        <a href="#21"><span>Part III · slides 21–25</span><b>How it works</b><em>Essays to a chart with no model call, two languages on one map, the excerpt rule, the page's rules.</em></a>
+        <a href="#26"><span>Part IV · slides 26–31</span><b>The build</b><em>The brief, how the work was layered, and every bug the screenshots caught.</em></a>
+        <a href="#32"><span>Part V · slides 32–37</span><b>The tour film</b><em>An 80-second narrated film of the page, how it was recorded, voiced, mixed and embedded.</em></a>
+        <a href="#38"><span>Endpapers · slides 38–39</span><b>One day, four versions</b><em>The timeline, and where to read it yourself.</em></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="open" aria-label="Slide 3: Six ways to read one archive">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">03</span><span>What it is</span></div>
+      <h2>Six ways to read <em>one archive</em></h2>
+      <p class="lead">One dataset — 103 essays, 1,10,574 words, 8,007 sentences, Substack and WordPress — and six chapters that each ask it a different question. Every mark is an essay, and every one opens.</p>
+      <div class="three mt chapters-grid">
+        <a class="card ch rv" style="--d:1" href="#11"><span class="nm">I</span><h4>Atlas</h4><p class="note">Where does each essay sit among the others? A chart placed by meaning.</p></a>
+        <a class="card ch rv" style="--d:2" href="#13"><span class="nm">II</span><h4>Sky</h4><p class="note">What shape does an opening line make? One star per word.</p></a>
+        <a class="card ch rv" style="--d:3" href="#14"><span class="nm">III</span><h4>Fingerprint</h4><p class="note">What is left when the words are gone? Punctuation on a spiral.</p></a>
+        <a class="card ch rv" style="--d:4" href="#15"><span class="nm">IV</span><h4>Phrases</h4><p class="note">What do I say without noticing? Habits, and a guess-the-year game.</p></a>
+        <a class="card ch rv" style="--d:5" href="#16"><span class="nm">V</span><h4>Letters</h4><p class="note">Has a later essay answered an earlier one? Pairs found by meaning.</p></a>
+        <a class="card ch rv" style="--d:6" href="#17"><span class="nm">VI</span><h4>Found poems</h4><p class="note">What do five essays say together? Lock a line, shuffle the rest.</p></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Part I · The first logbook ----------------------------------------- -->
+  <section class="slide" data-part="before" aria-label="Slide 4: Version 22, the first logbook">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">04</span><span>Part I · v22.0.0 · the first logbook</span></div>
+      <div class="split wide-r top">
+        <div>
+          <h2>The first version: <em>six lenses</em> in a row</h2>
+          <p class="lead">The page launched as a new room in the site's Scriptorium. Everything the redesign kept was already there: the data, the six ideas and an Ask chat pinned to any essay.</p>
+          <ul class="plain">
+            <li>A header with a row of lens chips.</li>
+            <li>A scrolly intro that was really a 24-second <strong>“film”</strong>: one dot per essay moving from a timeline to language lanes, to a map of meaning, to how loud each essay is — with Previous, Play and Next buttons and a seek bar.</li>
+            <li>Then a <strong>tab strip</strong>: Atlas, Sky, Fingerprint, Phrases, Letters, Found poems — one visible at a time.</li>
+            <li>A <strong>drawer</strong> beside the lens for the selected essay, its neighbours and the chat.</li>
+          </ul>
+        </div>
+        <div class="stack">
+          <figure class="shot rv" style="--d:1"><img src="assets/logbook/v22-header.webp" width="1056" height="380" loading="lazy" decoding="async" alt="The first version's header: Scriptorium · Logbook, the title Wanderer's Logbook in a heavy serif, a paragraph and six small lens chips."></figure>
+          <figure class="shot rv" style="--d:2"><img src="assets/logbook/v22-atlas.webp" width="1056" height="660" loading="lazy" decoding="async" alt="The first version's Atlas lens: a tab strip with Atlas selected, a chart of glowing coloured clusters of dots, a Walk the trail slider, and a side panel titled The Logbook entry."><figcaption>v22: the Atlas tab, region-coloured glows, and the entry drawer on the right.</figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="before" aria-label="Slide 5: What was in the way">
+    <div class="inner split">
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="A tall chest of six drawers numbered I to VI. Only the top drawer, I, is pulled out, with an indigo circle and a saffron diamond peeking over its rim. Blot stands beside the chest pressing a closed drawer and looking up at the open one.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><rect class="il-o" x="404" y="104" width="214" height="288" rx="4"/><rect class="il-o" x="414" y="159" width="194" height="38" rx="3"/><circle class="il-l" cx="511" cy="178" r="4"/><text class="il-num" x="430" y="185" font-size="20">II</text><rect class="il-o" x="414" y="204" width="194" height="38" rx="3"/><circle class="il-l" cx="511" cy="223" r="4"/><text class="il-num" x="430" y="230" font-size="20">III</text><rect class="il-o" x="414" y="249" width="194" height="38" rx="3"/><circle class="il-l" cx="511" cy="268" r="4"/><text class="il-num" x="430" y="275" font-size="20">IV</text><rect class="il-o" x="414" y="294" width="194" height="38" rx="3"/><circle class="il-l" cx="511" cy="313" r="4"/><text class="il-num" x="430" y="320" font-size="20">V</text><rect class="il-o" x="414" y="339" width="194" height="38" rx="3"/><circle class="il-l" cx="511" cy="358" r="4"/><text class="il-num" x="430" y="365" font-size="20">VI</text><path class="il-o" d="M520 114H690L702 106V144L690 152H520Z"/><path class="il-o" d="M520 114H690V152H520Z"/><text class="il-num" x="536" y="140" font-size="20">I</text><circle class="il-en" cx="612" cy="104" r="7"/><polygon class="il-mr" points="640,93 649,102 640,111 631,102"/><circle class="il-en" cx="664" cy="106" r="6"/><circle class="il-l" cx="605" cy="133" r="4"/><text class="il-t" x="636" y="80">only one open</text><g transform="translate(196 181.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-bean" class="il-k" transform="translate(93 66) rotate(-108)"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(4 -5)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+      <div>
+        <div class="eyebrow"><span class="num">05</span><span>Part I · what was in the way</span></div>
+        <h2>Five of six ideas <em>behind a tab</em></h2>
+        <ul class="plain">
+          <li><strong>Hidden chapters.</strong> Only one lens showed at a time; five of the six waited behind a tab, with nothing on the page to show what they looked like.</li>
+          <li><strong>A film with buttons.</strong> The intro's Play, Previous and Next duplicated what scrolling already did.</li>
+          <li><strong>Shrunk on a phone.</strong> Every figure was a fixed viewBox scaled to fit; the 1,000 × 660 Atlas drew at 0.39× on a 390-px screen.</li>
+          <li><strong>Very long walls.</strong> Fingerprint was a wall of 103 cards about 4,500 px tall; Letters a column of 22 pairs near 5,800 px.</li>
+          <li><strong>Colour doing two jobs.</strong> Language was orange and teal in one place, region colours in another.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="before" aria-label="Slide 6: The day-one fix">
+    <div class="inner split">
+      <div>
+        <div class="eyebrow"><span class="num">06</span><span>Part I · v22.0.1 · the day-one fix</span></div>
+        <h2>The nightly job was <em>erasing</em> the essays</h2>
+        <p class="lead">The Logbook stands on the chatbot's index, so a bug there was a bug here. Eight minutes after launch came a patch.</p>
+        <div class="bug">
+          <div><h3>Symptom</h3><p>Every night the index lost 509 Substack body chunks that a local run had embedded.</p></div>
+          <div><h3>Cause</h3><p>Substack answers GitHub's runners with a 403 — API, bodies and RSS alike — so the nightly text cache held only the 29 WordPress essays, and indexing deleted the rest.</p></div>
+          <div class="fix"><h3>Fix</h3><p>The cache lists what it lacks in <code>missing</code>; the essay source sits the run out with <code>keep: true</code>; <code>npm run logbook</code> keeps the last good file.</p></div>
+        </div>
+      </div>
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="Night: a crescent moon over a closed door with a sign reading 403. Two envelopes have bounced off it and lie on the ground. Blot stands in front, calmly hugging a small stack of pages to his chest, labelled keep: true.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><path class="il-o" d="M706 70A34 34 0 1 0 736 120A28 28 0 1 1 706 70Z"/><path class="il-l twinkle" style="--d:0" d="M620 64V76M614 70H626"/><path class="il-l twinkle" style="--d:1" d="M664 126V138M658 132H670"/><path class="il-l twinkle" style="--d:2" d="M580 112V124M574 118H586"/><rect class="il-o" x="498" y="170" width="132" height="222" rx="3"/><rect class="il-o" x="512" y="184" width="104" height="94" rx="2"/><rect class="il-o" x="512" y="290" width="104" height="90" rx="2"/><circle class="il-f" cx="604" cy="288" r="4.5"/><path class="il-l" d="M546 222L564 204L582 222"/><rect class="il-o" x="530" y="222" width="68" height="40" rx="3"/><text class="il-ta" x="564" y="252" text-anchor="middle" font-size="28">403</text><g transform="translate(436 300) rotate(-18)"><rect class="il-o" x="0" y="0" width="34" height="24" rx="2"/><path class="il-l" d="M0 0L17 13L34 0"/></g><g transform="translate(404 352) rotate(12)"><rect class="il-o" x="0" y="0" width="34" height="24" rx="2"/><path class="il-l" d="M0 0L17 13L34 0"/></g><path class="il-thin" d="M478 300Q490 306 494 318M470 290Q482 284 492 288"/><text class="il-m" x="150" y="168">keep: true</text><path class="il-thin" d="M190 176Q206 196 220 214"/><g transform="translate(186 181.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(-2 -6)"/><rect class="il-o" x="38" y="86" width="44" height="28" rx="1.5" style="stroke-width:1.4"/><rect class="il-o" x="36" y="82" width="44" height="28" rx="1.5" style="stroke-width:1.4"/><rect class="il-o" x="40" y="78" width="44" height="28" rx="1.5" style="stroke-width:1.4"/><path class="il-kl" d="M46 86H76M46 92H72M46 98H68" style="opacity:.6"/><use href="#bl-bean" class="il-gap" transform="translate(28 72) rotate(-14)"/><use href="#bl-bean" class="il-k" transform="translate(28 72) rotate(-14)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(14)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(14)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Part II · The field journal ------------------------------------------ -->
+  <section class="slide" data-part="journal" aria-label="Slide 7: The idea — bind it as a book">
+    <div class="inner split wide-r">
+      <div>
+        <div class="eyebrow"><span class="num">07</span><span>Part II · The field journal</span></div>
+        <h2>Bind it as a <em>book</em>, not a tab strip</h2>
+        <p class="lead">The redesign treats the page as a field journal you read front to back: a cover, a short prologue, a contents page, six chapters, an index and a colophon. Any essay opens as a page of its own, slid over the chapter you found it in.</p>
+        <ul class="plain mt">
+          <li><strong>Cover</strong> — the route inked through every essay, in writing order, across the chart.</li>
+          <li><strong>Prologue</strong> — five scrolled steps that turn a ledger into a map.</li>
+          <li><strong>Contents</strong> — six chapters, each with a thumbnail drawn from the real data.</li>
+          <li><strong>Chapters I–VI</strong> — Atlas, Sky, Fingerprint, Phrases, Letters, Found poems, with a floating dock to move between them.</li>
+          <li><strong>Index &amp; entry page</strong> — every essay in order; each one opens with a chat pinned to it.</li>
+        </ul>
+      </div>
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="A leporello — a book folded like an accordion — in five panels labelled cover, prologue, contents, chapters and index, each with a tiny drawing of what it holds. A vermilion arrow over the top reads front to back. At the right end Blot leans in and pushes the last panel open.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="30" y1="372" x2="770" y2="372"/><polygon class="il-o" points="40,150 152,170 152,342 40,360"/><text class="il-t" x="96.0" y="392" text-anchor="middle" font-size="23">cover</text><polygon class="il-o" points="152,170 264,150 264,360 152,342"/><polygon class="il-off" points="152,170 264,150 264,360 152,342"/><text class="il-t" x="208.0" y="392" text-anchor="middle" font-size="23">prologue</text><polygon class="il-o" points="264,150 376,170 376,342 264,360"/><text class="il-t" x="320.0" y="392" text-anchor="middle" font-size="23">contents</text><polygon class="il-o" points="376,170 488,150 488,360 376,342"/><polygon class="il-off" points="376,170 488,150 488,360 376,342"/><text class="il-t" x="432.0" y="392" text-anchor="middle" font-size="23">chapters</text><polygon class="il-o" points="488,150 600,170 600,342 488,360"/><text class="il-t" x="544.0" y="392" text-anchor="middle" font-size="23">index</text><path class="il-l" d="M60 200H128M60 214H110"/><path class="il-dots" style="stroke-width:2.6;stroke-dasharray:0 7" d="M62 300C80 270 104 300 130 262"/><circle class="il-en" cx="62" cy="300" r="4.5"/><polygon class="il-mr" points="130,256 136,262 130,268 124,262"/><circle class="il-f" cx="178" cy="214" r="3.2"/><circle class="il-f" cx="194" cy="214" r="6.2"/><circle class="il-f" cx="210" cy="214" r="5.2"/><circle class="il-f" cx="226" cy="214" r="4.2"/><circle class="il-f" cx="242" cy="214" r="3.2"/><circle class="il-f" cx="178" cy="232" r="6.2"/><circle class="il-f" cx="194" cy="232" r="5.2"/><circle class="il-f" cx="210" cy="232" r="4.2"/><circle class="il-f" cx="226" cy="232" r="3.2"/><circle class="il-f" cx="242" cy="232" r="6.2"/><circle class="il-f" cx="178" cy="250" r="5.2"/><circle class="il-f" cx="194" cy="250" r="4.2"/><circle class="il-f" cx="210" cy="250" r="3.2"/><circle class="il-f" cx="226" cy="250" r="6.2"/><circle class="il-f" cx="242" cy="250" r="5.2"/><circle class="il-f" cx="178" cy="268" r="4.2"/><circle class="il-f" cx="194" cy="268" r="3.2"/><circle class="il-f" cx="210" cy="268" r="6.2"/><circle class="il-f" cx="226" cy="268" r="5.2"/><circle class="il-f" cx="242" cy="268" r="4.2"/><rect class="il-o" x="276" y="206" width="18" height="16" rx="2" style="stroke-width:1.8"/><path class="il-l" d="M302 214H350"/><rect class="il-o" x="276" y="236" width="18" height="16" rx="2" style="stroke-width:1.8"/><path class="il-l" d="M302 244H350"/><rect class="il-o" x="276" y="266" width="18" height="16" rx="2" style="stroke-width:1.8"/><path class="il-l" d="M302 274H350"/><rect class="il-o" x="276" y="296" width="18" height="16" rx="2" style="stroke-width:1.8"/><path class="il-l" d="M302 304H350"/><text class="il-num" x="432" y="236" text-anchor="middle" font-size="38">I–VI</text><path class="il-thin" d="M394 270H470M394 286H462M394 302H468"/><path class="il-l" d="M500 206H514M522 206H586"/><path class="il-l" d="M500 228H514M522 228H573"/><path class="il-l" d="M500 250H514M522 250H560"/><path class="il-l" d="M500 272H514M522 272H577"/><path class="il-l" d="M500 294H514M522 294H564"/><path class="il-l" d="M500 316H514M522 316H581"/><path class="il-al" d="M70 118C210 92 420 92 560 118" marker-end="url(#il-arrow)"/><text class="il-ta" x="300" y="94" text-anchor="middle" font-size="24">front to back</text><g transform="translate(594 161.8) scale(1.6)"><g transform="rotate(-6 60 131.4)"><use href="#bl-plate"/><use href="#bl-bean" class="il-k" transform="translate(27 66) rotate(118)"/><use href="#bl-armR" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(-4 -2)"/></g></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 8: The cover">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">08</span><span>Part II · The cover</span></div>
+      <div class="split wide-r">
+        <div>
+          <h2>A route through <em>every</em> essay</h2>
+          <p class="lead">The cover is the chart itself. A vermilion route runs through all 103 essays in the order they were written, inked in when the page opens; the latest entry is marked. Six territories, grown as islands from their own essays' positions, carry hand-lettered names.</p>
+          <div class="stats mt" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+            <div><b>103</b><span>Entries</span></div>
+            <div><b>1,10,574</b><span>Words</span></div>
+            <div><b>8,007</b><span>Sentences</span></div>
+            <div><b>2,596</b><span>Exclamation marks</span></div>
+          </div>
+          <p class="note mt-s">Four ways in: <strong>Begin reading</strong>, <strong>▶ Watch the tour</strong>, <strong>Contents</strong> and <strong>A random entry</strong>. The numbers use Indian grouping, as the rest of the site does.</p>
+        </div>
+        <figure class="shot rv" style="--d:2">
+          <img src="assets/logbook/cover.webp" width="1280" height="800" loading="lazy" decoding="async" alt="The Logbook's cover on a desktop: the title Wanderer's Logbook set in a large serif with Logbook in vermilion italic, a paragraph, four big numbers and four buttons, beside a chart of six pastel islands crossed by a dotted vermilion route.">
+          <figcaption>The cover in the site's classic shell, beside the profile sidebar.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 9: The prologue">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">09</span><span>Part II · The prologue</span></div>
+      <h2>Five steps from a ledger <em>to a map</em></h2>
+      <p class="lead">A scrollytelling prologue with a sticky figure. The same 103 marks rearrange at each step, so the reader watches one dataset become a chart instead of being handed one.</p>
+      <div class="strip mt" tabindex="0" role="region" aria-label="The five prologue steps, scrollable">
+        <figure class="shot"><img src="assets/logbook/pro-0.webp" width="1056" height="836" loading="lazy" decoding="async" alt="Prologue step 1, the ledger: 103 dots in rows, sized by length."><figcaption><strong>1 · The ledger.</strong> 103 entries, 2020 to 2026; the longest runs 3,529 words, the shortest 420.</figcaption></figure>
+        <figure class="shot"><img src="assets/logbook/pro-1.webp" width="1056" height="836" loading="lazy" decoding="async" alt="Prologue step 2, the surge: the dots stacked by year, with 2026 towering over the rest."><figcaption><strong>2 · The surge.</strong> 33 essays before 2026; then 70 in one year, 55 for the 100 Days To Offload challenge.</figcaption></figure>
+        <figure class="shot"><img src="assets/logbook/pro-2.webp" width="1056" height="836" loading="lazy" decoding="async" alt="Prologue step 3, two tongues: English essays as indigo circles above the line, Marathi as saffron diamonds below."><figcaption><strong>3 · Two tongues.</strong> 86 in English, 17 in Marathi — indigo circles, saffron diamonds.</figcaption></figure>
+        <figure class="shot"><img src="assets/logbook/pro-3.webp" width="1056" height="836" loading="lazy" decoding="async" alt="Prologue step 4, placed by meaning: the dots fly onto the chart and six coloured territories appear."><figcaption><strong>4 · Placed by meaning.</strong> Forget the dates: six territories emerge on their own.</figcaption></figure>
+        <figure class="shot"><img src="assets/logbook/pro-4.webp" width="1056" height="836" loading="lazy" decoding="async" alt="Prologue step 5, the exclamation mark: the same chart with each dot sized by its exclamation marks."><figcaption><strong>5 · The exclamation mark.</strong> 2,596 of them, about 23 per thousand words; the loudest year was 2022.</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 10: Contents and the dock">
+    <div class="inner split">
+      <figure class="shot rv" style="--d:1">
+        <img src="assets/logbook/contents-a.webp" width="1056" height="836" loading="lazy" decoding="async" alt="The contents page: six chapter cards, each with a small thumbnail drawn from the real data — a tiny chart, a constellation, a spiral, bars, arcs and lines of a poem — then the Atlas chapter opening below.">
+        <figcaption>Every thumbnail on the contents page is drawn from the real data, not an icon.</figcaption>
+      </figure>
+      <div>
+        <div class="eyebrow"><span class="num">10</span><span>Part II · Contents &amp; dock</span></div>
+        <h2>Six chapters, and a way <em>between</em> them</h2>
+        <p class="lead">Contents names each chapter with its Roman numeral and a miniature of what it shows. Once you are inside, a small dock floats at the bottom of the screen — <span class="serif"><em>‹ I Atlas ›</em></span> — and follows whichever chapter is in view.</p>
+        <ul class="plain">
+          <li>The chapter ids are the old <code>?lens=</code> tab names, so every link to the first version still lands on the right chapter.</li>
+          <li>On a phone the dock moves to the top, clear of the site's floating Ask button.</li>
+          <li>It hides while an essay or the tour is open.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 11: Chapter I, Atlas">
+    <div class="inner">
+      <div class="split wide-r">
+        <div>
+          <div class="eyebrow"><span class="num">11</span><span>Chapter I · Atlas</span></div>
+          <h2>The chart of what <em>I write about</em></h2>
+          <p class="quote">“Essays sit beside the ones that say similar things — placed by the same multilingual embeddings the Ask page searches, laid flat — so an English essay and a Marathi one about the same hills share a coast.”</p>
+          <ul class="plain mt">
+            <li><strong>Search</strong> a title, tag or word; the rest of the chart fades back.</li>
+            <li><strong>English / मराठी</strong> toggle, and a <strong>territory legend</strong>: hover to peek, click to isolate.</li>
+            <li><strong>Hover</strong> a mark for a card with its first line; <strong>open</strong> it to pin its three nearest neighbours with dashed lines.</li>
+            <li><strong>Walk the route</strong> plays the essays in writing order, 85 ms apiece, with a scrubber.</li>
+          </ul>
+        </div>
+        <figure class="shot rv" style="--d:2">
+          <img src="assets/logbook/atlas-hover.webp" width="1056" height="836" loading="lazy" decoding="async" alt="The Atlas chapter: six watercolour islands named Travel Blogs and Trekking, AI and Running, Self Reflection and Satpuda, Youth Flourishing and Technology, Digital Wellbeing and Social Media, Book Review and Artificial Intelligence. Indigo circles and saffron diamonds sit on them; a hover card shows an essay titled Usain Bolt: What it takes to conquer the self and the world.">
+          <figcaption>Hovering a mark: date, length, title, first line and territory.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 12: How the islands grow">
+    <div class="inner split">
+      <div>
+        <div class="eyebrow"><span class="num">12</span><span>Chapter I · Atlas</span></div>
+        <h2>Islands grown from <em>their own</em> essays</h2>
+        <p class="lead">The territories are not drawn by hand and not convex hulls. Each region's essays are painted as soft discs, and an SVG filter turns that cloud into land with a coastline — the same filter on the cover, the Atlas, the prologue and every entry page.</p>
+        <pre><span class="c">&lt;!-- the "gooey" island, one per region --&gt;</span>
+<span class="k">&lt;feGaussianBlur</span> stdDeviation=<span class="s">{blur}</span> <span class="k">/&gt;</span>            <span class="c">1 · blur the discs</span>
+<span class="k">&lt;feColorMatrix</span> values=<span class="s">"… 0 0 0 26 -11"</span> <span class="k">/&gt;</span> <span class="c">2 · threshold: land</span>
+<span class="k">&lt;feMorphology</span> operator=<span class="s">"erode"</span> radius=<span class="s">"1.3"</span><span class="k">/&gt;</span> <span class="c">3 · land minus it: coast</span>
+<span class="k">&lt;feMorphology</span> operator=<span class="s">"dilate"</span> <span class="k">/&gt;</span>       <span class="c">4 · a ring offshore: shoal</span></pre>
+        <p class="note mt-s">Where two regions overlap they share a coast, which is the point: the map's borders are where one subject turns into another.</p>
+      </div>
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="A little production line in four stations. Dark discs sit on a tray, labelled discs; they soften into a blurred cloud, labelled blur; Blot presses a vermilion button on a press, labelled threshold; out comes a crisp island with a dashed contour ring around it, labelled coast. Vermilion arrows join the stations.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><rect class="il-o" x="44" y="300" width="124" height="22" rx="4"/><circle class="il-f" cx="62" cy="282" r="9"/><circle class="il-f" cx="84" cy="270" r="9"/><circle class="il-f" cx="100" cy="288" r="9"/><circle class="il-f" cx="122" cy="276" r="9"/><circle class="il-f" cx="140" cy="290" r="9"/><circle class="il-f" cx="112" cy="258" r="9"/><circle class="il-f" cx="74" cy="296" r="9"/><circle class="il-f" cx="150" cy="270" r="9"/><g opacity=".55"><circle cx="238" cy="276" r="26" style="fill:var(--i-ink);opacity:.22"/><circle cx="260" cy="262" r="24" style="fill:var(--i-ink);opacity:.22"/><circle cx="280" cy="280" r="26" style="fill:var(--i-ink);opacity:.22"/><circle cx="300" cy="268" r="22" style="fill:var(--i-ink);opacity:.22"/><circle cx="262" cy="292" r="22" style="fill:var(--i-ink);opacity:.22"/><circle cx="290" cy="294" r="18" style="fill:var(--i-ink);opacity:.22"/></g><path class="il-thin" style="stroke-dasharray:4 6" d="M210 284C204 254 236 232 262 238C284 226 318 240 320 266C334 286 312 314 284 312C262 324 226 316 214 300Z"/><rect class="il-o" x="514" y="214" width="92" height="178" rx="5"/><rect class="il-o" x="530" y="232" width="60" height="44" rx="3"/><path class="il-l" d="M546 254H574"/><circle class="il-a" cx="514" cy="300" r="10"/><path class="il-thin" style="stroke-dasharray:3 6" d="M640 302C626 266 664 236 700 244C730 236 770 256 764 290C770 320 742 342 708 336C676 344 648 330 640 302Z"/><path class="il-o" d="M656 300C646 274 674 254 702 260C726 254 754 270 748 294C752 316 730 330 706 324C682 330 662 320 656 300Z"/><path class="il-al" d="M176 288C186 284 194 284 202 286" marker-end="url(#il-arrow)"/><path class="il-al" d="M328 280C340 278 352 280 362 284" marker-end="url(#il-arrow)"/><path class="il-al" d="M612 262C622 268 630 276 636 284" marker-end="url(#il-arrow)"/><text class="il-t" x="106" y="352" text-anchor="middle">discs</text><text class="il-t" x="266" y="352" text-anchor="middle">blur</text><text class="il-t" x="560" y="200" text-anchor="middle">threshold</text><text class="il-t" x="704" y="372" text-anchor="middle">coast</text><g transform="translate(314 181.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-bean" class="il-k" transform="translate(93 66) rotate(-104)"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(4 0)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 13: Chapter II, Sky">
+    <div class="inner split wide-r">
+      <div>
+        <div class="eyebrow"><span class="num">13</span><span>Chapter II · Sky</span></div>
+        <h2>Opening lines as <em>constellations</em></h2>
+        <p class="quote">“Every essay's first sentence, drawn after Nicholas Rougeux's Literary Constellations: one star per word, larger for longer words, turning hardest where the words carry meaning.”</p>
+        <ul class="plain mt">
+          <li>103 constellations in a twinkling field; <strong>year chips</strong> filter it.</li>
+          <li><strong>Watch the sky fill</strong> lights them in writing order, with the year large behind.</li>
+          <li><strong>The observatory</strong> draws one constellation star by star, each star labelled with its word.</li>
+          <li>The chapter is always night, in either theme. The share card's constellation and this one call the same function, <code>constellationOf</code>, so they draw the same shape.</li>
+        </ul>
+      </div>
+      <figure class="shot rv" style="--d:2">
+        <img src="assets/logbook/sky-a.webp" width="1056" height="836" loading="lazy" decoding="async" alt="The Sky chapter: a deep indigo night sky filled with small constellations of white stars, year chips across the top, and one constellation enlarged on the right with each star labelled with a word.">
+        <figcaption>One star per word; the observatory on the right labels them.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 14: Chapter III, Fingerprint">
+    <div class="inner split wide-r">
+      <div>
+        <div class="eyebrow"><span class="num">14</span><span>Chapter III · Fingerprint</span></div>
+        <h2>Punctuation and rhythm, <em>words removed</em></h2>
+        <p class="quote">“Take the words away and an essay still has a shape.”</p>
+        <p>Each essay's punctuation is laid along a spiral in reading order — full stops in ink, commas in pencil, exclamation marks in vermilion, questions in teal — after Stefanie Posavec and <em>Between the Words</em>.</p>
+        <ul class="plain">
+          <li><strong>The specimen</strong>: one essay's spiral, its punctuation mix, a bar per sentence and four facts.</li>
+          <li><strong>The cabinet</strong>: every spiral, filed by year. Sort by year, longest, loudest, most questions or calmest.</li>
+          <li>Hover to inspect, click to keep; on a phone a tap opens the essay.</li>
+        </ul>
+      </div>
+      <figure class="shot rv" style="--d:2">
+        <img src="assets/logbook/fingerprint-a.webp" width="1056" height="836" loading="lazy" decoding="async" alt="The Fingerprint chapter: a large spiral of coloured punctuation marks for one essay with its rhythm bars and facts, beside a grid of small spirals, one per essay, filed under the year 2026.">
+        <figcaption>The specimen beside the cabinet. Sort buttons sit above the drawer.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 15: Chapter IV, Phrases">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">15</span><span>Chapter IV · Phrases</span></div>
+      <h2>Habits of <em>the hand</em></h2>
+      <p class="lead">“The phrases I reach for without noticing. A phrase only counts once it turns up in several different essays, so these are habits, not subjects.”</p>
+      <div class="two mt">
+        <figure class="shot crop rv" style="--d:1">
+          <img src="assets/logbook/phrases-a.webp" width="1056" height="836" style="aspect-ratio:1056/600" loading="lazy" decoding="async" alt="The Phrases chapter: a ledger of signature phrases such as social media, know your, one needs and think about, each with a row of dots by year and a count; beside it, words of the year from 2026 back to 2020.">
+          <figcaption><strong>The ledger</strong> of signature phrases with a dot per year, and <strong>words of the year</strong>.</figcaption>
+        </figure>
+        <figure class="shot crop rv" style="--d:2">
+          <img src="assets/logbook/phrases-b.webp" width="1056" height="836" style="aspect-ratio:1056/600" loading="lazy" decoding="async" alt="Below the ledger: how loud each year was, drawn as rows of exclamation marks, and a game card quoting a Marathi sentence with year buttons from 2020 to 2026.">
+          <figcaption><strong>Volume</strong> as a pictogram of “!”, and <strong>Guess the year</strong> from a real sentence.</figcaption>
+        </figure>
+      </div>
+      <p class="note mt-s">The first version picked a line at random — and 280 of the 412 lines are from 2026, so always answering 2026 usually won. The game now draws a <em>year</em> first, then a line from it; it keeps a streak and says how many years off you were.</p>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 16: Chapter V, Letters">
+    <div class="inner split wide-r">
+      <div>
+        <div class="eyebrow"><span class="num">16</span><span>Chapter V · Letters</span></div>
+        <h2>My past self, <em>answered</em></h2>
+        <p class="quote">“A sentence from years ago, and the recent sentence closest to it in meaning. Nobody chose these pairs: the embeddings matched them, at least eighteen months apart.”</p>
+        <ul class="plain mt">
+          <li>An <strong>arc diagram</strong> across the years: each arc joins a then to a now. Arrow keys walk the arcs; Enter opens one.</li>
+          <li>The pair is shown as two <strong>postmarked letters</strong> — <em>Then</em> and <em>Now</em> — with a ring for how close they are in meaning.</li>
+          <li>Previous, next and shuffle; pairs often cross languages, English answering Marathi.</li>
+        </ul>
+      </div>
+      <figure class="shot rv" style="--d:2">
+        <img src="assets/logbook/letters-a.webp" width="1056" height="836" loading="lazy" decoding="async" alt="The Letters chapter: an arc diagram over a timeline from 2020 to 2026 with one arc highlighted in vermilion, and below it two postmarked letter cards in Marathi, Then 17 Aug 2020 and Now 1 Jun 2026, with a small closeness ring between them reading 0.71.">
+        <figcaption>Letter 1 of 22: Marathi from August 2020 answered by Marathi from June 2026, 0.71 alike.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+
+  <section class="slide" data-part="journal" aria-label="Slide 17: Chapter VI, Found poems">
+    <div class="inner split">
+      <div>
+        <div class="eyebrow"><span class="num">17</span><span>Chapter VI · Found poems</span></div>
+        <h2>Lines cut <em>from the archive</em></h2>
+        <p class="quote">“Five sentences from five essays, shuffled until they read as one poem. Keep the lines you like and shuffle the rest.”</p>
+        <ul class="plain mt">
+          <li>A <strong>padlock</strong> beside each line keeps it; <strong>Shuffle the others</strong> redraws the rest, inking new lines in.</li>
+          <li>The address bar is always a link to the poem in front of you (<code>?poem=</code> and <code>?lock=</code>).</li>
+          <li><strong>Copy link</strong> and <strong>Save as image</strong> — a PNG of the card.</li>
+          <li>Each line carries its year; tap it to open the essay it came from.</li>
+        </ul>
+      </div>
+      <figure class="shot rv" style="--d:2">
+        <img src="assets/logbook/poem-a.webp" width="1056" height="836" loading="lazy" decoding="async" alt="The Found poems chapter: a paper card titled A found poem, five lines from five essays between 2023 and 2026 in English and Marathi, each with a small padlock and its year, and Shuffle, Copy link and Save as image buttons below.">
+        <figcaption>Five lines, five essays, 2023–2026.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 18: Every essay, its own page">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">18</span><span>§ Index &amp; the entry page</span></div>
+      <div class="split wide-r">
+        <div>
+          <h2>Every essay, <em>its own page</em></h2>
+          <p class="lead">Click any mark in any chapter, or a row in the index, and the essay slides over as a page of the journal — a bottom sheet on a phone. <code>?post=</code> holds it, so the page is a link.</p>
+          <ul class="plain">
+            <li>Its photo, duotoned like every card on the site; its date, language and platform; its first line.</li>
+            <li>Words, reading time, average sentence and “! per 1,000”, then its fingerprint and rhythm.</li>
+            <li>A <strong>mini chart</strong> of where it sits, and its <strong>three nearest</strong> essays in meaning.</li>
+            <li><strong>Ask about this essay</strong> — the site's chat, pinned to this essay and its neighbours.</li>
+            <li>← and → turn the page in writing order; Esc closes and focus goes back where it was.</li>
+            <li>The <strong>§ Index</strong> at the back lists all 103 — search, language, newest, oldest or longest — and a colophon says what is computed and what never ships.</li>
+          </ul>
+        </div>
+        <figure class="shot rv" style="--d:2">
+          <img src="assets/logbook/sheet.webp" width="1280" height="800" loading="lazy" decoding="async" alt="An essay open as a page sliding over the Atlas from the right: a duotoned photo, the title Usain Bolt: What it takes to conquer the self and the world, a Read it on Substack button, facts, and the start of its fingerprint.">
+          <figcaption>An entry slid over the Atlas, which stays visible behind it.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="slide" data-part="journal" aria-label="Slide 19: On a phone">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">19</span><span>Part II · On a phone</span></div>
+      <h2>Drawn at <em>the real width</em></h2>
+      <p class="lead">Every figure measures its own box and draws at that many pixels — no scaled-down viewBox — so the chart's labels are as legible at 390 px as at 1,440. Layouts switch on the container's width, not the screen's, because the site's sidebar makes viewport breakpoints lie.</p>
+      <div class="phones mt">
+        <figure class="shot phone rv" style="--d:1"><img src="assets/logbook/m-cover.webp" width="520" height="907" loading="lazy" decoding="async" alt="The cover on a phone."><figcaption>Cover</figcaption></figure>
+        <figure class="shot phone rv" style="--d:2"><img src="assets/logbook/m-atlas-pinned.webp" width="520" height="907" loading="lazy" decoding="async" alt="The Atlas on a phone with a card for one essay and the chapter dock at the top."><figcaption>Atlas + dock</figcaption></figure>
+        <figure class="shot phone rv" style="--d:3"><img src="assets/logbook/m-sheet.webp" width="520" height="907" loading="lazy" decoding="async" alt="An essay open as a bottom sheet on a phone."><figcaption>Entry as a bottom sheet</figcaption></figure>
+        <figure class="shot phone rv" style="--d:4"><img src="assets/logbook/m-letters-b.webp" width="520" height="907" loading="lazy" decoding="async" alt="Letters on a phone: the then and now cards stacked."><figcaption>Letters</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="journal" aria-label="Slide 20: By dark">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">20</span><span>Part II · By dark</span></div>
+      <div class="split wide-r">
+        <div>
+          <h2>Iron-gall ink by day, <em>indigo</em> by night</h2>
+          <p class="lead">Every colour on the page is a token, so the SVGs need no dark variants: the paper turns to deep indigo, the ink to bone, the islands deepen and the vermilion lifts to coral. The site's own dark switch drives it, in either shell.</p>
+          <div class="row mt">
+            <span class="chip"><span class="dot-en"></span>English · indigo · circle</span>
+            <span class="chip"><span class="dot-mr"></span>मराठी · saffron · diamond</span>
+            <span class="chip acc">vermilion · the route, the “!”, the UI</span>
+            <span class="chip" style="color:var(--ask)">teal · the “?” only</span>
+          </div>
+        </div>
+        <figure class="shot rv" style="--d:2">
+          <img src="assets/logbook/dark-cover.webp" width="1280" height="800" loading="lazy" decoding="async" alt="The cover in dark mode: deep indigo paper, bone-coloured type, coral Logbook, and darker islands on the chart.">
+          <figcaption>The cover in dark mode.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Part III · How it works --------------------------------------------- -->
+  <section class="slide" data-part="works" aria-label="Slide 21: From essays to a chart">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">21</span><span>Part III · How it works</span></div>
+      <h2>From essays to <em>a chart</em>, with no model call</h2>
+      <p class="lead">The page reads one committed file, <code>public/data/logbook.json</code>. <code>npm run logbook</code> builds it from text and vectors the site already has for its chatbot, so the Logbook adds no new model calls at all.</p>
+      <div class="flow mt">
+        <div class="card rv" style="--d:1"><p class="k">1 · Text</p><h4>Every essay</h4><p class="note">Substack and WordPress, cached in the gitignored <code>knowledge_base/</code> by the word-count job.</p></div>
+        <div class="card rv" style="--d:2"><p class="k">2 · Vectors</p><h4>Chunk embeddings</h4><p class="note">The <code>/ask</code> index already holds bge-m3 vectors per chunk; each essay gets their mean.</p></div>
+        <div class="card rv" style="--d:3"><p class="k">3 · Layout</p><h4>UMAP to 2D</h4><p class="note"><code>umap-js</code>, seeded: 40 neighbours and a loose <code>minDist</code> of 0.8, so ~100 essays don't scatter into far islands.</p></div>
+        <div class="card rv" style="--d:4"><p class="k">4 · Regions</p><h4>k-means, named by tags</h4><p class="note">k = 6 on the flat layout, each named after its essays' two commonest topical tags.</p></div>
+        <div class="card ink rv" style="--d:5"><p class="k" style="color:var(--accent)">5 · Ship</p><h4>logbook.json</h4><p class="note" style="color:var(--paper)">177 KB, under a 200 KB budget a test enforces.</p></div>
+      </div>
+      <p class="note mt">It runs as the <code>logbook</code> step of <code>npm run refresh</code>, after <code>ask:index</code>. An essay with no chunks yet is left off the chart, never placed at the origin.</p>
+    </div>
+  </section>
+
+  <section class="slide" data-part="works" aria-label="Slide 22: Two languages, one map">
+    <div class="inner split">
+      <div>
+        <div class="eyebrow"><span class="num">22</span><span>Part III · How it works</span></div>
+        <h2>Two languages, <em>one map</em></h2>
+        <p class="lead">bge-m3 is multilingual, so a Marathi essay about a Sahyadri fort and an English one about the same climb land next to each other. Language is a property of the mark, never of the map.</p>
+        <ul class="plain">
+          <li><strong>Detection by share of letters:</strong> a text is Marathi when its Devanagari letters reach half its Latin ones, so an English essay quoting one Marathi word is still English — and a title keeps its own language.</li>
+          <li><strong>Doubled by shape:</strong> English is an indigo <span class="dot-en"></span> circle, Marathi a saffron <span class="dot-mr"></span> diamond, in every chapter — colour alone never carries the meaning.</li>
+          <li><strong>Set in its own type:</strong> Devanagari in Tiro Devanagari Marathi beside Instrument Serif, with <code>lang="mr"</code> for screen readers.</li>
+        </ul>
+        <div class="stats mt" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+          <div><b>86</b><span>English</span></div>
+          <div><b>17</b><span>Marathi</span></div>
+          <div><b>6</b><span>Shared territories</span></div>
+        </div>
+      </div>
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="A single hill drawn in outline. On its slope an indigo circle and a saffron diamond sit at the same height, either side of Blot, who touches each one with an arm tip. Labels: same hills over the top, English under the circle, Marathi in Devanagari under the diamond.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><path class="il-o" d="M96 392C150 330 210 236 300 214C360 199 420 186 480 208C560 238 640 318 712 392Z"/><path class="il-thin" d="M150 360C206 296 256 246 310 236C364 224 420 214 476 232C540 256 600 312 650 360"/><circle class="il-en" cx="298.1" cy="272.4" r="22"/><polygon class="il-mr" points="525.9,245.4 552.9,272.4 525.9,299.4 498.9,272.4"/><text class="il-t" x="400" y="170" text-anchor="middle">same hills</text><text class="il-t" x="298.1" y="324.4" text-anchor="middle">english</text><text class="il-t il-tmr" x="525.9" y="328.4" text-anchor="middle">मराठी</text><g transform="translate(314 181.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-bean" class="il-k" transform="translate(27 66) rotate(112)"/><use href="#bl-bean" class="il-k" transform="translate(93 66) rotate(-112)"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(0 0)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" data-part="works" aria-label="Slide 23: The excerpt rule">
+    <div class="inner split">
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="A paper wall with a narrow slot. Blot pushes a single thin strip of paper — one sentence — through the slot and out the other side. A thick block of ruled lines, a whole paragraph, sits on the ground behind him, too big to pass. The wall is labelled thirty words or fewer.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><g transform="translate(70 262) rotate(-4)"><rect class="il-o" x="0" y="0" width="112" height="128" rx="3"/><path class="il-l" d="M14 18H98"/><path class="il-l" d="M14 33H87"/><path class="il-l" d="M14 48H76"/><path class="il-l" d="M14 63H89"/><path class="il-l" d="M14 78H78"/><path class="il-l" d="M14 93H91"/><path class="il-l" d="M14 108H80"/></g><rect class="il-o" x="488" y="110" width="58" height="282" rx="3"/><rect class="il-f" x="488" y="273.4" width="58" height="14"/><rect class="il-o" x="388.2" y="275.4" width="241.8" height="10" rx="1.5" style="stroke-width:1.8"/><rect class="il-o" x="488" y="275.4" width="58" height="10" style="stroke:none"/><path class="il-l" d="M488 273.4V287.4M546 273.4V287.4"/><path class="il-thin" d="M400.2 280.4H454.2M560 280.4H610"/><text class="il-ta" x="560" y="254.4">≤ 30 words</text><text class="il-t" x="126" y="246" text-anchor="middle">a paragraph</text><g transform="translate(200 181.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-bean" class="il-k" transform="translate(93 66) rotate(-100)"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(5 0)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+      <div>
+        <div class="eyebrow"><span class="num">23</span><span>Part III · How it works</span></div>
+        <h2>Sentences may ship. <em>Paragraphs never do.</em></h2>
+        <p class="lead">The essays live on Substack and WordPress; the Logbook only points at them. So the committed JSON may carry single sentences — each linking back to its essay — and nothing longer.</p>
+        <pre><span class="c">// src/lib/logbook.js — the rule</span>
+<span class="k">export const</span> MAX_EXCERPT_WORDS = <span class="n">30</span>;
+
+<span class="c">// src/lib/logbook.test.js — the guard</span>
+it(<span class="s">"stays under 200 KB"</span>, () =&gt;
+  expect(raw.length).toBeLessThan(<span class="n">200</span> * <span class="n">1024</span>));</pre>
+        <p class="note mt-s">The test holds the committed file to both: no excerpt over 30 words, no file over 200 KB. The full text stays in the gitignored <code>knowledge_base/</code>. A line must also start like a sentence — a capital, a quote or a Devanagari letter — never on a digit.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="works" aria-label="Slide 24: What the analysis computes">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">24</span><span>Part III · How it works</span></div>
+      <h2>What each chapter <em>reads</em></h2>
+      <p class="lead">All the analysis lives in one tested module, <code>src/lib/logbook.js</code>: cleaning, language, sentences, phrases, letter pairs and constellations. Each chapter is a view over its output.</p>
+      <table class="t mt">
+        <thead><tr><th>Chapter</th><th>Computed at build time</th><th>In the file</th></tr></thead>
+        <tbody>
+          <tr><td>I · Atlas</td><td>Mean chunk vector → UMAP → k-means; three nearest neighbours per essay</td><td><code>xy</code>, <code>cluster</code>, <code>near</code></td></tr>
+          <tr><td>II · Sky</td><td>First sentence → words → <code>constellationOf</code> (one star per word, turning on meaningful words)</td><td><code>opening</code></td></tr>
+          <tr><td>III · Fingerprint</td><td>Punctuation in reading order; words per sentence</td><td><code>punct</code>, <code>rhythm</code>, <code>exclaims</code></td></tr>
+          <tr><td>IV · Phrases</td><td>2- to 5-word phrases found in at least three essays; words of each year; up to four lines per essay for the game</td><td>24 + 24 phrases, 412 lines</td></tr>
+          <tr><td>V · Letters</td><td>Chunk pairs at least 548 days apart and ≥ 0.6 alike in meaning, each essay used once</td><td>22 letters</td></tr>
+          <tr><td>VI · Found poems</td><td>The same pool of single sentences, drawn five at a time</td><td>lines</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="slide" data-part="works" aria-label="Slide 25: The page's own rules">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">25</span><span>Part III · How it works</span></div>
+      <h2>Rules the page <em>keeps</em></h2>
+      <div class="three mt">
+        <div class="card rv" style="--d:1"><p class="k">Real pixel width</p><h4>No scaled viewBox</h4><p class="note">A <code>useWidth</code> hook (a ResizeObserver) gives every figure its real width; SVG type is set in pixels, so it stays readable on a phone.</p></div>
+        <div class="card rv" style="--d:2"><p class="k">Container queries</p><h4>The box, not the screen</h4><p class="note">Layouts switch on <code>.lb-cq</code> container width, because the classic shell's sidebar makes viewport breakpoints lie.</p></div>
+        <div class="card rv" style="--d:3"><p class="k">Tokens</p><h4>One palette, two themes</h4><p class="note">Every colour is a <code>--lb-*</code> variable in <code>logbook.css</code>; dark mode redefines them, so no SVG needs a dark variant.</p></div>
+        <div class="card rv" style="--d:4"><p class="k">URL state</p><h4>Every view is a link</h4><p class="note"><code>?post=</code> an essay, <code>?lens=</code> a chapter, <code>?poem=</code> + <code>?lock=</code> a poem, <code>?tour</code> the film — always merged, so <code>?view=</code> survives.</p></div>
+        <div class="card rv" style="--d:5"><p class="k">Keyboard</p><h4>One tab stop per field</h4><p class="note">Marks use a roving tabindex: arrows move in writing order, Home/End jump, Enter opens. Dialogs trap focus and give it back.</p></div>
+        <div class="card rv" style="--d:6"><p class="k">Weight</p><h4>Fonts on this page only</h4><p class="note">Instrument Serif and Tiro Devanagari Marathi load through Helmet on <code>/logbook</code> alone; the chapter bundle is about 28 KB gzipped.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Part IV · The build ------------------------------------------------- -->
+  <section class="slide" data-part="build" aria-label="Slide 26: How the redesign was built">
+    <div class="inner split">
+      <div>
+        <div class="eyebrow"><span class="num">26</span><span>Part IV · The build</span></div>
+        <h2>One brief, <em>full autonomy</em></h2>
+        <div class="prompt rv" style="--d:1">
+          <p>Completely revamp “Wanderers Logbook”, you have full freedom and autonomy. Make sure it is interactive, elegant and beautiful. Redesign the whole experience.</p>
+          <small>The brief · Claude Code session</small>
+        </div>
+        <div class="prompt rv mt-s" style="--d:2">
+          <p>Make sure you explore all the experiences: Atlas, Sky, Fingerprint, Phrases, Letters, Found poems.</p>
+          <small>Added mid-turn, with a screenshot of the old mobile header</small>
+        </div>
+        <p class="note mt-s">Built in a single Claude Code session, with every step checked in a real browser: Playwright screenshots at desktop and phone widths, in light and dark, in both of the site's shells.</p>
+      </div>
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="Six loose tab cards, numbered I to VI, lie scattered on the ground at the left, labelled tabs. Blot walks to the right hugging a small stack of the same cards. At the right stands a bound book with a vermilion ribbon bookmark, titled Logbook, labelled a book.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><g transform="translate(60 356) rotate(-8)"><rect class="il-o" x="0" y="0" width="30" height="34" rx="6"/><text class="il-num" x="15" y="23" text-anchor="middle" font-size="15">I</text></g><g transform="translate(94 350) rotate(6)"><rect class="il-o" x="0" y="0" width="30" height="34" rx="6"/><text class="il-num" x="15" y="23" text-anchor="middle" font-size="15">II</text></g><g transform="translate(128 356) rotate(-3)"><rect class="il-o" x="0" y="0" width="30" height="34" rx="6"/><text class="il-num" x="15" y="23" text-anchor="middle" font-size="15">III</text></g><g transform="translate(162 350) rotate(9)"><rect class="il-o" x="0" y="0" width="30" height="34" rx="6"/><text class="il-num" x="15" y="23" text-anchor="middle" font-size="15">IV</text></g><g transform="translate(196 356) rotate(-6)"><rect class="il-o" x="0" y="0" width="30" height="34" rx="6"/><text class="il-num" x="15" y="23" text-anchor="middle" font-size="15">V</text></g><g transform="translate(230 350) rotate(4)"><rect class="il-o" x="0" y="0" width="30" height="34" rx="6"/><text class="il-num" x="15" y="23" text-anchor="middle" font-size="15">VI</text></g><path class="il-o" d="M590 186H700Q708 186 708 194V384Q708 392 700 392H590Z"/><path class="il-o" d="M576 194Q576 186 584 186H604V392H584Q576 392 576 384Z"/><path class="il-a" d="M676 186V246L686 236L696 246V186Z"/><path class="il-thin" d="M622 222H688M622 236H672"/><text class="il-num" x="652" y="306" text-anchor="middle" font-size="30">Logbook</text><text class="il-t" x="160" y="330" text-anchor="middle">tabs</text><text class="il-t" x="642" y="170" text-anchor="middle">a book</text><path class="il-al" d="M478 300C506 296 530 296 556 300" marker-end="url(#il-arrow)"/><g transform="translate(284 181.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-legL" class="il-k" transform="rotate(14 48 114)"/><use href="#bl-legR" class="il-k" transform="rotate(-8 72 114)"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(4 -6)"/><g transform="translate(36 78)"><rect class="il-o" x="0" y="0" width="40" height="30" rx="5" style="stroke-width:1.4"/><rect class="il-o" x="3" y="-4" width="40" height="30" rx="5" style="stroke-width:1.4"/><rect class="il-o" x="6" y="-8" width="40" height="30" rx="5" style="stroke-width:1.4"/><text class="il-num" x="26" y="16" text-anchor="middle" font-size="12">I–VI</text></g><use href="#bl-bean" class="il-gap" transform="translate(28 72) rotate(-14)"/><use href="#bl-bean" class="il-k" transform="translate(28 72) rotate(-14)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(14)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(14)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" data-part="build" aria-label="Slide 27: How the work was split">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">27</span><span>Part IV · The build</span></div>
+      <h2>Geometry first, <em>then</em> the pages</h2>
+      <p class="lead">The redesign was built in layers, so the hard part — where every mark, label and island goes — could be tested without a browser.</p>
+      <div class="four mt">
+        <div class="card rv" style="--d:1"><p class="k">1 · Model</p><h4>Pure geometry</h4><p class="note"><code>model.js</code>: spirals, phyllotaxis, arcs, the prologue's five layouts, year ticks, search. 16 unit tests.</p></div>
+        <div class="card rv" style="--d:2"><p class="k">2 · Ground</p><h4>The shared chart</h4><p class="note"><code>ChartBase.js</code>: graticule, islands, region labels and a compass, drawn once and shared by four views.</p></div>
+        <div class="card rv" style="--d:3"><p class="k">3 · Chapters</p><h4>Six rebuilt views</h4><p class="note">One file per chapter, plus the cover, prologue, contents, dock, index and entry sheet.</p></div>
+        <div class="card rv" style="--d:4"><p class="k">4 · Proof</p><h4>Look, then fix</h4><p class="note">Every chapter screenshotted at 1,440 and 390 px, light and dark; every interaction scripted and checked.</p></div>
+      </div>
+      <div class="stats mt" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+        <div><b>53</b><span>Test suites</span></div>
+        <div><b>612</b><span>Tests passing</span></div>
+        <div><b>28 KB</b><span>Chapter bundle, gzip</span></div>
+        <div><b>0</b><span>New dependencies</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="build" aria-label="Slide 28: Bug — the vanishing diamonds">
+    <div class="inner split">
+      <div>
+        <div class="eyebrow"><span class="num">28</span><span>Part IV · What the screenshots caught</span></div>
+        <h2>The Marathi essays <em>vanished</em></h2>
+        <p class="lead">The first screenshot of the new Atlas showed only circles: all seventeen saffron diamonds had gone. Caught before it shipped.</p>
+        <div class="bug">
+          <div><h3>Symptom</h3><p>Every Marathi mark was off the chart. The English circles were fine.</p></div>
+          <div><h3>Cause</h3><p>The diamonds were rects with an SVG <code>rotate()</code> attribute. The new hover scale needed CSS <code>transform-origin: center</code>, which re-anchored that rotation and flung them away.</p></div>
+          <div class="fix"><h3>Fix</h3><p>Draw a diamond as a polygon — <code>diamond(cx, cy, r)</code> in <code>shared.js</code> — now a rule in the repo's CLAUDE.md.</p></div>
+        </div>
+        <pre class="mt-s"><span class="k">export const</span> diamond = (cx, cy, r) =&gt;
+  <span class="s">`${cx},${cy - r} ${cx + r},${cy} ${cx},${cy + r} ${cx - r},${cy}`</span>;</pre>
+      </div>
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="A flat chart, like a tabletop with a grid, holds five indigo circles that sit still. Saffron diamonds are sliding off its right edge and tumbling through the air. Blot stands just past the edge and has caught one diamond, hugging it, his face unchanged. A label reads rotate( ).">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><path class="il-o" d="M70 252H520L548 300H98Z"/><path class="il-thin" d="M160 252L182 300M250 252L274 300M340 252L366 300M430 252L456 300M84 276H534"/><path class="il-o" d="M98 300H548V312H98Z"/><circle class="il-en" cx="150" cy="270" r="9"/><circle class="il-en" cx="232" cy="282" r="8"/><circle class="il-en" cx="312" cy="264" r="10"/><circle class="il-en" cx="390" cy="284" r="8"/><circle class="il-en" cx="470" cy="268" r="9"/><polygon class="il-mr" transform="rotate(18 578 232)" points="578,216 594,232 578,248 562,232"/><polygon class="il-mr" transform="rotate(-24 606 296)" points="606,281 621,296 606,311 591,296"/><path class="il-thin" d="M556 214L548 206M566 208L562 198M596 280L590 270M604 276L604 264"/><text class="il-ta" x="600" y="186" text-anchor="middle">rotate( )</text><g transform="translate(598 181.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(-4 -6)"/><polygon class="il-mr" points="60,80 76,96 60,112 44,96"/><use href="#bl-bean" class="il-gap" transform="translate(28 72) rotate(-14)"/><use href="#bl-bean" class="il-k" transform="translate(28 72) rotate(-14)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(14)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(14)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" data-part="build" aria-label="Slide 29: Bugs — words and labels">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">29</span><span>Part IV · What the screenshots caught</span></div>
+      <h2>Small things a reader <em>would</em> notice</h2>
+      <div class="bug mt rv" style="--d:1">
+        <div><h3>Symptom</h3><p>A game line began <span lang="mr">“५० वाजता…”</span> — half a time of day.</p></div>
+        <div><h3>Cause</h3><p>The sentence splitter broke at the decimal point in “<span lang="mr">६.५० वाजता</span>”, leaving a fragment that starts on a digit — one line in 412.</p></div>
+        <div class="fix"><h3>Fix</h3><p><code>startsLikeSentence()</code> in the analysis, plus a filter for the committed data; a test now says no line starts on a digit, in either script.</p></div>
+      </div>
+      <div class="bug rv" style="--d:2">
+        <div><h3>Symptom</h3><p>Region names disappeared under the dots.</p></div>
+        <div><h3>Cause</h3><p>Labels were drawn in the ground layer, beneath the marks.</p></div>
+        <div class="fix"><h3>Fix</h3><p>A separate <code>RegionLabels</code> layer, drawn after the marks, with a paper halo.</p></div>
+      </div>
+      <div class="bug rv" style="--d:3">
+        <div><h3>Symptom</h3><p>The cover's stat read <strong>“EXCLAMATIO N”</strong>, and the “Latest” label was clipped at the edge.</p></div>
+        <div><h3>Cause</h3><p>Wide letter-spacing plus <code>overflow-wrap</code> broke the word; the label had no room on the right.</p></div>
+        <div class="fix"><h3>Fix</h3><p>Tighter kicker spacing and normal wrapping; the label flips to the left near the edge.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="build" aria-label="Slide 30: Bug — the black poem">
+    <div class="inner split">
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="A small paper printer labelled save as image. Blot presses its vermilion button. Out of the slot rises a sheet that is solid black, with the poem's lines barely visible in it. Blot looks up at the sheet, deadpan.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><g transform="rotate(-3 553.3 160)"><rect class="il-f" x="501.3" y="92" width="104" height="150" rx="2"/><path d="M515.3 116H589.3" style="stroke:var(--i-paper);stroke-width:1.6;opacity:.32"/><path d="M515.3 134H580.3" style="stroke:var(--i-paper);stroke-width:1.6;opacity:.32"/><path d="M515.3 152H571.3" style="stroke:var(--i-paper);stroke-width:1.6;opacity:.32"/><path d="M515.3 170H582.3" style="stroke:var(--i-paper);stroke-width:1.6;opacity:.32"/><path d="M515.3 188H573.3" style="stroke:var(--i-paper);stroke-width:1.6;opacity:.32"/></g><rect class="il-o" x="455.3" y="248" width="196" height="144" rx="8"/><rect class="il-o" x="479.3" y="236" width="148" height="16" rx="3"/><path class="il-f" d="M495.3 244H611.3"/><circle class="il-a" cx="455.3" cy="276.3" r="10"/><text class="il-t" x="553.3" y="330" text-anchor="middle">save as image</text><g transform="translate(268 181.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-bean" class="il-k" transform="translate(93 66) rotate(-106)"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(4 -6)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+      <div>
+        <div class="eyebrow"><span class="num">30</span><span>Part IV · What the screenshots caught</span></div>
+        <h2>Save as image gave <em>a black card</em></h2>
+        <div class="bug">
+          <div><h3>Symptom</h3><p>The exported PNG was solid black behind the poem, and shifted by its margin.</p></div>
+          <div><h3>Cause</h3><p>html-to-image draws the paper-grain data URI as black, and bakes the node's margins into the canvas.</p></div>
+          <div class="fix"><h3>Fix</h3><p>A <code>lb-poem--flat</code> class while it captures (plain paper, no grain), and the margin moved onto a wrapper.</p></div>
+        </div>
+        <p class="note mt-s">Verified by actually downloading the file in a headless browser, not by trusting the code path.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="build" aria-label="Slide 31: The phone review">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">31</span><span>Part IV · The phone review</span></div>
+      <h2>Five fixes only a <em>390-pixel</em> screen showed</h2>
+      <table class="t mt">
+        <thead><tr><th>Where</th><th>What went wrong</th><th>The fix</th></tr></thead>
+        <tbody>
+          <tr><td>Year axes</td><td>Labels for 2020–2026 collided on the prologue and letters</td><td><code>yearTicks()</code> drops a tick that would sit within 34 px of the last</td></tr>
+          <tr><td>Phrases</td><td>Long phrases were cut off beside their dots</td><td>A container query moves the year dots under the phrase</td></tr>
+          <tr><td>Chapter dock</td><td>The dock sat on top of the site's floating Ask button</td><td>On phones the dock moves to the top of the screen</td></tr>
+          <tr><td>Found poems</td><td>A line's year wrapped alone onto the next line</td><td>The last word and the year share a no-wrap span</td></tr>
+          <tr><td>Letters</td><td>The postmark covered the letter's text</td><td>The postmark floats, so the text wraps around it</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Part V · The tour film ---------------------------------------------- -->
+  <section class="slide" data-part="film" aria-label="Slide 32: The film brief">
+    <div class="inner split">
+      <div>
+        <div class="eyebrow"><span class="num">32</span><span>Part V · v23.1.0 · the tour film</span></div>
+        <h2>“Ask questions to <em>clarify</em>”</h2>
+        <div class="prompt">
+          <p>Create a detailed video for this new page. Include all the exciting features that this new page has. Ask questions to clarify requirement.</p>
+          <small>The brief</small>
+        </div>
+        <table class="t mt">
+          <thead><tr><th>Question</th><th>Chosen</th><th>Not chosen</th></tr></thead>
+          <tbody>
+            <tr><td>Format</td><td><strong>Vertical, 60–90 s</strong></td><td class="note">Landscape 2–3 min · both cuts · square</td></tr>
+            <tr><td>Style</td><td><strong>The real page, scripted</strong></td><td class="note">An animated explainer · a mix</td></tr>
+            <tr><td>Audio</td><td><strong>Voice-over + music</strong></td><td class="note">Music + captions · silent</td></tr>
+            <tr><td>Deliver</td><td><strong>Embed it on /logbook, and share it</strong></td><td class="note">A re-renderable npm script</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="A phone stands on a tripod like a film camera, a vermilion record light on top, pointed at an easel that shows a small chart with an island and marks. Blot stands beside the tripod pressing the phone's side button. The tripod is labelled 414 by 690.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><path class="il-l" d="M660 242L626 392M700 242L734 392M680 242V392"/><rect class="il-o" x="604" y="150" width="152" height="112" rx="4"/><path class="il-o" d="M626 230C620 206 642 190 664 196C680 186 708 192 712 212C730 222 722 244 700 244C684 252 640 250 626 230Z" style="stroke-width:1.8"/><circle class="il-en" cx="650" cy="214" r="4.5"/><polygon class="il-mr" points="684,216 690,222 684,228 678,222"/><circle class="il-en" cx="700" cy="206" r="4"/><path class="il-thin" style="stroke-dasharray:4 7" d="M566 200L600 204M566 220L600 222"/><path class="il-l" d="M424.4 300L394.4 392M424.4 300L454.4 392M424.4 300V392"/><rect class="il-o" x="398.4" y="154" width="52" height="92" rx="9"/><rect class="il-o" x="404.4" y="166" width="40" height="66" rx="3" style="stroke-width:1.6"/><rect class="il-o" x="414.4" y="246" width="20" height="54" rx="3"/><circle class="il-a" cx="424.4" cy="146" r="7"/><rect class="il-o" x="390.4" y="261.7" width="10" height="24" rx="3"/><text class="il-m" x="424.4" y="420" text-anchor="middle">414 × 690</text><g transform="translate(204 181.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-bean" class="il-k" transform="translate(93 66) rotate(-110)"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(4 -2)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+  <section class="slide" data-part="film" aria-label="Slide 33: The film">
+    <div class="inner film" data-film>
+      <video controls preload="none" playsinline poster="assets/logbook/tour-poster.webp" width="720" height="1280" aria-label="A narrated tour of the Wanderer's Logbook, recorded on the page at phone size">
+        <source src="assets/logbook/the-logbook.mp4" type="video/mp4">
+        <track kind="captions" src="assets/logbook/the-logbook.vtt" srclang="en" label="English (narration)">
+      </video>
+      <div>
+        <div class="eyebrow"><span class="num">33</span><span>Part V · the film</span></div>
+        <h2>The Logbook, <em>in motion</em></h2>
+        <p class="lead">79.8 seconds, recorded on the real page at phone size, one chapter after another. Captions are burned in, so it plays with the sound off. Press a chapter to jump.</p>
+        <ol class="chapters">
+          <li><button type="button" data-start="0" aria-pressed="false"><span class="n">·</span><span class="t">Wanderer’s Logbook</span><span class="s">0:00</span></button></li>
+          <li><button type="button" data-start="9.4" aria-pressed="false"><span class="n">·</span><span class="t">Prologue</span><span class="s">0:09</span></button></li>
+          <li><button type="button" data-start="19.4" aria-pressed="false"><span class="n">I</span><span class="t">Atlas</span><span class="s">0:19</span></button></li>
+          <li><button type="button" data-start="30.4" aria-pressed="false"><span class="n">II</span><span class="t">Sky</span><span class="s">0:30</span></button></li>
+          <li><button type="button" data-start="37.4" aria-pressed="false"><span class="n">III</span><span class="t">Fingerprint</span><span class="s">0:37</span></button></li>
+          <li><button type="button" data-start="44.8" aria-pressed="false"><span class="n">IV</span><span class="t">Phrases</span><span class="s">0:44</span></button></li>
+          <li><button type="button" data-start="52.3" aria-pressed="false"><span class="n">V</span><span class="t">Letters</span><span class="s">0:52</span></button></li>
+          <li><button type="button" data-start="58.8" aria-pressed="false"><span class="n">VI</span><span class="t">Found poems</span><span class="s">0:58</span></button></li>
+          <li><button type="button" data-start="66.3" aria-pressed="false"><span class="n">§</span><span class="t">Every essay, its own page</span><span class="s">1:06</span></button></li>
+        </ol>
+        <p class="note mt-s">Narration: Piper TTS, <code>en_GB-cori-high</code> (trained on public-domain LibriVox recordings) · music: the Scriptorium loop · <a href="assets/logbook/the-logbook.mp4" download>download the MP4</a> (4.3 MB).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="film" aria-label="Slide 34: The script">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">34</span><span>Part V · the script</span></div>
+      <h2>Ten lines, <em>one per scene</em></h2>
+      <p class="lead">Each scene lasts as long as its narration plus 1.3 seconds. The voice says one thing and the caption shows a tighter version of it — “sanket tambare dot in, slash logbook” is spoken; <code>sankettambare.in/logbook</code> is shown.</p>
+      <table class="t mt script">
+        <thead><tr><th>Scene</th><th>Starts</th><th>Narration</th></tr></thead>
+        <tbody>
+          <tr><td>Cover</td><td>0:00</td><td>This is the Wanderer's Logbook. Every essay I have published since 2020, in English and Marathi, read as data.</td></tr>
+          <tr><td>Prologue</td><td>0:09</td><td>A short prologue tells the story in dots: one hundred and three essays, the surge of 2026, two languages, and a map of meaning.</td></tr>
+          <tr><td>I · Atlas</td><td>0:19</td><td>The Atlas places essays by what they say, so an English essay and a Marathi one about the same hills share a coast. Walk the route, in the order they were written.</td></tr>
+          <tr><td>II · Sky</td><td>0:30</td><td>In the Sky, every first sentence becomes a constellation: one star for every word.</td></tr>
+          <tr><td>III · Fingerprint</td><td>0:37</td><td>Take the words away, and each essay still has a fingerprint: its punctuation, spiralling out.</td></tr>
+          <tr><td>IV · Phrases</td><td>0:44</td><td>Phrases shows the habits of my hand. Then, a game: guess the year a line was written.</td></tr>
+          <tr><td>V · Letters</td><td>0:52</td><td>Letters pairs an old sentence with the new one closest to it in meaning, years apart.</td></tr>
+          <tr><td>VI · Found poems</td><td>0:58</td><td>Found poems cuts five essays into one poem. Lock the lines you love, and shuffle the rest.</td></tr>
+          <tr><td>§ Entry</td><td>1:06</td><td>And every essay opens as its own page, with its nearest neighbours, and a chat that knows it.</td></tr>
+          <tr><td>End card</td><td>1:13</td><td>The Wanderer's Logbook. At sanket tambare dot in, slash logbook.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="slide" data-part="film" aria-label="Slide 35: How the film was made">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">35</span><span>Part V · how it was made</span></div>
+      <h2>A browser for a camera, <em>ffmpeg</em> for an editor</h2>
+      <div class="flow mt">
+        <div class="card rv" style="--d:1"><p class="k">1 · Voice</p><h4>Piper TTS</h4><p class="note"><code>en_GB-cori-high</code>, a little faster than default; 62 s of voice, 182 words.</p></div>
+        <div class="card rv" style="--d:2"><p class="k">2 · Camera</p><h4>A scripted browser</h4><p class="note">Playwright at 414 × 690, 2× pixels; a CDP screencast saved 2,919 timed frames as it hovered, clicked and scrolled.</p></div>
+        <div class="card rv" style="--d:3"><p class="k">3 · Clock</p><h4>Even 30 fps</h4><p class="note">Frames arrive unevenly (~36 a second); each 30 fps tick takes the newest frame before it.</p></div>
+        <div class="card rv" style="--d:4"><p class="k">4 · Frame</p><h4>1080 × 1920</h4><p class="note">The recording in a rounded window on paper, a title and caption per scene, an end card.</p></div>
+        <div class="card ink rv" style="--d:5"><p class="k" style="color:var(--accent)">5 · Encode</p><h4>Two cuts</h4><p class="note" style="color:var(--paper)">A 22.4 MB master to share; a 720 × 1280 web encode of 4.3 MB for the page.</p></div>
+      </div>
+      <p class="note mt">The Ask button and theme toggles were hidden while recording, and a vermilion ring shows each tap. A 19-cue WebVTT and an <code>.srt</code> carry the narration as text.</p>
+    </div>
+  </section>
+
+  <section class="slide" data-part="film" aria-label="Slide 36: The quiet music">
+    <div class="inner split">
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="A mixing desk with two faders, labelled music and voice. Blot pushes the music fader up with one arm tip; a vermilion arrow beside it reads plus sixteen dB. Above the desk, a speech bubble holds a wave for the voice, and two small music notes rise.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="392" x2="764" y2="392"/><rect class="il-o" x="360.8" y="196" width="240" height="196" rx="6"/><rect class="il-f" x="387.8" y="214" width="6" height="140" rx="3"/><rect class="il-f" x="477.8" y="214" width="6" height="140" rx="3"/><rect class="il-o" x="374.8" y="265" width="32" height="20" rx="4"/><rect class="il-o" x="464.8" y="250" width="32" height="20" rx="4"/><text class="il-t" x="390.8" y="380" text-anchor="middle">music</text><text class="il-t" x="480.8" y="380" text-anchor="middle">voice</text><path class="il-al" d="M416.8 320V236" marker-end="url(#il-arrow)"/><text class="il-ta" x="394.8" y="184" text-anchor="middle">+16 dB</text><path class="il-o" d="M530.8 92H626.8Q640.8 92 640.8 106V132Q640.8 146 626.8 146H562.8L546.8 164L550.8 146H530.8Q516.8 146 516.8 132V106Q516.8 92 530.8 92Z"/><path class="il-l" d="M532.8 119Q542.8 102 552.8 119T572.8 119T592.8 119T612.8 119T626.8 119"/><path class="il-l" d="M384.8 150V118L408.8 112V144"/><circle class="il-f" cx="379.8" cy="151" r="6"/><circle class="il-f" cx="403.8" cy="145" r="6"/><path class="il-l" d="M446.8 136V108"/><circle class="il-f" cx="441.8" cy="137" r="5.5"/><g transform="translate(204 181.8) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-bean" class="il-k" transform="translate(93 66) rotate(-108)"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(4 -4)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+      <div>
+        <div class="eyebrow"><span class="num">36</span><span>Part V · what the meter caught</span></div>
+        <h2>The music was <em>nearly silent</em></h2>
+        <p class="lead">Nobody listened to the first mix — the work happened in a container with no speakers — so it was measured instead.</p>
+        <div class="bug">
+          <div><h3>Symptom</h3><p>Between narration lines the track measured about −62 dB: effectively silence.</p></div>
+          <div><h3>Cause</h3><p>The loop is a quiet file (−40.9 dB mean), mixed at 0.55 and ducked hard under the voice.</p></div>
+          <div class="fix"><h3>Fix</h3><p>+16 dB on the bed, gentler ducking, loudness normalised to −16 LUFS.</p></div>
+        </div>
+        <pre class="mt-s"><span class="k">volume</span>=<span class="s">16dB</span>,
+<span class="k">sidechaincompress</span>=threshold=<span class="n">0.02</span>:ratio=<span class="n">6</span>:attack=<span class="n">40</span>:release=<span class="n">600</span>,
+<span class="k">loudnorm</span>=I=<span class="n">-16</span>:TP=<span class="n">-1.5</span>:LRA=<span class="n">11</span></pre>
+        <p class="note mt-s">Gaps now sit at −43 to −34 dB under a voice at −18.5 dB; peak −2.6 dBFS.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-part="film" aria-label="Slide 37: The tour on the page">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">37</span><span>Part V · on the page</span></div>
+      <div class="split wide-r">
+        <div>
+          <h2>▶ Watch the tour, <em>on the page</em></h2>
+          <p class="lead">A new button on the cover — or a <code>?tour</code> link — opens the film in a dialog with its chapter list, captions and a download link.</p>
+          <ul class="plain">
+            <li><code>preload="none"</code>: opening <code>/logbook</code> costs nothing; the poster loads with the dialog and the film only when it plays.</li>
+            <li>Four committed files: <code>the-logbook.mp4</code>, <code>.jpg</code>, <code>.vtt</code> and <code>.json</code> (the chapter starts).</li>
+            <li><code>tour.test.js</code> fails the build if a file is missing, the chapters stop following the page's order, or the video passes 6 MB.</li>
+            <li>The dialog's focus trap, Esc, scroll lock and focus return became one shared hook, <code>useModal</code>, used by the entry page too.</li>
+          </ul>
+        </div>
+        <figure class="shot rv" style="--d:2">
+          <img src="assets/logbook/tour.webp" width="1280" height="800" loading="lazy" decoding="async" alt="The tour dialog over the cover on a desktop: the vertical video's poster on the left and, on the right, the title The Logbook, in motion, nine chapters with their start times and a Download the video button.">
+          <figcaption>The tour dialog over the cover.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Endpapers ----------------------------------------------------------- -->
+  <section class="slide" data-part="close" aria-label="Slide 38: One day, four versions">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">38</span><span>Endpapers · the timeline</span></div>
+      <h2>One day, <em>four versions</em></h2>
+      <p class="lead">All of it shipped on 16 October 2026 — the first page in the morning, the redesign by lunch, the film by mid-afternoon.</p>
+      <div class="tl">
+        <div class="rv" style="--d:1"><b>10:42</b><i>v22.0.0 · launch</i><p>The first <code>/logbook</code>: a scrolly intro, six lenses in tabs, a drawer, the data build with its 30-word and 200 KB rules, and a share card.</p></div>
+        <div class="rv" style="--d:2"><b>10:50</b><i>v22.0.1 · fix</i><p>The nightly job stops deleting the Substack essays' chunks; the Logbook keeps its last good file.</p></div>
+        <div class="rv" style="--d:3"><b>12:59</b><i>v23.0.0 · the field journal</i><p>Cover, prologue, contents, six rebuilt chapters, dock, index and entry page. 23 files, +3,457 / −1,167.</p></div>
+        <div class="rv" style="--d:4"><b>15:20</b><i>v23.1.0 · the tour</i><p>A narrated 80-second film of the page, embedded behind ▶ Watch the tour, with a guard test.</p></div>
+      </div>
+      <p class="note mt">Times are IST. The redesign merged as #61 and the tour as #62.</p>
+    </div>
+  </section>
+
+  <section class="slide" data-part="close" aria-label="Slide 39: Read it yourself">
+    <div class="inner split wide-l">
+      <div>
+        <div class="eyebrow"><span class="num">39</span><span>Endpapers · colophon</span></div>
+        <h2>Now read it <em>yourself</em></h2>
+        <p class="lead">Every mark is an essay, and every one opens. Start at the cover, or take the tour first.</p>
+        <div class="links row mt">
+          <a href="https://sankettambare.in/logbook">sankettambare.in/logbook ↗</a>
+          <a href="https://sankettambare.in/logbook?tour=1">▶ Watch the tour ↗</a>
+          <a href="https://sankettambare.in/logbook?lens=poem">VI · Found poems ↗</a>
+          <a href="https://sankettambare.in/ask">Ask the archive ↗</a>
+        </div>
+        <p class="note mt">Set in Instrument Serif, Tiro Devanagari Marathi, Inter and Plus Jakarta Sans. Illustrations hand-drawn as SVG after the illo method — its deadpan ink-drop, Blot, does the work in each one. Screenshots from the live code on 16 October 2026.</p>
+      </div>
+      <figure class="illo rv" style="--d:2">
+        <svg viewBox="0 0 800 450" role="img" aria-label="Blot, smaller now, walks off along a dotted vermilion route that winds from the foreground across three islands, each smaller than the last, toward the horizon, with indigo circles and saffron diamonds along the way.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="36" y1="230" x2="764" y2="230"/><path class="il-o" d="M300 350C290 326 318 306 352 310C380 300 420 312 418 334C424 356 398 368 366 364C334 372 306 366 300 350Z"/><path class="il-o" d="M520 300C514 284 534 270 556 274C574 266 600 274 600 290C604 306 586 314 564 312C544 318 524 312 520 300Z"/><path class="il-o" d="M664 258C660 248 672 240 686 242C698 238 714 244 714 254C716 264 704 268 690 268C678 272 666 268 664 258Z"/><path class="il-dots" d="M40 404C120 404 196 392 250 380C300 368 330 350 360 338C420 316 480 300 540 292C600 284 640 268 690 254"/><circle class="il-en" cx="360" cy="338" r="6"/><polygon class="il-mr" points="560,283 567,290 560,297 553,290"/><circle class="il-en" cx="690" cy="254" r="4.5"/><circle class="il-en" cx="330" cy="352" r="4"/><polygon class="il-mr" points="388,325 393,330 388,335 383,330"/><g transform="translate(131 258.9) scale(1.15)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-armR" class="il-k"/><use href="#bl-legL" class="il-k" transform="rotate(14 48 114)"/><use href="#bl-legR" class="il-k" transform="rotate(-8 72 114)"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(4 -2)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+</svg>
+      </figure>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <span class="part-name" id="part-name"></span>
+  <div class="ticks" id="ticks"></div>
+  <button type="button" id="replay" aria-label="Replay this slide's drawing" title="Replay (R)">&#8635;</button>
+  <span class="counter" id="counter">01 / 39</span>
+</nav>
+
+<script>
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var counter = document.getElementById('counter');
+  var partName = document.getElementById('part-name');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var PARTS = { open: 'Opening', before: 'I · The first logbook', journal: 'II · The field journal', works: 'III · How it works', build: 'IV · The build', film: 'V · The tour film', close: 'Endpapers' };
+  var current = 0;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  // --- Navigation -----------------------------------------------------------
+  var lastPart = null;
+  slides.forEach(function (slide, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', slide.getAttribute('aria-label'));
+    var part = slide.getAttribute('data-part');
+    if (i && part !== lastPart) b.className = 'gap';
+    lastPart = part;
+    b.addEventListener('click', function () { go(i); });
+    ticks.appendChild(b);
+  });
+  var tickButtons = Array.prototype.slice.call(ticks.children);
+
+  // Only the slide in view is .on: leaving takes it off, so coming back replays.
+  // A film that scrolls out of view stops.
+  function activate() {
+    slides.forEach(function (s, i) {
+      var on = i === current;
+      if (on && !s.classList.contains('on')) s.classList.add('on');
+      if (!on && s.classList.contains('on')) {
+        s.classList.remove('on');
+        s.querySelectorAll('video').forEach(function (v) { if (!v.paused) v.pause(); });
+      }
+    });
+  }
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    partName.textContent = PARTS[slides[current].getAttribute('data-part')] || '';
+    tickButtons.forEach(function (b, i) { b.setAttribute('aria-current', i === current ? 'true' : 'false'); });
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+    activate();
+    try { history.replaceState(null, '', '#' + (current + 1)); } catch (e) { /* file:// in some browsers */ }
+  }
+
+  function go(i, instant) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: instant || still.matches ? 'auto' : 'smooth' });
+    paint();
+  }
+
+  function replay() {
+    var s = slides[current];
+    s.classList.remove('on');
+    void s.offsetWidth; // restart the keyframes
+    s.classList.add('on');
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+  document.getElementById('replay').addEventListener('click', replay);
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var t = e.target || {};
+    var tag = t.tagName || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || e.metaKey || e.ctrlKey || e.altKey) return;
+    // The film's own controls keep their keys (space plays, arrows seek).
+    if (t.closest && t.closest('video')) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || (e.key === ' ' && tag !== 'BUTTON')) { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+    else if (e.key === 'r' || e.key === 'R') { replay(); }
+  });
+
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () { track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' }); }, 120);
+  });
+
+  // #7 opens slide 7 — handy for presenting from a link; in-deck links use it too.
+  function fromHash(instant) {
+    var m = /^#(\d+)$/.exec(location.hash);
+    if (m) { go(+m[1] - 1, instant); return true; }
+    return false;
+  }
+  window.addEventListener('hashchange', function () { fromHash(false); });
+  if (!fromHash(true)) paint();
+
+  // --- The tour film: chapter buttons seek, the playing chapter is marked ---
+  document.querySelectorAll('[data-film]').forEach(function (box) {
+    var v = box.querySelector('video');
+    var buttons = Array.prototype.slice.call(box.querySelectorAll('[data-start]'));
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        v.currentTime = +b.getAttribute('data-start');
+        var p = v.play();
+        if (p && p.catch) p.catch(function () { /* blocked or unsupported: the poster stays */ });
+      });
+    });
+    v.addEventListener('timeupdate', function () {
+      var t = v.currentTime + 0.05, on = null;
+      buttons.forEach(function (b) { if (+b.getAttribute('data-start') <= t) on = b; });
+      buttons.forEach(function (b) { b.setAttribute('aria-pressed', b === on ? 'true' : 'false'); });
+    });
+  });
+})();
+
+// --- Theme toggle -----------------------------------------------------------
+// Three states, not two: with no data-theme the deck follows the OS setting.
+(function () {
+  var KEY = 'deck-theme';
+  var MODES = ['auto', 'light', 'dark'];
+  var META = {
+    auto:  { ico: '◑', lab: 'Auto',  say: 'follow system' },
+    light: { ico: '☀', lab: 'Light', say: 'light' },
+    dark:  { ico: '☾', lab: 'Dark',  say: 'dark' }
+  };
+  var btn = document.getElementById('theme');
+  var ico = document.getElementById('theme-ico');
+  var lab = document.getElementById('theme-lab');
+  function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  var mode = MODES.indexOf(stored()) > -1 ? stored() : 'auto';
+  function apply(next, persist) {
+    mode = next;
+    if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', mode);
+    ico.textContent = META[mode].ico;
+    lab.textContent = META[mode].lab;
+    btn.setAttribute('aria-label', 'Theme: ' + META[mode].say + '. Activate to change.');
+    if (persist) {
+      try { if (mode === 'auto') localStorage.removeItem(KEY); else localStorage.setItem(KEY, mode); } catch (e) { /* ignored */ }
+    }
+  }
+  btn.addEventListener('click', function () { apply(MODES[(MODES.indexOf(mode) + 1) % MODES.length], true); });
+  apply(mode, false);
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="write"></script>
+</body>
+</html>
