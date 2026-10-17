@@ -1,0 +1,1158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A 12-slide illustrated deck on Dare Write's Brand Kit at brand-kit.sankettambare.in: three brand directions, the original logo files, export sizes and rules, and 29 prompt templates that turn a post into a ready-to-paste prompt for an AI tool. Why it exists, a tour, how a prompt is assembled, and how the site is built.">
+<title>One Diary, Three Moods</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=Kalam:wght@400;700&family=JetBrains+Mono:wght@400;600&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;600&family=Mukta:wght@400;600&family=Instrument+Serif&display=swap">
+
+<script>
+// Runs before first paint: a stored theme must be on <html> already, or the
+// deck flashes the system theme before switching.
+(function(){
+  try{
+    var t = localStorage.getItem('deck-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ /* private mode, blocked storage — fall through to system */ }
+})();
+</script>
+
+<style>
+/* ---------------------------------------------------------------------------
+ * Tokens lifted from the brand kit itself (src/data/themes.yaml): light is
+ * Direction A, the Wanderer's Notebook — paper, ink, Dare Red, Signal Green,
+ * Fraunces, Kalam, JetBrains Mono. Dark is Direction B, the Terminal Monk —
+ * night, bone, phosphor, lumen, Bricolage Grotesque, Mukta, IBM Plex Mono.
+ * The --i-* tokens colour the drawings.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#f4eedc; --surface:#ece4cc; --raised:#fbf7ec; --sunk:#e6ddc3;
+  --rule:rgba(28,27,24,.2);
+  --text:#1c1b18; --prose:#2b2924; --muted:#5a564c; --faint:#7a7568;
+  --accent:#c8281e; --accent-text:#c8281e; --accent-soft:#f3d3cc; --on-accent:#ffffff;
+  --a2:#23824a; --a2-text:#1d6e3e; --a2-soft:#d3e8d8;
+  --hi:#e4e36b; --on-hi:#1c1b18;
+  --sig-tab:#1c1b18;
+  --shadow:0 3px 10px rgba(28,27,24,.14);
+  --focus:#c8281e;
+
+  --i-paper:#fbf7ec; --i-ink:#1c1b18; --i-body:#fffdf6; --i-screen:#1c1b18; --i-eye:#fffdf6;
+  --i-acc:#c8281e; --i-acc-soft:#f1c3bc; --i-acc-text:#c8281e;
+  --i-sec:#23824a; --i-sec-soft:#cde6d4; --i-hi:#e4e36b;
+
+  --font-display:"Fraunces",Georgia,serif;
+  --font-body:"Fraunces",Georgia,serif;
+  --font-note:"Kalam",cursive;
+  --font-hand:"Kalam",cursive;
+  --font-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#0e1211; --surface:#161c1a; --raised:#1b2220; --sunk:#252e2b;
+    --rule:rgba(233,237,230,.18);
+    --text:#e9ede6; --prose:#d5dbd3; --muted:#a9b3ae; --faint:#86908b;
+    --accent:#3ddc84; --accent-text:#3ddc84; --accent-soft:#163a27; --on-accent:#0e1211;
+    --a2:#e8ee73; --a2-text:#e8ee73; --a2-soft:#34361b;
+    --hi:#e8ee73; --on-hi:#0e1211;
+    --sig-tab:transparent;
+    --shadow:0 3px 12px rgba(0,0,0,.5);
+    --focus:#3ddc84;
+    --i-paper:#161c1a; --i-ink:#e9ede6; --i-body:#232c29; --i-screen:#070a09; --i-eye:#e9ede6;
+    --i-acc:#3ddc84; --i-acc-soft:#1f5c3c; --i-acc-text:#3ddc84;
+    --i-sec:#e8ee73; --i-sec-soft:#43451f; --i-hi:#5c5f2a;
+    --font-display:"Bricolage Grotesque",system-ui,sans-serif;
+    --font-body:"Bricolage Grotesque",system-ui,sans-serif;
+    --font-note:"Mukta",system-ui,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#0e1211; --surface:#161c1a; --raised:#1b2220; --sunk:#252e2b;
+  --rule:rgba(233,237,230,.18);
+  --text:#e9ede6; --prose:#d5dbd3; --muted:#a9b3ae; --faint:#86908b;
+  --accent:#3ddc84; --accent-text:#3ddc84; --accent-soft:#163a27; --on-accent:#0e1211;
+  --a2:#e8ee73; --a2-text:#e8ee73; --a2-soft:#34361b;
+  --hi:#e8ee73; --on-hi:#0e1211;
+  --sig-tab:transparent;
+  --shadow:0 3px 12px rgba(0,0,0,.5);
+  --focus:#3ddc84;
+  --i-paper:#161c1a; --i-ink:#e9ede6; --i-body:#232c29; --i-screen:#070a09; --i-eye:#e9ede6;
+  --i-acc:#3ddc84; --i-acc-soft:#1f5c3c; --i-acc-text:#3ddc84;
+  --i-sec:#e8ee73; --i-sec-soft:#43451f; --i-hi:#5c5f2a;
+  --font-display:"Bricolage Grotesque",system-ui,sans-serif;
+  --font-body:"Bricolage Grotesque",system-ui,sans-serif;
+  --font-note:"Mukta",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--paper);color:var(--text);
+  font-family:var(--font-body);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+a{color:var(--accent-text);text-underline-offset:3px;}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  height:100dvh;scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100%;width:100%;height:100dvh;scroll-snap-align:start;
+  display:flex;align-items:center;justify-content:center;
+  padding:68px 28px 96px;overflow-y:auto;
+}
+/* Tall slides must start at the top, not be clipped above it. */
+.slide > .inner{margin:auto 0;}
+.inner{width:100%;max-width:1140px;}
+
+/* The kit's own kicker: mono, spaced, in the accent. */
+.eyebrow{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent-text);margin-bottom:14px;
+}
+.eyebrow .num{
+  color:var(--on-accent);background:var(--accent);
+  border-radius:999px;padding:2px 10px;letter-spacing:.06em;
+}
+h1,h2{font-family:var(--font-display);font-weight:600;letter-spacing:-.015em;margin:0 0 14px;}
+h1{font-size:clamp(42px,6.2vw,76px);line-height:1.02;}
+h2{font-size:clamp(28px,3.5vw,42px);line-height:1.1;}
+h3{font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
+p{margin:0 0 12px;color:var(--prose);}
+.lead{font-size:clamp(16px,1.6vw,18.5px);color:var(--muted);max-width:62ch;}
+.note{font-family:var(--font-note);font-size:17px;color:var(--a2-text);}
+strong{color:var(--text);font-weight:700;}
+code{
+  font-family:var(--font-mono);font-size:.84em;background:var(--sunk);
+  border-radius:6px;padding:1px 6px;color:var(--text);
+}
+pre{
+  font-family:var(--font-mono);font-size:12.5px;line-height:1.6;
+  background:var(--raised);border:1.5px solid var(--text);border-radius:10px;
+  padding:12px 16px;overflow-x:auto;margin:0;color:var(--prose);
+}
+pre .c{color:var(--faint);}
+pre .k{color:var(--accent-text);}
+pre .s{color:var(--a2-text);}
+mark{background:var(--hi);color:var(--on-hi);padding:0 3px;border-radius:2px;}
+
+/* --- Layout helpers ------------------------------------------------------ */
+.split{display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:center;}
+.split.wide-right{grid-template-columns:.82fr 1.18fr;}
+.split.wide-left{grid-template-columns:1.2fr .8fr;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.stack > * + *{margin-top:14px;}
+/* A code block must scroll inside its column, not widen the grid. */
+.split > *,.two > *,.three > *{min-width:0;}
+@media (max-width:900px){
+  .split,.split.wide-right,.split.wide-left,.two,.three{grid-template-columns:1fr;gap:22px;}
+  .slide{padding:64px 16px 92px;}
+}
+
+.panel{background:var(--raised);border:1.5px solid var(--text);border-radius:10px;padding:14px 18px;}
+.panel p{font-size:14.5px;}
+.panel p:last-child{margin-bottom:0;}
+.panel h4{font-family:var(--font-display);font-weight:600;font-size:19px;margin:0 0 6px;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media (max-width:600px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--raised);border:1.5px solid var(--text);border-radius:10px;padding:12px 14px;}
+.stat .v{font-family:var(--font-mono);font-size:28px;font-weight:600;line-height:1;color:var(--a2-text);}
+.stat .k{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+
+ul.plain,ol.plain{list-style:none;margin:0;padding:0;}
+ul.plain li{position:relative;padding-left:20px;margin-bottom:9px;color:var(--prose);font-size:15px;}
+ul.plain li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:50%;background:var(--accent);}
+ul.plain li:last-child,ol.plain li:last-child{margin-bottom:0;}
+ol.steps{counter-reset:s;}
+ol.steps li{counter-increment:s;position:relative;padding-left:34px;margin-bottom:8px;font-size:14.5px;color:var(--prose);line-height:1.45;}
+ol.steps li::before{
+  content:counter(s);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;
+  font-family:var(--font-mono);font-size:12px;font-weight:600;line-height:24px;text-align:center;
+  color:var(--a2-text);border:1.5px solid var(--a2);
+}
+ol.steps li.on::before{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
+
+.flag{
+  border-left:3px solid var(--accent);background:var(--raised);
+  border-radius:0 10px 10px 0;padding:12px 16px;margin-top:16px;
+}
+.flag p{margin:0;font-size:14.5px;color:var(--prose);}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.chips span{
+  font-family:var(--font-mono);font-size:11.5px;color:var(--prose);
+  border:1.5px solid var(--text);border-radius:999px;padding:3px 10px;background:var(--raised);
+}
+.chips span b{color:var(--accent-text);font-weight:600;}
+
+/* Title */
+.brand{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.brand img{display:block;width:64px;height:64px;object-fit:contain;}
+.brand .logo-dark{width:82px;height:64px;}
+.brand span{font-family:var(--font-display);font-weight:600;font-size:24px;line-height:1.1;}
+.brand small{display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px;font-weight:400;}
+/* Badge on paper, binary mark on night (rule R-02). */
+.brand .logo-dark{display:none;}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .brand .logo-light{display:none;}
+  :root:not([data-theme="light"]) .brand .logo-dark{display:block;}
+}
+:root[data-theme="dark"] .brand .logo-light{display:none;}
+:root[data-theme="dark"] .brand .logo-dark{display:block;}
+.title-meta{
+  display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:22px;
+  font-family:var(--font-mono);font-size:12.5px;color:var(--muted);
+}
+
+/* Directions */
+.dir h4{font-size:24px;font-weight:400;margin:12px 0 2px;line-height:1.1;}
+.dir .use{font-size:14px;color:var(--muted);margin:0 0 8px;}
+.dir .fonts{font-family:var(--font-mono);font-size:11.5px;color:var(--prose);margin:0 0 8px;}
+.sw{display:flex;gap:5px;}
+.sw i{display:block;width:22px;height:22px;border-radius:5px;border:1.5px solid var(--text);}
+
+/* Screenshots */
+.shot{margin:0;}
+.shot img{
+  display:block;width:100%;height:auto;border-radius:10px;
+  border:1.5px solid var(--text);box-shadow:var(--shadow);background:var(--surface);
+}
+.shot figcaption{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);margin-top:8px;letter-spacing:.02em;}
+
+/* File tree */
+.tree{font-size:12px;line-height:1.55;}
+
+/* Signature: on paper it sits on a dark tab (rule R-06); on night it goes
+   straight onto the ground (R-09). Same file either way. */
+.sig{display:inline-block;background:var(--sig-tab);border-radius:6px;padding:6px 16px;margin-top:18px;}
+.sig img{display:block;height:46px;width:auto;}
+
+/* --- Illustrations: illo methodology, drawn by hand ------------------------
+ * Blip, the screen-faced robot, performs each idea. Light body and ink
+ * outline, a dark screen with two dot eyes, one antenna whose ball carries the
+ * accent (Dare Red by day, phosphor by night). The accent otherwise marks one
+ * or two things per scene. The three direction cards keep their real colours
+ * in both themes, because they are the directions.
+ * ------------------------------------------------------------------------- */
+.illo{margin:0;border-radius:12px;overflow:hidden;background:var(--i-paper);border:1.5px solid var(--text);}
+.illo svg{display:block;width:100%;height:auto;}
+.il-bg{fill:var(--i-paper)}
+.il-w{fill:var(--i-body);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.il-p{fill:var(--i-paper);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.il-a{fill:var(--i-acc);stroke:var(--i-ink);stroke-width:3.5;stroke-linejoin:round}
+.il-as{fill:var(--i-acc-soft);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round}
+.il-ss{fill:var(--i-sec-soft);stroke:var(--i-ink);stroke-width:3;stroke-linejoin:round}
+.il-hi{fill:var(--i-hi)}
+.il-k{fill:none;stroke:var(--i-ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.il-k3{fill:none;stroke:var(--i-ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.il-thin{fill:none;stroke:var(--i-ink);stroke-width:2.5;stroke-linecap:round;opacity:.55}
+.il-tick{fill:none;stroke:var(--i-sec);stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
+.il-hatch{stroke:var(--i-ink);stroke-width:2;opacity:.32}
+.il-dash{stroke-dasharray:9 8}
+.il-scr{fill:var(--i-screen)}
+.il-eye{fill:var(--i-eye)}
+.il-off{fill:var(--i-acc-soft);opacity:.75}
+.il-mark{fill:var(--i-ink)}
+.lo{fill:none;stroke:var(--i-ink);stroke-width:17;stroke-linecap:round;stroke-linejoin:round}
+.li{fill:none;stroke:var(--i-body);stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.il-t{font-family:var(--font-hand);font-weight:400;fill:var(--i-ink)}
+.il-ta{font-family:var(--font-hand);font-weight:700;fill:var(--i-acc-text)}
+.il-ts{font-family:var(--font-hand);font-weight:700;fill:var(--i-sec)}
+.il-m{font-family:"JetBrains Mono",ui-monospace,monospace;fill:var(--i-ink)}
+/* the three directions, in their own colours whatever the theme */
+.m-a{fill:#f4eedc;stroke:var(--i-ink);stroke-width:3.5;stroke-linejoin:round}
+.m-b{fill:#0e1211;stroke:var(--i-ink);stroke-width:3.5;stroke-linejoin:round}
+.m-c{fill:#f5f0e6;stroke:var(--i-ink);stroke-width:3.5;stroke-linejoin:round}
+.mk-d{fill:none;stroke:#1c1b18;stroke-width:3;stroke-linecap:round;opacity:.55}
+.mk-l{fill:none;stroke:#e9ede6;stroke-width:3;stroke-linecap:round;opacity:.7}
+.il-grain{pointer-events:none}
+:root[data-theme="dark"] .il-grain{opacity:.45}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .il-grain{opacity:.45}}
+
+/* --- Home link + rail ---------------------------------------------------- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 18px;pointer-events:none;
+}
+.topbar > *{pointer-events:auto;}
+.home,.theme{
+  font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text);text-decoration:none;
+  background:var(--raised);border:1.5px solid var(--text);border-radius:999px;padding:5px 12px;
+}
+.home:hover,.theme:hover{color:var(--accent-text);border-color:var(--accent);}
+.theme{display:inline-flex;align-items:center;gap:7px;cursor:pointer;line-height:1;}
+.theme .ico{font-size:13px;line-height:1;}
+
+.rail{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;background:var(--paper);border-top:1.5px solid var(--text);
+}
+.rail button{
+  font:inherit;font-family:var(--font-mono);font-size:15px;line-height:1;cursor:pointer;
+  background:var(--raised);color:var(--text);
+  border:1.5px solid var(--text);border-radius:999px;padding:7px 13px;
+}
+.rail button:hover:not(:disabled){border-color:var(--accent);color:var(--accent-text);}
+.rail button:disabled{opacity:.35;cursor:default;}
+.ticks{display:flex;gap:5px;flex:1;overflow:hidden;}
+.ticks button{flex:1;min-width:0;height:6px;padding:0;border-radius:999px;background:var(--sunk);border:none;}
+.ticks button[aria-current="true"]{background:var(--accent);}
+.counter{font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
+
+@media (max-width:760px){
+  .topbar{background:var(--paper);border-bottom:1.5px solid var(--text);padding:9px 14px;}
+  .home,.theme{border-color:transparent;background:transparent;padding:4px 6px;}
+}
+@media (prefers-reduced-motion: reduce){.track{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+
+<!-- Blip, the grain, the hatch and the arrowhead: defined once, reused by
+     every drawing. Shapes carry no colour of their own, so each <use> paints
+     them by class. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="blip-torso" d="M-28,-40 Q-28,-54 -14,-54 L14,-54 Q28,-54 28,-40 L26,-18 Q25,-12 22,-10 L22,-4 Q22,0 18,0 L10,0 Q6,0 6,-4 L6,-10 L-6,-10 L-6,-4 Q-6,0 -10,0 L-18,0 Q-22,0 -22,-4 L-22,-10 Q-25,-12 -26,-18 Z"/>
+    <rect id="blip-skull" x="-58" y="-150" width="116" height="98" rx="30"/>
+    <g id="blip-shadow" class="il-off">
+      <use href="#blip-torso" transform="translate(6 4)"/>
+      <use href="#blip-skull" transform="translate(6 4)"/>
+    </g>
+    <g id="blip">
+      <use href="#blip-torso" class="il-w"/>
+      <line class="il-k" x1="0" y1="-150" x2="0" y2="-172"/>
+      <circle class="il-a" cx="0" cy="-181" r="10"/>
+      <use href="#blip-skull" class="il-w"/>
+      <rect class="il-scr" x="-42" y="-136" width="84" height="70" rx="20"/>
+    </g>
+    <g id="blip-eyes" class="il-eye">
+      <ellipse cx="-15" cy="0" rx="5" ry="7"/><ellipse cx="15" cy="0" rx="5" ry="7"/>
+    </g>
+    <pattern id="il-hatch" width="11" height="11" patternUnits="userSpaceOnUse" patternTransform="rotate(32)">
+      <line class="il-hatch" x1="0" y1="0" x2="0" y2="11"/>
+    </pattern>
+    <filter id="il-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0.12 0"/>
+    </filter>
+    <marker id="il-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="il-mark"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <a class="home" data-island-return href="../index.html#write/brand-kit-deck">&larr; Home</a>
+  <button class="theme" type="button" id="theme" aria-label="Theme: follow system. Activate to change.">
+    <span class="ico" id="theme-ico" aria-hidden="true">&#9681;</span><span id="theme-lab">Auto</span>
+  </button>
+</div>
+
+<div class="track" id="track" tabindex="-1">
+
+  <!-- 01 · Title ----------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 1: Title">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="brand">
+            <img class="logo-light" src="assets/brand-kit/badge.webp" width="64" height="64" alt="Dare Write's — The wanderer's diary">
+            <img class="logo-dark" src="assets/brand-kit/binary.webp" width="82" height="64" alt="Dare Write's — The wanderer's diary">
+            <span>Dare Write&rsquo;s Brand Kit<small>Sanket Tambare &middot; v1.0</small></span>
+          </div>
+          <div class="eyebrow"><span class="num">01</span><span>The deck &middot; October 2026</span></div>
+          <h1>One diary, three moods</h1>
+          <p class="lead">My writing brand, kept in one place: three looks, the original logo and signature, the sizes and rules, and 29 prompt templates that turn a post, a run or a project into a prompt I can paste into an AI tool. This deck covers why the kit exists, a tour of the site, and how a prompt is put together.</p>
+          <div class="title-meta">
+            <a href="https://brand-kit.sankettambare.in">brand-kit.sankettambare.in &#8599;</a>
+            <span>Astro 7 &middot; Cloudflare Pages</span>
+            <span>Built 17 October 2026</span>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blip, a small robot with a screen for a face, turns the crank of a little card press. A sheet marked post goes into the hopper on top; a dial on the front reads A, B and C. Three numbered cards stand on a tray beside the press, the third still coming out of it: the same layout in three moods, paper with a red rule, night with a green rule, chalk with a marigold rule, each with an empty circle top right where the real logo will go. Handwritten: same card, three moods.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-t" x="40" y="74" font-size="32">same card,</text>
+            <text class="il-t" x="40" y="110" font-size="32">three <tspan class="il-ta">moods</tspan></text>
+            <path class="il-thin" d="M112,124 Q124,170 120,226" marker-end="url(#il-arrow)"/>
+            <!-- tray -->
+            <path class="il-k" d="M50,374 L322,374 M62,374 L56,410 M300,374 L306,410"/>
+            <!-- card A · notebook -->
+            <g transform="translate(64 254) rotate(-7 48 60) scale(1.3)">
+              <rect class="m-a" width="74" height="92" rx="3"/>
+              <rect x="8" y="10" width="20" height="5" fill="#23824a"/>
+              <path class="mk-d" d="M8,32 H56 M8,42 H50 M8,52 H58"/>
+              <rect x="8" y="62" width="22" height="4" fill="#c8281e"/>
+              <circle cx="62" cy="14" r="8" fill="none" stroke="#1c1b18" stroke-width="2" stroke-dasharray="3 3" opacity=".6"/>
+            </g>
+            <!-- card B · terminal -->
+            <g transform="translate(150 252) rotate(-1 48 60) scale(1.3)">
+              <rect class="m-b" width="74" height="92" rx="3"/>
+              <rect x="8" y="10" width="20" height="5" fill="#3ddc84"/>
+              <path class="mk-l" d="M8,32 H56 M8,42 H50 M8,52 H58"/>
+              <rect x="8" y="62" width="22" height="4" fill="#3ddc84"/>
+              <circle cx="62" cy="14" r="8" fill="none" stroke="#e9ede6" stroke-width="2" stroke-dasharray="3 3" opacity=".7"/>
+            </g>
+            <!-- card C · basalt, still coming out of the press -->
+            <g transform="translate(242 254) scale(1.3)">
+              <rect class="m-c" width="74" height="92" rx="3"/>
+              <rect x="8" y="10" width="20" height="5" fill="#a8432a"/>
+              <path class="mk-d" d="M8,32 H56 M8,42 H50"/>
+              <rect x="8" y="62" width="22" height="4" fill="#e9a21b"/>
+            </g>
+            <!-- the sheet going in -->
+            <g transform="rotate(-6 422 116)">
+              <rect class="il-p" x="382" y="62" width="82" height="104" rx="3"/>
+              <text class="il-t" x="398" y="98" font-size="24">post</text>
+              <path class="il-thin" d="M396,116 H448 M396,130 H440"/>
+            </g>
+            <!-- the press -->
+            <path class="il-w" d="M352,196 L336,140 L510,140 L494,196 Z"/>
+            <rect class="il-w" x="318" y="196" width="210" height="204" rx="14"/>
+            <path class="il-k" d="M332,400 L332,410 M512,400 L512,410"/>
+            <circle class="il-p" cx="423" cy="276" r="40"/>
+            <path class="il-thin" d="M423,236 L423,246 M383,276 L393,276 M463,276 L453,276 M395,248 L402,255 M451,248 L444,255"/>
+            <text class="il-t" x="370" y="232" font-size="22" text-anchor="middle">A</text>
+            <text class="il-t" x="423" y="222" font-size="22" text-anchor="middle">B</text>
+            <text class="il-t" x="476" y="232" font-size="22" text-anchor="middle">C</text>
+            <path class="il-k" d="M423,276 L448,251"/>
+            <circle class="il-w" cx="423" cy="276" r="7"/>
+            <path class="il-k3" d="M342,346 L366,346 M342,358 L362,358"/>
+            <!-- crank -->
+            <path class="il-k" d="M528,334 L564,350"/>
+            <circle class="il-p" cx="528" cy="334" r="9"/>
+            <circle class="il-p" cx="566" cy="351" r="9"/>
+            <path class="il-thin" d="M540,302 Q574,300 590,326"/>
+            <!-- Blip cranks -->
+            <g transform="translate(640 410) scale(1.1)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-18,-42 L-62,-56"/><path class="li" d="M-18,-42 L-62,-56"/>
+              <path class="lo" d="M-6,-36 L-60,-50"/><path class="li" d="M-6,-36 L-60,-50"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(-8 -101)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · The problem ----------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 2: The problem">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">02</span><span>The problem</span></div>
+          <h2>Every graphic started from a blank chat</h2>
+          <p class="lead">A quote card, a run poster or a project launch meant explaining the brand again: the colours, the fonts, the 4:5 grid, which corner the logo goes in. Then the image model redrew the logo, misspelt a word, and turned Marathi into shapes that only looked like Devanagari.</p>
+          <div class="stats" style="margin-top:18px;">
+            <div class="stat"><div class="v">29</div><div class="k">Templates</div></div>
+            <div class="stat"><div class="v">6</div><div class="k">AI tools</div></div>
+            <div class="stat"><div class="v">3</div><div class="k">Directions</div></div>
+            <div class="stat"><div class="v">273</div><div class="k">Prompts</div></div>
+          </div>
+          <div class="flag"><p><strong>The templates already existed</strong>, inside a design mock-up exported from a visual design tool: 29 templates, 91 tool variants, three directions. Useful, but a mock-up. The job was to turn it into a site I&rsquo;d actually open before posting.</p></div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A canvas on an easel. In its top-right corner a wobbly round logo reads DAER WRTIES, misspelt, and below it rows of squiggles imitate Marathi script. A jointed mechanical arm reaches in from the top left with a wet paintbrush, about to repaint the logo. Blip stands on a stepladder on the right, scrubbing the misspelt logo out with a big eraser. Handwritten: fixing it by hand, every single time.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <!-- easel + canvas -->
+            <path class="il-k" d="M410,150 L410,172 M336,396 L318,410 M484,396 L502,410"/>
+            <rect class="il-w" x="320" y="170" width="180" height="218" rx="3"/>
+            <rect class="il-p" x="308" y="386" width="204" height="10" rx="3"/>
+            <rect class="il-p" x="396" y="160" width="28" height="14" rx="3"/>
+            <!-- the misspelt logo -->
+            <path class="il-p" d="M452,180 C474,178 486,196 484,214 C483,234 468,246 450,245 C430,244 418,230 420,212 C421,193 434,181 452,180 Z"/>
+            <text class="il-t" x="452" y="210" font-size="16" text-anchor="middle">DAER</text>
+            <text class="il-t" x="452" y="228" font-size="13" text-anchor="middle">WRTIES</text>
+            <path class="il-thin" d="M470,192 l16,6 M468,206 l18,6 M466,220 l18,6"/>
+            <!-- not-quite-Marathi -->
+            <path class="il-k3" d="M338,282 H478"/>
+            <path class="il-thin" d="M350,282 q6,14 -4,22 M372,282 v18 q6,6 0,10 M396,282 q-6,12 4,20 M422,282 v20 M446,282 q8,10 -2,20 M468,282 v14"/>
+            <path class="il-k3" d="M338,326 H452"/>
+            <path class="il-thin" d="M352,326 q-6,12 4,18 M378,326 v16 M402,326 q8,8 -2,18 M430,326 v12 q4,6 -2,10"/>
+            <path class="il-thin" d="M338,362 H420"/>
+            <!-- the paint arm -->
+            <rect class="il-w" x="118" y="-12" width="84" height="38" rx="6"/>
+            <path class="lo" d="M160,26 L196,92 L300,118"/><path class="li" d="M160,26 L196,92 L300,118"/>
+            <circle class="il-p" cx="196" cy="92" r="11"/>
+            <circle class="il-p" cx="300" cy="118" r="10"/>
+            <path class="il-k" d="M300,118 L388,166"/>
+            <rect class="il-p" x="384" y="160" width="20" height="12" rx="2" transform="rotate(29 394 166)"/>
+            <path class="il-as" d="M400,170 Q414,172 424,188 Q410,188 398,178 Z"/>
+            <!-- stepladder -->
+            <path class="il-k" d="M545,410 L567,262 M635,410 L613,262 M557,330 L623,330 M551,372 L629,372"/>
+            <rect class="il-p" x="553" y="252" width="74" height="12" rx="3"/>
+            <path class="il-mark" d="M520,404 h4 v3 h-4 z M532,400 h3 v3 h-3 z M512,398 h3 v3 h-3 z"/>
+            <!-- the eraser, mid-scrub -->
+            <rect class="il-p" x="478" y="200" width="36" height="26" rx="4" transform="rotate(-12 496 213)"/>
+            <path class="il-k3" d="M492,199 L497,225" transform="rotate(-12 496 213)"/>
+            <!-- Blip scrubs -->
+            <g transform="translate(590 252)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-18,-42 L-72,-40"/><path class="li" d="M-18,-42 L-72,-40"/>
+              <path class="lo" d="M18,-42 L32,-16"/><path class="li" d="M18,-42 L32,-16"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(-8 -101)"/>
+            </g>
+            <path class="il-thin" d="M520,182 q-6,-10 2,-18 M534,176 q-2,-10 6,-14"/>
+            <text class="il-t" x="36" y="360" font-size="28">fixing it by hand,</text>
+            <text class="il-t" x="36" y="394" font-size="28">every <tspan class="il-ta">single</tspan> time</text>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · The one rule ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 3: The one rule">
+    <div class="inner">
+      <div class="split wide-right">
+        <div>
+          <div class="eyebrow"><span class="num">03</span><span>The one rule</span></div>
+          <h2>AI paints the background. The real files go on top.</h2>
+          <p class="lead">Every graphic is three layers, always in this order, and an AI tool only ever touches the first.</p>
+          <ol class="plain steps" style="margin-top:14px;">
+            <li><strong>Background.</strong> From an image tool, with two areas of a 1080&times;1350 card left empty: the top-right 260&times;260 and the bottom-right 340&times;120.</li>
+            <li><strong>Type.</strong> Exact text in the real fonts, Marathi in Kalam or Mukta. Most reliably done by asking Claude for one HTML artboard and screenshotting it at 1&times;.</li>
+            <li class="on"><strong>Logo and signature.</strong> The original PNGs, composited last. Never redrawn, recoloured or filtered.</li>
+          </ol>
+          <div class="chips" style="margin-top:16px;">
+            <span><b>R-01</b> original files only</span>
+            <span><b>R-05</b> never on highlighter, marigold, red or photos</span>
+            <span><b>R-07</b> one logo per graphic</span>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="An exploded stack of three layers, drawn like boards held apart. The bottom layer is hatched all over, painted by AI, except for an empty dashed corner at the back right labelled keep empty. The middle layer carries lines of type. The top layer is bare except for a dark signature tab at the front right. Blip stands on the top layer holding a round sticker labelled badge.png, about to press it into the empty corner. Labels on the left: 1, AI background; 2, HTML type; 3, real logo, last.">
+            <rect class="il-bg" width="800" height="450"/>
+            <!-- 1 · background -->
+            <path d="M260,388 L560,388 L640,328 L340,328 Z" fill="url(#il-hatch)"/>
+            <path class="il-k" d="M260,388 L560,388 L640,328 L340,328 Z"/>
+            <path class="il-w" d="M260,388 L560,388 L560,400 L260,400 Z"/>
+            <path class="il-w" d="M560,388 L640,328 L640,340 L560,400 Z"/>
+            <path class="il-p il-dash" d="M640,328 L560,328 L532,349 L612,349 Z" style="stroke-width:2.5"/>
+            <path class="il-thin" d="M606,342 Q630,352 650,354"/>
+            <text class="il-t" x="656" y="362" font-size="22">keep empty</text>
+            <!-- exploded-view guides -->
+            <path class="il-thin il-dash" d="M260,312 L260,388 M560,312 L560,388 M640,252 L640,328 M260,224 L260,300 M560,224 L560,300 M640,164 L640,240"/>
+            <!-- 2 · type -->
+            <path class="il-w" d="M260,300 L560,300 L640,240 L340,240 Z"/>
+            <path class="il-w" d="M260,300 L560,300 L560,312 L260,312 Z"/>
+            <path class="il-w" d="M560,300 L640,240 L640,252 L560,312 Z"/>
+            <path class="il-k" d="M356,255 L500,255"/>
+            <path class="il-thin" d="M336,270 L510,270 M320,282 L450,282"/>
+            <!-- 3 · logo + signature -->
+            <path class="il-p" d="M260,212 L560,212 L640,152 L340,152 Z"/>
+            <path class="il-p" d="M260,212 L560,212 L560,224 L260,224 Z"/>
+            <path class="il-p" d="M560,212 L640,152 L640,164 L560,224 Z"/>
+            <path class="il-scr" d="M560,212 L470,212 L484,201 L574,201 Z"/>
+            <path d="M488,209 q6,-8 11,-1 t12,-1 t14,-3" fill="none" stroke="var(--i-eye)" stroke-width="2" stroke-linecap="round"/>
+            <ellipse class="il-thin il-dash" cx="592" cy="164" rx="26" ry="9" style="opacity:.8"/>
+            <!-- labels -->
+            <text class="il-t" x="28" y="374" font-size="24"><tspan class="il-ta">1</tspan> &middot; AI background</text>
+            <text class="il-t" x="28" y="286" font-size="24"><tspan class="il-ta">2</tspan> &middot; HTML type</text>
+            <text class="il-t" x="28" y="198" font-size="24"><tspan class="il-ta">3</tspan> &middot; real logo, last</text>
+            <!-- Blip places the badge -->
+            <g transform="translate(494 186) scale(0.9)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M18,-42 L64,-54"/><path class="li" d="M18,-42 L64,-54"/>
+              <path class="lo" d="M-18,-42 L-34,-16"/><path class="li" d="M-18,-42 L-34,-16"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(8 -101)"/>
+            </g>
+            <circle class="il-as" cx="574" cy="146" r="18"/>
+            <path class="il-thin" d="M566,140 q8,-6 16,0 M564,150 q10,6 20,0"/>
+            <text class="il-t" x="604" y="112" font-size="21">badge.png</text>
+            <path class="il-thin" d="M618,118 Q606,128 592,134"/>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · Three directions ------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 4: Three directions">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">04</span><span>Three directions</span></div>
+      <h2>One diary, three moods</h2>
+      <p class="lead" style="margin-bottom:20px;">A switch at the top of every page re-themes the whole site at once: colours, fonts, logo and the signature&rsquo;s filter. Each direction says what it is for.</p>
+      <div class="three">
+        <div class="dir">
+          <figure class="shot"><img src="assets/brand-kit/dir-a.webp" width="1000" height="625" alt="The Brand kit page in Direction A: warm paper, black ink, the round badge logo and five swatches from Paper to Highlighter." loading="lazy"></figure>
+          <h4 style="font-family:Fraunces,Georgia,serif;font-weight:600;">A &middot; Wanderer&rsquo;s Notebook</h4>
+          <p class="use">Digital Monk cards, essays, book reviews.</p>
+          <p class="fonts">Fraunces &middot; Kalam &middot; JetBrains Mono</p>
+          <div class="sw" aria-label="Paper, ink, Dare Red, Signal Green, Highlighter"><i style="background:#f4eedc"></i><i style="background:#1c1b18"></i><i style="background:#c8281e"></i><i style="background:#23824a"></i><i style="background:#e4e36b"></i></div>
+        </div>
+        <div class="dir">
+          <figure class="shot"><img src="assets/brand-kit/dir-b.webp" width="1000" height="625" alt="The same page in Direction B: near-black night, bone text, phosphor green, and the binary wordmark in place of the badge." loading="lazy"></figure>
+          <h4 style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:600;">B &middot; Terminal Monk</h4>
+          <p class="use">Tech deep-dives, build logs, project launches.</p>
+          <p class="fonts">Bricolage Grotesque &middot; Mukta &middot; IBM Plex Mono</p>
+          <div class="sw" aria-label="Night, Bone, Phosphor, Lumen, Alert"><i style="background:#0e1211"></i><i style="background:#e9ede6"></i><i style="background:#3ddc84"></i><i style="background:#e8ee73"></i><i style="background:#ff5a47"></i></div>
+        </div>
+        <div class="dir">
+          <figure class="shot"><img src="assets/brand-kit/dir-c.webp" width="1000" height="625" alt="The same page in Direction C: chalk paper, basalt ink, marigold, laterite and monsoon green, with the badge." loading="lazy"></figure>
+          <h4 style="font-family:'Instrument Serif',Georgia,serif;">C &middot; Basalt &amp; Marigold</h4>
+          <p class="use">Civic and satire, Pune stories, run and trail logs.</p>
+          <p class="fonts">Instrument Serif &middot; Mukta &middot; Space Mono</p>
+          <div class="sw" aria-label="Chalk, Basalt, Marigold, Laterite, Monsoon"><i style="background:#f5f0e6"></i><i style="background:#2a2826"></i><i style="background:#e9a21b"></i><i style="background:#a8432a"></i><i style="background:#3d6650"></i></div>
+        </div>
+      </div>
+      <div class="flag"><p>The switch sets one attribute, <code>data-dir</code>, on <code>&lt;html&gt;</code>. Every key in <code>themes.yaml</code> becomes a CSS variable, so a fourth direction would theme the whole site with no CSS change. A tiny script in <code>&lt;head&gt;</code> applies the saved choice before first paint, so pages never flash the wrong theme.</p></div>
+    </div>
+  </section>
+
+  <!-- 05 · The live card --------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 5: The live card">
+    <div class="inner">
+      <div class="split wide-right">
+        <div>
+          <div class="eyebrow"><span class="num">05</span><span>The Brand kit page</span></div>
+          <h2>Type a quote, watch the card</h2>
+          <p class="lead">The home page ends in a live Digital Monk card: the 1080&times;1350 master format at a third of its size, filled from a four-field form.</p>
+          <ul class="plain" style="margin-top:14px;">
+            <li>Type Devanagari and the quote switches to the note font (Kalam here) on its own.</li>
+            <li>The size steps down with length: 27, 22 or 17 px under 70, under 130, or longer.</li>
+            <li><strong>Timestamp: now (IST)</strong> writes the series format: <code style="white-space:nowrap">17.10.2026 &middot; 05:42 IST &middot; Pune</code> for A, <code style="white-space:nowrap">17&middot;10&middot;2026 / 05:42 IST / Pune</code> for B and C.</li>
+            <li>The values travel. <strong>Open the quote-card prompts &rarr;</strong> lands on a prompt that already holds them.</li>
+          </ul>
+          <p class="note" style="margin-top:16px;">Above it: five swatches that copy their hex on tap, three type specimens, and the voice &mdash; what the brand sounds like, and the four things it never does.</p>
+        </div>
+        <div class="two">
+          <figure class="shot">
+            <img src="assets/brand-kit/card-a.webp" width="600" height="752" alt="The live card in Direction A: THE DIGITAL MONK SAYS, No. 1440 in green, the badge top right, the quote in Marathi set in Kalam, a red rule, the timestamp, the post title bottom left and the signature on a dark tab bottom right." loading="lazy">
+            <figcaption>A &middot; the default quote in Marathi</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="assets/brand-kit/card-b.webp" width="600" height="752" alt="The same card in Direction B: night background, No. 1440 in phosphor green, the binary mark top right, the English quote in Bricolage Grotesque, a green rule and the signature bottom right." loading="lazy">
+            <figcaption>B &middot; the same card, in English</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · The prompt library ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 6: The prompt library">
+    <div class="inner">
+      <div class="split wide-right">
+        <div>
+          <div class="eyebrow"><span class="num">06</span><span>The prompt library</span></div>
+          <h2>29 templates, one for each thing I post</h2>
+          <p class="lead">Each template has its own page and URL, a size and format line, a &ldquo;why this works&rdquo; note, and a tab for every tool it supports.</p>
+          <h3 style="margin-top:16px;">Five groups</h3>
+          <div class="chips">
+            <span>Write &amp; share <b>1</b></span>
+            <span>Prompt generators <b>4</b></span>
+            <span>Projects <b>4</b></span>
+            <span>Site sections <b>11</b></span>
+            <span>Brand templates <b>9</b></span>
+          </div>
+          <h3 style="margin-top:16px;">Six tools</h3>
+          <ul class="plain">
+            <li><strong>Claude (HTML)</strong>, the production path: one self-contained artboard with exact text, real fonts and correct Marathi, screenshotted at 1&times;.</li>
+            <li><strong>ChatGPT Images</strong> and <strong>Gemini &middot; Nano Banana</strong> for direct images; Gemini&rsquo;s variant repeats the exact text first.</li>
+            <li><strong>Midjourney &middot; Ideogram</strong> for textless backgrounds; <strong>Claude / ChatGPT</strong> and <strong>ChatGPT / Gemini (web + image)</strong> for text, and for prompts that write prompts.</li>
+          </ul>
+          <p class="note" style="margin-top:12px;">The tool lives in the URL &mdash; <code>/prompts/run?tool=claude</code> &mdash; so a link opens on the right tab.</p>
+        </div>
+        <figure class="shot">
+          <img src="assets/brand-kit/prompts.webp" width="1120" height="752" alt="The Project announcement prompt page in Direction B: the template sidebar grouped into Write and share, Prompt generators and Projects, the tool tabs with Claude (HTML) selected, and a form already filled with this project's name, tagline and key features." loading="lazy">
+          <figcaption>Project announcement &middot; Direction B &middot; filled in for the brand kit itself</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · How a prompt is built ------------------------------------------- -->
+  <section class="slide" aria-label="Slide 7: How a prompt is built">
+    <div class="inner">
+      <div class="split wide-right">
+        <div>
+          <div class="eyebrow"><span class="num">07</span><span>Under the form</span></div>
+          <h2>From a Markdown file to a prompt, in eight steps</h2>
+          <ol class="plain steps" style="margin-top:6px;">
+            <li>Split the template on <code>## claude</code>, <code>## gemini</code>&hellip; into tool variants (at build time).</li>
+            <li>Splice the shared blocks: <code>{CLAUDE_KIT}</code>, <code>{DIRECTION_BLOCK}</code>, <code>{LOGO_SAFE}</code>.</li>
+            <li class="on">Pick each <code>{A: &hellip; | B: &hellip; | C: &hellip;}</code> for the active direction.</li>
+            <li>Put the project context first, for <code>proj-</code> templates.</li>
+            <li>Turn the leftover <code>{DIRECTION}</code> into A, B or C.</li>
+            <li>Append the platform spec, the do&rsquo;s and don&rsquo;ts and the checks (not for Midjourney).</li>
+            <li>Collect every <code>{KEY}</code> still in the text, in order.</li>
+            <li>Fill what you typed; highlight what&rsquo;s still empty.</li>
+          </ol>
+        </div>
+        <div class="stack">
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="A paper ribbon runs left to right from a sheet labelled template.md, marked hash hash claude. A rubber stamp presses small blocks onto it, labelled plus blocks. The ribbon then passes through a box marked A, B and C with a pull cord under each letter; Blip pulls cord B down. A stapler clips a small tick list to the ribbon, labelled plus checks. An arrow labelled fill KEYS leads to the finished sheet, labelled prompt, with one line still highlighted.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+              <!-- template.md -->
+              <path class="il-w" d="M28,118 L92,118 L112,138 L112,236 L28,236 Z"/>
+              <path class="il-k3" d="M92,118 L92,138 L112,138"/>
+              <text class="il-m" x="38" y="152" font-size="11">## claude</text>
+              <path class="il-thin" d="M40,174 H98 M40,190 H92 M40,206 H100 M40,222 H86"/>
+              <text class="il-t" x="22" y="268" font-size="21">template.md</text>
+              <!-- the ribbon -->
+              <rect class="il-p" x="112" y="182" width="540" height="22"/>
+              <!-- stamp: + blocks -->
+              <path class="il-k" d="M200,-4 L200,120"/>
+              <ellipse class="il-w" cx="200" cy="128" rx="14" ry="9"/>
+              <rect class="il-w" x="194" y="136" width="12" height="14"/>
+              <rect class="il-w" x="176" y="150" width="48" height="20" rx="3"/>
+              <rect class="il-scr" x="180" y="170" width="40" height="8"/>
+              <path class="il-thin" d="M164,160 L154,156 M236,160 L246,156"/>
+              <rect class="il-ss" x="238" y="187" width="14" height="12" rx="2"/>
+              <rect class="il-ss" x="260" y="187" width="14" height="12" rx="2"/>
+              <rect class="il-ss" x="282" y="187" width="14" height="12" rx="2"/>
+              <text class="il-t" x="200" y="238" font-size="22" text-anchor="middle">+ blocks</text>
+              <!-- the A / B / C box and its cords -->
+              <rect class="il-w" x="336" y="160" width="84" height="66" rx="8"/>
+              <text class="il-t" x="356" y="214" font-size="19" text-anchor="middle">A</text>
+              <text class="il-ta" x="378" y="214" font-size="21" text-anchor="middle">B</text>
+              <text class="il-t" x="400" y="214" font-size="19" text-anchor="middle">C</text>
+              <path class="il-k3" d="M356,226 L356,253 M400,226 L400,253 M378,226 L352,343"/>
+              <circle class="il-p" cx="356" cy="262" r="9"/>
+              <circle class="il-p" cx="400" cy="262" r="9"/>
+              <!-- Blip pulls B -->
+              <g transform="translate(270 410)">
+                <use href="#blip-shadow"/>
+                <path class="lo" d="M18,-42 L76,-58"/><path class="li" d="M18,-42 L76,-58"/>
+                <path class="lo" d="M6,-36 L72,-52"/><path class="li" d="M6,-36 L72,-52"/>
+                <use href="#blip"/>
+                <use href="#blip-eyes" transform="translate(8 -101)"/>
+              </g>
+              <circle class="il-p" cx="350" cy="352" r="9"/>
+              <path class="il-thin" d="M366,320 l0,16 M372,326 l-6,10 l-6,-10"/>
+              <!-- stapler: + checks -->
+              <rect class="il-w" x="522" y="206" width="104" height="10" rx="3"/>
+              <path class="il-w" d="M524,172 L612,160 Q624,160 624,170 L622,178 L524,180 Z"/>
+              <circle class="il-p" cx="624" cy="193" r="8"/>
+              <rect class="il-p" x="548" y="220" width="42" height="50" rx="3"/>
+              <path class="il-tick" style="stroke-width:3" d="M554,232 l4,4 l8,-8 M554,247 l4,4 l8,-8 M554,262 l4,4 l8,-8"/>
+              <path class="il-thin" d="M572,234 H584 M572,249 H584 M572,264 H584"/>
+              <text class="il-t" x="569" y="300" font-size="22" text-anchor="middle">+ checks</text>
+              <!-- fill {KEYS} -->
+              <path class="il-k3" d="M534,138 L640,138" marker-end="url(#il-arrow)"/>
+              <text class="il-t" x="586" y="126" font-size="20" text-anchor="middle">fill {KEYS}</text>
+              <!-- prompt -->
+              <g transform="rotate(3 717 190)">
+                <rect class="il-w" x="664" y="118" width="108" height="146" rx="3"/>
+                <path class="il-thin" d="M676,140 H758 M676,156 H750 M676,172 H760 M676,204 H756 M676,220 H744 M676,236 H758"/>
+                <rect class="il-hi" x="692" y="182" width="48" height="13" rx="2"/>
+                <path class="il-thin" d="M676,188 H756" style="opacity:.8"/>
+              </g>
+              <text class="il-t" x="717" y="300" font-size="24" text-anchor="middle">prompt</text>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+<pre><span class="c">// quote · tool claude · direction B</span>
+"No. {NUMBER}" (mono 60px; <span class="k">{A: green | B: phosphor | C: laterite}</span>)
+<span class="c">// becomes</span>
+"No. 1440" (mono 60px; <span class="s">phosphor</span>)</pre>
+        </div>
+      </div>
+      <div class="flag"><p>It is all in <code>prompt.ts</code>: 83 lines of pure functions with no DOM or Astro in them, so the same code runs at build time, in the browser on every keystroke, and under <code>node --test</code>.</p></div>
+    </div>
+  </section>
+
+  <!-- 08 · The form builds itself ------------------------------------------ -->
+  <section class="slide" aria-label="Slide 8: The form builds itself">
+    <div class="inner">
+      <div class="split wide-right">
+        <div>
+          <div class="eyebrow"><span class="num">08</span><span>The custom form</span></div>
+          <h2>Nobody wrote the form. It&rsquo;s read off the prompt.</h2>
+          <ul class="plain" style="margin-top:14px;">
+            <li>Every <code>{KEY}</code> left after step 7 becomes a field. A new placeholder in any Markdown file gets a field on the next build, with no code change.</li>
+            <li><code>fields.yaml</code> only refines it: a label, a type (text, textarea, url, number, select), a hint, a default.</li>
+            <li>Values are shared. Type <code>PROJECT_NAME</code> once and every project prompt already has it; they live in this browser&rsquo;s <code>localStorage</code> under <code>dw-brand-kit</code>.</li>
+            <li>Empty keys stay <mark>{HIGHLIGHTED}</mark>, and what you see is exactly what <strong>Copy prompt</strong> copies. If the clipboard is blocked, the text is selected instead: &ldquo;Selected &mdash; press Ctrl/&#8984;+C&rdquo;.</li>
+          </ul>
+          <div class="flag"><p>Typing re-runs the eight steps for the output only. The form is rebuilt only when the direction or tool changes, so the cursor never jumps.</p></div>
+        </div>
+        <figure class="shot">
+          <img src="assets/brand-kit/output.webp" width="851" height="446" alt="The prompt output box: a dark bar reading 4,360 characters, highlighted equals still to fill, with a red Copy prompt button; below it the Claude HTML prompt for the quote card, with the placeholder HIGHLIGHT_WORDS still highlighted in yellow." loading="lazy">
+          <figcaption>Digital Monk quote card &middot; Claude (HTML) &middot; one field still to fill</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 · Check before posting -------------------------------------------- -->
+  <section class="slide" aria-label="Slide 9: Check before posting">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">09</span><span>After you generate</span></div>
+          <h2>&ldquo;Ready to post&rdquo; has to be earned</h2>
+          <p class="lead">Every template ends in a checklist: its own platform checks, then eight that apply to everything &mdash; proofread letter by letter, look for gibberish text in the background, test it on a phone, contrast of at least 4.5:1, original logo files, brand colours only, the right export size with alt text, and what to do when something fails.</p>
+          <figure class="shot" style="margin-top:16px;">
+            <img src="assets/brand-kit/checklist.webp" width="851" height="512" alt="The checklist for the run and trail log card in Direction C: nine boxes, all ticked, the counter reading 9 of 9 checked and a green Ready to post badge beside an Uncheck all button." loading="lazy">
+            <figcaption>Run / trail log card &middot; Direction C &middot; 9 of 9</figcaption>
+          </figure>
+        </div>
+        <div>
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="A clipboard as tall as the scene stands on the ground with ten rows of boxes. Nine are ticked in green. Blip holds a giant pencil level, like a lance, and is ticking the tenth box at the bottom. At the top of the clipboard a small flag on a spring is just popping up, reading ready to post, with a tick. Handwritten: not until the last box.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+              <!-- clipboard -->
+              <rect class="il-w" x="150" y="76" width="200" height="328" rx="12"/>
+              <rect class="il-p" x="214" y="64" width="72" height="26" rx="6"/>
+              <rect class="il-scr" x="230" y="70" width="40" height="8" rx="3"/>
+              <g>
+                <rect class="il-p" x="168" y="101" width="22" height="22" rx="3" style="stroke-width:3"/><path class="il-tick" d="M171,111 l6,7 l12,-14"/><path class="il-thin" d="M204,112 H330"/>
+                <rect class="il-p" x="168" y="130" width="22" height="22" rx="3" style="stroke-width:3"/><path class="il-tick" d="M171,140 l6,7 l12,-14"/><path class="il-thin" d="M204,141 H312"/>
+                <rect class="il-p" x="168" y="159" width="22" height="22" rx="3" style="stroke-width:3"/><path class="il-tick" d="M171,169 l6,7 l12,-14"/><path class="il-thin" d="M204,170 H326"/>
+                <rect class="il-p" x="168" y="188" width="22" height="22" rx="3" style="stroke-width:3"/><path class="il-tick" d="M171,198 l6,7 l12,-14"/><path class="il-thin" d="M204,199 H300"/>
+                <rect class="il-p" x="168" y="217" width="22" height="22" rx="3" style="stroke-width:3"/><path class="il-tick" d="M171,227 l6,7 l12,-14"/><path class="il-thin" d="M204,228 H332"/>
+                <rect class="il-p" x="168" y="246" width="22" height="22" rx="3" style="stroke-width:3"/><path class="il-tick" d="M171,256 l6,7 l12,-14"/><path class="il-thin" d="M204,257 H318"/>
+                <rect class="il-p" x="168" y="275" width="22" height="22" rx="3" style="stroke-width:3"/><path class="il-tick" d="M171,285 l6,7 l12,-14"/><path class="il-thin" d="M204,286 H328"/>
+                <rect class="il-p" x="168" y="304" width="22" height="22" rx="3" style="stroke-width:3"/><path class="il-tick" d="M171,314 l6,7 l12,-14"/><path class="il-thin" d="M204,315 H306"/>
+                <rect class="il-p" x="168" y="333" width="22" height="22" rx="3" style="stroke-width:3"/><path class="il-tick" d="M171,343 l6,7 l12,-14"/><path class="il-thin" d="M204,344 H322"/>
+                <rect class="il-p" x="168" y="362" width="22" height="22" rx="3" style="stroke-width:3"/><path class="il-tick" d="M171,372 l6,7"/><path class="il-thin" d="M204,373 H310"/>
+              </g>
+              <!-- the flag, springing up -->
+              <path class="il-k3" d="M330,76 l-8,-6 l16,-6 l-16,-6 l16,-6 l-8,-6 L330,14"/>
+              <path class="il-p" d="M330,12 L482,12 L470,27 L482,42 L330,42 Z" style="stroke-width:3"/>
+              <text class="il-ts" x="338" y="33" font-size="18">ready to post &#10003;</text>
+              <path class="il-thin" d="M318,26 l-14,-4 M318,38 l-16,0"/>
+              <!-- the giant pencil -->
+              <g transform="translate(184 377) rotate(-2)">
+                <path class="il-p" d="M0,0 L28,-9 L28,9 Z" style="stroke-width:3"/>
+                <path class="il-mark" d="M0,0 L9,-3 L9,3 Z"/>
+                <rect class="il-w" x="28" y="-9" width="176" height="18" style="stroke-width:3"/>
+                <path class="il-thin" d="M28,-3 H204 M28,3 H204"/>
+                <rect class="il-p" x="204" y="-9" width="14" height="18" style="stroke-width:3"/>
+                <rect class="il-as" x="218" y="-9" width="16" height="18" rx="3" style="stroke-width:3"/>
+              </g>
+              <!-- Blip ticks the last box -->
+              <g transform="translate(476 410) scale(1.1)">
+                <use href="#blip-shadow"/>
+                <path class="lo" d="M-18,-42 L-72,-40"/><path class="li" d="M-18,-42 L-72,-40"/>
+                <path class="lo" d="M-6,-36 L-60,-36"/><path class="li" d="M-6,-36 L-60,-36"/>
+                <use href="#blip"/>
+                <use href="#blip-eyes" transform="translate(-9 -98)"/>
+              </g>
+              <text class="il-t" x="560" y="96" font-size="30">not until</text>
+              <text class="il-t" x="560" y="132" font-size="30">the <tspan class="il-ta">last</tspan> box</text>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+          <div class="flag"><p><strong>A deliberate change from the mock-up.</strong> The design started with every box ticked, so &ldquo;Ready to post &#10003;&rdquo; showed before anything had been checked. On the site they start empty.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · Assets, standards, the ZIP -------------------------------------- -->
+  <section class="slide" aria-label="Slide 10: Assets, standards and the ZIP">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">10</span><span>Assets &middot; Standards &middot; Download</span></div>
+      <h2>Original files, fixed sizes, one download</h2>
+      <div class="two" style="margin-top:6px;">
+        <figure class="shot">
+          <img src="assets/brand-kit/assets.webp" width="1120" height="665" alt="The Assets page: the full brand-kit download panel above four cards for the badge, the binary mark and the white signature, each on its intended background with a Download button." loading="lazy">
+          <figcaption>Assets &middot; each file on the ground it&rsquo;s meant for, plus the tokens as CSS</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="assets/brand-kit/standards.webp" width="1120" height="665" alt="The Standards page: a table of eight export sizes from the 1080 by 1350 feed card to the 1080 by 1920 WhatsApp Status, and the start of the logo and signature rules with do and don't examples." loading="lazy">
+          <figcaption>Standards &middot; eight export sizes, rules R-01 to R-09, do and don&rsquo;t</figcaption>
+        </figure>
+      </div>
+      <div class="split wide-left" style="margin-top:18px;align-items:start;">
+        <div>
+          <p style="font-size:15px;"><strong>dare-writes-brand-kit.zip</strong> is built once, at build time, by an Astro endpoint using fflate: 67 files, 2.7 MB. Cloudflare serves it as a plain static file.</p>
+          <ul class="plain">
+            <li>The README inside is generated from <code>site.yaml</code> and <code>themes.yaml</code>, so it can&rsquo;t drift from the website.</li>
+            <li>The four PNGs are byte-identical to the originals, checked by MD5.</li>
+            <li>Tokens come from the same function that draws them on the Assets page.</li>
+          </ul>
+        </div>
+<pre class="tree">dare-writes-brand-kit/
+├── README.md        <span class="c">generated</span>
+├── assets/          <span class="c">badge · binary · 2 signatures</span>
+├── tokens/          <span class="c">A · B · C as .css and .json</span>
+└── fonts/           <span class="c">8 families + OFL licences</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · How it's built -------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 11: How it's built">
+    <div class="inner">
+      <div class="eyebrow"><span class="num">11</span><span>How it&rsquo;s built</span></div>
+      <h2>Static files, one engine, checked against the original</h2>
+      <div class="stats" style="margin:16px 0 20px;">
+        <div class="stat"><div class="v">33</div><div class="k">Routes, all static</div></div>
+        <div class="stat"><div class="v">0</div><div class="k">Servers</div></div>
+        <div class="stat"><div class="v">19 KB</div><div class="k">JS on a prompt page</div></div>
+        <div class="stat"><div class="v">273/273</div><div class="k">Prompts identical</div></div>
+      </div>
+      <div class="split">
+        <ul class="plain">
+          <li><strong>Astro 7, fully static, on Cloudflare Pages.</strong> No adapter, no functions, nothing to patch. Anything live happens in the browser.</li>
+          <li><strong>Prompts are Markdown with frontmatter</strong>, checked by a Zod schema: a missing label fails the build, not the page.</li>
+          <li><strong>YAML is imported directly</strong> by pages and browser scripts, so there is one source and no glue.</li>
+          <li><strong>Plain TypeScript, no UI framework.</strong> The React runtime the mock-up used stayed behind.</li>
+          <li><strong>Fonts are self-hosted</strong> through @fontsource: no Google Fonts request, and the same files go into the ZIP.</li>
+          <li><strong>noindex twice</strong>: a meta tag and an <code>X-Robots-Tag</code> header. No <code>robots.txt</code> disallow, which would stop crawlers from ever seeing the noindex.</li>
+        </ul>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A long plank rests on a triangular fulcrum, perfectly level. On the left end sits a ream of paper labelled design file, on the right an identical ream labelled new engine; each ream's wrapper reads 273. Blip stands in the middle of the plank over the fulcrum with both arms out, holding the balance. Handwritten: identical, character for character.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <text class="il-t" x="36" y="68" font-size="28">identical,</text>
+            <text class="il-t" x="36" y="102" font-size="28">character for <tspan class="il-ta">character</tspan></text>
+            <!-- fulcrum + plank -->
+            <path class="il-w" d="M352,410 L448,410 L400,338 Z"/>
+            <rect class="il-w" x="130" y="326" width="540" height="14" rx="4"/>
+            <!-- left ream -->
+            <rect class="il-w" x="160" y="236" width="110" height="90" rx="3"/>
+            <path class="il-thin" d="M164,248 H266 M164,258 H266 M164,310 H266 M164,318 H266"/>
+            <rect class="il-p" x="160" y="268" width="110" height="32"/>
+            <text class="il-t" x="215" y="294" font-size="26" text-anchor="middle">273</text>
+            <text class="il-t" x="215" y="222" font-size="24" text-anchor="middle">design file</text>
+            <!-- right ream -->
+            <rect class="il-w" x="530" y="236" width="110" height="90" rx="3"/>
+            <path class="il-thin" d="M534,248 H636 M534,258 H636 M534,310 H636 M534,318 H636"/>
+            <rect class="il-p" x="530" y="268" width="110" height="32"/>
+            <text class="il-t" x="585" y="294" font-size="26" text-anchor="middle">273</text>
+            <text class="il-t" x="585" y="222" font-size="24" text-anchor="middle">new engine</text>
+            <!-- Blip holds the balance -->
+            <g transform="translate(400 326)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-18,-42 L-66,-60"/><path class="li" d="M-18,-42 L-66,-60"/>
+              <path class="lo" d="M18,-42 L66,-60"/><path class="li" d="M18,-42 L66,-60"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(0 -101)"/>
+            </g>
+            <path class="il-thin" d="M318,250 l-12,-6 M482,250 l12,-6"/>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+      <div class="flag"><p><strong>Parity, before anything shipped.</strong> The 29 templates and every shared block were converted from the mock-up&rsquo;s own data by a one-off script, not copied by hand. Then all 273 combinations &mdash; 91 tool variants &times; 3 directions &mdash; were generated by the old code and the new engine, and compared.</p></div>
+    </div>
+  </section>
+
+  <!-- 12 · Limits & next --------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 12: Limits and what's next">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">12</span><span>Known limits</span></div>
+          <h2>What it doesn&rsquo;t do, yet</h2>
+          <ul class="plain" style="margin-top:12px;">
+            <li><strong>No AI call from the form, by choice.</strong> The result is the filled prompt, and nothing leaves the browser. Calling a model later means a Cloudflare Pages Function, a secret, and Cloudflare Access in front so the key can&rsquo;t be abused.</li>
+            <li><strong>Typed values stay in one browser.</strong> They don&rsquo;t sync across devices.</li>
+            <li><strong>The hero still says &ldquo;One diary, two moods.&rdquo;</strong> Copied word for word from the mock-up, which now has three. One line in <code>site.yaml</code>.</li>
+            <li><strong>Two font lists</strong>, in <code>fonts.css</code> and <code>site.yaml</code>: a new family goes in both.</li>
+            <li><strong>Project context is matched by prefix</strong>: a new project template must start with <code>proj-</code>.</li>
+          </ul>
+          <div class="title-meta">
+            <a href="https://brand-kit.sankettambare.in">brand-kit.sankettambare.in &#8599;</a>
+            <span>Public to anyone with the link &middot; noindex</span>
+          </div>
+          <div class="sig"><img src="assets/brand-kit/signature-white.webp" width="300" height="240" alt="Sanket's signature"></div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A closed door with a plate reading /api/generate and a padlock on its hasp. Beside it, on a small board on the wall, Blip hangs a key with a tag reading secret back on its hook instead of using it. Handwritten: not yet, by choice.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="24" y1="410" x2="776" y2="410"/>
+            <!-- door -->
+            <rect class="il-p" x="270" y="110" width="150" height="300" rx="4"/>
+            <rect class="il-w" x="282" y="122" width="126" height="288"/>
+            <rect class="il-p" x="294" y="150" width="102" height="28" rx="4" style="stroke-width:3"/>
+            <text class="il-m" x="345" y="169" font-size="12.5" text-anchor="middle">/api/generate</text>
+            <path class="il-thin" d="M296,214 H394 M296,330 H394"/>
+            <circle class="il-p" cx="390" cy="284" r="7"/>
+            <!-- padlock -->
+            <path class="il-k" d="M400,242 a10,10 0 0 1 20,0 v8"/>
+            <rect class="il-p" x="396" y="248" width="30" height="26" rx="4"/>
+            <circle class="il-mark" cx="411" cy="259" r="3"/>
+            <path class="il-k3" d="M411,261 v6"/>
+            <!-- hook board + key -->
+            <rect class="il-p" x="450" y="300" width="42" height="22" rx="3" style="stroke-width:3"/>
+            <path class="il-k3" d="M471,322 v10 a6,6 0 0 0 12,0"/>
+            <circle class="il-w" cx="477" cy="346" r="9" style="stroke-width:3"/>
+            <path class="il-k3" d="M477,355 L477,388 M477,378 h8 M477,386 h6"/>
+            <path class="il-thin" d="M470,352 L462,366"/>
+            <g transform="rotate(-6 453 372)">
+              <rect class="il-p" x="432" y="362" width="44" height="20" rx="3" style="stroke-width:3"/>
+              <text class="il-t" x="454" y="377" font-size="15" text-anchor="middle">secret</text>
+            </g>
+            <path class="il-thin" d="M497,326 q8,10 0,20"/>
+            <!-- Blip hangs it back -->
+            <g transform="translate(562 410) scale(1.1)">
+              <use href="#blip-shadow"/>
+              <path class="lo" d="M-18,-42 L-72,-58"/><path class="li" d="M-18,-42 L-72,-58"/>
+              <path class="lo" d="M18,-42 L32,-16"/><path class="li" d="M18,-42 L32,-16"/>
+              <use href="#blip"/>
+              <use href="#blip-eyes" transform="translate(-8 -103)"/>
+            </g>
+            <text class="il-t" x="560" y="92" font-size="32">not yet,</text>
+            <text class="il-t" x="560" y="130" font-size="32">by <tspan class="il-ta">choice</tspan></text>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <div class="ticks" id="ticks"></div>
+  <span class="counter" id="counter">01 / 12</span>
+</nav>
+
+<script>
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var counter = document.getElementById('counter');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var current = 0;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  slides.forEach(function (slide, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', slide.getAttribute('aria-label'));
+    b.addEventListener('click', function () { go(i); });
+    ticks.appendChild(b);
+  });
+  var tickButtons = Array.prototype.slice.call(ticks.children);
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    tickButtons.forEach(function (b, i) {
+      b.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+    paint();
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  // A resize changes what offsetLeft means; stay on the slide the reader was on.
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' });
+    }, 120);
+  });
+
+  paint();
+})();
+
+// --- Theme toggle ---------------------------------------------------------
+// Three states, not two: with no data-theme the deck follows the OS setting,
+// and a two-way switch would throw that away. Light is Direction A, dark is
+// Direction B.
+(function () {
+  var KEY = 'deck-theme';
+  var MODES = ['auto', 'light', 'dark'];
+  var META = {
+    auto:  { ico: '◑', lab: 'Auto',  say: 'follow system' },
+    light: { ico: '☀', lab: 'Light', say: 'light' },
+    dark:  { ico: '☾', lab: 'Dark',  say: 'dark' }
+  };
+
+  var btn = document.getElementById('theme');
+  var ico = document.getElementById('theme-ico');
+  var lab = document.getElementById('theme-lab');
+
+  function stored() {
+    try { return localStorage.getItem(KEY); } catch (e) { return null; }
+  }
+
+  var mode = MODES.indexOf(stored()) > -1 ? stored() : 'auto';
+
+  function apply(next, persist) {
+    mode = next;
+    if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', mode);
+
+    ico.textContent = META[mode].ico;
+    lab.textContent = META[mode].lab;
+    btn.setAttribute('aria-label', 'Theme: ' + META[mode].say + '. Activate to change.');
+
+    if (persist) {
+      // Storage can throw in a private window; the toggle must still work.
+      try {
+        if (mode === 'auto') localStorage.removeItem(KEY);
+        else localStorage.setItem(KEY, mode);
+      } catch (e) { /* ignored */ }
+    }
+  }
+
+  btn.addEventListener('click', function () {
+    apply(MODES[(MODES.indexOf(mode) + 1) % MODES.length], true);
+  });
+
+  apply(mode, false);
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="write"></script>
+</body>
+</html>

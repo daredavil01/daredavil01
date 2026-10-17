@@ -92,6 +92,13 @@ presentations/
                                    the narrated tour film (Blot, inline SVG)
   assets/logbook/                 Screenshots (webp) plus the tour film, its poster
                                    and captions
+  brand-kit.html                  One Diary, Three Moods: the 12-slide illustrated
+                                   deck on Dare Write's Brand Kit at
+                                   brand-kit.sankettambare.in — three directions,
+                                   the prompt engine, the self-building form
+                                   (Blip, inline SVG)
+  assets/brand-kit/               Screenshots, plus the logo and signature, used
+                                   by that deck (webp)
   e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
                                    ethanol/sugar trade-off and how the site was built
   projects-page-revamp.html       Projects, Reborn: the 12-slide deck on
