@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="A 24-slide illustrated deck on the After the Feed trilogy: The Wanderer's Digital Escape (a one-night game), After the Feed (a 15-minute story in seven chapters) and 45 Days (one short page a day, with no streak to break). The core idea, a tour of all three with real screenshots, the rules they keep, and how they were built.">
+<meta name="description" content="A 25-slide illustrated deck, with a three-minute narrated film, on the After the Feed trilogy: The Wanderer's Digital Escape (a one-night game), After the Feed (a 15-minute story in seven chapters) and 45 Days (one short page a day, with no streak to break). The core idea, a tour of all three with real screenshots, the rules they keep, and how they were built.">
 <title>After the Feed, a Trilogy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -271,6 +271,12 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
 .cta a span{display:block;font-size:13px;color:var(--muted);margin-top:3px;}
 @media (max-width:760px){.cta{grid-template-columns:1fr;}}
 
+/* The film: the video keeps its 9:16 and fits the slide's height. */
+.film{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;}
+.film > *{min-width:0;}
+.film video{display:block;height:min(70vh,660px);width:auto;aspect-ratio:9/16;border-radius:22px;border:1px solid var(--rule);background:#0b1220;box-shadow:var(--shadow);}
+@media (max-width:960px){.film{grid-template-columns:1fr;}.film video{height:auto;width:100%;max-width:360px;justify-self:center;}}
+
 /* --- Illustrations: the illo method, drawn by hand ----------------------
  * The Wanderer, the game's lantern-carrying walker, performs every idea.
  * Locked parts: a hooded bell-shaped cloak, a pack on the back, a staff
@@ -433,6 +439,7 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
             <li><strong>03 &middot; The 45 days.</strong> One short page a day, with no streak to break. <a href="https://45-days.sankettambare.in/">Start Day 1 &#8599;</a></li>
           </ul>
           <div class="title-meta">
+            <a href="#2" data-go="2">&#9654; Watch the 3-minute film</a>
             <span>Words by Sanket Tambare</span>
             <span>13 source posts</span>
             <span>React 18 &middot; Astro 7 &middot; Cloudflare Pages</span>
@@ -485,12 +492,37 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 02 · The idea -------------------------------------------------------- -->
-  <section class="slide" aria-label="Slide 2: The idea">
+  <!-- 02 · The film ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 2: The trilogy in three minutes">
+    <div class="inner">
+      <div class="film">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">02</span><span>The film</span></div>
+            <h2>The trilogy in three minutes</h2>
+            <p class="lead">A narrated vertical film of the whole idea: why it exists, then the game, the story and the 45 days, drawn with the same Wanderer and cut with the real screens of all three.</p>
+          </div>
+          <ul class="plain tight">
+            <li><strong>Voice:</strong> Kokoro-82M (Apache 2.0), an open neural text-to-speech model run locally on a CPU, voice <code>am_puck</code>. The script is first person, built from Sanket&rsquo;s posts.</li>
+            <li><strong>Picture:</strong> an HTML stage rendered frame by frame, 5,400 frames at 30 fps, keyed to the narration&rsquo;s word timings. Night for the game, dawn on &ldquo;by morning&rdquo;, then the story&rsquo;s morning.</li>
+            <li><strong>Sound:</strong> music and cues synthesised for the film, ducked under the voice. Captions are in the player; the 1080 &times; 1920 social cut has them burned in.</li>
+          </ul>
+          <p style="font-size:13.5px"><a href="assets/trilogy/trilogy-film.mp4" download>Download the MP4</a> (720 &times; 1280, 3:00, 7.3 MB)</p>
+        </div>
+        <video controls preload="none" playsinline poster="assets/trilogy/trilogy-film-poster.webp" width="720" height="1280" aria-label="After the Feed, a trilogy: a three-minute narrated film of the game, the story and the 45 days">
+          <source src="assets/trilogy/trilogy-film.mp4" type="video/mp4">
+          <track kind="captions" src="assets/trilogy/trilogy-film.vtt" srclang="en" label="English (narration)">
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · The idea -------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 3: The idea">
     <div class="inner">
       <div class="split">
         <div>
-          <div class="eyebrow"><span class="num">02</span><span>The idea</span></div>
+          <div class="eyebrow"><span class="num">03</span><span>The idea</span></div>
           <h2>We plan our careers, our health and our money. Four or five hours a day on a screen go unexamined.</h2>
           <blockquote class="quote big">
             <p>&ldquo;We all have our physical and digital self.&rdquo;</p>
@@ -535,12 +567,12 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 03 · The gap --------------------------------------------------------- -->
-  <section class="slide" aria-label="Slide 3: The gap">
+  <!-- 04 · The gap --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 4: The gap">
     <div class="inner">
       <div class="split wl">
         <div>
-          <div class="eyebrow"><span class="num">03</span><span>The gap</span></div>
+          <div class="eyebrow"><span class="num">04</span><span>The gap</span></div>
           <h2>Apps guard the door. Nobody walks the road after it.</h2>
           <p class="lead">Friction apps such as one sec, Opal and ScreenZen act at the moment you open an app. Almost nothing covers the weeks after someone leaves. That stretch is what Sanket wrote about, and it is where the trilogy goes.</p>
           <h3 style="margin-top:16px">The weeks after</h3>
@@ -590,12 +622,12 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 04 · The arc --------------------------------------------------------- -->
-  <section class="slide" aria-label="Slide 4: The arc">
+  <!-- 05 · The arc --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 5: The arc">
     <div class="inner">
       <div class="split wr">
         <div>
-          <div class="eyebrow"><span class="num">04</span><span>The arc</span></div>
+          <div class="eyebrow"><span class="num">05</span><span>The arc</span></div>
           <h2>Seven stages of one person's way out</h2>
           <p class="lead">The arc is Sanket's own, set down in his posts, most of it in &ldquo;The Road Less Travelled!&rdquo;. The story gives each stage a chapter. The 45 days fold the same arc into five phases. Both expect the slip back, and neither treats it as failure.</p>
           <div class="arc" role="list">
@@ -649,12 +681,12 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 05 · The promise ----------------------------------------------------- -->
-  <section class="slide" aria-label="Slide 5: The promise">
+  <!-- 06 · The promise ----------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 6: The promise">
     <div class="inner">
       <div class="split">
         <div>
-          <div class="eyebrow"><span class="num">05</span><span>The promise</span></div>
+          <div class="eyebrow"><span class="num">06</span><span>The promise</span></div>
           <h2>&ldquo;Average effects are small. Some people gain a lot. You're allowed to find out which one you are.&rdquo;</h2>
           <p class="lead">The last line of the story carries the whole trilogy. None of the three sells &ldquo;detox = happiness&rdquo;. Small averages are called small, every finding links its study, and deactivating and deleting are treated as equally valid.</p>
           <div class="three" style="margin-top:14px">
@@ -705,13 +737,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 06 · Three parts, one walk ------------------------------------------- -->
-  <section class="slide" aria-label="Slide 6: Three parts, one walk">
+  <!-- 07 · Three parts, one walk ------------------------------------------- -->
+  <section class="slide" aria-label="Slide 7: Three parts, one walk">
     <div class="inner">
       <div class="split eq">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">06</span><span>The trilogy</span></div>
+            <div class="eyebrow"><span class="num">07</span><span>The trilogy</span></div>
             <h2>Three parts, one walk</h2>
             <p class="lead">Each part asks for a different amount of time and does a different job. Start with any of them. The 45 days call themselves part three of After the Feed.</p>
           </div>
@@ -771,13 +803,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 07 · The game ------------------------------------------------------- -->
-  <section class="slide" aria-label="Slide 7: The game">
+  <!-- 08 · The game ------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 8: The game">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">07</span><span class="sec">Part 01 &middot; The game</span></div>
+            <div class="eyebrow"><span class="num">08</span><span class="sec">Part 01 &middot; The game</span></div>
             <h2>The Wanderer&rsquo;s Digital Escape</h2>
             <p class="lead">&ldquo;It is 22:47 and your phone is still glowing. Walk out of the feed &mdash; through four worlds built from it &mdash; and reach a quiet beach by sunrise. Every choice changes the light you carry.&rdquo;</p>
           </div>
@@ -837,13 +869,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 08 · Acts, not answers ---------------------------------------------- -->
-  <section class="slide" aria-label="Slide 8: Acts, not just answers">
+  <!-- 09 · Acts, not answers ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 9: Acts, not just answers">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">08</span><span class="sec">The game</span></div>
+            <div class="eyebrow"><span class="num">09</span><span class="sec">The game</span></div>
             <h2>Acts, not just answers</h2>
             <p class="lead">Inspired by games like <em>Florence</em>, where the gesture is the meaning. Point at a choice and the world leans toward it. Every gesture also works from the buttons and the keyboard.</p>
           </div>
@@ -914,13 +946,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 09 · Four worlds, four meters ---------------------------------------- -->
-  <section class="slide" aria-label="Slide 9: Four worlds, four meters">
+  <!-- 10 · Four worlds, four meters ---------------------------------------- -->
+  <section class="slide" aria-label="Slide 10: Four worlds, four meters">
     <div class="inner">
       <div class="split">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">09</span><span class="sec">The game</span></div>
+            <div class="eyebrow"><span class="num">10</span><span class="sec">The game</span></div>
             <h2>One night, four worlds, four meters</h2>
             <p class="lead">The night is the progress bar. The sky follows the clock in the corner, from midnight blue to first light. Each world opens with a title card and ends with a boss.</p>
           </div>
@@ -991,13 +1023,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 10 · The beach ------------------------------------------------------- -->
-  <section class="slide" aria-label="Slide 10: The beach">
+  <!-- 11 · The beach ------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 11: The beach">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">10</span><span class="sec">The game</span></div>
+            <div class="eyebrow"><span class="num">11</span><span class="sec">The game</span></div>
             <h2>Morning is the result</h2>
             <p class="lead">The ending is a sunrise, then a scroll through where you arrived.</p>
           </div>
@@ -1057,13 +1089,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 11 · The story ------------------------------------------------------ -->
-  <section class="slide" aria-label="Slide 11: The story">
+  <!-- 12 · The story ------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 12: The story">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">11</span><span class="sec">Part 02 &middot; The story</span></div>
+            <div class="eyebrow"><span class="num">12</span><span class="sec">Part 02 &middot; The story</span></div>
             <h2>After the Feed</h2>
             <p class="lead">&ldquo;This is the story of what happens after you leave the feed: the good parts, the hard parts, and what the research actually says.&rdquo;</p>
           </div>
@@ -1116,13 +1148,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 12 · One thing to try ------------------------------------------------ -->
-  <section class="slide" aria-label="Slide 12: One thing to try in every chapter">
+  <!-- 13 · One thing to try ------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 13: One thing to try in every chapter">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">12</span><span class="sec">The story</span></div>
+            <div class="eyebrow"><span class="num">13</span><span class="sec">The story</span></div>
             <h2>One thing to try in every chapter</h2>
             <p class="lead">Each stage of the arc gets one tactile mechanic, so the reader feels the stage instead of being told about it.</p>
           </div>
@@ -1191,13 +1223,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 13 · The exit gauntlet ---------------------------------------------- -->
-  <section class="slide" aria-label="Slide 13: The exit gauntlet">
+  <!-- 14 · The exit gauntlet ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 14: The exit gauntlet">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">13</span><span class="sec">The story</span></div>
+            <div class="eyebrow"><span class="num">14</span><span class="sec">The story</span></div>
             <h2>Leaving is designed to be hard. Naming the trick takes its power.</h2>
           </div>
           <blockquote class="quote">
@@ -1264,13 +1296,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 14 · Honest evidence ------------------------------------------------- -->
-  <section class="slide" aria-label="Slide 14: Finding first, caveat one tap away">
+  <!-- 15 · Honest evidence ------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 15: Finding first, caveat one tap away">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">14</span><span class="sec">The story</span></div>
+            <div class="eyebrow"><span class="num">15</span><span class="sec">The story</span></div>
             <h2>Finding first, caveat one tap away</h2>
             <p class="lead">Every chapter carries one research card: its strength, a big number or phrase, the finding, and the study linked. One tap flips it to the caveat. Small effects are called small.</p>
           </div>
@@ -1335,13 +1367,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 15 · The desert, then before you go --------------------------------- -->
-  <section class="slide" aria-label="Slide 15: The desert, then before you go">
+  <!-- 16 · The desert, then before you go --------------------------------- -->
+  <section class="slide" aria-label="Slide 16: The desert, then before you go">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">15</span><span class="sec">The story</span></div>
+            <div class="eyebrow"><span class="num">16</span><span class="sec">The story</span></div>
             <h2>The quiet, then what you leave with</h2>
             <p class="lead">In Chapter 6 the page itself goes quiet: colour fades to sand, the waves flatten, and one box keeps an idea that came while you were bored. A care note stays visible the whole time.</p>
           </div>
@@ -1403,13 +1435,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 16 · The 45 days ---------------------------------------------------- -->
-  <section class="slide" aria-label="Slide 16: The 45 days">
+  <!-- 17 · The 45 days ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 17: The 45 days">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">16</span><span class="sec">Part 03 &middot; The 45 days</span></div>
+            <div class="eyebrow"><span class="num">17</span><span class="sec">Part 03 &middot; The 45 days</span></div>
             <h2>Forty-five days after the feed.</h2>
             <p class="lead">&ldquo;One short page a day, built on Sanket Tambare&rsquo;s own lines about leaving social media. Each day gives you his words, what the research says, a small checklist and one thing to do offline.&rdquo;</p>
           </div>
@@ -1480,13 +1512,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 17 · One page, learned once ------------------------------------------ -->
-  <section class="slide" aria-label="Slide 17: One page, learned once">
+  <!-- 18 · One page, learned once ------------------------------------------ -->
+  <section class="slide" aria-label="Slide 18: One page, learned once">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">17</span><span class="sec">The 45 days</span></div>
+            <div class="eyebrow"><span class="num">18</span><span class="sec">The 45 days</span></div>
             <h2>One page, learned once</h2>
             <p class="lead">One template renders all 45 days, and the order of the blocks never changes, so you learn the page once. Large Previous and Next buttons name the neighbouring day&rsquo;s theme.</p>
           </div>
@@ -1565,13 +1597,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 18 · Welcome back --------------------------------------------------- -->
-  <section class="slide" aria-label="Slide 18: Welcome back">
+  <!-- 19 · Welcome back --------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 19: Welcome back">
     <div class="inner">
       <div class="tour phone-right">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">18</span><span class="sec">The 45 days</span></div>
+            <div class="eyebrow"><span class="num">19</span><span class="sec">The 45 days</span></div>
             <h2>Coming back costs nothing</h2>
             <p class="lead">Return after two or more days and Home greets you instead of scolding you: continue where you left off, read Day 22 first, or catch up on what you skipped. After 14 days you can begin again and keep your notes.</p>
           </div>
@@ -1632,13 +1664,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 19 · Yours stays yours ---------------------------------------------- -->
-  <section class="slide" aria-label="Slide 19: Your notes stay, his words travel">
+  <!-- 20 · Yours stays yours ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 20: Your notes stay, his words travel">
     <div class="inner">
       <div class="tour">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">19</span><span class="sec">The 45 days</span></div>
+            <div class="eyebrow"><span class="num">20</span><span class="sec">The 45 days</span></div>
             <h2>Your notes stay. His words travel.</h2>
             <p class="lead">The Journal is for you. The share card is for everyone else, and the two never mix.</p>
           </div>
@@ -1706,13 +1738,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 20 · The rules ------------------------------------------------------ -->
-  <section class="slide" aria-label="Slide 20: The rules">
+  <!-- 21 · The rules ------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 21: The rules">
     <div class="inner">
       <div class="split">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">20</span><span>What holds it together</span></div>
+            <div class="eyebrow"><span class="num">21</span><span>What holds it together</span></div>
             <h2>Never use the tricks it teaches you to spot</h2>
             <p class="lead">The story and the series share one set of rules, written into their build docs as invariants rather than preferences. The game puts the tricks on stage instead: the Streak Counter is a boss you hold to break.</p>
           </div>
@@ -1771,13 +1803,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 21 · Privacy is the message ----------------------------------------- -->
-  <section class="slide" aria-label="Slide 21: Privacy is the message">
+  <!-- 22 · Privacy is the message ----------------------------------------- -->
+  <section class="slide" aria-label="Slide 22: Privacy is the message">
     <div class="inner">
       <div class="split">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">21</span><span>What holds it together</span></div>
+            <div class="eyebrow"><span class="num">22</span><span>What holds it together</span></div>
             <h2>Privacy is the message</h2>
             <p class="lead">A trilogy about the feed can&rsquo;t quietly feed on its readers. Nothing you type leaves your device: no accounts, no cookies, no analytics, no ads.</p>
           </div>
@@ -1839,13 +1871,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 22 · Help on every page --------------------------------------------- -->
-  <section class="slide" aria-label="Slide 22: A route to human help">
+  <!-- 23 · Help on every page --------------------------------------------- -->
+  <section class="slide" aria-label="Slide 23: A route to human help">
     <div class="inner">
       <div class="split">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">22</span><span>What holds it together</span></div>
+            <div class="eyebrow"><span class="num">23</span><span>What holds it together</span></div>
             <h2>A route to human help, on every page</h2>
             <p class="lead">Every chapter of the story and every page of the series ends with one line. It is never collapsed and never behind a tap:</p>
           </div>
@@ -1894,13 +1926,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 23 · How it was built ----------------------------------------------- -->
-  <section class="slide" aria-label="Slide 23: How it was built">
+  <!-- 24 · How it was built ----------------------------------------------- -->
+  <section class="slide" aria-label="Slide 24: How it was built">
     <div class="inner">
       <div class="split wl">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">23</span><span>Under the hood</span></div>
+            <div class="eyebrow"><span class="num">24</span><span>Under the hood</span></div>
             <h2>Built small, checked hard</h2>
           </div>
           <div class="two">
@@ -1980,13 +2012,13 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     </div>
   </section>
 
-  <!-- 24 · Pick a door ---------------------------------------------------- -->
-  <section class="slide" aria-label="Slide 24: Pick a door">
+  <!-- 25 · Pick a door ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 25: Pick a door">
     <div class="inner">
       <div class="split">
         <div class="col">
           <div>
-            <div class="eyebrow"><span class="num">24</span><span>Your turn</span></div>
+            <div class="eyebrow"><span class="num">25</span><span>Your turn</span></div>
             <h2>You&rsquo;re allowed to find out which one you are.</h2>
             <p class="lead">Start with whichever fits the time you have. Each part points to the next, and none of them will hold it against you if you stop.</p>
           </div>
@@ -2037,7 +2069,7 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
   <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
   <button type="button" id="next" aria-label="Next slide">&rarr;</button>
   <div class="ticks" id="ticks"></div>
-  <span class="counter" id="counter">01 / 24</span>
+  <span class="counter" id="counter">01 / 25</span>
 </nav>
 
 <script>
@@ -2068,6 +2100,10 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     });
     prev.disabled = current === 0;
     next.disabled = current === slides.length - 1;
+    // A film keeps playing in a slide that has scrolled away; stop it.
+    Array.prototype.forEach.call(document.querySelectorAll('video'), function (v) {
+      if (!slides[current].contains(v) && !v.paused) v.pause();
+    });
   }
 
   function go(i) {
@@ -2078,6 +2114,9 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
     try { history.replaceState(null, '', '#' + (current + 1)); } catch (e) { /* file:// in some browsers */ }
   }
 
+  Array.prototype.forEach.call(document.querySelectorAll('[data-go]'), function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); go(parseInt(a.getAttribute('data-go'), 10) - 1); });
+  });
   prev.addEventListener('click', function () { go(current - 1); });
   next.addEventListener('click', function () { go(current + 1); });
 
@@ -2093,7 +2132,7 @@ table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-
 
   document.addEventListener('keydown', function (e) {
     var tag = (e.target && e.target.tagName) || '';
-    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'VIDEO') return;
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
