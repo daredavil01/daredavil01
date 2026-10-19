@@ -112,12 +112,14 @@ presentations/
                                    deck on the AI added to the Yung Foundation
                                    admin — use cases, the provider layer, the
                                    code checks, keys and privacy (inline SVG only)
-  after-the-feed-trilogy.html     After the Feed, a Trilogy: the 24-slide
+  after-the-feed-trilogy.html     After the Feed, a Trilogy: the 25-slide
                                    illustrated deck on the game, the story and
                                    45 Days — the core idea, a tour of each with
                                    screenshots, the rules they keep, the build
-                                   (the Wanderer, inline SVG)
-  assets/trilogy/                 Screenshots used by that deck (webp)
+                                   (the Wanderer, inline SVG), and a 3-minute
+                                   narrated vertical film
+  assets/trilogy/                 Screenshots (webp) plus the film, its poster
+                                   and captions
 developer-infographic/
   index.html                      "A Developer, Measured" — scroll-through
                                    infographic (career gantt, rated stack,
