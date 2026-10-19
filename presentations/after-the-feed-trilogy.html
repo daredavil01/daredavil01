@@ -1,0 +1,2172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A 24-slide illustrated deck on the After the Feed trilogy: The Wanderer's Digital Escape (a one-night game), After the Feed (a 15-minute story in seven chapters) and 45 Days (one short page a day, with no streak to break). The core idea, a tour of all three with real screenshots, the rules they keep, and how they were built.">
+<title>After the Feed, a Trilogy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=IBM+Plex+Mono:wght@400;600&family=Caveat:wght@500;700&display=swap">
+
+<script>
+// Runs before first paint: a stored theme must be on <html> already, or the
+// deck flashes the system theme before switching.
+(function(){
+  try{
+    var t = localStorage.getItem('deck-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ /* private mode, blocked storage — fall through to system */ }
+})();
+</script>
+
+<style>
+/* ---------------------------------------------------------------------------
+ * Two themes, two halves of the trilogy. Light is the morning the story and
+ * the series live in: their sage ground, near-black ink, teal for "you, after
+ * the feed" and coral for the feed (tokens.css in both repos). Dark is the
+ * game's night walk: midnight paper, pale ink, the lantern's amber.
+ * The --i-* tokens colour the drawings; the lantern is the one accent.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#eef2ef; --surface:#fafbfa; --raised:#fafbfa; --sunk:#dfe6e3;
+  --rule:#c3ccc8; --rule-soft:#d3dbd7;
+  --text:#18211f; --prose:#2c3734; --muted:#4a5653; --faint:#66726e;
+  --accent:#2c6a6e; --accent-text:#2c6a6e; --accent-soft:#dceae9; --on-accent:#fafbfa;
+  --coral:#b8432a; --coral-soft:#f5ded6;
+  --lamp:#8a5208; --lamp-soft:#f6e6c8;
+  --ph1:#dceae9; --ph2:#e3ebd9; --ph3:#f5ded6; --ph4:#e6e2da; --ph5:#f1e7cc;
+  --ph1-d:#2c6a6e; --ph2-d:#4f6b3a; --ph3-d:#b8432a; --ph4-d:#6f6a60; --ph5-d:#7a5c14;
+  --shadow:0 14px 36px rgba(24,33,31,.14);
+  --focus:#2c6a6e;
+
+  --i-paper:#f7f9f7; --i-ink:#18211f; --i-body:#fdfdfb; --i-face:#18211f; --i-off:#dbe4e0;
+  --i-acc:#e39a2c; --i-flame:#fff1c9;
+  --i-teal:#2c6a6e; --i-teal-soft:#cfe3e2;
+  --i-feed:#e0573b; --i-feed-soft:#f7d2c6;
+  --i-sand:#e8e2d4; --i-night:#e4eaf0;
+
+  --font-display:"Schibsted Grotesk",system-ui,sans-serif;
+  --font-body:"Schibsted Grotesk",system-ui,sans-serif;
+  --font-serif:"Newsreader",Georgia,serif;
+  --font-hand:"Caveat",cursive;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#0b1220; --surface:#121b2c; --raised:#152033; --sunk:#1d2a40;
+    --rule:#33445f; --rule-soft:#26354d;
+    --text:#e8eef2; --prose:#cdd7e0; --muted:#a3b1c0; --faint:#8494a8;
+    --accent:#7fc0c2; --accent-text:#8fd0d2; --accent-soft:#16343a; --on-accent:#0b1220;
+    --coral:#f29a82; --coral-soft:#3a2420;
+    --lamp:#f2b54a; --lamp-soft:#33280f;
+    --ph1:#16343a; --ph2:#22301a; --ph3:#3a2420; --ph4:#2a2924; --ph5:#33280f;
+    --ph1-d:#8fd0d2; --ph2-d:#b4cf98; --ph3-d:#f29a82; --ph4-d:#cfc6b6; --ph5-d:#e8c46a;
+    --shadow:0 14px 36px rgba(0,0,0,.45);
+    --focus:#f2b54a;
+    --i-paper:#101a2b; --i-ink:#e6ecf2; --i-body:#1c2a40; --i-face:#05080f; --i-off:#0a111d;
+    --i-acc:#f2b54a; --i-flame:#fff4d6;
+    --i-teal:#7fc0c2; --i-teal-soft:#1d4448;
+    --i-feed:#f08a70; --i-feed-soft:#4a2a24;
+    --i-sand:#2b2a2c; --i-night:#0c1424;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#0b1220; --surface:#121b2c; --raised:#152033; --sunk:#1d2a40;
+  --rule:#33445f; --rule-soft:#26354d;
+  --text:#e8eef2; --prose:#cdd7e0; --muted:#a3b1c0; --faint:#8494a8;
+  --accent:#7fc0c2; --accent-text:#8fd0d2; --accent-soft:#16343a; --on-accent:#0b1220;
+  --coral:#f29a82; --coral-soft:#3a2420;
+  --lamp:#f2b54a; --lamp-soft:#33280f;
+  --ph1:#16343a; --ph2:#22301a; --ph3:#3a2420; --ph4:#2a2924; --ph5:#33280f;
+  --ph1-d:#8fd0d2; --ph2-d:#b4cf98; --ph3-d:#f29a82; --ph4-d:#cfc6b6; --ph5-d:#e8c46a;
+  --shadow:0 14px 36px rgba(0,0,0,.45);
+  --focus:#f2b54a;
+  --i-paper:#101a2b; --i-ink:#e6ecf2; --i-body:#1c2a40; --i-face:#05080f; --i-off:#0a111d;
+  --i-acc:#f2b54a; --i-flame:#fff4d6;
+  --i-teal:#7fc0c2; --i-teal-soft:#1d4448;
+  --i-feed:#f08a70; --i-feed-soft:#4a2a24;
+  --i-sand:#2b2a2c; --i-night:#0c1424;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--paper);color:var(--text);
+  font-family:var(--font-body);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+a{color:var(--accent-text);text-underline-offset:3px;}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  height:100dvh;scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100%;width:100%;height:100dvh;scroll-snap-align:start;
+  display:flex;align-items:center;justify-content:center;
+  padding:64px 32px 84px;overflow-y:auto;
+}
+/* Tall slides must start at the top, not be clipped above it. */
+.slide > .inner{margin:auto 0;}
+.inner{width:100%;max-width:1240px;}
+
+.eyebrow{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--accent-text);margin-bottom:12px;
+}
+.eyebrow .num{
+  color:var(--on-accent);background:var(--accent);
+  border-radius:999px;padding:2px 10px;letter-spacing:.06em;
+}
+.eyebrow .sec{color:var(--lamp);}
+h1,h2{font-family:var(--font-display);font-weight:700;letter-spacing:-.025em;margin:0 0 12px;color:var(--text);}
+h1{font-size:clamp(40px,5.6vw,72px);line-height:1.02;}
+h1 .soft{color:var(--lamp);}
+h2{font-size:clamp(26px,3.1vw,40px);line-height:1.08;}
+h3{font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
+p{margin:0 0 11px;color:var(--prose);}
+.lead{font-size:clamp(15.5px,1.45vw,18px);color:var(--muted);max-width:60ch;}
+strong{color:var(--text);font-weight:600;}
+code{
+  font-family:var(--font-mono);font-size:.84em;background:var(--sunk);
+  border-radius:6px;padding:1px 6px;color:var(--text);
+}
+
+/* Sanket's lines: verbatim, serif italic, always linked to the post. */
+.quote{margin:14px 0 0;padding-left:14px;border-left:3px solid var(--accent);}
+.quote p{font-family:var(--font-serif);font-style:italic;font-size:clamp(17px,1.6vw,21px);line-height:1.35;color:var(--text);margin:0 0 6px;}
+.quote cite{display:block;font-style:normal;font-size:12.5px;color:var(--muted);}
+.quote.lamp{border-left-color:var(--lamp);}
+.quote.big p{font-size:clamp(20px,2.1vw,27px);}
+
+/* --- Layout helpers ------------------------------------------------------ */
+.split{display:grid;grid-template-columns:1fr 1.2fr;gap:40px;align-items:center;}
+.split.eq{grid-template-columns:1fr 1fr;}
+.split.wr{grid-template-columns:.86fr 1.14fr;}
+.split.wl{grid-template-columns:1.14fr .86fr;}
+.tour{display:grid;grid-template-columns:1fr 1.22fr;gap:24px 36px;align-items:start;}
+.col > * + *{margin-top:14px;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.two.wf{grid-template-columns:1.35fr 1fr;align-items:center;}
+.two.ev{grid-template-columns:repeat(2,minmax(0,214px));justify-content:center;align-items:start;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.split > *,.tour > *,.two > *,.three > *,.duo > *{min-width:0;}
+.tour.phone-right{grid-template-columns:1fr 290px;align-items:center;}
+.tour.phone-right > .phone{width:100%;max-width:290px;justify-self:center;}
+.duo{display:grid;grid-template-columns:1fr 196px;gap:16px;align-items:start;}
+.duo.wide-phone{grid-template-columns:1fr 228px;}
+.duo.slim{grid-template-columns:1fr 158px;}
+@media (max-width:960px){
+  .split,.split.wr,.split.wl,.split.eq,.tour,.tour.phone-right,.two,.two.wf,.three{grid-template-columns:1fr;gap:22px;}
+  .slide{padding:62px 16px 88px;}
+}
+@media (max-width:560px){
+  .duo,.duo.wide-phone,.duo.slim{grid-template-columns:1fr;}
+  .hide-sm{display:none;}
+  table.t td:first-child{white-space:normal;}
+  .duo .phone{max-width:240px;}
+}
+
+.panel{background:var(--raised);border:1px solid var(--rule);border-radius:14px;padding:14px 16px;}
+.panel p{font-size:14.5px;}
+.panel p:last-child{margin-bottom:0;}
+.panel h4{font-family:var(--font-display);font-weight:600;font-size:18px;margin:0 0 6px;letter-spacing:-.01em;}
+.panel .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media (max-width:600px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--raised);border:1px solid var(--rule);border-radius:12px;padding:10px 12px;}
+.stat .v{font-family:var(--font-mono);font-size:24px;font-weight:600;line-height:1.05;color:var(--accent-text);}
+.stat .k{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+.stat.lamp .v{color:var(--lamp);}
+
+ul.plain{list-style:none;margin:0;padding:0;}
+ul.plain li{position:relative;padding-left:18px;margin-bottom:7px;color:var(--prose);font-size:15px;line-height:1.45;}
+ul.plain li::before{content:"";position:absolute;left:2px;top:8px;width:7px;height:7px;border-radius:50%;background:var(--accent);}
+ul.plain li:last-child{margin-bottom:0;}
+ul.plain.tight li{font-size:14px;margin-bottom:5px;}
+
+/* Small tables: chapters, worlds, meters, keys. */
+table.t{width:100%;border-collapse:collapse;font-size:13.5px;}
+table.t th{font-family:var(--font-mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 10px 6px 0;border-bottom:1px solid var(--rule);}
+table.t td{padding:6px 10px 6px 0;border-bottom:1px solid var(--rule-soft);vertical-align:top;color:var(--prose);line-height:1.4;}
+table.t td:first-child{color:var(--text);font-weight:600;white-space:nowrap;}
+table.t tr:last-child td{border-bottom:none;}
+table.t .m{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-space:nowrap;}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chips span{
+  font-family:var(--font-mono);font-size:11.5px;color:var(--prose);
+  border:1px solid var(--rule);border-radius:999px;padding:3px 10px;background:var(--raised);
+}
+.chips span b{color:var(--accent-text);font-weight:600;margin-right:4px;}
+
+/* The arc: Sanket's seven stages, numbered. */
+.arc{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:6px;}
+.arc div{border-top:3px solid var(--accent);padding-top:6px;font-size:13px;line-height:1.25;color:var(--text);font-weight:600;}
+.arc div small{display:block;font-family:var(--font-mono);font-size:10px;font-weight:400;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+.arc div.back{border-top-color:var(--coral);}
+@media (max-width:760px){.arc{grid-template-columns:repeat(4,1fr);}}
+
+/* The five phases of 45 Days, in their own tints (tokens.css). */
+.phases{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.phases div{border-radius:10px;padding:8px 10px;font-size:13px;line-height:1.25;color:var(--text);font-weight:600;}
+.phases div small{display:block;font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.06em;margin-bottom:3px;}
+.phases div em{display:block;font-style:normal;font-weight:400;font-size:12px;color:var(--prose);margin-top:3px;}
+.phases .p1{background:var(--ph1);} .phases .p1 small{color:var(--ph1-d);}
+.phases .p2{background:var(--ph2);} .phases .p2 small{color:var(--ph2-d);}
+.phases .p3{background:var(--ph3);} .phases .p3 small{color:var(--ph3-d);}
+.phases .p4{background:var(--ph4);} .phases .p4 small{color:var(--ph4-d);}
+.phases .p5{background:var(--ph5);} .phases .p5 small{color:var(--ph5-d);}
+@media (max-width:760px){.phases{grid-template-columns:repeat(2,1fr);}}
+
+/* The trilogy: three parts as three cards. */
+.part{background:var(--raised);border:1px solid var(--rule);border-radius:16px;padding:14px 16px;}
+.part .n{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--lamp);text-transform:uppercase;}
+.part h4{font-family:var(--font-display);font-size:19px;font-weight:700;letter-spacing:-.015em;margin:4px 0 4px;}
+.part p{font-size:14px;margin:0 0 8px;}
+.part .meta{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);margin:0 0 8px;}
+.part a{font-size:13.5px;font-weight:600;}
+
+/* Rules grid. */
+.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.rule{border-left:3px solid var(--accent);background:var(--raised);border-radius:0 12px 12px 0;padding:9px 13px;}
+.rule h4{font-family:var(--font-display);font-size:15.5px;font-weight:600;margin:0 0 3px;}
+.rule p{font-size:13.5px;margin:0;line-height:1.45;}
+@media (max-width:600px){.rules{grid-template-columns:1fr;}}
+
+.flag{border-left:3px solid var(--lamp);background:var(--raised);border-radius:0 12px 12px 0;padding:10px 14px;}
+.flag p{margin:0;font-size:14px;color:var(--prose);}
+
+/* Screenshots: desktop frames and phone frames. */
+.shot{margin:0;}
+.shot img{
+  display:block;width:100%;height:auto;border-radius:12px;
+  border:1px solid var(--rule);box-shadow:var(--shadow);background:var(--surface);
+}
+.shot.phone img{border-radius:24px;border:5px solid var(--text);}
+.shot figcaption{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-top:7px;letter-spacing:.02em;line-height:1.45;}
+.shots{display:grid;gap:14px;}
+
+.title-meta{
+  display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:18px;
+  font-family:var(--font-mono);font-size:12px;color:var(--muted);
+}
+.cta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.cta a{
+  display:block;text-decoration:none;color:var(--text);
+  background:var(--raised);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;
+}
+.cta a:hover{border-color:var(--accent);}
+.cta a small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--lamp);margin-bottom:3px;}
+.cta a b{display:block;font-family:var(--font-display);font-size:17px;letter-spacing:-.01em;}
+.cta a span{display:block;font-size:13px;color:var(--muted);margin-top:3px;}
+@media (max-width:760px){.cta{grid-template-columns:1fr;}}
+
+/* --- Illustrations: the illo method, drawn by hand ----------------------
+ * The Wanderer, the game's lantern-carrying walker, performs every idea.
+ * Locked parts: a hooded bell-shaped cloak, a pack on the back, a staff
+ * with a small hook at the top, two straight legs, one working arm, and a
+ * hood whose opening is a plain shadow — no face, like the game's
+ * silhouette and the trilogy's "no faces" rule. The lantern's glass is the
+ * only accent on him (amber by day and by night). It is carried, hung on
+ * the staff hook, or set down — never gone. Teal (you, after the feed) and
+ * coral (the feed) each mark one or two things a scene turns on.
+ * ------------------------------------------------------------------------- */
+.illo{margin:0;border-radius:16px;overflow:hidden;background:var(--i-paper);border:1px solid var(--rule);}
+.illo svg{display:block;width:100%;height:auto;}
+.il-bg{fill:var(--i-paper)}
+.il-w{fill:var(--i-body);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.il-p{fill:var(--i-paper);stroke:var(--i-ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.il-k{fill:none;stroke:var(--i-ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.il-k3{fill:none;stroke:var(--i-ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.il-thin{fill:none;stroke:var(--i-ink);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:.55}
+.il-dash{stroke-dasharray:8 9}
+.il-dot{stroke-dasharray:0.1 9}
+.il-a{fill:var(--i-acc);stroke:var(--i-ink);stroke-width:3;stroke-linejoin:round}
+.il-glow{fill:var(--i-acc);opacity:.2}
+.il-flame{fill:var(--i-flame)}
+.il-mark{fill:var(--i-ink)}
+.il-off{fill:var(--i-off)}
+.il-teal{fill:var(--i-teal);stroke:var(--i-ink);stroke-width:3;stroke-linejoin:round}
+.il-teal-s{fill:var(--i-teal-soft);stroke:var(--i-ink);stroke-width:3;stroke-linejoin:round}
+.il-feed{fill:var(--i-feed);stroke:var(--i-ink);stroke-width:3;stroke-linejoin:round}
+.il-feed-s{fill:var(--i-feed-soft);stroke:var(--i-ink);stroke-width:3;stroke-linejoin:round}
+.il-sand{fill:var(--i-sand)}
+.il-night{fill:var(--i-night)}
+.il-hatch{stroke:var(--i-ink);stroke-width:2;opacity:.3}
+.il-hf{fill:url(#il-hatch)}
+.wd-limb{fill:none;stroke:var(--i-ink);stroke-width:7;stroke-linecap:round}
+.wd-arm{fill:none;stroke:var(--i-ink);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.wd-staff{fill:none;stroke:var(--i-ink);stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
+.wd-face{fill:var(--i-face)}
+.wd-handle{fill:none;stroke:var(--i-ink);stroke-width:3;stroke-linecap:round}
+.il-t{font-family:var(--font-hand);font-weight:500;fill:var(--i-ink)}
+.il-tt{font-family:var(--font-hand);font-weight:700;fill:var(--i-teal)}
+.il-m{font-family:var(--font-mono);font-weight:600;fill:var(--i-ink)}
+.il-grain{pointer-events:none}
+:root[data-theme="dark"] .il-grain{opacity:.5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .il-grain{opacity:.5}}
+
+/* --- Home link + rail ---------------------------------------------------- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 18px;pointer-events:none;
+}
+.topbar > *{pointer-events:auto;}
+.home,.theme{
+  font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text);text-decoration:none;
+  background:var(--raised);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;
+}
+.home:hover,.theme:hover{color:var(--accent-text);border-color:var(--accent);}
+.theme{display:inline-flex;align-items:center;gap:7px;cursor:pointer;line-height:1;}
+.theme .ico{font-size:13px;line-height:1;}
+
+.rail{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  display:flex;align-items:center;gap:12px;
+  padding:11px 18px;background:var(--paper);border-top:1px solid var(--rule);
+}
+.rail button{
+  font:inherit;font-family:var(--font-mono);font-size:15px;line-height:1;cursor:pointer;
+  background:var(--raised);color:var(--text);
+  border:1px solid var(--rule);border-radius:999px;padding:7px 13px;
+}
+.rail button:hover:not(:disabled){border-color:var(--accent);color:var(--accent-text);}
+.rail button:disabled{opacity:.35;cursor:default;}
+.ticks{display:flex;gap:4px;flex:1;overflow:hidden;}
+.ticks button{flex:1;min-width:0;height:6px;padding:0;border-radius:999px;background:var(--sunk);border:none;}
+.ticks button[aria-current="true"]{background:var(--lamp);}
+.counter{font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
+
+@media (max-width:760px){
+  .topbar{background:var(--paper);border-bottom:1px solid var(--rule);padding:9px 14px;}
+  .home,.theme{border-color:transparent;background:transparent;padding:4px 6px;}
+}
+@media (prefers-reduced-motion: reduce){.track{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+
+<!-- The Wanderer, the grain, the hatch and the arrowhead: defined once and
+     reused by every drawing. Origin is the ground between his feet; he faces
+     right. Shapes carry no colour of their own, so each <use> paints them by
+     class. Pose-specific parts (the arm, the lantern's place, the staff's
+     angle) are drawn per scene. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="wd-pack-s" d="M-29,-111 Q-29,-118 -22,-118 L-15,-118 Q-11,-118 -11,-114 L-11,-87 Q-11,-82 -16,-82 L-23,-82 Q-29,-82 -29,-88 Z"/>
+    <path id="wd-cloak-s" d="M-11,-123 C-18,-104 -22,-80 -25,-57 Q0,-51 25,-57 C22,-80 18,-104 11,-123 Z"/>
+    <path id="wd-hood-s" d="M-12,-117 C-16,-129 -15,-143 -9,-154 C-1,-152 9,-150 14,-143 C19,-136 18,-125 12,-116 Z"/>
+    <path id="wd-face-s" d="M14,-141 C8,-140 4,-133 5,-125 C6,-120 9,-118 12,-118 C16,-124 17,-135 14,-141 Z"/>
+    <g id="wd-off" class="il-off">
+      <use href="#wd-pack-s" transform="translate(5 4)"/>
+      <use href="#wd-cloak-s" transform="translate(5 4)"/>
+      <use href="#wd-hood-s" transform="translate(5 4)"/>
+    </g>
+    <g id="wd-body">
+      <use href="#wd-pack-s" class="il-w"/>
+      <use href="#wd-cloak-s" class="il-w"/>
+      <use href="#wd-hood-s" class="il-w"/>
+      <use href="#wd-face-s" class="wd-face"/>
+    </g>
+    <path id="wd-legs-walk" class="wd-limb" d="M-5,-60 L-15,-1 M6,-60 L15,-1"/>
+    <path id="wd-legs-stand" class="wd-limb" d="M-5,-60 L-7,-1 M6,-60 L8,-1"/>
+    <path id="wd-staff" class="wd-staff" d="M-30,-1 L-22,-172 Q-22,-183 -33,-182"/>
+    <!-- the lantern and its glow: origin is the hand (or the staff hook) it
+         hangs from. The glow goes down first, behind the body, so it never
+         tints the cloak. -->
+    <circle id="wd-glow" class="il-glow" cx="0" cy="22" r="40"/>
+    <g id="wd-lantern">
+      <path class="wd-handle" d="M-6,9 Q0,-4 6,9"/>
+      <rect class="il-mark" x="-9" y="8" width="18" height="5" rx="2"/>
+      <rect class="il-a" x="-7" y="13" width="14" height="19" rx="3"/>
+      <path class="il-flame" d="M0,17 Q4.5,23 0,28.5 Q-4.5,23 0,17 Z"/>
+      <rect class="il-mark" x="-9" y="31" width="18" height="5" rx="2"/>
+    </g>
+    <!-- the lantern hung on the staff hook, which curls back so it clears the hood -->
+    <use id="wd-glow-hung" href="#wd-glow" transform="translate(-33 -181)"/>
+    <use id="wd-lantern-hung" href="#wd-lantern" transform="translate(-33 -181)"/>
+    <pattern id="il-hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <line class="il-hatch" x1="0" y1="0" x2="0" y2="10"/>
+    </pattern>
+    <filter id="il-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.2 0 0 0 0 0.25 0 0 0 0 0.24 0 0 0 0.12 0"/>
+    </filter>
+    <marker id="il-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="il-mark"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <a class="home" data-island-return href="../index.html#play/after-the-feed-trilogy">&larr; Home</a>
+  <button class="theme" type="button" id="theme" aria-label="Theme: follow system. Activate to change.">
+    <span class="ico" id="theme-ico" aria-hidden="true">&#9681;</span><span id="theme-lab">Auto</span>
+  </button>
+</div>
+
+<div class="track" id="track" tabindex="-1">
+
+  <!-- 01 · Title ----------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 1: Title">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">01</span><span>A deck &middot; October 2026</span></div>
+          <h1>After the Feed,<br><span class="soft">a trilogy</span></h1>
+          <p class="lead">Three things Sanket Tambare made about the months after leaving social media: a game you play in one night, a story you read in one sitting, and a series you read one page a day for 45 days. All three are built from his own posts, paired with honest research, and keep nothing about you anywhere but your own browser.</p>
+          <ul class="plain">
+            <li><strong>01 &middot; The game.</strong> A digital well-being accountability game. <a href="https://daredavil01.github.io/daredavil01/digital-wellbeing/index.html">Play it &#8599;</a></li>
+            <li><strong>02 &middot; The story.</strong> After the Feed: the months after leaving the feed, in seven chapters. <a href="https://after-the-feed.sankettambare.in/">Read it &#8599;</a></li>
+            <li><strong>03 &middot; The 45 days.</strong> One short page a day, with no streak to break. <a href="https://45-days.sankettambare.in/">Start Day 1 &#8599;</a></li>
+          </ul>
+          <div class="title-meta">
+            <span>Words by Sanket Tambare</span>
+            <span>13 source posts</span>
+            <span>React 18 &middot; Astro 7 &middot; Cloudflare Pages</span>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A giant phone stands upright on the ground like a door. Its screen is packed with coral tiles at the top and opens into a dark doorway at the bottom. The Wanderer, a hooded walker with a pack and a staff, has just stepped out of it and walks right, carrying a lit lantern. A few coral tiles trail behind him on the ground, smaller and fainter each time. Far ahead on the horizon sits a single teal dot. Handwritten: the feed, and you, after the feed.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+            <text class="il-t" x="165" y="50" font-size="30" text-anchor="middle">the feed</text>
+            <!-- the phone, standing like a door -->
+            <rect class="il-off" x="88" y="76" width="170" height="322" rx="28"/>
+            <rect class="il-w" x="80" y="70" width="170" height="322" rx="28"/>
+            <rect class="il-p" x="94" y="94" width="142" height="282" rx="12"/>
+            <path class="il-k3" d="M146,82 L184,82"/>
+            <rect class="il-feed" x="102" y="102" width="38" height="42" rx="6"/>
+            <rect class="il-feed-s" x="146" y="102" width="38" height="42" rx="6"/>
+            <rect class="il-feed" x="190" y="102" width="38" height="42" rx="6"/>
+            <rect class="il-feed-s" x="102" y="152" width="38" height="42" rx="6"/>
+            <rect class="il-feed" x="146" y="152" width="38" height="42" rx="6"/>
+            <rect class="il-feed-s" x="190" y="152" width="38" height="42" rx="6"/>
+            <rect class="il-feed-s" x="102" y="202" width="38" height="42" rx="6"/>
+            <rect class="il-feed-s" x="146" y="202" width="38" height="42" rx="6"/>
+            <rect class="il-feed" x="190" y="202" width="38" height="42" rx="6"/>
+            <!-- the doorway he came through -->
+            <path class="il-k3" d="M122,376 L122,268 Q122,254 136,254 L194,254 Q208,254 208,268 L208,376" />
+            <rect class="il-hf" x="124" y="256" width="82" height="118"/>
+            <!-- the feed, thinning out behind him -->
+            <rect class="il-feed-s" x="270" y="374" width="18" height="18" rx="4" opacity=".85"/>
+            <rect class="il-feed-s" x="304" y="380" width="12" height="12" rx="3" opacity=".6"/>
+            <rect class="il-feed-s" x="330" y="384" width="8" height="8" rx="2" opacity=".35"/>
+            <!-- you, after the feed -->
+            <circle class="il-teal" cx="690" cy="372" r="17"/>
+            <text class="il-t" x="690" y="330" font-size="26" text-anchor="middle">you, after the feed</text>
+            <path class="il-thin il-dash" d="M520,392 L668,392"/>
+            <!-- the Wanderer walks out -->
+            <g transform="translate(430 392) scale(1.45)">
+              <use href="#wd-glow" transform="translate(28 -86)"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-walk"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L28,-86"/>
+              <use href="#wd-lantern" transform="translate(28 -86)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · The idea -------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 2: The idea">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">02</span><span>The idea</span></div>
+          <h2>We plan our careers, our health and our money. Four or five hours a day on a screen go unexamined.</h2>
+          <blockquote class="quote big">
+            <p>&ldquo;We all have our physical and digital self.&rdquo;</p>
+            <cite>Sanket Tambare, <a href="https://sankettambare.substack.com/p/vibe-coding-digital-wellbeing-game">Vibe-Coding Digital Well-being accountability game!</a></cite>
+          </blockquote>
+          <blockquote class="quote">
+            <p>&ldquo;What is the impact of your avg 4-5 hours digital technology use on your life?&rdquo;</p>
+            <cite>Sanket Tambare, <a href="https://sankettambare.substack.com/p/digital-wellbeing">Are you aware about digital part of your being?</a></cite>
+          </blockquote>
+          <p class="lead" style="margin-top:16px">The trilogy starts from that question. It doesn't tell anyone to quit. It asks them to look at their digital self as carefully as the physical one, and then decide for themselves.</p>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="The Wanderer stands on the left and lifts his lantern toward a tall wall. In the light, the wall shows a shadow with his hood on top, but its body is the shape of a phone. Two faint beams run from the lantern to the shadow. Handwritten under the shadow: 4–5 hours a day.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+            <!-- the wall -->
+            <rect class="il-off" x="438" y="52" width="330" height="340"/>
+            <rect class="il-p" x="430" y="46" width="330" height="346"/>
+            <!-- the shadow: his hood, a phone for a body -->
+            <path class="il-hf" d="M577,176 C566,145 569,108 585,80 C605,85 631,90 644,108 C657,126 655,155 639,178 Z"/>
+            <path class="il-k3 il-dash" d="M577,176 C566,145 569,108 585,80 C605,85 631,90 644,108 C657,126 655,155 639,178" opacity=".6"/>
+            <rect class="il-hf" x="540" y="172" width="150" height="186" rx="26"/>
+            <rect class="il-k3 il-dash" x="540" y="172" width="150" height="186" rx="26" opacity=".6"/>
+            <path class="il-k3" d="M598,190 L632,190" opacity=".6"/>
+            <text class="il-t" x="615" y="384" font-size="28" text-anchor="middle">4&ndash;5 hours a day</text>
+            <!-- beams -->
+            <path class="il-thin il-dash" d="M305,198 L536,176 M305,214 L536,352"/>
+            <!-- the Wanderer lifts the lantern -->
+            <g transform="translate(250 392) scale(1.5)">
+              <use href="#wd-glow" transform="translate(33 -140)"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-stand"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L33,-140"/>
+              <use href="#wd-lantern" transform="translate(33 -140)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · The gap --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 3: The gap">
+    <div class="inner">
+      <div class="split wl">
+        <div>
+          <div class="eyebrow"><span class="num">03</span><span>The gap</span></div>
+          <h2>Apps guard the door. Nobody walks the road after it.</h2>
+          <p class="lead">Friction apps such as one sec, Opal and ScreenZen act at the moment you open an app. Almost nothing covers the weeks after someone leaves. That stretch is what Sanket wrote about, and it is where the trilogy goes.</p>
+          <h3 style="margin-top:16px">The weeks after</h3>
+          <div class="chips"><span>relapse</span><span>the 30-day deletion buffer</span><span>the quiet &ldquo;desert&rdquo;</span><span>building a replacement habit</span></div>
+          <blockquote class="quote">
+            <p>&ldquo;Initially it feels good to be free but the dopamine hits and social pull, pulls you back in the digital grind.&rdquo;</p>
+            <cite>Sanket Tambare, <a href="https://sankettambare.substack.com/p/the-road-less-travelled">The Road Less Travelled!</a></cite>
+          </blockquote>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="On the left, a turnstile gate with a sign showing a stopwatch, labelled friction apps. The Wanderer has already walked past it and carries his lantern along an empty road to the right. The road runs into fog, past blank signposts with nothing written on them. Handwritten above the fog: the weeks after.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+            <!-- the gate -->
+            <text class="il-t" x="152" y="150" font-size="28" text-anchor="middle">friction apps</text>
+            <rect class="il-w" x="92" y="222" width="14" height="170" rx="4"/>
+            <rect class="il-w" x="198" y="222" width="14" height="170" rx="4"/>
+            <rect class="il-off" x="86" y="174" width="144" height="48" rx="9"/>
+            <rect class="il-w" x="80" y="168" width="144" height="48" rx="9"/>
+            <circle class="il-p" cx="152" cy="193" r="15"/>
+            <path class="il-k3" d="M152,193 L152,184 M152,193 L159,197 M148,175 L156,175"/>
+            <circle class="il-w" cx="152" cy="300" r="9"/>
+            <path class="il-k" d="M152,300 L112,290 M152,300 L190,286 M152,300 L150,340"/>
+            <!-- blank signposts on the road -->
+            <path class="il-k3" d="M520,392 L520,318 M660,392 L660,318"/>
+            <rect class="il-p" x="494" y="296" width="54" height="28" rx="5"/>
+            <rect class="il-p" x="634" y="296" width="54" height="28" rx="5"/>
+            <!-- fog -->
+            <path class="il-thin il-dash" d="M470,262 Q530,248 590,262 T710,262 T780,258"/>
+            <path class="il-thin il-dash" d="M540,236 Q600,222 660,236 T780,232"/>
+            <path class="il-thin il-dash" d="M500,350 Q560,338 620,350 T740,350"/>
+            <text class="il-t" x="640" y="200" font-size="28" text-anchor="middle">the weeks after</text>
+            <!-- the Wanderer, past the gate -->
+            <g transform="translate(360 392) scale(1.35)">
+              <use href="#wd-glow" transform="translate(28 -86)"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-walk"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L28,-86"/>
+              <use href="#wd-lantern" transform="translate(28 -86)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · The arc --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 4: The arc">
+    <div class="inner">
+      <div class="split wr">
+        <div>
+          <div class="eyebrow"><span class="num">04</span><span>The arc</span></div>
+          <h2>Seven stages of one person's way out</h2>
+          <p class="lead">The arc is Sanket's own, set down in his posts, most of it in &ldquo;The Road Less Travelled!&rdquo;. The story gives each stage a chapter. The 45 days fold the same arc into five phases. Both expect the slip back, and neither treats it as failure.</p>
+          <div class="arc" role="list">
+            <div role="listitem"><small>1</small>Frustration</div>
+            <div role="listitem"><small>2</small>Trial break</div>
+            <div role="listitem" class="back"><small>3</small>Relapse</div>
+            <div role="listitem"><small>4</small>Find your why</div>
+            <div role="listitem"><small>5</small>Leaving</div>
+            <div role="listitem"><small>6</small>The quiet</div>
+            <div role="listitem"><small>7</small>New rhythm</div>
+          </div>
+          <blockquote class="quote">
+            <p>&ldquo;Now, empowered with ultimate will, powerful why and the strong intentions, you go ahead! Survive for a week, a month and the year.&rdquo;</p>
+            <cite>Sanket Tambare, <a href="https://sankettambare.substack.com/p/the-road-less-travelled">The Road Less Travelled!</a></cite>
+          </blockquote>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A winding trail climbs from the bottom left to the top right with seven stepping stones along it. A coral arrow loops back from the third stone to the second, labelled slip back. The Wanderer walks the trail between the fourth and fifth stones with his lantern. Near the sixth stone the ground flattens into low dunes, labelled the quiet. The seventh stone, at the top, is teal and labelled new rhythm.">
+            <rect class="il-bg" width="800" height="450"/>
+            <path class="il-k3 il-dash" d="M50,392 C170,392 200,318 300,318 C410,318 420,236 520,236 C620,236 640,150 760,140"/>
+            <!-- the slip back -->
+            <path fill="none" stroke="var(--i-feed)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="7 8" d="M362,288 C344,226 262,232 244,308"/>
+            <path class="il-feed" d="M236,300 L244,318 L254,302 Z"/>
+            <text class="il-t" x="300" y="216" font-size="27" text-anchor="middle">slip back</text>
+            <!-- the quiet -->
+            <path class="il-thin" d="M600,204 Q640,186 680,204 Q716,190 752,204"/>
+            <text class="il-t" x="676" y="236" font-size="26" text-anchor="middle">the quiet</text>
+            <!-- stones -->
+            <ellipse class="il-w" cx="126" cy="381" rx="15" ry="10"/>
+            <ellipse class="il-w" cx="236" cy="330" rx="15" ry="10"/>
+            <ellipse class="il-w" cx="367" cy="305" rx="15" ry="10"/>
+            <ellipse class="il-w" cx="459" cy="249" rx="15" ry="10"/>
+            <ellipse class="il-w" cx="593" cy="217" rx="15" ry="10"/>
+            <ellipse class="il-w" cx="686" cy="159" rx="15" ry="10"/>
+            <ellipse class="il-teal" cx="760" cy="140" rx="15" ry="10"/>
+            <text class="il-t" x="700" y="104" font-size="26" text-anchor="middle">new rhythm</text>
+            <!-- the Wanderer on the trail -->
+            <g transform="translate(526 236) scale(.95)">
+              <use href="#wd-glow" transform="translate(28 -86)"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-walk"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L28,-86"/>
+              <use href="#wd-lantern" transform="translate(28 -86)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · The promise ----------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 5: The promise">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">05</span><span>The promise</span></div>
+          <h2>&ldquo;Average effects are small. Some people gain a lot. You're allowed to find out which one you are.&rdquo;</h2>
+          <p class="lead">The last line of the story carries the whole trilogy. None of the three sells &ldquo;detox = happiness&rdquo;. Small averages are called small, every finding links its study, and deactivating and deleting are treated as equally valid.</p>
+          <div class="three" style="margin-top:14px">
+            <div class="panel"><p class="k">Invite</p><p>Never push. <code>Not today</code> counts as much as <code>I did it</code>.</p></div>
+            <div class="panel"><p class="k">Show</p><p>Each finding with its strength and its caveat.</p></div>
+            <div class="panel"><p class="k">Let you see</p><p>Optional check-ins, shown only to you, never as a label.</p></div>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A long row of short stone pillars stands along the ground, nearly all the same small height, with a dashed line across their tops labelled average. Two are a little taller. One pillar rises far above the rest, and the Wanderer stands on top of it holding his lantern high, looking out. Handwritten: a few gain a lot.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+            <g class="il-w">
+              <rect x="44" y="362" width="34" height="34" rx="8"/>
+              <rect x="94" y="350" width="34" height="46" rx="8"/>
+              <rect x="144" y="366" width="34" height="30" rx="8"/>
+              <rect x="194" y="354" width="34" height="42" rx="8"/>
+              <rect x="244" y="348" width="34" height="48" rx="8"/>
+              <rect x="294" y="326" width="34" height="70" rx="8"/>
+              <rect x="344" y="360" width="34" height="36" rx="8"/>
+              <rect x="394" y="352" width="34" height="44" rx="8"/>
+              <rect x="444" y="364" width="34" height="32" rx="8"/>
+              <rect x="572" y="356" width="34" height="40" rx="8"/>
+              <rect x="622" y="346" width="34" height="50" rx="8"/>
+              <rect x="672" y="318" width="34" height="78" rx="8"/>
+              <rect x="722" y="362" width="34" height="34" rx="8"/>
+            </g>
+            <rect class="il-off" x="504" y="240" width="48" height="156" rx="9"/>
+            <rect class="il-w" x="498" y="236" width="48" height="160" rx="9"/>
+            <path class="il-thin il-dash" d="M34,354 L780,354"/>
+            <text class="il-t" x="44" y="340" font-size="26">average</text>
+            <text class="il-t" x="372" y="232" font-size="27" text-anchor="middle">a few gain a lot</text>
+            <path class="il-thin" d="M440,240 Q470,250 486,262" marker-end="url(#il-arrow)"/>
+            <!-- the Wanderer on the tall one -->
+            <g transform="translate(522 236) scale(.92)">
+              <use href="#wd-glow" transform="translate(33 -140)"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-stand"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L33,-140"/>
+              <use href="#wd-lantern" transform="translate(33 -140)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · Three parts, one walk ------------------------------------------- -->
+  <section class="slide" aria-label="Slide 6: Three parts, one walk">
+    <div class="inner">
+      <div class="split eq">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">06</span><span>The trilogy</span></div>
+            <h2>Three parts, one walk</h2>
+            <p class="lead">Each part asks for a different amount of time and does a different job. Start with any of them. The 45 days call themselves part three of After the Feed.</p>
+          </div>
+          <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Three stops along the ground, joined by two arcing arrows. First, a small tent under a crescent moon, labelled one night. Second, an open book on a lectern, labelled one sitting. Third, a run of stepping stones getting smaller toward the horizon, the first three teal, labelled 45 days. The Wanderer walks between the book and the stones with his lantern, under the second arrow, which is labelled the hand-off.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="28" y1="380" x2="772" y2="380"/>
+            <!-- one night -->
+            <path class="il-w" d="M162,92 A30,30 0 1,0 162,148 A23,23 0 1,1 162,92 Z"/>
+            <circle class="il-mark" cx="88" cy="108" r="2.5"/><circle class="il-mark" cx="214" cy="84" r="2.5"/><circle class="il-mark" cx="60" cy="176" r="2"/>
+            <path class="il-off" d="M78,380 L138,294 L198,380 Z"/>
+            <path class="il-w" d="M70,380 L130,290 L190,380 Z"/>
+            <path class="il-hf" d="M130,318 L112,380 L148,380 Z"/>
+            <path class="il-k3" d="M130,318 L112,380 M130,318 L148,380"/>
+            <text class="il-t" x="130" y="420" font-size="27" text-anchor="middle">one night</text>
+            <!-- one sitting -->
+            <rect class="il-w" x="392" y="302" width="16" height="78" rx="4"/>
+            <path class="il-w" d="M348,306 L452,306 L440,286 L360,286 Z"/>
+            <path class="il-p" d="M360,286 Q380,268 400,280 Q420,268 440,286 Z"/>
+            <path class="il-k3" d="M400,280 L400,286"/>
+            <path class="il-thin" d="M372,280 Q384,274 394,279 M406,279 Q416,274 428,280"/>
+            <text class="il-t" x="400" y="420" font-size="27" text-anchor="middle">one sitting</text>
+            <!-- 45 days -->
+            <ellipse class="il-teal-s" cx="596" cy="374" rx="22" ry="8"/>
+            <ellipse class="il-teal-s" cx="640" cy="364" rx="19" ry="7"/>
+            <ellipse class="il-teal-s" cx="680" cy="355" rx="16" ry="6"/>
+            <ellipse class="il-w" cx="715" cy="347" rx="13" ry="5"/>
+            <ellipse class="il-w" cx="745" cy="340" rx="10" ry="4"/>
+            <ellipse class="il-w" cx="768" cy="334" rx="7" ry="3"/>
+            <text class="il-t" x="682" y="420" font-size="27" text-anchor="middle">45 days</text>
+            <!-- arrows -->
+            <path class="il-k3" d="M206,176 Q268,128 330,176" marker-end="url(#il-arrow)"/>
+            <path class="il-k3" d="M470,176 Q535,128 600,176" marker-end="url(#il-arrow)"/>
+            <text class="il-t" x="535" y="118" font-size="26" text-anchor="middle">the hand-off</text>
+            <!-- the Wanderer between the book and the stones -->
+            <g transform="translate(526 380) scale(1.02)">
+              <use href="#wd-glow" transform="translate(28 -86)"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-walk"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L28,-86"/>
+              <use href="#wd-lantern" transform="translate(28 -86)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+          </figure>
+        </div>
+        <div>
+          <div class="col">
+            <div class="part"><p class="n">01 &middot; The game &middot; one night</p><h4>The Wanderer&rsquo;s Digital Escape</h4><p>Feel the pull. Four worlds built from the feed, walked from 22:47 to sunrise, with choices you make by holding, swiping and writing. About twelve minutes.</p><a href="https://daredavil01.github.io/daredavil01/digital-wellbeing/index.html">daredavil01.github.io/&hellip;/digital-wellbeing &#8599;</a></div>
+            <div class="part"><p class="n">02 &middot; The story &middot; one sitting</p><h4>After the Feed</h4><p>Understand the months after. Seven chapters, each with one thing to try, one research finding and one small offline act. About fifteen minutes.</p><a href="https://after-the-feed.sankettambare.in/">after-the-feed.sankettambare.in &#8599;</a></div>
+            <div class="part"><p class="n">03 &middot; The 45 days &middot; a page a day</p><h4>45 Days</h4><p>Practise it. One short page a day in five phases, about five minutes each, counting days read and never days in a row.</p><a href="https://45-days.sankettambare.in/">45-days.sankettambare.in &#8599;</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · The game ------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 7: The game">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">07</span><span class="sec">Part 01 &middot; The game</span></div>
+            <h2>The Wanderer&rsquo;s Digital Escape</h2>
+            <p class="lead">&ldquo;It is 22:47 and your phone is still glowing. Walk out of the feed &mdash; through four worlds built from it &mdash; and reach a quiet beach by sunrise. Every choice changes the light you carry.&rdquo;</p>
+          </div>
+          <div class="stats">
+            <div class="stat lamp"><div class="v">22:47</div><div class="k">to 06:41</div></div>
+            <div class="stat"><div class="v">4</div><div class="k">Worlds</div></div>
+            <div class="stat"><div class="v">~12</div><div class="k">Minutes</div></div>
+            <div class="stat"><div class="v">0</div><div class="k">Sign-ups</div></div>
+          </div>
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="Night, under a crescent moon. A phone lies face down on top of a standing stone, and coral notification bubbles keep stacking up above it. The Wanderer stands beside the stone, facing it, pressing the phone down with his hand. His lantern hangs lit from the hook of his staff. Handwritten: 22:47, and face down.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+              <path class="il-w" d="M702,62 A30,30 0 1,0 702,118 A23,23 0 1,1 702,62 Z"/>
+              <circle class="il-mark" cx="620" cy="70" r="2.5"/><circle class="il-mark" cx="750" cy="160" r="2.5"/><circle class="il-mark" cx="560" cy="130" r="2"/><circle class="il-mark" cx="230" cy="70" r="2"/>
+              <text class="il-t" x="70" y="96" font-size="44">22:47</text>
+              <!-- the standing stone, the phone face down on it -->
+              <path class="il-off" d="M380,392 L388,304 Q392,292 428,292 Q464,292 468,304 L476,392 Z"/>
+              <path class="il-w" d="M372,392 L380,300 Q384,288 420,288 Q456,288 460,300 L468,392 Z"/>
+              <rect class="il-w" x="384" y="272" width="72" height="16" rx="6"/>
+              <circle class="il-mark" cx="396" cy="280" r="3"/>
+              <!-- notifications, still stacking up -->
+              <rect class="il-feed-s" x="378" y="238" width="78" height="24" rx="12"/>
+              <path class="il-thin" d="M392,250 L440,250"/>
+              <rect class="il-feed-s" x="390" y="206" width="70" height="24" rx="12" transform="rotate(-4 425 218)"/>
+              <path class="il-thin" d="M404,218 L446,216"/>
+              <rect class="il-feed" x="372" y="174" width="66" height="24" rx="12" transform="rotate(5 405 186)"/>
+              <path class="il-k3" d="M408,140 L408,158 M394,146 L400,160 M422,146 L416,160" opacity=".5"/>
+              <text class="il-t" x="250" y="250" font-size="27" text-anchor="middle">face down</text>
+              <path class="il-thin" d="M290,256 Q336,270 374,278" marker-end="url(#il-arrow)"/>
+              <!-- the Wanderer presses it down; the lantern waits on the staff -->
+              <g transform="translate(505 392) scale(-1.4 1.4)">
+                <use href="#wd-glow-hung"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-lantern-hung"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-stand"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L35,-79"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+        </div>
+        <div class="col">
+          <figure class="shot">
+            <img src="assets/trilogy/game-title.webp" width="1200" height="750" loading="lazy" alt="The game's title screen at night: The Wanderer's Digital Escape in large serif type, the line What lies beyond the horizon of your mundane life?, a Begin the journey button, and the four meters Focus, Dopamine, Oneness and Tranquility. A small hooded walker with a lantern stands at the shoreline on the right.">
+            <figcaption>The title screen. The walker on the shore is the Wanderer who draws this deck.</figcaption>
+          </figure>
+          <blockquote class="quote lamp">
+            <p>&ldquo;What lies beyond the horizon of your mundane life?&rdquo;</p>
+            <cite>The game&rsquo;s opening question, answered at sunrise: &ldquo;You just found out.&rdquo;</cite>
+          </blockquote>
+          <p style="font-size:14.5px">No app store, no sign-up and no build step: a static page in this repository, React 18 from a CDN, a canvas landscape, and sound synthesised in the browser.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · Acts, not answers ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 8: Acts, not just answers">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">08</span><span class="sec">The game</span></div>
+            <h2>Acts, not just answers</h2>
+            <p class="lead">Inspired by games like <em>Florence</em>, where the gesture is the meaning. Point at a choice and the world leans toward it. Every gesture also works from the buttons and the keyboard.</p>
+          </div>
+          <table class="t">
+            <thead><tr><th>Scene</th><th>What you do</th></tr></thead>
+            <tbody>
+              <tr><td>Prologue</td><td><strong>Hold</strong> to set the phone face down while notifications keep stacking up</td></tr>
+              <tr><td>The reels</td><td>Swipe a phone that never stops. The &ldquo;remembered&rdquo; counter stays at 0</td></tr>
+              <tr><td>The candle room</td><td>A real 60-second silence: in for four, out for six</td></tr>
+              <tr><td>The Streak Counter</td><td><strong>Hold</strong> to break day 847</td></tr>
+              <tr><td>Your five</td><td>Type the names of your five people</td></tr>
+              <tr><td>The Last Notification</td><td>Tap it, or observe it, untouched, until it passes</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col">
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="A big counting machine on short legs shows the digits 8, 4, 7 in three windows, with a coral flame burning on top and the words day streak underneath. A crack runs right across all three windows. The Wanderer stands at the machine's left side, pressing and holding a round button labelled hold. His lantern hangs from his staff.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+              <!-- the machine -->
+              <rect class="il-w" x="392" y="336" width="20" height="56" rx="4"/>
+              <rect class="il-w" x="608" y="336" width="20" height="56" rx="4"/>
+              <rect class="il-off" x="368" y="128" width="300" height="214" rx="18"/>
+              <rect class="il-w" x="360" y="120" width="300" height="214" rx="18"/>
+              <rect class="il-p" x="392" y="152" width="76" height="100" rx="10"/>
+              <rect class="il-p" x="482" y="152" width="76" height="100" rx="10"/>
+              <rect class="il-p" x="572" y="152" width="76" height="100" rx="10"/>
+              <text class="il-m" x="430" y="228" font-size="70" text-anchor="middle">8</text>
+              <text class="il-m" x="520" y="228" font-size="70" text-anchor="middle">4</text>
+              <text class="il-m" x="610" y="228" font-size="70" text-anchor="middle">7</text>
+              <text class="il-m" x="565" y="292" font-size="15" text-anchor="middle" letter-spacing="3">DAY STREAK</text>
+              <!-- the streak flame -->
+              <path class="il-feed" d="M510,56 C544,88 534,114 510,118 C486,114 476,88 510,56 Z"/>
+              <path class="il-feed-s" d="M510,84 C522,98 518,110 510,112 C502,110 498,98 510,84 Z"/>
+              <!-- the crack -->
+              <path class="il-k" d="M388,196 L428,212 L452,190 L496,220 L528,198 L566,226 L604,202 L648,214"/>
+              <!-- the hold button -->
+              <circle class="il-off" cx="392" cy="288" r="19"/>
+              <circle class="il-p" cx="388" cy="284" r="19"/>
+              <circle class="il-k3" cx="388" cy="284" r="9"/>
+              <text class="il-t" x="436" y="324" font-size="27" text-anchor="middle">hold</text>
+              <!-- the Wanderer holds it down -->
+              <g transform="translate(318 392) scale(1.4)">
+                <use href="#wd-glow-hung"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-lantern-hung"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-stand"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L36,-77"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+          <div class="duo slim">
+            <figure class="shot">
+              <img src="assets/trilogy/game-streak.webp" width="1200" height="750" loading="lazy" alt="The Streak Counter boss in the Dopamine Arcade at 03:12: a towering 847 with a flame on top, five coloured dots that are watching, and two choices, Break the streak. Let the number go, marked hold, and Keep it. This one genuinely matters.">
+              <figcaption>The Streak Counter, 03:12. The first choice is held, not clicked.</figcaption>
+            </figure>
+            <figure class="shot phone">
+              <img src="assets/trilogy/game-reels-m.webp" width="520" height="900" loading="lazy" alt="The reels on a phone: a glowing card reading 3am thoughts, with Watched 7 and Remembered 0 below it, and two choices, Keep scrolling and Put it down.">
+              <figcaption>The reels at 390 px. Watched 7, remembered 0.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 · Four worlds, four meters ---------------------------------------- -->
+  <section class="slide" aria-label="Slide 9: Four worlds, four meters">
+    <div class="inner">
+      <div class="split">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">09</span><span class="sec">The game</span></div>
+            <h2>One night, four worlds, four meters</h2>
+            <p class="lead">The night is the progress bar. The sky follows the clock in the corner, from midnight blue to first light. Each world opens with a title card and ends with a boss.</p>
+          </div>
+          <table class="t">
+            <thead><tr><th>World</th><th>Time</th><th class="hide-sm">What it mirrors</th><th>Boss</th></tr></thead>
+            <tbody>
+              <tr><td>I &middot; Echo Chamber Swamp</td><td class="m">23:05</td><td class="hide-sm">Algorithm bubbles, confirmation bias, endless scrolling</td><td>The Algorithm Mirror</td></tr>
+              <tr><td>II &middot; The Dopamine Arcade</td><td class="m">00:48</td><td class="hide-sm">Reels, AI slop, sleep loss, notifications, streaks</td><td>The Streak Counter</td></tr>
+              <tr><td>III &middot; Validation City</td><td class="m">03:30</td><td class="hide-sm">Likes, comparison, Dunbar&rsquo;s five, deleting the account</td><td>The Mirror Wall</td></tr>
+              <tr><td>IV &middot; The Nomad&rsquo;s Trail</td><td class="m">05:16</td><td class="hide-sm">The 5:30am hour, the run, the notebook, the well</td><td>The Last Notification</td></tr>
+            </tbody>
+          </table>
+          <div class="stats">
+            <div class="stat"><div class="v">30</div><div class="k">Focus</div></div>
+            <div class="stat lamp"><div class="v">40</div><div class="k">Dopamine &middot; lower is freer</div></div>
+            <div class="stat"><div class="v">25</div><div class="k">Oneness</div></div>
+            <div class="stat"><div class="v">20</div><div class="k">Tranquility</div></div>
+          </div>
+          <p style="font-size:14px">Where each meter starts. The lantern is the meters made visible: its size and colour follow them, it flares when you choose presence and flickers when Dopamine runs high. Above 75 Dopamine the world drains of colour and glitches at the edges: Ghost Mode.</p>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A timeline of one night drawn along the ground, from a crescent moon on the left to a sun rising on the right, joined by a dotted arc across the sky. Four small worlds stand on the line: reeds and bubbles at 23:05, an arcade cabinet at 00:48, a city skyline at 03:30, and a pine tree at 05:16. The sunrise is marked 06:41. The Wanderer walks the line between the city and the tree with his lantern.">
+            <rect class="il-bg" width="800" height="450"/>
+            <path class="il-thin il-dash" d="M120,110 Q420,0 728,276"/>
+            <path class="il-w" d="M102,82 A30,30 0 1,0 102,138 A23,23 0 1,1 102,82 Z"/>
+            <line class="il-k3" x1="40" y1="330" x2="770" y2="330"/>
+            <!-- the sun at the end of the line -->
+            <path class="il-w" d="M706,330 A34,34 0 0,1 774,330 Z"/>
+            <path class="il-k3" d="M740,284 L740,270 M708,296 L698,286 M772,296 L782,286"/>
+            <!-- I · swamp -->
+            <path class="il-k3" d="M146,330 L141,280 M160,330 L160,266 M174,330 L180,284"/>
+            <ellipse class="il-w" cx="141" cy="276" rx="5" ry="12"/>
+            <ellipse class="il-w" cx="160" cy="262" rx="5" ry="12"/>
+            <ellipse class="il-w" cx="180" cy="280" rx="5" ry="12"/>
+            <circle class="il-p" cx="200" cy="306" r="7"/><circle class="il-p" cx="208" cy="290" r="4"/>
+            <!-- II · arcade -->
+            <rect class="il-w" x="282" y="246" width="56" height="84" rx="7"/>
+            <rect class="il-feed-s" x="290" y="256" width="40" height="30" rx="5"/>
+            <path class="il-k3" d="M338,274 L352,258"/><circle class="il-p" cx="354" cy="254" r="6"/>
+            <path class="il-k3" d="M296,302 L324,302 M296,314 L316,314"/>
+            <!-- III · city -->
+            <rect class="il-w" x="430" y="262" width="22" height="68" rx="3"/>
+            <rect class="il-w" x="452" y="240" width="26" height="90" rx="3"/>
+            <rect class="il-w" x="478" y="276" width="20" height="54" rx="3"/>
+            <path class="il-k3" d="M460,258 L460,264 M470,258 L470,264 M460,280 L460,286 M470,280 L470,286 M438,282 L438,288 M444,282 L444,288" opacity=".7"/>
+            <!-- IV · trail -->
+            <path class="il-w" d="M612,246 L634,288 L622,288 L640,330 L584,330 L602,288 L590,288 Z"/>
+            <!-- times -->
+            <text class="il-t" x="160" y="368" font-size="25" text-anchor="middle">23:05</text>
+            <text class="il-t" x="310" y="368" font-size="25" text-anchor="middle">00:48</text>
+            <text class="il-t" x="464" y="368" font-size="25" text-anchor="middle">03:30</text>
+            <text class="il-t" x="612" y="368" font-size="25" text-anchor="middle">05:16</text>
+            <text class="il-t" x="740" y="368" font-size="25" text-anchor="middle">06:41</text>
+            <!-- the Wanderer between the city and the trail -->
+            <g transform="translate(540 330) scale(.95)">
+              <use href="#wd-glow" transform="translate(28 -86)"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-walk"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L28,-86"/>
+              <use href="#wd-lantern" transform="translate(28 -86)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · The beach ------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 10: The beach">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">10</span><span class="sec">The game</span></div>
+            <h2>Morning is the result</h2>
+            <p class="lead">The ending is a sunrise, then a scroll through where you arrived.</p>
+          </div>
+          <ul class="plain tight">
+            <li><strong>Digital Flourishing Score:</strong> <code>(Focus + Oneness + Tranquility + (100 &minus; Dopamine)) &divide; 4</code></li>
+            <li><strong>Your archetype,</strong> the nearest of five wanderers, from the Mindless Scroller to the Digital Ascetic</li>
+            <li><strong>The light you carried,</strong> each meter from where it started to where it ended</li>
+            <li><strong>Eight dimensions</strong> of the NIRMAN framework as a radar, and every choice as a light or a hollow</li>
+            <li><strong>An action plan,</strong> a 1080 &times; 1350 score card and a printable report</li>
+          </ul>
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="Sunrise over a calm sea. A line of footprints crosses the sand from the left. The Wanderer stands at the shoreline and hangs his still-lit lantern on the hook of a wooden post, facing the rising sun. Handwritten: 06:41, and the light you carried.">
+              <rect class="il-bg" width="800" height="450"/>
+              <text class="il-t" x="66" y="92" font-size="44">06:41</text>
+              <!-- the sun and the sea -->
+              <line class="il-thin" x1="28" y1="290" x2="772" y2="290"/>
+              <path class="il-w" d="M560,290 A62,62 0 0,1 684,290 Z"/>
+              <path class="il-k3" d="M622,208 L622,190 M570,226 L558,214 M674,226 L686,214 M540,268 L524,262 M704,268 L720,262"/>
+              <path class="il-thin il-dash" d="M520,310 L720,310 M560,328 L690,328 M100,316 L300,316"/>
+              <!-- the beach -->
+              <path class="il-sand" d="M28,352 Q200,340 400,350 T772,346 L772,420 L28,420 Z"/>
+              <path class="il-thin" d="M28,352 Q200,340 400,350 T772,346"/>
+              <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+              <g class="il-mark" opacity=".45">
+                <ellipse cx="70" cy="384" rx="5" ry="2.5"/><ellipse cx="92" cy="378" rx="5" ry="2.5"/>
+                <ellipse cx="128" cy="386" rx="5" ry="2.5"/><ellipse cx="150" cy="380" rx="5" ry="2.5"/>
+                <ellipse cx="186" cy="386" rx="5" ry="2.5"/><ellipse cx="208" cy="380" rx="5" ry="2.5"/>
+                <ellipse cx="244" cy="386" rx="5" ry="2.5"/><ellipse cx="266" cy="380" rx="5" ry="2.5"/>
+                <ellipse cx="302" cy="386" rx="5" ry="2.5"/><ellipse cx="324" cy="380" rx="5" ry="2.5"/>
+              </g>
+              <!-- the mooring post -->
+              <rect class="il-w" x="462" y="262" width="14" height="130" rx="4"/>
+              <path class="il-k" d="M469,262 L469,252 Q470,244 478,246"/>
+              <text class="il-t" x="532" y="430" font-size="26" text-anchor="middle">the light you carried</text>
+              <!-- the Wanderer hangs up the lantern -->
+              <g transform="translate(420 392) scale(1.4)">
+                <use href="#wd-glow" transform="translate(39 -99)"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-stand"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L39,-99"/>
+                <use href="#wd-lantern" transform="translate(39 -99)"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+        </div>
+        <div class="col">
+          <figure class="shot">
+            <img src="assets/trilogy/game-results.webp" width="1200" height="750" loading="lazy" alt="The results at the beach, 06:41: a ring showing 69 out of 100, the line You walked out as The Mindful Achiever, a short description, and below it The light you carried, with Focus 30 to 72, Dopamine 40 to 27, Oneness 25 to 63 and Tranquility 20 to 68.">
+            <figcaption>A seeded walk: 69/100, the Mindful Achiever. Focus 30 &rarr; 72, Dopamine 40 &rarr; 27.</figcaption>
+          </figure>
+          <div class="flag"><p>Your five names and your notebook line stay in your browser&rsquo;s local storage and appear only on your own results. Nothing is sent anywhere.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · The story ------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 11: The story">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">11</span><span class="sec">Part 02 &middot; The story</span></div>
+            <h2>After the Feed</h2>
+            <p class="lead">&ldquo;This is the story of what happens after you leave the feed: the good parts, the hard parts, and what the research actually says.&rdquo;</p>
+          </div>
+          <div class="stats">
+            <div class="stat lamp"><div class="v">7</div><div class="k">Chapters</div></div>
+            <div class="stat"><div class="v">~15</div><div class="k">Minutes</div></div>
+            <div class="stat"><div class="v">1</div><div class="k">Scroll</div></div>
+            <div class="stat"><div class="v">0&ndash;10</div><div class="k">Optional check-in</div></div>
+          </div>
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="Five flat stepping stones cross a stream from left to right, with a dashed arrow arcing over them. Under the stones, handwritten: his words, the story, try it, the research, offline. The Wanderer has just arrived on the last stone, which is teal, holding his lantern.">
+              <rect class="il-bg" width="800" height="450"/>
+              <path class="il-thin" d="M28,334 Q100,324 172,334 T316,334 T460,334 T604,334 T772,334"/>
+              <path class="il-thin" d="M28,402 Q100,392 172,402 T316,402 T460,402 T604,402 T772,402"/>
+              <path class="il-thin il-dash" d="M60,368 L84,368 M190,382 L214,382 M330,352 L352,352 M470,384 L494,384 M736,370 L760,370"/>
+              <path class="il-k3 il-dash" d="M96,256 C260,196 430,196 590,244" marker-end="url(#il-arrow)"/>
+              <ellipse class="il-off" cx="116" cy="372" rx="46" ry="14"/><ellipse class="il-w" cx="110" cy="366" rx="46" ry="14"/>
+              <ellipse class="il-off" cx="256" cy="372" rx="46" ry="14"/><ellipse class="il-w" cx="250" cy="366" rx="46" ry="14"/>
+              <ellipse class="il-off" cx="396" cy="372" rx="46" ry="14"/><ellipse class="il-w" cx="390" cy="366" rx="46" ry="14"/>
+              <ellipse class="il-off" cx="536" cy="372" rx="46" ry="14"/><ellipse class="il-w" cx="530" cy="366" rx="46" ry="14"/>
+              <ellipse class="il-off" cx="676" cy="372" rx="46" ry="14"/><ellipse class="il-teal-s" cx="670" cy="366" rx="46" ry="14"/>
+              <text class="il-t" x="110" y="438" font-size="25" text-anchor="middle">his words</text>
+              <text class="il-t" x="250" y="438" font-size="25" text-anchor="middle">the story</text>
+              <text class="il-t" x="390" y="438" font-size="25" text-anchor="middle">try it</text>
+              <text class="il-t" x="530" y="438" font-size="25" text-anchor="middle">the research</text>
+              <text class="il-t" x="670" y="438" font-size="25" text-anchor="middle">offline</text>
+              <!-- the Wanderer arrives on the last stone -->
+              <g transform="translate(666 360) scale(.98)">
+                <use href="#wd-glow" transform="translate(28 -86)"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-stand"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L28,-86"/>
+                <use href="#wd-lantern" transform="translate(28 -86)"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+        </div>
+        <div class="col">
+          <figure class="shot">
+            <img src="assets/trilogy/story-opening.webp" width="1200" height="750" loading="lazy" alt="The opening of After the Feed: the title, the quote We all have our physical and digital self, a Begin the story button with the note Nothing you type here leaves your device, an optional 0 to 10 slider asking how in control of your phone use you feel, and on the right a wall of coral tiles thinning out above a single teal dot labelled you, after the feed. Seven named stages run along the header.">
+            <figcaption>The opening: a wall of coral tiles fades to one teal dot, &ldquo;you, after the feed&rdquo;.</figcaption>
+          </figure>
+          <p style="font-size:14.5px">Every chapter keeps the same rhythm, so the reader learns it once: Sanket&rsquo;s quote, calm narration, <strong>one thing to try</strong>, <strong>what the research says</strong> (finding first, caveat one tap away), <strong>one small offline act</strong>, then next.</p>
+          <p style="font-size:14.5px">One vertical scroll with nothing locked. Progress is shown by stage, never by percentage: seven named segments in the header, from Frustration to New rhythm. <code>/?chapter=3</code> opens Chapter 3.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · One thing to try ------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 12: One thing to try in every chapter">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">12</span><span class="sec">The story</span></div>
+            <h2>One thing to try in every chapter</h2>
+            <p class="lead">Each stage of the arc gets one tactile mechanic, so the reader feels the stage instead of being told about it.</p>
+          </div>
+          <table class="t">
+            <thead><tr><th>Chapter</th><th class="hide-sm">Stage</th><th>Try it</th></tr></thead>
+            <tbody>
+              <tr><td>1 &middot; Everyone Seems Busy</td><td class="m hide-sm">Frustration</td><td>Add your ordinary Tuesday to a wall of highlights and watch it get seven seconds on screen</td></tr>
+              <tr><td>2 &middot; The Quiet Week</td><td class="m hide-sm">Trial break</td><td>Switch the feed off and spend the hour you get back. Ten minutes stay unclaimed on purpose</td></tr>
+              <tr><td>3 &middot; The Pull-Back</td><td class="m hide-sm">Relapse</td><td>A feed slides over the story and never finishes. One slip is a lapse; write an if-then plan</td></tr>
+              <tr><td>4 &middot; Find Your Why</td><td class="m hide-sm">Understanding</td><td>Keep the reasons that are true for you: &ldquo;I want my attention back for&hellip;&rdquo;</td></tr>
+              <tr><td>5 &middot; The Exit Gauntlet</td><td class="m hide-sm">Leaving</td><td>Walk a fictional deletion flow and learn each dark pattern by name</td></tr>
+              <tr><td>6 &middot; The Desert</td><td class="m hide-sm">The quiet</td><td>The page drains to sand. One box keeps an idea that came while you were bored</td></tr>
+              <tr><td>7 &middot; The Hand-off</td><td class="m hide-sm">New rhythm</td><td>Choose Run, Read, Write or Meet, see your first session, add it to your calendar</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col">
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="A big glass jar on the ground, nearly full of teal beads: dark teal at the bottom, lighter teal above, and one row of empty dashed circles at the top. The Wanderer stands beside it and drops one more bead in from his raised hand. His lantern hangs from his staff. Handwritten: the freed hour, and an arrow to the empty top row: 10 min, on purpose.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+              <text class="il-t" x="500" y="150" font-size="28" text-anchor="middle">the freed hour</text>
+              <!-- the jar -->
+              <path class="il-off" d="M428,238 L428,226 Q428,218 436,218 L580,218 Q588,218 588,226 L588,238 Q608,246 608,268 L608,374 Q608,398 584,398 L432,398 Q408,398 408,374 L408,268 Q408,246 428,238 Z"/>
+              <path class="il-p" d="M420,232 L420,220 Q420,212 428,212 L572,212 Q580,212 580,220 L580,232 Q600,240 600,262 L600,368 Q600,392 576,392 L424,392 Q400,392 400,368 L400,262 Q400,240 420,232 Z"/>
+              <circle class="il-teal" cx="422" cy="374" r="8.5"/><circle class="il-teal" cx="444" cy="374" r="8.5"/><circle class="il-teal" cx="466" cy="374" r="8.5"/><circle class="il-teal" cx="488" cy="374" r="8.5"/><circle class="il-teal" cx="510" cy="374" r="8.5"/><circle class="il-teal" cx="532" cy="374" r="8.5"/><circle class="il-teal" cx="554" cy="374" r="8.5"/><circle class="il-teal" cx="576" cy="374" r="8.5"/>
+              <circle class="il-teal" cx="422" cy="352" r="8.5"/><circle class="il-teal" cx="444" cy="352" r="8.5"/><circle class="il-teal" cx="466" cy="352" r="8.5"/><circle class="il-teal" cx="488" cy="352" r="8.5"/><circle class="il-teal" cx="510" cy="352" r="8.5"/><circle class="il-teal" cx="532" cy="352" r="8.5"/><circle class="il-teal" cx="554" cy="352" r="8.5"/><circle class="il-teal" cx="576" cy="352" r="8.5"/>
+              <circle class="il-teal" cx="422" cy="330" r="8.5"/><circle class="il-teal" cx="444" cy="330" r="8.5"/><circle class="il-teal" cx="466" cy="330" r="8.5"/><circle class="il-teal" cx="488" cy="330" r="8.5"/><circle class="il-teal" cx="510" cy="330" r="8.5"/><circle class="il-teal" cx="532" cy="330" r="8.5"/><circle class="il-teal" cx="554" cy="330" r="8.5"/><circle class="il-teal" cx="576" cy="330" r="8.5"/>
+              <circle class="il-teal-s" cx="422" cy="308" r="8.5"/><circle class="il-teal-s" cx="444" cy="308" r="8.5"/><circle class="il-teal-s" cx="466" cy="308" r="8.5"/><circle class="il-teal-s" cx="488" cy="308" r="8.5"/><circle class="il-teal-s" cx="510" cy="308" r="8.5"/><circle class="il-teal-s" cx="532" cy="308" r="8.5"/><circle class="il-teal-s" cx="554" cy="308" r="8.5"/><circle class="il-teal-s" cx="576" cy="308" r="8.5"/>
+              <circle class="il-teal-s" cx="422" cy="286" r="8.5"/><circle class="il-teal-s" cx="444" cy="286" r="8.5"/><circle class="il-teal-s" cx="466" cy="286" r="8.5"/><circle class="il-teal-s" cx="488" cy="286" r="8.5"/><circle class="il-teal-s" cx="510" cy="286" r="8.5"/><circle class="il-teal-s" cx="532" cy="286" r="8.5"/><circle class="il-teal-s" cx="554" cy="286" r="8.5"/><circle class="il-teal-s" cx="576" cy="286" r="8.5"/>
+              <circle class="il-k3 il-dash" cx="422" cy="264" r="8.5" stroke-dasharray="4 4" opacity=".6"/><circle class="il-k3 il-dash" cx="444" cy="264" r="8.5" stroke-dasharray="4 4" opacity=".6"/><circle class="il-k3 il-dash" cx="466" cy="264" r="8.5" stroke-dasharray="4 4" opacity=".6"/><circle class="il-k3 il-dash" cx="488" cy="264" r="8.5" stroke-dasharray="4 4" opacity=".6"/><circle class="il-k3 il-dash" cx="510" cy="264" r="8.5" stroke-dasharray="4 4" opacity=".6"/><circle class="il-k3 il-dash" cx="532" cy="264" r="8.5" stroke-dasharray="4 4" opacity=".6"/><circle class="il-k3 il-dash" cx="554" cy="264" r="8.5" stroke-dasharray="4 4" opacity=".6"/><circle class="il-k3 il-dash" cx="576" cy="264" r="8.5" stroke-dasharray="4 4" opacity=".6"/>
+              <text class="il-t" x="700" y="230" font-size="25" text-anchor="middle">10 min,</text>
+              <text class="il-t" x="700" y="256" font-size="25" text-anchor="middle">on purpose</text>
+              <path class="il-thin" d="M660,262 Q636,268 612,266" marker-end="url(#il-arrow)"/>
+              <!-- one more bead, falling in -->
+              <path class="il-thin il-dash" d="M372,200 Q420,170 458,214"/>
+              <circle class="il-teal" cx="458" cy="222" r="9"/>
+              <!-- the Wanderer drops it in -->
+              <g transform="translate(320 392) scale(1.4)">
+                <use href="#wd-glow-hung"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-lantern-hung"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-stand"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L34,-133"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+          <div class="duo wide-phone">
+            <div>
+              <blockquote class="quote">
+                <p>&ldquo;Then you wish to get out for some time by deactivating the account.&rdquo;</p>
+                <cite>Sanket Tambare, <a href="https://sankettambare.substack.com/p/the-road-less-travelled">The Road Less Travelled!</a></cite>
+              </blockquote>
+              <p style="font-size:14px;margin-top:12px">Chapter 2&rsquo;s jar holds the hour a large experiment found people got back. Walk, call, read or sleep, ten minutes at a time; the last ten are carried into the desert in Chapter 6.</p>
+            </div>
+            <figure class="shot phone">
+              <img src="assets/trilogy/story-jar-m.webp" width="520" height="746" loading="lazy" alt="The hour jar on a phone: Feed deactivated for a week, 60 minutes freed. The jar holds four rows of teal dots and two rows of empty dashed circles, with 20 minutes to place, and four buttons below: Walk 20 min, Call someone 10 min, Read 0 min, Sleep 10 min.">
+              <figcaption>The hour jar at 390 px.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · The exit gauntlet ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 13: The exit gauntlet">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">13</span><span class="sec">The story</span></div>
+            <h2>Leaving is designed to be hard. Naming the trick takes its power.</h2>
+          </div>
+          <blockquote class="quote">
+            <p>&ldquo;&hellip;first you have to navigate through the UI designed with embedded dark patterns and keeping your urge off for 30 days not to login and then your account is deleted!&rdquo;</p>
+            <cite>Sanket Tambare, <a href="https://sankettambare.substack.com/p/learnings-from-the-journey-getting">Learnings from the journey: Getting off from the Instagram!</a></cite>
+          </blockquote>
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="A gauntlet of signboards on posts. The first board asks sure?, with a big coral button and a tiny grey link. The second shows a cracked heart. The third shows an hourglass and 30 days. At the far end stands an open door. The Wanderer, his lantern hanging from his staff, pins a paper tag reading emotional pressure onto the corner of the cracked-heart board.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+              <!-- board 1 · sure? -->
+              <rect class="il-w" x="114" y="290" width="12" height="102" rx="3"/>
+              <rect class="il-off" x="66" y="206" width="120" height="90" rx="10"/>
+              <rect class="il-w" x="60" y="200" width="120" height="90" rx="10"/>
+              <text class="il-t" x="120" y="236" font-size="32" text-anchor="middle">sure?</text>
+              <rect class="il-feed" x="76" y="248" width="88" height="20" rx="10"/>
+              <path class="il-thin" d="M104,280 L136,280"/>
+              <!-- board 2 · the cracked heart, being named -->
+              <rect class="il-w" x="414" y="292" width="12" height="100" rx="3"/>
+              <rect class="il-off" x="356" y="202" width="140" height="96" rx="10"/>
+              <rect class="il-w" x="350" y="196" width="140" height="96" rx="10"/>
+              <path class="il-feed-s" d="M420,276 C396,258 380,244 380,228 C380,216 390,208 401,208 C410,208 416,213 420,220 C424,213 430,208 439,208 C450,208 460,216 460,228 C460,244 444,258 420,276 Z"/>
+              <path class="il-k3" d="M420,220 L414,234 L426,244 L416,262"/>
+              <g transform="rotate(-5 404 300)">
+                <rect class="il-p" x="322" y="284" width="168" height="34" rx="5"/>
+                <text class="il-t" x="408" y="309" font-size="23" text-anchor="middle">emotional pressure</text>
+              </g>
+              <circle class="il-a" cx="334" cy="296" r="4"/>
+              <!-- board 3 · 30 days -->
+              <rect class="il-w" x="604" y="290" width="12" height="102" rx="3"/>
+              <rect class="il-off" x="556" y="206" width="120" height="90" rx="10"/>
+              <rect class="il-w" x="550" y="200" width="120" height="90" rx="10"/>
+              <path class="il-k3" d="M580,214 L604,214 L592,232 L604,250 L580,250 L592,232 Z"/>
+              <text class="il-t" x="638" y="240" font-size="27" text-anchor="middle">30 days</text>
+              <!-- the way out -->
+              <rect class="il-p" x="712" y="250" width="58" height="142" rx="4"/>
+              <path class="il-w" d="M712,250 L690,262 L690,396 L712,392 Z"/>
+              <!-- the Wanderer names it -->
+              <g transform="translate(272 392) scale(1.35)">
+                <use href="#wd-glow-hung"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-lantern-hung"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-stand"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L42,-93"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+        </div>
+        <div class="col">
+          <figure class="shot">
+            <img src="assets/trilogy/story-mirrorloop.webp" width="1200" height="750" loading="lazy" alt="Chapter 5 in dark mode: the title The Exit Gauntlet and Sanket's quote on the left; on the right, step 1 of 4 inside Mirrorloop, a fictional platform, with a big violet Deactivate instead button and a small Delete my account link, and a note naming the trick: Dark pattern, step 1, interface interference. A Skip the gauntlet button sits at the top.">
+            <figcaption>Mirrorloop in dark mode, step 1 of 4: interface interference.</figcaption>
+          </figure>
+          <ul class="plain tight">
+            <li><strong>Mirrorloop</strong> is an invented platform, labelled on screen: &ldquo;A fictional platform. The tactics are real; the brand is not.&rdquo;</li>
+            <li>Each trick is named by its research or CCPA name, never by a company: <strong>interface interference</strong>, <strong>confirm shaming</strong>, <strong>emotional pressure</strong>, <strong>the forced 30-day wait</strong>.</li>
+            <li><code>Skip the gauntlet</code> on every step, and both endings are valid: a long break, or delete for good.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · Honest evidence ------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 14: Finding first, caveat one tap away">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">14</span><span class="sec">The story</span></div>
+            <h2>Finding first, caveat one tap away</h2>
+            <p class="lead">Every chapter carries one research card: its strength, a big number or phrase, the finding, and the study linked. One tap flips it to the caveat. Small effects are called small.</p>
+          </div>
+          <table class="t">
+            <thead><tr><th>Chapter</th><th>The card says</th><th>Strength</th></tr></thead>
+            <tbody>
+              <tr><td>1 &middot; Frustration</td><td>How, not how much</td><td class="m">Correlational</td></tr>
+              <tr><td>2 &middot; Trial break</td><td>&asymp; 1 hour a day</td><td class="m">Strong &middot; small effect</td></tr>
+              <tr><td>3 &middot; Relapse</td><td>&minus;57%</td><td class="m">Moderate</td></tr>
+              <tr><td>4 &middot; Understanding</td><td>&asymp; 10 years</td><td class="m">Moderate to strong</td></tr>
+              <tr><td>5 &middot; Leaving</td><td>Over 1 in 3</td><td class="m">Strong &middot; descriptive</td></tr>
+              <tr><td>6 &middot; The quiet</td><td>Loneliness: unchanged</td><td class="m">Weak to moderate</td></tr>
+              <tr><td>7 &middot; New rhythm</td><td>66 days</td><td class="m">Moderate</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:14px">Chapter 2&rsquo;s caveat, for example: &ldquo;&lsquo;Slightly&rsquo; means small. A 2025 review of 10 studies found no average change in happiness or life satisfaction from breaks.&rdquo;</p>
+        </div>
+        <div class="col">
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="A large card stands on an easel. Its front shows a teal chip reading small effect and, in big type, ≈ 1 hour a day, over lines of text. The Wanderer stands to its right and lifts the card's bottom corner with his hand, uncovering the word caveat written on the card behind it. His lantern hangs from his staff.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+              <g transform="translate(-44 0)">
+              <path class="il-k" d="M410,320 L388,392 M630,320 L652,392"/>
+              <!-- the card behind, with the caveat -->
+              <rect class="il-off" x="380" y="104" width="320" height="230" rx="14"/>
+              <rect class="il-p" x="368" y="98" width="320" height="230" rx="14"/>
+              <text class="il-tt" x="640" y="312" font-size="30" text-anchor="middle">caveat</text>
+              <!-- the front card, its corner lifted -->
+              <path class="il-w" d="M374,90 L666,90 Q680,90 680,104 L680,226 L586,320 L374,320 Q360,320 360,306 L360,104 Q360,90 374,90 Z"/>
+              <path class="il-w" d="M680,226 L586,320 L612,222 Z"/>
+              <rect class="il-teal-s" x="384" y="110" width="150" height="28" rx="14"/>
+              <text class="il-t" x="459" y="131" font-size="21" text-anchor="middle">small effect</text>
+              <text class="il-m" x="384" y="188" font-size="34">&asymp; 1 hour a day</text>
+              <path class="il-thin" d="M384,218 L600,218 M384,240 L572,240 M384,262 L540,262"/>
+              </g>
+              <!-- the Wanderer lifts the corner -->
+              <g transform="translate(700 392) scale(-1.35 1.35)">
+                <use href="#wd-glow-hung"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-lantern-hung"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-stand"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L38,-91"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+          <div class="two ev">
+            <figure class="shot">
+              <img src="assets/trilogy/story-evidence-front.webp" width="505" height="595" loading="lazy" alt="Chapter 1's research card, front: What the research says, a Correlational chip, the stat How, not how much, the finding that in a 2025 study of 18 to 24-year-olds how much people used social media barely tracked their mood but comparing themselves negatively did, the source Calvert et al., JAMA Network Open, 2025, and a Read the caveat button.">
+              <figcaption>Chapter 1, the finding.</figcaption>
+            </figure>
+            <figure class="shot">
+              <img src="assets/trilogy/story-evidence-back.webp" width="505" height="487" loading="lazy" alt="The same card flipped: The caveat. That is a correlation from one US sample, not proof that comparison causes low mood. Source linked, and a Back to the finding button.">
+              <figcaption>One tap later, the caveat.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 · The desert, then before you go --------------------------------- -->
+  <section class="slide" aria-label="Slide 15: The desert, then before you go">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">15</span><span class="sec">The story</span></div>
+            <h2>The quiet, then what you leave with</h2>
+            <p class="lead">In Chapter 6 the page itself goes quiet: colour fades to sand, the waves flatten, and one box keeps an idea that came while you were bored. A care note stays visible the whole time.</p>
+          </div>
+          <blockquote class="quote">
+            <p>&ldquo;When you choose to leave this all behind, all these emotional waves suddenly stop and you suddenly feel as if, you are really missing something important sometimes!&rdquo;</p>
+            <cite>Sanket Tambare, <a href="https://sankettambare.substack.com/p/the-road-less-travelled">The Road Less Travelled!</a></cite>
+          </blockquote>
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="A flat, faded desert with low dunes and a pale sun; the waves in the sky have flattened into straight dashed lines. The Wanderer holds a small card up into the light of his lantern, which hangs from his staff; it reads your why. On a flat stone beside him rests a small stack of cards, the top one reading idea.">
+              <rect class="il-bg" width="800" height="450"/>
+              <path class="il-sand" d="M28,334 Q160,306 300,330 T560,324 T772,316 L772,392 L28,392 Z"/>
+              <path class="il-thin" d="M28,334 Q160,306 300,330 T560,324 T772,316"/>
+              <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+              <circle class="il-p" cx="660" cy="104" r="28"/>
+              <path class="il-thin il-dash" d="M60,140 L300,140 M90,166 L340,166 M60,192 L260,192"/>
+              <!-- the stack of cards on a stone -->
+              <ellipse class="il-w" cx="584" cy="382" rx="58" ry="14"/>
+              <rect class="il-p" x="548" y="334" width="72" height="44" rx="5" transform="rotate(-8 584 356)"/>
+              <rect class="il-p" x="550" y="330" width="72" height="44" rx="5" transform="rotate(4 586 352)"/>
+              <rect class="il-w" x="548" y="326" width="72" height="44" rx="5"/>
+              <text class="il-t" x="584" y="356" font-size="24" text-anchor="middle">idea</text>
+              <!-- the card he reads -->
+              <path class="il-k3" d="M432,208 L436,222"/>
+              <rect class="il-off" x="412" y="226" width="84" height="44" rx="5"/>
+              <rect class="il-w" x="406" y="220" width="84" height="44" rx="5"/>
+              <text class="il-t" x="448" y="249" font-size="22" text-anchor="middle">your why</text>
+              <!-- the Wanderer -->
+              <g transform="translate(386 392) scale(1.4)">
+                <use href="#wd-glow-hung"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-lantern-hung"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-stand"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L33,-130"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+        </div>
+        <div class="col">
+          <div class="two">
+            <figure class="shot">
+              <img src="assets/trilogy/story-desert.webp" width="1200" height="750" loading="lazy" alt="Chapter 6, The Desert, drained to sand colours: Sanket's quote on the left; on the right, the line The emotional waves have stopped, ten empty circles for the ten minutes nobody claimed in Chapter 2, a box titled One idea that came while you were bored with a Keep it button, a second quote, and a care note: if the quiet feels heavy rather than restful, reach out to someone.">
+              <figcaption>Chapter 6: the ten unclaimed minutes from the jar come back here.</figcaption>
+            </figure>
+            <figure class="shot">
+              <img src="assets/trilogy/story-ending.webp" width="1200" height="750" loading="lazy" alt="The ending, Before you go: the headline Average effects are small. Some people gain a lot. You're allowed to find out which one you are., Sanket's closing quote and a dark Start Day 1 of 45 button. On the right, the check-in at 6 out of 10 with the line When you began: 4/10. That is 2 higher., then What you're leaving with: your why, your if-then, your replacement, Read, 20 pages, and one idea kept from the desert, above the support block.">
+              <figcaption>The ending, live: Start Day 1 of 45.</figcaption>
+            </figure>
+          </div>
+          <div class="panel">
+            <p class="k">Before you go</p>
+            <p>The ending repeats the opening&rsquo;s 0&ndash;10 check-in and compares it, shown only to you. Then <strong>what you&rsquo;re leaving with</strong>: your why, your if-then plan, your replacement habit and your idea from the desert, in your own words. A real <code>.ics</code> file books your first session; <code>Erase what I typed</code> removes all of it.</p>
+            <p>Then <code>Start Day 1 of 45</code> opens the series&rsquo; Start page, carrying your why, habit and first start time over in the link&rsquo;s fragment, never through a server. The series reads them once and clears them from the address bar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 · The 45 days ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 16: The 45 days">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">16</span><span class="sec">Part 03 &middot; The 45 days</span></div>
+            <h2>Forty-five days after the feed.</h2>
+            <p class="lead">&ldquo;One short page a day, built on Sanket Tambare&rsquo;s own lines about leaving social media. Each day gives you his words, what the research says, a small checklist and one thing to do offline.&rdquo;</p>
+          </div>
+          <div class="phases" role="list">
+            <div class="p1" role="listitem"><small>Days 1&ndash;10</small>Awareness<em>Notice before you change.</em></div>
+            <div class="p2" role="listitem"><small>Days 11&ndash;18</small>Break<em>A week off, and a plan for the hour.</em></div>
+            <div class="p3" role="listitem"><small>Days 19&ndash;26</small>Relapse, why, delete<em>Slip, understand, decide.</em></div>
+            <div class="p4" role="listitem"><small>Days 27&ndash;35</small>Desert<em>The quiet in the middle.</em></div>
+            <div class="p5" role="listitem"><small>Days 36&ndash;45</small>Rhythm<em>Build what carries you past Day 45.</em></div>
+          </div>
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="A row of numbered stepping stones, 8 to 16, runs across the ground. Stones 8, 9, 11 and 12 are teal, read. Stone 10 is only a dashed outline, labelled still open. The Wanderer has just landed on stone 13 with his lantern, labelled up next. Behind them a broken chain lies on the ground, labelled no chain.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+              <!-- the chain nobody keeps -->
+              <g transform="translate(600 300)">
+                <ellipse class="il-k3" cx="0" cy="0" rx="16" ry="9"/>
+                <ellipse class="il-k3" cx="26" cy="4" rx="16" ry="9" transform="rotate(14 26 4)"/>
+                <ellipse class="il-k3" cx="52" cy="12" rx="16" ry="9"/>
+                <path class="il-k3" d="M78,28 A16,9 20 0,1 92,12 M98,14 A16,9 20 0,1 112,30"/>
+              </g>
+              <text class="il-t" x="690" y="272" font-size="25" text-anchor="middle">no chain</text>
+              <!-- stones -->
+              <ellipse class="il-teal-s" cx="70" cy="380" rx="32" ry="11"/>
+              <ellipse class="il-teal-s" cx="150" cy="380" rx="32" ry="11"/>
+              <ellipse class="il-k3 il-dash" cx="230" cy="380" rx="32" ry="11" stroke-dasharray="6 6"/>
+              <ellipse class="il-teal-s" cx="310" cy="380" rx="32" ry="11"/>
+              <ellipse class="il-teal-s" cx="390" cy="380" rx="32" ry="11"/>
+              <ellipse class="il-w" cx="470" cy="380" rx="32" ry="11"/>
+              <ellipse class="il-w" cx="550" cy="380" rx="32" ry="11"/>
+              <ellipse class="il-w" cx="630" cy="380" rx="32" ry="11"/>
+              <ellipse class="il-w" cx="710" cy="380" rx="32" ry="11"/>
+              <g class="il-t" font-size="22" text-anchor="middle">
+                <text x="70" y="422">8</text><text x="150" y="422">9</text><text x="230" y="422">10</text>
+                <text x="310" y="422">11</text><text x="390" y="422">12</text><text x="470" y="422">13</text>
+                <text x="550" y="422">14</text><text x="630" y="422">15</text><text x="710" y="422">16</text>
+              </g>
+              <text class="il-t" x="230" y="320" font-size="27" text-anchor="middle">still open</text>
+              <path class="il-thin" d="M230,328 L230,358" marker-end="url(#il-arrow)"/>
+              <text class="il-tt" x="500" y="176" font-size="28" text-anchor="middle">up next</text>
+              <!-- the Wanderer lands on 13 -->
+              <g transform="translate(468 376) scale(.98)">
+                <use href="#wd-glow" transform="translate(28 -86)"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-walk"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L28,-86"/>
+                <use href="#wd-lantern" transform="translate(28 -86)"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+        </div>
+        <div class="col">
+          <figure class="shot">
+            <img src="assets/trilogy/days-home.webp" width="1200" height="750" loading="lazy" alt="The 45 Days home page for a reader who has read 11 days: the heading Forty-five days after the feed, a grid of 45 dots with the first nine and two more filled, an Up next card for Day 13, Device-free first hour, with Open Day 13 and Today's card buttons, the line 11 days read. Day 10 is still open whenever you want it. There is no streak to protect, and the five phases below.">
+            <figcaption>Home after 11 days read: &ldquo;Day 10 is still open whenever you want it. There is no streak to protect.&rdquo;</figcaption>
+          </figure>
+          <ul class="plain tight">
+            <li><strong>Days read, never days in a row.</strong> &ldquo;9 days read&rdquo; is just a count; order and gaps don&rsquo;t matter.</li>
+            <li><strong>Up next</strong> is the day after the furthest one you&rsquo;ve read. Skipped days stay listed as still open.</li>
+            <li><strong>Every day is open.</strong> Read ahead, go back, or revisit one that helped. <code>/day/12/</code> opens Day 12; <code>/next/</code> opens Up next.</li>
+            <li><strong>Start in under a minute,</strong> with an optional <code>.ics</code> of 45 daily reminders. Your calendar reminds you; the site never sends notifications.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 · One page, learned once ------------------------------------------ -->
+  <section class="slide" aria-label="Slide 17: One page, learned once">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">17</span><span class="sec">The 45 days</span></div>
+            <h2>One page, learned once</h2>
+            <p class="lead">One template renders all 45 days, and the order of the blocks never changes, so you learn the page once. Large Previous and Next buttons name the neighbouring day&rsquo;s theme.</p>
+          </div>
+          <table class="t">
+            <thead><tr><th>Block</th><th>What you get</th></tr></thead>
+            <tbody>
+              <tr><td>His line</td><td>Sanket&rsquo;s exact sentence as the headline, linked to the post it came from</td></tr>
+              <tr><td>The idea</td><td>A short explanation, and an extended idea one tap away</td></tr>
+              <tr><td>Today&rsquo;s checklist</td><td>3&ndash;4 small items to tick, remembered on your device</td></tr>
+              <tr><td>Today, offline</td><td>One thing to do away from the screen: <code>I did it</code> or <code>Not today</code>, neither of which costs you anything</td></tr>
+              <tr><td>The research</td><td>Every claim linked to its study, graded Strong, Moderate, Weak, Contested, Policy or Anecdotal</td></tr>
+              <tr><td>Today&rsquo;s card</td><td>A shareable 1080 &times; 1080 image of the day, in three styles</td></tr>
+              <tr><td>Your note</td><td>A private note box, saved as you type, on this device only</td></tr>
+              <tr><td>Mark as read</td><td>Counts the day as read; undo any time</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col">
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="A small hand press stands on the ground. The Wanderer, on its right, pulls its long lever down with one hand; his lantern hangs from his staff. To the left of the press sits a neat stack of freshly printed pages, all laid out the same way: a big number 12, lines of a quote, three tick boxes and a dark block at the bottom. Handwritten: same order, every day.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+              <text class="il-t" x="190" y="96" font-size="28" text-anchor="middle">same order, every day</text>
+              <!-- the stack of printed days -->
+              <rect class="il-p" x="112" y="196" width="150" height="196" rx="6" transform="rotate(-4 187 294)"/>
+              <rect class="il-p" x="116" y="192" width="150" height="196" rx="6" transform="rotate(3 191 290)"/>
+              <rect class="il-off" x="122" y="194" width="150" height="196" rx="6"/>
+              <rect class="il-w" x="114" y="186" width="150" height="196" rx="6"/>
+              <text class="il-t" x="130" y="232" font-size="40" font-weight="700">12</text>
+              <path class="il-thin" d="M130,250 L240,250 M130,264 L226,264 M130,278 L236,278"/>
+              <rect class="il-k3" x="130" y="294" width="12" height="12" rx="2"/><path class="il-thin" d="M150,300 L226,300"/>
+              <rect class="il-k3" x="130" y="314" width="12" height="12" rx="2"/><path class="il-thin" d="M150,320 L214,320"/>
+              <rect class="il-k3" x="130" y="334" width="12" height="12" rx="2"/><path class="il-thin" d="M150,340 L230,340"/>
+              <rect class="il-mark" x="130" y="354" width="118" height="18" rx="4"/>
+              <!-- the press -->
+              <rect class="il-off" x="306" y="156" width="16" height="236"/>
+              <rect class="il-w" x="300" y="150" width="16" height="242" rx="4"/>
+              <rect class="il-w" x="500" y="150" width="16" height="242" rx="4"/>
+              <rect class="il-w" x="288" y="132" width="240" height="24" rx="7"/>
+              <path class="il-k" d="M408,156 L408,226"/>
+              <rect class="il-w" x="330" y="226" width="156" height="22" rx="5"/>
+              <rect class="il-p" x="340" y="306" width="136" height="20" rx="3"/>
+              <rect class="il-w" x="316" y="326" width="184" height="18" rx="4"/>
+              <!-- the lever, pulled down -->
+              <circle class="il-w" cx="408" cy="124" r="10"/>
+              <path class="il-k" d="M408,124 L556,226"/>
+              <circle class="il-p" cx="560" cy="229" r="8"/>
+              <!-- the Wanderer pulls it -->
+              <g transform="translate(612 392) scale(-1.4 1.4)">
+                <use href="#wd-glow-hung"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-lantern-hung"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-stand"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L36,-116"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+          <div class="duo">
+            <div>
+              <blockquote class="quote">
+                <p>&ldquo;One thing is sure, you simply cannot cut-off and keep that block of time of your day empty.&rdquo;</p>
+                <cite>Sanket Tambare, <a href="https://sankettambare.substack.com/p/learnings-from-the-journey-getting">Learnings from the journey: Getting off from the Instagram!</a> &middot; Day 12</cite>
+              </blockquote>
+              <p style="font-size:13.5px;margin-top:12px">On desktop: <code>&larr;</code> <code>&rarr;</code> previous and next, <code>D</code> mark as read, <code>E</code> extended idea, <code>S</code> today&rsquo;s card, <code>N</code> your note, <code>J</code> jump to any day, <code>?</code> the list. Ignored while you type.</p>
+            </div>
+            <figure class="shot phone">
+              <img src="assets/trilogy/days-day12-m.webp" width="520" height="867" loading="lazy" alt="Day 12 on a phone: Day 12 of 45 with a progress strip, 11 days read, no streaks, just days, a Phase 2 Break chip, a big green 12, the theme Fill the empty block, Sanket's quote linked to its post, and the line An empty hour pulls the old habit back in. Decide in advance what fills it.">
+              <figcaption>Day 12 at 390 px.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 18 · Welcome back --------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 18: Welcome back">
+    <div class="inner">
+      <div class="tour phone-right">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">18</span><span class="sec">The 45 days</span></div>
+            <h2>Coming back costs nothing</h2>
+            <p class="lead">Return after two or more days and Home greets you instead of scolding you: continue where you left off, read Day 22 first, or catch up on what you skipped. After 14 days you can begin again and keep your notes.</p>
+          </div>
+          <div class="two wf">
+            <figure class="illo">
+              <svg viewBox="0 0 800 450" role="img" aria-label="A signpost points right, reading Day 13. On a hook on the post hangs the Wanderer's lantern, still lit. The Wanderer has walked back up the path and reaches for it. Behind him his footprints have a long gap in them, then carry on. Handwritten: nothing lost.">
+                <rect class="il-bg" width="800" height="450"/>
+                <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+                <!-- footprints, with a gap -->
+                <g class="il-mark" opacity=".45">
+                  <ellipse cx="48" cy="384" rx="5" ry="2.5"/><ellipse cx="70" cy="378" rx="5" ry="2.5"/>
+                  <ellipse cx="96" cy="384" rx="5" ry="2.5"/><ellipse cx="118" cy="378" rx="5" ry="2.5"/>
+                  <ellipse cx="234" cy="384" rx="5" ry="2.5"/><ellipse cx="256" cy="378" rx="5" ry="2.5"/>
+                  <ellipse cx="282" cy="384" rx="5" ry="2.5"/><ellipse cx="304" cy="378" rx="5" ry="2.5"/>
+                </g>
+                <path class="il-thin il-dash" d="M140,384 L214,384"/>
+                <!-- the signpost -->
+                <rect class="il-off" x="470" y="184" width="12" height="208"/>
+                <rect class="il-w" x="464" y="178" width="12" height="214" rx="3"/>
+                <path class="il-w" d="M482,190 L598,190 L620,212 L598,234 L482,234 Z"/>
+                <text class="il-t" x="546" y="222" font-size="30" text-anchor="middle">Day 13</text>
+                <path class="il-k3" d="M464,206 L440,206 L440,214"/>
+                <path class="il-thin il-dash" d="M640,392 L760,392"/>
+                <!-- the lantern, left on the hook and still lit -->
+                <use href="#wd-glow" transform="translate(440 214)"/>
+                <use href="#wd-lantern" transform="translate(440 214)"/>
+                <text class="il-t" x="610" y="140" font-size="28" text-anchor="middle">nothing lost</text>
+                <path class="il-thin" d="M564,144 Q500,170 462,210" marker-end="url(#il-arrow)"/>
+                <!-- the Wanderer reaches for it -->
+                <g transform="translate(384 392) scale(1.4)">
+                  <use href="#wd-staff"/>
+                  <use href="#wd-off"/>
+                  <use href="#wd-legs-stand"/>
+                  <use href="#wd-body"/>
+                  <path class="wd-arm" d="M9,-110 L38,-126"/>
+                </g>
+                <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+              </svg>
+            </figure>
+            <div>
+              <blockquote class="quote">
+                <p>&ldquo;For some reason, the routine breaks for 2-3 days. Now how are you going to restart everything?&rdquo;</p>
+                <cite>Sanket Tambare, Day 22 &middot; <a href="https://sankettambare.substack.com/p/the-dilemmas-of-maze-runner-trapped">The dilemmas of Maze-runner trapped in daily grind!</a></cite>
+              </blockquote>
+              <p style="margin-top:10px;font-weight:600;color:var(--text)">The answer: you don&rsquo;t restart everything. You restart today.</p>
+            </div>
+          </div>
+          <div class="rule" style="border-left-color:var(--coral)">
+            <h4>Nowhere on the site</h4>
+            <p>No streak, chain or consecutive-day count. No red zero, no &ldquo;you lost your progress&rdquo;, no countdown, no &ldquo;we miss you&rdquo;. Missed days are simply open, and nothing is ever locked.</p>
+          </div>
+        </div>
+        <figure class="shot phone">
+          <img src="assets/trilogy/days-welcome-m.webp" width="520" height="1040" loading="lazy" alt="Welcome back on a phone: a strip of dots, the heading Welcome back., It's been 7 days since Day 12. Nothing was lost, and nothing needs making up. A coral card quotes Sanket from Day 22 and answers: you don't restart everything. You restart today. Below, Where would you like to pick up? with Continue where I left off, Day 13, selected, and Read Day 22 first.">
+          <figcaption>Seven days away. &ldquo;Nothing was lost, and nothing needs making up.&rdquo;</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 · Yours stays yours ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 19: Your notes stay, his words travel">
+    <div class="inner">
+      <div class="tour">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">19</span><span class="sec">The 45 days</span></div>
+            <h2>Your notes stay. His words travel.</h2>
+            <p class="lead">The Journal is for you. The share card is for everyone else, and the two never mix.</p>
+          </div>
+          <div class="panel">
+            <p class="k">Your journal</p>
+            <p>Notes for every day, newest first, each linking back to its day. Days read, offline actions done, notes written. Check-ins on Days 1, 11, 28 and 45, if you want them: screen time, a 0&ndash;10 sense of control and a 0&ndash;10 mood, shown only to you as bars, with the note &ldquo;One person&rsquo;s numbers, not a study.&rdquo; Download it as <code>.txt</code> or <code>.json</code>, or erase it with one confirmed tap.</p>
+          </div>
+          <div class="panel">
+            <p class="k">Today&rsquo;s card</p>
+            <p>Three styles (Quote, Line, Phase), drawn on your device at 1080 &times; 1080 with the site&rsquo;s address. Share the image to an app, save a PNG, or copy the text or link. A card never includes your notes, check-ins, read count or name, and the share options are plain links, so no social network&rsquo;s code ever loads.</p>
+          </div>
+        </div>
+        <div class="col">
+          <figure class="illo">
+            <svg viewBox="0 0 800 450" role="img" aria-label="The Wanderer posts a square card with a big quotation mark on it into the slot of a coral postbox, labelled his words. Behind him, on the ground, sits a small closed chest with a padlock, labelled your notes stay here. His lantern hangs from his staff.">
+              <rect class="il-bg" width="800" height="450"/>
+              <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+              <!-- the chest -->
+              <rect class="il-off" x="226" y="340" width="120" height="56" rx="6"/>
+              <rect class="il-w" x="220" y="334" width="120" height="58" rx="6"/>
+              <path class="il-w" d="M220,334 Q220,306 250,306 L310,306 Q340,306 340,334 Z"/>
+              <path class="il-k3" d="M272,326 Q280,312 288,326"/>
+              <rect class="il-p" x="268" y="326" width="24" height="22" rx="4"/>
+              <circle class="il-mark" cx="280" cy="336" r="3"/>
+              <text class="il-t" x="280" y="282" font-size="26" text-anchor="middle">your notes stay here</text>
+              <!-- the postbox -->
+              <rect class="il-w" x="594" y="270" width="16" height="122" rx="4"/>
+              <rect class="il-off" x="554" y="158" width="108" height="122" rx="16"/>
+              <path class="il-feed-s" d="M546,272 L546,184 Q546,150 600,150 Q654,150 654,184 L654,272 Q654,276 650,276 L550,276 Q546,276 546,272 Z"/>
+              <path class="il-k" d="M546,272 L546,184 Q546,150 600,150 Q654,150 654,184 L654,272 Q654,276 650,276 L550,276 Q546,276 546,272 Z"/>
+              <rect class="il-mark" x="572" y="188" width="62" height="8" rx="4"/>
+              <path class="il-k3" d="M566,228 L634,228"/>
+              <text class="il-t" x="600" y="122" font-size="27" text-anchor="middle">his words</text>
+              <!-- the card going in -->
+              <g transform="rotate(-24 548 200)">
+                <rect class="il-w" x="520" y="172" width="56" height="56" rx="4"/>
+                <text class="il-t" x="532" y="210" font-size="40" font-weight="700">&ldquo;</text>
+                <path class="il-thin" d="M548,204 L566,204 M532,216 L564,216"/>
+              </g>
+              <!-- the Wanderer posts it -->
+              <g transform="translate(470 392) scale(1.4)">
+                <use href="#wd-glow-hung"/>
+                <use href="#wd-staff"/>
+                <use href="#wd-lantern-hung"/>
+                <use href="#wd-off"/>
+                <use href="#wd-legs-stand"/>
+                <use href="#wd-body"/>
+                <path class="wd-arm" d="M9,-110 L40,-124"/>
+              </g>
+              <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+            </svg>
+          </figure>
+          <div class="two">
+            <figure class="shot">
+              <img src="assets/trilogy/days-journal.webp" width="1200" height="750" loading="lazy" alt="Your journal: Days read, not days in a row. Everything here lives only in this browser. Counters for 11 days read, 6 offline actions done and 4 notes written; a grid of the 45 days with read, open and up next marked; and note cards for Days 12, 11 and 7, newest first.">
+              <figcaption>The Journal: 11 read, 6 offline acts, 4 notes.</figcaption>
+            </figure>
+            <figure class="shot">
+              <img src="assets/trilogy/days-share.webp" width="1200" height="750" loading="lazy" alt="Make today's card for Day 12: a square green Quote card with Sanket's line and the site's address, a Quote, Line, Phase switch, Share image, Save PNG, Copy text and Copy link buttons, the text shared with the image, and the card's image description for screen readers.">
+              <figcaption>Today&rsquo;s card, Quote style, with its alt text.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 · The rules ------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 20: The rules">
+    <div class="inner">
+      <div class="split">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">20</span><span>What holds it together</span></div>
+            <h2>Never use the tricks it teaches you to spot</h2>
+            <p class="lead">The story and the series share one set of rules, written into their build docs as invariants rather than preferences. The game puts the tricks on stage instead: the Streak Counter is a boss you hold to break.</p>
+          </div>
+          <div class="rules">
+            <div class="rule"><h4>No streaks, no shame</h4><p>Days read, never days in a row. <code>Not today</code> is as valid as <code>I did it</code>. No guilt copy outside the labelled parody.</p></div>
+            <div class="rule"><h4>Honest, not persuasive</h4><p>Every finding shows its strength and links its study. Sanket&rsquo;s own claims are labelled as his observations, never as findings.</p></div>
+            <div class="rule"><h4>His words, verbatim</h4><p>Every quote is Sanket&rsquo;s, word for word, typos aside, and links to its post. Copy lives in data files, never in code.</p></div>
+            <div class="rule"><h4>Help on every page</h4><p>A route to human help is never collapsed and never behind a tap.</p></div>
+            <div class="rule"><h4>Accessible from the first commit</h4><p>Real buttons and links, visible focus, live regions, keyboard and screen-reader paths, 200% zoom, colour never alone.</p></div>
+            <div class="rule"><h4>Calm, in both themes</h4><p>Light and dark for every surface, WCAG 2.2 AA in both. Motion uses only transform and opacity, and stops under reduced motion.</p></div>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A glass display case on legs, like a museum's. Pinned inside it like specimens are a coral streak flame, a coral notification badge reading 9+, and a countdown clock, each with a small paper tag: streak, badge, countdown. The Wanderer stands beside the case and lifts his lantern to light it.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+            <!-- the case -->
+            <path class="il-k" d="M324,322 L316,392 M656,322 L664,392"/>
+            <rect class="il-off" x="306" y="116" width="380" height="212" rx="10"/>
+            <rect class="il-p" x="298" y="108" width="380" height="212" rx="10"/>
+            <rect class="il-k3" x="314" y="124" width="348" height="180" rx="6"/>
+            <path class="il-thin" d="M600,132 L640,172 M620,132 L650,162"/>
+            <!-- specimen 1 · the streak flame -->
+            <path class="il-mark" d="M380,138 L380,150"/><circle class="il-mark" cx="380" cy="138" r="3.5"/>
+            <path class="il-feed" d="M380,150 C406,176 398,200 380,204 C362,200 354,176 380,150 Z"/>
+            <path class="il-feed-s" d="M380,172 C390,184 386,196 380,198 C374,196 370,184 380,172 Z"/>
+            <rect class="il-p" x="346" y="240" width="68" height="28" rx="4"/>
+            <text class="il-t" x="380" y="261" font-size="21" text-anchor="middle">streak</text>
+            <!-- specimen 2 · the badge -->
+            <path class="il-mark" d="M488,138 L488,152"/><circle class="il-mark" cx="488" cy="138" r="3.5"/>
+            <circle class="il-feed" cx="488" cy="182" r="28"/>
+            <text class="il-m" x="488" y="192" font-size="24" text-anchor="middle">9+</text>
+            <rect class="il-p" x="454" y="240" width="68" height="28" rx="4"/>
+            <text class="il-t" x="488" y="261" font-size="21" text-anchor="middle">badge</text>
+            <!-- specimen 3 · the countdown -->
+            <path class="il-mark" d="M598,138 L598,152"/><circle class="il-mark" cx="598" cy="138" r="3.5"/>
+            <circle class="il-w" cx="598" cy="182" r="28"/>
+            <path class="il-k3" d="M598,182 L598,164 M598,182 L612,190"/>
+            <path class="il-k3 il-dash" d="M598,148 A34,34 0 0,1 632,182" stroke-dasharray="4 5"/>
+            <rect class="il-p" x="552" y="240" width="92" height="28" rx="4"/>
+            <text class="il-t" x="598" y="261" font-size="21" text-anchor="middle">countdown</text>
+            <!-- the Wanderer lights the case -->
+            <g transform="translate(214 392) scale(1.4)">
+              <use href="#wd-glow" transform="translate(33 -140)"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-stand"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L33,-140"/>
+              <use href="#wd-lantern" transform="translate(33 -140)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 21 · Privacy is the message ----------------------------------------- -->
+  <section class="slide" aria-label="Slide 21: Privacy is the message">
+    <div class="inner">
+      <div class="split">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">21</span><span>What holds it together</span></div>
+            <h2>Privacy is the message</h2>
+            <p class="lead">A trilogy about the feed can&rsquo;t quietly feed on its readers. Nothing you type leaves your device: no accounts, no cookies, no analytics, no ads.</p>
+          </div>
+          <table class="t">
+            <thead><tr><th>Part</th><th>Kept in your browser under</th><th>What else loads</th></tr></thead>
+            <tbody>
+              <tr><td>The game</td><td class="m">wde.v2</td><td>React and htm from a CDN, pinned with integrity hashes, and fonts from Google Fonts</td></tr>
+              <tr><td>The story</td><td class="m">atf.v1</td><td>Nothing. Fonts are self-hosted and a strict Content Security Policy enforces it</td></tr>
+              <tr><td>The 45 days</td><td class="m">a45.v1</td><td>Nothing. Same self-hosted fonts, same strict policy</td></tr>
+            </tbody>
+          </table>
+          <ul class="plain tight">
+            <li><strong>The hand-off travels in the link.</strong> <code>#from=atf&amp;why=&hellip;&amp;habit=&hellip;&amp;start=&hellip;</code> is a URL fragment, which browsers never send to a server. 45 Days reads it once, stores it, and clears it from the address bar.</li>
+            <li><strong>Sharing sends only the public link</strong> or the day&rsquo;s own words. The share targets are plain links, so no social network&rsquo;s code ever loads.</li>
+            <li><strong>Storage blocked?</strong> In a private window every page still reads; actions say they can&rsquo;t be saved.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Two small houses stand at either end of a path, one marked story and the other 45 days. Between them the Wanderer walks the path carrying a folded note in his hand that reads #from=atf, his lantern hanging from his staff. Behind, a tall server tower stands apart; a dashed line from the story's house toward it stops short at a cross.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+            <!-- the server nobody visits -->
+            <rect class="il-off" x="528" y="46" width="70" height="140" rx="6"/>
+            <rect class="il-p" x="520" y="40" width="70" height="140" rx="6"/>
+            <path class="il-k3" d="M534,64 L576,64 M534,84 L576,84 M534,104 L576,104 M534,124 L576,124"/>
+            <circle class="il-mark" cx="540" cy="150" r="4"/>
+            <text class="il-m" x="555" y="170" font-size="12" text-anchor="middle">server</text>
+            <path class="il-thin il-dash" d="M150,246 Q280,96 466,96"/>
+            <path class="il-k3" d="M476,86 L496,106 M496,86 L476,106"/>
+            <!-- story -->
+            <path class="il-w" d="M52,304 L118,250 L184,304 Z"/>
+            <rect class="il-w" x="64" y="302" width="108" height="90" rx="3"/>
+            <rect class="il-p" x="104" y="344" width="28" height="48" rx="3"/>
+            <text class="il-t" x="118" y="334" font-size="23" text-anchor="middle">story</text>
+            <!-- 45 days -->
+            <path class="il-w" d="M616,304 L682,250 L748,304 Z"/>
+            <rect class="il-w" x="628" y="302" width="108" height="90" rx="3"/>
+            <rect class="il-p" x="668" y="344" width="28" height="48" rx="3"/>
+            <text class="il-t" x="682" y="334" font-size="23" text-anchor="middle">45 days</text>
+            <path class="il-thin il-dash" d="M190,392 L610,392"/>
+            <!-- the note, carried by hand -->
+            <rect class="il-off" x="432" y="276" width="90" height="30" rx="4"/>
+            <rect class="il-w" x="426" y="270" width="90" height="30" rx="4"/>
+            <text class="il-m" x="471" y="290" font-size="13" text-anchor="middle">#from=atf</text>
+            <!-- the Wanderer walks it over -->
+            <g transform="translate(396 392) scale(1.25)">
+              <use href="#wd-glow-hung"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-lantern-hung"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-walk"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L28,-90"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 22 · Help on every page --------------------------------------------- -->
+  <section class="slide" aria-label="Slide 22: A route to human help">
+    <div class="inner">
+      <div class="split">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">22</span><span>What holds it together</span></div>
+            <h2>A route to human help, on every page</h2>
+            <p class="lead">Every chapter of the story and every page of the series ends with one line. It is never collapsed and never behind a tap:</p>
+          </div>
+          <blockquote class="quote lamp">
+            <p>&ldquo;Feeling low or unsafe? Please talk to someone. In India, Tele-MANAS is free and open 24&times;7: 14416.&rdquo;</p>
+          </blockquote>
+          <div class="panel">
+            <p class="k">The full support block</p>
+            <p><strong>Tele-MANAS:</strong> 14416 or 1-800-891-4416, free, 24&times;7.<br><strong>NIMHANS SHUT clinic</strong> (Service for Healthy Use of Technology), Bengaluru: 080-26685948.<br><strong>In an emergency,</strong> call 112.</p>
+            <p>It appears in full on the story&rsquo;s desert and ending; on the series&rsquo; About page, Day 31 and Day 45 complete; and whenever a reader&rsquo;s check-in shows a very low mood twice in a row, with the line &ldquo;It&rsquo;s okay to ask for help. That&rsquo;s part of the plan.&rdquo;</p>
+          </div>
+          <p style="font-size:14px">Check-ins are reflections shown only to the reader, never diagnoses. Neither site makes medical claims: &ldquo;people in one study reported&hellip;&rdquo;, never &ldquo;this will reduce your anxiety&rdquo;.</p>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Night, a crescent moon and a few stars. A roadside call box stands by the path with a sign on top reading 14416. The Wanderer has lifted its receiver to his hood, the coiled cord running back to the box. His lantern hangs from his staff. Handwritten above: free, 24×7.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+            <path class="il-w" d="M150,62 A26,26 0 1,0 150,110 A20,20 0 1,1 150,62 Z"/>
+            <circle class="il-mark" cx="90" cy="150" r="2.5"/><circle class="il-mark" cx="250" cy="80" r="2.5"/><circle class="il-mark" cx="700" cy="70" r="2"/>
+            <text class="il-t" x="560" y="72" font-size="30" text-anchor="middle">free, 24&times;7</text>
+            <!-- the call box -->
+            <rect class="il-off" x="478" y="128" width="120" height="270" rx="10"/>
+            <rect class="il-w" x="470" y="120" width="120" height="272" rx="10"/>
+            <rect class="il-w" x="458" y="102" width="144" height="24" rx="7"/>
+            <rect class="il-p" x="488" y="136" width="84" height="30" rx="5"/>
+            <text class="il-m" x="530" y="158" font-size="19" text-anchor="middle">14416</text>
+            <path class="il-thin" d="M490,184 L570,184 M490,184 L490,300 M570,184 L570,300 M490,300 L570,300 M530,184 L530,300 M490,242 L570,242"/>
+            <!-- the handset unit and its cord -->
+            <rect class="il-w" x="442" y="226" width="28" height="44" rx="5"/>
+            <path class="il-k3" d="M442,256 Q432,252 434,244 Q436,236 428,234 Q420,232 422,224 Q424,216 416,214"/>
+            <!-- the Wanderer takes the call -->
+            <g transform="translate(374 392) scale(1.4)">
+              <use href="#wd-glow-hung"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-lantern-hung"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-stand"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L21,-134"/>
+            </g>
+            <rect class="il-w" x="404" y="184" width="16" height="32" rx="6" transform="rotate(-14 412 200)"/>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 23 · How it was built ----------------------------------------------- -->
+  <section class="slide" aria-label="Slide 23: How it was built">
+    <div class="inner">
+      <div class="split wl">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">23</span><span>Under the hood</span></div>
+            <h2>Built small, checked hard</h2>
+          </div>
+          <div class="two">
+            <div class="panel">
+              <p class="k">The game &middot; in this repo</p>
+              <p>React 18.3.1 and htm from a CDN with integrity hashes, a canvas world drawn and lit by the clock, and every sound synthesised with the Web Audio API, with no audio files. About 5,000 lines across six files, no build step.</p>
+            </div>
+            <div class="panel">
+              <p class="k">The story and the series</p>
+              <p>Astro 7.3.5 on Cloudflare Pages; every push to <code>main</code> deploys. Every word a reader sees or hears lives in <code>src/data/en/</code> as JSON, the series one file per day, so changing copy never touches code.</p>
+            </div>
+          </div>
+          <ul class="plain tight">
+            <li><strong>Guards fail the build:</strong> schemas, the series&rsquo; <code>check:content</code> (post keys, 3&ndash;4 checklist items, share lines of 20 words or fewer), <code>check:copy</code> for text that sneaks into a template, <code>check:contrast</code> for both themes, and <code>check:size</code> budgets of 300 KB and 280 KB for a first load.</li>
+            <li><strong>Playwright and axe</strong> run against the production build at 390 px and 1440 px, in both colour schemes and with reduced motion: over a hundred tests for each site. Every test asserts zero CSP violations and zero requests to other origins.</li>
+            <li><strong>Built with Claude Code,</strong> phase by phase, from a build document and a plan. Anything with a look, a feel or a pace waits at a design gate (D1&ndash;D7) that only Sanket can confirm.</li>
+          </ul>
+          <div class="stats">
+            <div class="stat"><div class="v">45</div><div class="k">Day files</div></div>
+            <div class="stat"><div class="v">135</div><div class="k">Share-card PNGs</div></div>
+            <div class="stat"><div class="v">13</div><div class="k">Source posts</div></div>
+            <div class="stat lamp"><div class="v">0</div><div class="k">Third-party requests in the story and series</div></div>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Four stations in a row, joined by an arrow labelled every push. First, a filing cabinet with a drawer open and a page marked with braces, labelled data. Second, a sieve the Wanderer holds and shakes: small words fall through, but a scrap of quoted text is caught in the mesh; labelled guards. Third, a bench with a phone-sized frame and a desktop-sized frame, each with a teal tick, labelled tests. Fourth, a cloud with a flag on top, labelled live.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+            <path class="il-k3" d="M96,150 L726,150" marker-end="url(#il-arrow)"/>
+            <text class="il-t" x="410" y="134" font-size="27" text-anchor="middle">every push</text>
+            <!-- data -->
+            <rect class="il-off" x="68" y="258" width="90" height="140" rx="6"/>
+            <rect class="il-w" x="60" y="252" width="90" height="140" rx="6"/>
+            <path class="il-k3" d="M60,330 L150,330 M96,352 L114,352"/>
+            <rect class="il-p" x="70" y="214" width="58" height="44" rx="3" transform="rotate(-6 99 236)"/>
+            <text class="il-m" x="99" y="244" font-size="20" text-anchor="middle">{ }</text>
+            <rect class="il-w" x="48" y="262" width="114" height="40" rx="5"/>
+            <path class="il-k3" d="M94,282 L116,282"/>
+            <text class="il-t" x="105" y="432" font-size="26" text-anchor="middle">data</text>
+            <!-- guards: the sieve -->
+            <path class="il-k3" d="M300,262 L290,262"/>
+            <path class="il-p" d="M300,262 Q344,326 388,262 Z"/>
+            <path class="il-hf" d="M300,262 Q344,326 388,262 Z"/>
+            <ellipse class="il-w" cx="344" cy="262" rx="44" ry="11"/>
+            <g transform="rotate(8 344 284)">
+              <rect class="il-p" x="322" y="270" width="44" height="24" rx="4"/>
+              <text class="il-t" x="344" y="290" font-size="22" text-anchor="middle">&ldquo;&nbsp;&rdquo;</text>
+            </g>
+            <g class="il-mark"><circle cx="332" cy="318" r="2.5"/><circle cx="350" cy="334" r="2.5"/><circle cx="340" cy="352" r="2.5"/><circle cx="356" cy="370" r="2.5"/></g>
+            <text class="il-t" x="344" y="432" font-size="26" text-anchor="middle">guards</text>
+            <!-- tests -->
+            <rect class="il-w" x="462" y="318" width="150" height="12" rx="3"/>
+            <path class="il-k" d="M476,330 L470,392 M598,330 L604,392"/>
+            <rect class="il-p" x="478" y="258" width="34" height="58" rx="6"/>
+            <rect class="il-p" x="524" y="264" width="78" height="52" rx="4"/>
+            <path fill="none" stroke="var(--i-teal)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M486,288 L493,296 L505,278 M550,290 L558,298 L576,278"/>
+            <text class="il-t" x="537" y="432" font-size="26" text-anchor="middle">tests</text>
+            <!-- live -->
+            <path class="il-w" d="M664,312 Q646,312 646,294 Q646,276 666,278 Q668,256 694,256 Q716,256 720,274 Q744,270 746,292 Q748,312 728,312 Z"/>
+            <path class="il-k3" d="M696,256 L696,214"/>
+            <path class="il-teal" d="M696,214 L722,222 L696,232 Z"/>
+            <text class="il-t" x="696" y="432" font-size="26" text-anchor="middle">live</text>
+            <!-- the Wanderer works the sieve -->
+            <g transform="translate(248 392) scale(1.25)">
+              <use href="#wd-glow-hung"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-lantern-hung"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-stand"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L34,-104"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 24 · Pick a door ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 24: Pick a door">
+    <div class="inner">
+      <div class="split">
+        <div class="col">
+          <div>
+            <div class="eyebrow"><span class="num">24</span><span>Your turn</span></div>
+            <h2>You&rsquo;re allowed to find out which one you are.</h2>
+            <p class="lead">Start with whichever fits the time you have. Each part points to the next, and none of them will hold it against you if you stop.</p>
+          </div>
+          <div class="cta">
+            <a href="https://daredavil01.github.io/daredavil01/digital-wellbeing/index.html"><small>Tonight</small><b>Play the game</b><span>The Wanderer&rsquo;s Digital Escape, about twelve minutes, best with sound.</span></a>
+            <a href="https://after-the-feed.sankettambare.in/"><small>One sitting</small><b>Read the story</b><span>After the Feed, seven chapters, about fifteen minutes.</span></a>
+            <a href="https://45-days.sankettambare.in/"><small>A page a day</small><b>Start Day 1</b><span>45 Days, about five minutes a day, with no streak to break.</span></a>
+          </div>
+          <p style="font-size:14.5px">Words by Sanket Tambare, from 13 posts on <a href="https://sankettambare.substack.com/t/digital-wellbeing">The Wanderer&rsquo;s Technical Anecdotes</a>. Every finding sits beside its study and its caveat.</p>
+          <p style="font-size:14px;color:var(--muted)">Intentionally created by <a href="https://sankettambare.in">Sanket Tambare</a>&#10084;&#65039;</p>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Dawn. A signpost with three boards stands where the path splits: one points left and reads tonight, one points right and reads 15 minutes, and one points right and reads 45 days. The Wanderer stands before it and lifts his lantern to read the boards. A sun is coming up on the horizon to the right.">
+            <rect class="il-bg" width="800" height="450"/>
+            <line class="il-thin" x1="28" y1="392" x2="772" y2="392"/>
+            <path class="il-w" d="M640,392 A50,50 0 0,1 740,392 Z"/>
+            <path class="il-k3" d="M690,326 L690,312 M648,342 L638,332 M732,342 L742,332"/>
+            <path class="il-thin il-dash" d="M410,392 Q300,370 70,360 M440,392 Q560,372 770,362"/>
+            <!-- the signpost -->
+            <rect class="il-off" x="438" y="146" width="14" height="246"/>
+            <rect class="il-w" x="432" y="140" width="14" height="252" rx="3"/>
+            <path class="il-w" d="M428,150 L322,150 L302,170 L322,190 L428,190 Z"/>
+            <text class="il-t" x="368" y="180" font-size="27" text-anchor="middle">tonight</text>
+            <path class="il-w" d="M450,202 L580,202 L600,222 L580,242 L450,242 Z"/>
+            <text class="il-t" x="520" y="232" font-size="26" text-anchor="middle">15 minutes</text>
+            <path class="il-w" d="M450,254 L566,254 L586,274 L566,294 L450,294 Z"/>
+            <text class="il-tt" x="512" y="284" font-size="27" text-anchor="middle">45 days</text>
+            <!-- the Wanderer reads the boards -->
+            <g transform="translate(262 392) scale(1.4)">
+              <use href="#wd-glow" transform="translate(33 -140)"/>
+              <use href="#wd-staff"/>
+              <use href="#wd-off"/>
+              <use href="#wd-legs-stand"/>
+              <use href="#wd-body"/>
+              <path class="wd-arm" d="M9,-110 L33,-140"/>
+              <use href="#wd-lantern" transform="translate(33 -140)"/>
+            </g>
+            <rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <div class="ticks" id="ticks"></div>
+  <span class="counter" id="counter">01 / 24</span>
+</nav>
+
+<script>
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var counter = document.getElementById('counter');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var current = 0;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  slides.forEach(function (slide, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', slide.getAttribute('aria-label'));
+    b.addEventListener('click', function () { go(i); });
+    ticks.appendChild(b);
+  });
+  var tickButtons = Array.prototype.slice.call(ticks.children);
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    tickButtons.forEach(function (b, i) {
+      b.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+    paint();
+    // A deep link to a slide survives a reload or a shared URL.
+    try { history.replaceState(null, '', '#' + (current + 1)); } catch (e) { /* file:// in some browsers */ }
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  // A resize changes what offsetLeft means; stay on the slide the reader was on.
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' });
+    }, 120);
+  });
+
+  // #7 opens slide 7.
+  var start = parseInt((location.hash || '').slice(1), 10);
+  if (start >= 1 && start <= slides.length) {
+    current = start - 1;
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' });
+  }
+  paint();
+})();
+
+// --- Theme toggle ---------------------------------------------------------
+// Three states, not two: with no data-theme the deck follows the OS setting,
+// and a two-way switch would throw that away. Light is the story's morning,
+// dark is the game's night.
+(function () {
+  var KEY = 'deck-theme';
+  var MODES = ['auto', 'light', 'dark'];
+  var META = {
+    auto:  { ico: '◑', lab: 'Auto',  say: 'follow system' },
+    light: { ico: '☀', lab: 'Light', say: 'light' },
+    dark:  { ico: '☾', lab: 'Dark',  say: 'dark' }
+  };
+
+  var btn = document.getElementById('theme');
+  var ico = document.getElementById('theme-ico');
+  var lab = document.getElementById('theme-lab');
+
+  function stored() {
+    try { return localStorage.getItem(KEY); } catch (e) { return null; }
+  }
+
+  var mode = MODES.indexOf(stored()) > -1 ? stored() : 'auto';
+
+  function apply(next, persist) {
+    mode = next;
+    if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', mode);
+
+    ico.textContent = META[mode].ico;
+    lab.textContent = META[mode].lab;
+    btn.setAttribute('aria-label', 'Theme: ' + META[mode].say + '. Activate to change.');
+
+    if (persist) {
+      // Storage can throw in a private window; the toggle must still work.
+      try {
+        if (mode === 'auto') localStorage.removeItem(KEY);
+        else localStorage.setItem(KEY, mode);
+      } catch (e) { /* ignored */ }
+    }
+  }
+
+  btn.addEventListener('click', function () {
+    apply(MODES[(MODES.indexOf(mode) + 1) % MODES.length], true);
+  });
+
+  apply(mode, false);
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="play"></script>
+</body>
+</html>
