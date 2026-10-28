@@ -101,6 +101,12 @@ presentations/
                                    by that deck (webp)
   e20-ka-chakravyuha.html         E20 ka Chakravyuha: the 12-slide deck on the
                                    ethanol/sugar trade-off and how the site was built
+  pumped-storage.html             Are They Really Useful?: the 12-slide illustrated
+                                   deck on the pumped storage data story at
+                                   are-psp-useful.pages.dev — purpose, features,
+                                   take action, every page, how sources are
+                                   recorded, the build (Blot, inline SVG)
+  assets/pumped-storage/          Screenshots used by that deck (webp)
   projects-page-revamp.html       Projects, Reborn: the 12-slide deck on
                                    rebuilding /projects — data model, four
                                    views, and the bugs the work surfaced

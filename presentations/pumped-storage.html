@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A 12-slide illustrated deck on Pumped Storage Projects: Are They Really Useful?, the bilingual data story at are-psp-useful.pages.dev on Maharashtra's pumped storage push in the Sahyadri: why it exists, its features, what you can do, a tour of every page, how each source is recorded, and how the site was built.">
+<title>A Hill, Made a Battery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi:ital@0;1&family=Mukta:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&family=Kalam:wght@400;700&display=swap">
+
+<script>
+// Runs before first paint: a stored theme must be on <html> already, or the
+// deck flashes the system theme before switching.
+(function(){
+  try{
+    var t = localStorage.getItem('deck-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ /* private mode, blocked storage — fall through to system */ }
+})();
+</script>
+
+<style>
+/* ---------------------------------------------------------------------------
+ * Tokens lifted from the site itself (ghat-batteries src/styles/global.css):
+ * leaf green on a pale green ground, water blue, sun amber, Tiro Devanagari
+ * Marathi over Mukta. Dark is the site's own night palette. The --i-* tokens
+ * colour the drawings.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#f4faf2; --surface:#e8f2e5; --raised:#ffffff; --sunk:#dde9d9;
+  --rule:rgba(21,41,28,.18);
+  --text:#15291c; --prose:#24382a; --muted:#4d6353; --faint:#6f8474;
+  --accent:#1d7a45; --accent-text:#1d7a45; --accent-soft:#d6ecd9; --on-accent:#ffffff;
+  --a2:#0a6597; --a2-text:#0a6597; --a2-soft:#d5e8f3;
+  --sun:#f2a900; --hl:#ffe680;
+  --shadow:0 1px 2px rgb(20 60 30 / .06), 0 6px 20px rgb(20 60 30 / .08);
+  --focus:#1d7a45;
+
+  --i-paper:#eef5e8; --i-ink:#15291c; --i-eye:#eef5e8;
+  --i-acc:#1d7a45; --i-acc-soft:#cfe6d2; --i-acc-text:#17663a;
+  --i-sec:#0a6597; --i-sec-soft:#cfe3ef; --i-sun:#f2a900; --i-cut:#b8480a;
+  --i-off:rgba(21,41,28,.10);
+
+  --font-display:"Tiro Devanagari Marathi",Georgia,serif;
+  --font-body:"Mukta","Noto Sans Devanagari",system-ui,sans-serif;
+  --font-hand:"Kalam",cursive;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#0e1913; --surface:#15231a; --raised:#1a2b20; --sunk:#22362a;
+    --rule:rgba(228,241,230,.16);
+    --text:#e4f1e6; --prose:#cfe0d2; --muted:#a3baa8; --faint:#83998a;
+    --accent:#6fd39a; --accent-text:#6fd39a; --accent-soft:#1f4a30; --on-accent:#0e1913;
+    --a2:#7cc6f0; --a2-text:#7cc6f0; --a2-soft:#1d3a4d;
+    --sun:#f6c453; --hl:#6b5a00;
+    --shadow:0 1px 2px rgb(0 0 0 / .3), 0 6px 20px rgb(0 0 0 / .25);
+    --focus:#6fd39a;
+    --i-paper:#15231a; --i-ink:#e4f1e6; --i-eye:#15231a;
+    --i-acc:#6fd39a; --i-acc-soft:#1f4a30; --i-acc-text:#8fe0b0;
+    --i-sec:#7cc6f0; --i-sec-soft:#1d3a4d; --i-sun:#f6c453; --i-cut:#ff9a4d;
+    --i-off:rgba(0,0,0,.32);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#0e1913; --surface:#15231a; --raised:#1a2b20; --sunk:#22362a;
+  --rule:rgba(228,241,230,.16);
+  --text:#e4f1e6; --prose:#cfe0d2; --muted:#a3baa8; --faint:#83998a;
+  --accent:#6fd39a; --accent-text:#6fd39a; --accent-soft:#1f4a30; --on-accent:#0e1913;
+  --a2:#7cc6f0; --a2-text:#7cc6f0; --a2-soft:#1d3a4d;
+  --sun:#f6c453; --hl:#6b5a00;
+  --shadow:0 1px 2px rgb(0 0 0 / .3), 0 6px 20px rgb(0 0 0 / .25);
+  --focus:#6fd39a;
+  --i-paper:#15231a; --i-ink:#e4f1e6; --i-eye:#15231a;
+  --i-acc:#6fd39a; --i-acc-soft:#1f4a30; --i-acc-text:#8fe0b0;
+  --i-sec:#7cc6f0; --i-sec-soft:#1d3a4d; --i-sun:#f6c453; --i-cut:#ff9a4d;
+  --i-off:rgba(0,0,0,.32);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--paper);color:var(--text);
+  font-family:var(--font-body);font-size:17px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+a{color:var(--a2-text);text-underline-offset:3px;}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  height:100dvh;scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100%;width:100%;height:100dvh;scroll-snap-align:start;
+  display:flex;align-items:center;justify-content:center;
+  padding:68px 28px 96px;overflow-y:auto;
+}
+/* Tall slides must start at the top, not be clipped above it. */
+.slide > .inner{margin:auto 0;}
+.inner{width:100%;max-width:1160px;}
+
+.eyebrow{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent-text);margin-bottom:14px;
+}
+.eyebrow .num{color:var(--on-accent);background:var(--accent);border-radius:999px;padding:2px 10px;letter-spacing:.06em;}
+h1,h2{font-family:var(--font-display);font-weight:400;letter-spacing:-.01em;margin:0 0 14px;}
+h1{font-size:clamp(40px,5.8vw,70px);line-height:1.05;}
+h1 em,h2 em{font-style:italic;color:var(--accent-text);}
+h2{font-size:clamp(28px,3.4vw,42px);line-height:1.12;}
+h3{font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
+p{margin:0 0 12px;color:var(--prose);}
+.lead{font-size:clamp(16.5px,1.6vw,19px);color:var(--muted);max-width:62ch;}
+strong{color:var(--text);font-weight:700;}
+code{font-family:var(--font-mono);font-size:.82em;background:var(--sunk);border-radius:6px;padding:1px 6px;color:var(--text);}
+pre{
+  font-family:var(--font-mono);font-size:12.5px;line-height:1.6;
+  background:var(--raised);border:1px solid var(--rule);border-radius:12px;
+  padding:12px 16px;overflow-x:auto;margin:0;color:var(--prose);
+}
+pre .k{color:var(--accent-text);}
+pre .s{color:var(--a2-text);}
+mark{background:var(--hl);color:var(--text);padding:0 3px;border-radius:2px;}
+[lang="mr"]{font-family:"Mukta",var(--font-body);}
+
+/* --- Layout helpers ------------------------------------------------------ */
+.split{display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:center;}
+.split.wide-left{grid-template-columns:1.2fr .8fr;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.mt{margin-top:22px;}
+.split > *,.two > *,.three > *,.four > *{min-width:0;}
+@media (max-width:900px){
+  .split,.split.wide-left,.two,.three{grid-template-columns:1fr;gap:22px;}
+  .four{grid-template-columns:1fr 1fr;}
+  .slide{padding:64px 16px 92px;}
+}
+@media (max-width:520px){.four{grid-template-columns:1fr;}}
+
+.panel{background:var(--raised);border:1px solid var(--rule);border-radius:14px;padding:14px 18px;box-shadow:var(--shadow);}
+.panel p{font-size:15px;}
+.panel p:last-child{margin-bottom:0;}
+.panel h4{font-family:var(--font-display);font-weight:400;font-size:21px;margin:0 0 6px;line-height:1.2;}
+.panel .ico{font-size:20px;line-height:1;margin-right:6px;}
+
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.stat{background:var(--raised);border:1px solid var(--rule);border-radius:14px;padding:12px 16px;box-shadow:var(--shadow);}
+.stat .v{font-family:var(--font-display);font-size:34px;line-height:1.05;color:var(--accent-text);}
+.stat .k{font-size:14.5px;color:var(--prose);margin-top:4px;line-height:1.3;}
+.stat .f{font-size:12.5px;color:var(--muted);}
+
+ul.plain{list-style:none;margin:0;padding:0;}
+ul.plain li{position:relative;padding-left:20px;margin-bottom:8px;color:var(--prose);font-size:15.5px;}
+ul.plain li::before{content:"";position:absolute;left:2px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--accent);}
+ol.steps{list-style:none;margin:0;padding:0;counter-reset:s;}
+ol.steps li{counter-increment:s;position:relative;padding-left:36px;margin-bottom:9px;font-size:15.5px;color:var(--prose);line-height:1.45;}
+ol.steps li::before{
+  content:counter(s);position:absolute;left:0;top:0;width:25px;height:25px;border-radius:50%;
+  font-family:var(--font-mono);font-size:12px;font-weight:600;line-height:25px;text-align:center;
+  color:var(--accent-text);border:1.5px solid var(--accent);
+}
+ol.steps.two-col{columns:2;column-gap:28px;}
+ol.steps.two-col li{break-inside:avoid;}
+@media (max-width:760px){ol.steps.two-col{columns:1;}}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.chips span{font-family:var(--font-mono);font-size:11.5px;color:var(--prose);border:1px solid var(--rule);border-radius:999px;padding:3px 10px;background:var(--raised);}
+.chips span b{color:var(--accent-text);font-weight:600;}
+
+.ev{display:inline-block;font-family:var(--font-mono);font-size:11px;font-weight:600;border-radius:5px;padding:1px 7px;border:1.5px solid currentColor;}
+.ev.d{color:#0072b2;} .ev.r{color:#00805a;} .ev.a{color:#b8480a;} .ev.o{color:var(--muted);}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .ev.d{color:#56b4e9;}:root:not([data-theme="light"]) .ev.r{color:#3fd1a0;}:root:not([data-theme="light"]) .ev.a{color:#ff9a4d;}}
+:root[data-theme="dark"] .ev.d{color:#56b4e9;} :root[data-theme="dark"] .ev.r{color:#3fd1a0;} :root[data-theme="dark"] .ev.a{color:#ff9a4d;}
+
+.group{border-left:4px solid var(--accent);}
+.group span[lang="mr"]{display:block;color:var(--muted);font-size:15px;}
+
+.flag{border-left:3px solid var(--accent);background:var(--raised);border-radius:0 12px 12px 0;padding:12px 16px;margin-top:16px;}
+.flag p{margin:0;font-size:14.5px;color:var(--prose);}
+
+/* Title */
+.site-name{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;}
+.site-mr{font-size:19px;color:var(--muted);margin:-4px 0 14px;}
+.title-meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:22px;font-family:var(--font-mono);font-size:12.5px;color:var(--muted);}
+.cta{
+  display:inline-block;margin-top:6px;font-weight:700;text-decoration:none;
+  background:var(--accent);color:var(--on-accent);border-radius:999px;padding:9px 20px;
+}
+.cta:hover{filter:brightness(1.08);}
+
+/* Screenshots */
+.shot{margin:0;}
+.shot img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--rule);box-shadow:var(--shadow);background:var(--surface);}
+.shot figcaption{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);margin-top:8px;letter-spacing:.02em;}
+
+/* --- Illustrations: the illo method, drawn by hand ------------------------
+ * Blot, the illo method's deadpan ink-drop, performs each idea. Every fill is
+ * a token, so the drawings flip for dark mode: by day an ink drop with paper
+ * eyes, by night a pale drop on the forest-night ground. Blot's tip is leaf
+ * green; water is blue, power is sun amber, a felled tree is rust.
+ * ------------------------------------------------------------------------- */
+.illo{margin:0;border-radius:18px;overflow:hidden;background:var(--i-paper);border:1px solid var(--rule);}
+.illo svg{display:block;width:100%;height:auto;}
+.il-bg{fill:var(--i-paper)}
+.il-k{fill:var(--i-ink);stroke:var(--i-ink);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}
+.il-kl{fill:none;stroke:var(--i-ink);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}
+.il-eye{fill:var(--i-eye)}
+.il-tip{fill:var(--i-acc)}
+.il-plate{fill:var(--i-acc);stroke:var(--i-acc);stroke-width:1.4;stroke-linejoin:round;opacity:.8}
+.il-seam{fill:none;stroke:var(--i-paper);stroke-width:2.7;opacity:.42}
+.il-gap{fill:none;stroke:var(--i-paper);stroke-width:2.8}
+.il-o{fill:var(--i-paper);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round;stroke-linecap:round}
+.il-l{fill:none;stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round;stroke-linecap:round}
+.il-f{fill:var(--i-ink)}
+.il-thin{fill:none;stroke:var(--i-ink);stroke-width:1.5;stroke-linecap:round;opacity:.45}
+.il-a{fill:var(--i-acc);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round}
+.il-as{fill:var(--i-acc-soft);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round}
+.il-al{fill:none;stroke:var(--i-acc);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.il-w{fill:var(--i-sec-soft);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round}
+.il-wd{fill:none;stroke:var(--i-sec);stroke-width:3.2;stroke-linecap:round;stroke-dasharray:0 9}
+.il-dots{fill:none;stroke:var(--i-acc);stroke-width:3.2;stroke-linecap:round;stroke-dasharray:0 9}
+.il-sun{fill:var(--i-sun);stroke:var(--i-ink);stroke-width:2.3;stroke-linejoin:round}
+.il-cut{fill:var(--i-cut);stroke:var(--i-ink);stroke-width:2;stroke-linejoin:round}
+.il-off{fill:var(--i-off)}
+.il-hl{fill:var(--i-sun);opacity:.55}
+.il-t{font-family:var(--font-hand);font-weight:700;font-size:27px;fill:var(--i-ink)}
+.il-ta{font-family:var(--font-hand);font-weight:700;fill:var(--i-acc-text)}
+.il-s{font-family:var(--font-hand);font-weight:400;font-size:19px;fill:var(--i-ink)}
+.il-m{font-family:var(--font-mono);font-size:14px;fill:var(--i-ink)}
+.il-num{font-family:var(--font-display);fill:var(--i-ink)}
+.il-mr{font-family:"Mukta",sans-serif;font-weight:600;fill:var(--i-ink)}
+.il-grain{pointer-events:none}
+:root[data-theme="dark"] .il-grain{opacity:.5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .il-grain{opacity:.5}}
+
+/* --- Home link + rail ---------------------------------------------------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;pointer-events:none;}
+.topbar > *{pointer-events:auto;}
+.home,.theme{
+  font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text);text-decoration:none;background:var(--raised);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;
+}
+.home:hover,.theme:hover{color:var(--accent-text);border-color:var(--accent);}
+.theme{display:inline-flex;align-items:center;gap:7px;cursor:pointer;line-height:1;}
+.rail{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;gap:12px;padding:12px 18px;background:var(--paper);border-top:1px solid var(--rule);}
+.rail button{font:inherit;font-family:var(--font-mono);font-size:15px;line-height:1;cursor:pointer;background:var(--raised);color:var(--text);border:1px solid var(--rule);border-radius:999px;padding:7px 13px;}
+.rail button:hover:not(:disabled){border-color:var(--accent);color:var(--accent-text);}
+.rail button:disabled{opacity:.35;cursor:default;}
+.ticks{display:flex;gap:5px;flex:1;overflow:hidden;}
+.ticks button{flex:1;min-width:0;height:6px;padding:0;border-radius:999px;background:var(--sunk);border:none;}
+.ticks button[aria-current="true"]{background:var(--accent);}
+.counter{font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
+@media (max-width:760px){
+  .topbar{background:var(--paper);border-bottom:1px solid var(--rule);padding:9px 14px;}
+  .home,.theme{border-color:transparent;background:transparent;padding:4px 6px;}
+}
+@media (prefers-reduced-motion: reduce){.track{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+
+<!-- Blot, the trees, the grain and the arrowheads: defined once, reused by
+     every drawing. Blot's box is 120 x 140 with his feet at y = 131.4; at
+     scale 1.6, translate(x 182) stands him on the y = 392 ground line. Parts
+     carry no colour of their own, so each <use> paints them by class. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="bl-body" d="M56.3 15.5Q60 9.9 63.7 15.5L91.95 58C96.6 65 100.8 78 100.8 93A40.8 28.8 0 0 1 19.2 93C19.2 78 23.4 65 28.05 58Z"/>
+    <path id="bl-tipshape" d="M44.65 33L56.3 15.5Q60 9.9 63.7 15.5L75.35 33Q60 38.2 44.65 33Z"/>
+    <path id="bl-armL" d="M26 63C21 69 8.5 86 8.5 96.6C8.4 101.8 11.6 104.8 15.6 104.6C18.6 104.5 21.4 103.4 23 101.4Z"/>
+    <path id="bl-armR" d="M94 63C99 69 111.5 86 111.5 96.6C111.6 101.8 108.4 104.8 104.4 104.6C101.4 104.5 98.6 103.4 97 101.4Z"/>
+    <path id="bl-bean" d="M-4.5 -3C-6.8 6 -6.6 17 -5.4 22C-4.2 27.4 4.2 27.4 5.4 22C6.6 17 6.8 6 4.5 -3Z"/>
+    <path id="bl-legL" d="M41.6 114V124.7C39.4 125.1 38.6 126.9 39.2 128.9C39.8 130.7 41.6 131.4 43.6 131.4H51.6C53.6 131.4 54.8 130.3 54.8 128.1V114Z"/>
+    <path id="bl-legR" d="M78.4 114V124.7C80.6 125.1 81.4 126.9 80.8 128.9C80.2 130.7 78.4 131.4 76.4 131.4H68.4C66.4 131.4 65.2 130.3 65.2 128.1V114Z"/>
+    <pattern id="il-screen" width="1.5" height="1.5" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+      <circle class="il-eye" cx=".75" cy=".75" r=".34"/>
+    </pattern>
+    <use id="bl-plate" href="#bl-body" class="il-plate" transform="translate(.6 .5)"/>
+    <use id="bl-seam" href="#bl-body" class="il-seam"/>
+    <g id="bl-trunk">
+      <use href="#bl-body" class="il-k"/>
+      <use href="#bl-body" fill="url(#il-screen)" opacity=".06"/>
+      <use href="#bl-tipshape" class="il-tip"/>
+      <use href="#bl-tipshape" fill="url(#il-screen)" opacity=".2"/>
+      <path class="il-kl" d="M44.65 33Q60 38.2 75.35 33M28.05 58L56.3 15.5Q60 9.9 63.7 15.5L91.95 58"/>
+    </g>
+    <g id="bl-eyes" class="il-eye"><circle cx="46.7" cy="59.35" r="4.35"/><circle cx="73.3" cy="59.35" r="4.35"/></g>
+    <!-- a tree stands on its base at 0,0; a stump is what is left of one -->
+    <g id="tree"><path class="il-l" d="M0 0V-16"/><path class="il-as" d="M0 -46C-12 -46 -18 -36 -16 -28C-22 -24 -20 -14 -12 -13C-8 -10 8 -10 12 -13C20 -14 22 -24 16 -28C18 -36 12 -46 0 -46Z"/></g>
+    <g id="stump"><path class="il-o" d="M-8 0V-12H8V0Z"/><ellipse class="il-cut" cx="0" cy="-12" rx="8" ry="3"/></g>
+    <filter id="il-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.08 0 0 0 0 0.16 0 0 0 0 0.1 0 0 0 0.16 0"/>
+    </filter>
+    <marker id="il-arrow" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2,2 L9,6 L2,10" fill="none" style="stroke:var(--i-acc);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <a class="home" data-island-return href="../index.html#commons/pumped-storage-deck">&larr; Home</a>
+  <button class="theme" type="button" id="theme" aria-label="Theme: follow system. Activate to change.">
+    <span id="theme-ico" aria-hidden="true">&#9681;</span><span id="theme-lab">Auto</span>
+  </button>
+</div>
+
+<div class="track" id="track" tabindex="-1">
+
+  <!-- 01 · Title ----------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 1: Title">
+    <div class="inner split">
+      <div>
+        <div class="eyebrow"><span class="num">01</span><span>The deck &middot; October 2026</span></div>
+        <p class="site-name">Pumped Storage Projects</p>
+        <h1>Are they <em>really</em> useful?</h1>
+        <p class="site-mr" lang="mr">पंप स्टोरेज प्रकल्प: खरंच उपयोगी आहेत का?</p>
+        <p class="lead">An independent, bilingual data story on Maharashtra&rsquo;s plan to turn hills in the Sahyadri into giant batteries. It tracks every project: the trees and forest it needs, the clearances it got, and what the people who live there say. This deck covers why the site exists, what each page holds, and how it was built.</p>
+        <a class="cta" href="https://are-psp-useful.pages.dev">are-psp-useful.pages.dev &#8599;</a>
+        <div class="title-meta">
+          <span>English &amp; मराठी</span>
+          <span>Astro &middot; Cloudflare Pages</span>
+          <span>Built 27&ndash;28 October 2026</span>
+        </div>
+      </div>
+      <figure class="illo">
+        <svg viewBox="0 0 800 450" role="img" aria-label="Blot, a small ink-drop with a leaf-green tip, holds a magnifying glass up to a freshly cut tree stump at the foot of a forested hill. On the hilltop sits a blue reservoir marked plus; at the foot of the far side a second reservoir is marked minus, and a dotted blue tunnel runs between them through the hill, past a small amber lightning bolt. A few more stumps dot the slope among the trees. Handwritten: a hill, made a battery.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<text class="il-t" x="40" y="70">a hill,</text>
+<text class="il-t" x="40" y="106">made a <tspan class="il-ta">battery</tspan></text>
+<g transform="translate(-40 0)">
+  <path class="il-o" d="M300 392C360 300 400 170 520 160C640 150 700 300 760 392Z"/>
+  <use href="#tree" transform="translate(321 362)"/>
+  <use href="#tree" transform="translate(341 322)"/>
+  <use href="#stump" transform="translate(363 287)"/>
+  <use href="#tree" transform="translate(388 250)"/>
+  <use href="#stump" transform="translate(414 218)"/>
+  <use href="#tree" transform="translate(443 192)"/>
+  <use href="#tree" transform="translate(613 194)"/>
+  <use href="#tree" transform="translate(684 274)"/>
+  <ellipse class="il-w" cx="520" cy="166" rx="56" ry="11"/>
+  <path class="il-wd" d="M532 178C580 260 690 330 770 388"/>
+  <path class="il-sun" d="M640 286L626 306H636L630 322L648 298H638Z"/>
+</g>
+<ellipse class="il-w" cx="752" cy="394" rx="40" ry="9"/>
+<text class="il-num" x="478" y="140" font-size="34" text-anchor="middle">+</text>
+<text class="il-num" x="752" y="370" font-size="38" text-anchor="middle">&minus;</text>
+<g transform="translate(70 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(5 -2)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(-110)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(-110)"/></g>
+<path class="il-l" d="M258 282L268 276" style="stroke-width:5"/>
+<circle class="il-o" cx="281" cy="268" r="16" style="fill-opacity:.4"/>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+        </svg>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 02 · The question ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 2: The question">
+    <div class="inner split">
+      <div>
+        <div class="eyebrow"><span class="num">02</span><span>Purpose &middot; the question</span></div>
+        <h2>Not <em>whether</em> India needs storage, but where it goes</h2>
+        <p class="lead">A pumped storage plant is two reservoirs and a tunnel. At midday, when solar power is cheap, it pumps water uphill; in the evening, when power is dear, it lets the water fall back through turbines. Maharashtra is planning dozens of them, most on forested Sahyadri hilltops.</p>
+        <p>The site asks what each one costs the forest and the people who live around it, and sets that beside what it gives the grid.</p>
+        <div class="stats mt">
+          <div class="stat"><div class="v">39</div><div class="k">projects tracked</div></div>
+          <div class="stat"><div class="v">1,64,674</div><div class="k">trees to be felled, on record</div><div class="f">public for 5 of 39 projects</div></div>
+          <div class="stat"><div class="v">3,211 ha</div><div class="k">of forest land, on record</div><div class="f">known for 32 of 39 projects</div></div>
+          <div class="stat"><div class="v">60,615 MW</div><div class="k">in the pipeline</div></div>
+        </div>
+      </div>
+      <figure class="illo">
+        <svg viewBox="0 0 800 450" role="img" aria-label="A wooden balance on a triangular stand. On the left pan stand three trees; on the right pan sits a battery with an amber lightning bolt. The beam is level. Blot stands to the right with both arms raised in a shrug. Handwritten: which weighs more?">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<text class="il-t" x="40" y="70">which weighs</text>
+<text class="il-t" x="40" y="106"><tspan class="il-ta">more?</tspan></text>
+<path class="il-o" d="M330 236L290 392H370Z"/>
+<path class="il-l" d="M140 230H520" style="stroke-width:5"/>
+<circle class="il-o" cx="330" cy="230" r="7"/>
+<path class="il-l" d="M140 230L100 300M140 230L180 300M520 230L480 300M520 230L560 300"/>
+<path class="il-o" d="M88 300Q140 330 192 300Z"/>
+<path class="il-o" d="M468 300Q520 330 572 300Z"/>
+<use href="#tree" transform="translate(116 302) scale(.85)"/>
+<use href="#tree" transform="translate(164 302) scale(.85)"/>
+<use href="#tree" transform="translate(140 300)"/>
+<rect class="il-o" x="490" y="252" width="60" height="48" rx="5"/>
+<rect class="il-o" x="512" y="244" width="16" height="8" rx="2"/>
+<path class="il-sun" d="M524 260L510 280H520L514 296L532 272H522Z"/>
+<g transform="translate(590 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(-3 -3)"/><use href="#bl-bean" class="il-gap" transform="translate(28 72) rotate(130)"/><use href="#bl-bean" class="il-k" transform="translate(28 72) rotate(130)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(-130)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(-130)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+        </svg>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 03 · Trees first ----------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 3: Trees first, every number checkable">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">03</span><span>Purpose &middot; the order of things</span></div>
+          <h2>Trees first, and <em>every number</em> checkable</h2>
+          <p class="lead">The story is told in a fixed order of importance, and it has to hold up when a developer, an official or a neighbour checks it.</p>
+          <ol class="steps">
+            <li><strong>The forest.</strong> The trees and the whole Sahyadri ecosystem: species found nowhere else, corridors, sacred groves.</li>
+            <li><strong>The process.</strong> How environmental reviews are sidestepped, and how projects are imposed on local and Adivasi communities.</li>
+            <li><strong>The energy case.</strong> Power, emissions and cost, as supporting evidence &mdash; including what supporters say.</li>
+          </ol>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A three-step winners' podium. A tall tree stands on the top step marked 1, a small village house on step 2, and an amber lightning bolt on the lowest step 3. Blot stands to the left pointing up at the tree. Handwritten: trees first.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<text class="il-t" x="560" y="80"><tspan class="il-ta">trees</tspan> first</text>
+<rect class="il-o" x="380" y="250" width="120" height="142"/>
+<rect class="il-o" x="260" y="300" width="120" height="92"/>
+<rect class="il-o" x="500" y="330" width="120" height="62"/>
+<text class="il-num" x="440" y="330" font-size="44" text-anchor="middle">1</text>
+<text class="il-num" x="320" y="362" font-size="38" text-anchor="middle">2</text>
+<text class="il-num" x="560" y="377" font-size="32" text-anchor="middle">3</text>
+<use href="#tree" transform="translate(440 250) scale(2.2)"/>
+<path class="il-o" d="M290 300V270L320 248L350 270V300Z"/>
+<path class="il-l" d="M312 300V282H328V300"/>
+<path class="il-sun" d="M566 282L544 310H558L548 330L576 298H560Z"/>
+<g transform="translate(40 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(5 -5)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(-140)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(-140)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+      <div class="three mt">
+        <div class="panel"><h4>Independent</h4><p>No money from developers, governments or parties. Built from official documents and 75 vetted outlets.</p></div>
+        <div class="panel"><h4>Labelled evidence</h4><p>Every claim is <span class="ev d">Documented</span> <span class="ev r">Reported</span> <span class="ev a">Alleged</span> or an <span class="ev o">Official claim</span>. Allegations are always attributed by name.</p></div>
+        <div class="panel"><h4>Both figures, side by side</h4><p>Karjat: 48,557 trees in the forest committee&rsquo;s minutes, &ldquo;about 48,000&rdquo; in the developer&rsquo;s EIA, 32,490 in the felling permission. All three are shown.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · Features -------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 4: Features">
+    <div class="inner">
+      <div class="split wide-left">
+        <div>
+          <div class="eyebrow"><span class="num">04</span><span>Purpose &middot; features</span></div>
+          <h2>What <em>every page</em> carries</h2>
+          <p class="lead">The site is static and light enough for a low-end phone, but each page brings the same set of helpers with it.</p>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blot juggles six things along a dotted green arc above his head: an amber light bulb, an i-in-a-circle source mark, an EN and मर language switch, an orange RSS badge, a download arrow and a magnifying glass.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<path class="il-dots" d="M334 250C170 140 260 20 400 20C540 20 630 140 466 250"/>
+<circle class="il-sun" cx="253" cy="167" r="20"/><path class="il-l" d="M246 190H260M247 197H259"/>
+<circle class="il-o" cx="253" cy="94" r="20"/><text class="il-num" x="253" y="104" font-size="26" text-anchor="middle">i</text>
+<rect class="il-o" x="276" y="22" width="80" height="34" rx="17"/><path class="il-as" d="M316 22H339A17 17 0 0 1 339 56H316Z"/><text class="il-m" x="296" y="45" text-anchor="middle" font-weight="600">EN</text><text class="il-mr" x="336" y="46" font-size="16" text-anchor="middle">मर</text>
+<rect class="il-cut" x="462" y="18" width="40" height="40" rx="8"/><circle class="il-eye" cx="473" cy="47" r="3.5"/><path d="M470 36A12 12 0 0 1 482 48M470 26A22 22 0 0 1 492 48" fill="none" style="stroke:var(--i-eye);stroke-width:3.5;stroke-linecap:round"/>
+<circle class="il-o" cx="547" cy="94" r="20"/><path class="il-l" d="M547 82V101M539 94L547 102L555 94M537 106H557"/>
+<circle class="il-o" cx="543" cy="163" r="13"/><path class="il-l" d="M552 172L562 182" style="stroke-width:5"/>
+<g transform="translate(304 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(0 -8)"/><use href="#bl-bean" class="il-gap" transform="translate(28 72) rotate(160)"/><use href="#bl-bean" class="il-k" transform="translate(28 72) rotate(160)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(-160)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(-160)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+      <div class="four mt">
+        <div class="panel"><h4><span class="ico">💡</span>Did you know?</h4><p>A bubble on every page opens 24 short facts picked for that page or project, each with its source and a WhatsApp button.</p></div>
+        <div class="panel"><h4><span class="ico">ⓘ</span>Source bubbles</h4><p>Every number has an ⓘ. Tap it for the quoted sentence with the number highlighted, the document, its page and the evidence label.</p></div>
+        <div class="panel"><h4><span class="ico">अ</span>English &amp; मराठी</h4><p>Every page in both languages, from one URL. The choice is remembered; a shared link opens in the sender&rsquo;s language.</p></div>
+        <div class="panel"><h4><span class="ico">🔍</span>Search everything</h4><p>Ctrl/⌘+K, <code>/</code> or the 🔍 button searches projects, story chapters, glossary terms and pages at once.</p></div>
+        <div class="panel"><h4><span class="ico">📡</span>RSS feed</h4><p><code>/news.xml</code> carries the news page, so readers can follow new reports in any feed reader.</p></div>
+        <div class="panel"><h4><span class="ico">⬇</span>Download the data</h4><p>Projects, timeline, news, citations, glossary and model inputs as JSON and CSV, under CC BY 4.0.</p></div>
+        <div class="panel"><h4><span class="ico">📖</span>Glossary cards</h4><p>The first use of ToR, EC, ESA, gram sabha and 40 other terms links to a plain-language card.</p></div>
+        <div class="panel"><h4><span class="ico">↗</span>Share cards</h4><p>A share button on every page and a ready image card for each story chapter, made for WhatsApp.</p></div>
+      </div>
+      <div class="four mt">
+        <figure class="shot"><img src="assets/pumped-storage/dyk.webp" width="1280" height="800" loading="lazy" alt="A Did you know? pop-up on the Karjat project page: the forest committee recorded 48,557 trees, the draft EIA said about 48,000, and the felling permission is for 32,490, with sources and WhatsApp and Share buttons."><figcaption>💡 Did you know?</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/cite.webp" width="1280" height="800" loading="lazy" alt="A source pop-up for the Karjat tree count: Documented label, the quoted sentence with 48557 highlighted, and a link to the FAC minutes of 2 December 2025, page 177."><figcaption>ⓘ Source bubble, page 177</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/search.webp" width="1280" height="800" loading="lazy" alt="The search palette open with the query karjat: four projects and two story chapters match."><figcaption>🔍 Search, Ctrl/⌘+K</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/home-mr.webp" width="1280" height="800" loading="lazy" alt="The home page in Marathi."><figcaption>मराठी, same URL</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · Take action ----------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 5: Take action">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">05</span><span>Purpose &middot; take action</span></div>
+          <h2>Decisions are <em>still being made</em></h2>
+          <p class="lead">Study terms, clearances, gram sabhas and public hearings are still ahead for most projects. The Take action page says what a reader can do, and who is already working on the ground.</p>
+          <h3 class="mt">Groups working on this</h3>
+          <div class="two">
+            <div class="panel group"><h4>Sahyadri Conservation and Sustainable Development Policy Study Group</h4><span lang="mr">सह्याद्री संवर्धन आणि शाश्वत विकास धोरण अभ्यास समूह</span></div>
+            <div class="panel group"><h4>Save Sahyadri Campaign</h4><span lang="mr">सह्याद्री वाचवा अभियान</span></div>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blot posts a sealed envelope into the slot of a tall box labelled objections. Handwritten: write it down, get it recorded.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<text class="il-t" x="40" y="70">write it down,</text>
+<text class="il-t" x="40" y="106">get it <tspan class="il-ta">recorded</tspan></text>
+<rect class="il-o" x="440" y="236" width="150" height="156" rx="6"/>
+<path class="il-o" d="M430 236H600L590 216H440Z"/>
+<rect class="il-f" x="478" y="252" width="74" height="7" rx="3"/>
+<text class="il-s" x="515" y="310" text-anchor="middle">objections</text>
+<path class="il-thin" d="M462 330H568M462 350H548"/>
+<g transform="rotate(-24 470 250)"><rect class="il-o" x="430" y="232" width="62" height="40" rx="3"/><path class="il-l" d="M430 232L461 254L492 232"/><circle class="il-a" cx="461" cy="257" r="5"/></g>
+<g transform="translate(220 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(5 -3)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(-118)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(-118)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+      <h3 class="mt">What you can do</h3>
+      <ol class="steps two-col">
+        <li><strong>Know the facts.</strong> Read the story and check the projects near your district.</li>
+        <li><strong>Go to the gram sabha.</strong> Under PESA and the Forest Rights Act, forest land in many villages cannot be diverted without its consent.</li>
+        <li><strong>Object at the public hearing.</strong> Send written objections before the date and keep a stamped copy.</li>
+        <li><strong>Ask for the papers.</strong> File an RTI for the study terms, EIA report, forest proposal and tree count.</li>
+        <li><strong>Write to the decision makers.</strong> The expert committees, the collector, your MLA and MP, naming the Parivesh proposal number.</li>
+        <li><strong>Stand with forest-rights claims.</strong> Help families file and follow up individual and community claims.</li>
+        <li><strong>Document what you see.</strong> Photograph surveys, drilling or felling with date and place.</li>
+        <li><strong>Share, and correct.</strong> Share pages on WhatsApp and point people to the source.</li>
+        <li><strong>Volunteer.</strong> Help the groups with surveys, translation, legal work or outreach.</li>
+      </ol>
+      <div class="flag"><p>Lawful, peaceful action only. The site is independent and not affiliated with the groups listed; their contact details are on the site&rsquo;s <a href="https://are-psp-useful.pages.dev/take-action/">Take action</a> page.</p></div>
+    </div>
+  </section>
+
+  <!-- 06 · Home & Story ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 6: Home and the story">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">06</span><span>The pages &middot; 1 of 5</span></div>
+          <h2>Home, and a story in <em>ten chapters</em></h2>
+          <p><strong>Home</strong> opens on a Sahyadri photo and four headline numbers, then an animated explainer, <em>How a hill becomes a battery</em>: cheap daytime power, dear evening power, the cost to the forest, the cost to life around it. A fair box says what pumped storage is good for, and cards lead to every page.</p>
+          <p><strong>Story</strong> is the long read: 48,557 trees &middot; What lives here &middot; The forest bill &middot; How the review was sidestepped &middot; Imposed, not designed &middot; The promise &middot; A battery that can burn coal &middot; Built, not used &middot; What supporters say &middot; What I ask for. Each chapter ends with a share card.</p>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A big open book with ten small tabs down its right edge, the first one green. The left page shows a tree under the number 48,557; the right page has lines of text. Blot stands at the right edge, holding the corner of a page to turn it. Handwritten: ten short chapters.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<text class="il-t" x="40" y="70">ten short</text>
+<text class="il-t" x="40" y="106"><tspan class="il-ta">chapters</tspan></text>
+<g transform="translate(-26 0)">
+<path class="il-o" d="M150 370Q265 350 380 370V190Q265 170 150 190Z"/>
+<path class="il-o" d="M380 370Q495 350 610 370V190Q495 170 380 190Z"/>
+<g>
+  <rect class="il-a" x="608" y="198" width="16" height="13" rx="3"/>
+  <rect class="il-o" x="608" y="214" width="14" height="13" rx="3"/><rect class="il-o" x="608" y="230" width="14" height="13" rx="3"/><rect class="il-o" x="608" y="246" width="14" height="13" rx="3"/><rect class="il-o" x="608" y="262" width="14" height="13" rx="3"/><rect class="il-o" x="608" y="278" width="14" height="13" rx="3"/><rect class="il-o" x="608" y="294" width="14" height="13" rx="3"/><rect class="il-o" x="608" y="310" width="14" height="13" rx="3"/><rect class="il-o" x="608" y="326" width="14" height="13" rx="3"/><rect class="il-o" x="608" y="342" width="14" height="13" rx="3"/>
+</g>
+<text class="il-num" x="265" y="232" font-size="30" text-anchor="middle">48,557</text>
+<use href="#tree" transform="translate(265 336) scale(1.7)"/>
+<path class="il-thin" d="M406 220H584M406 244H576M406 268H584M406 292H560M406 316H580M406 340H540"/>
+</g>
+<g transform="translate(596 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armR" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(-5 -1)"/><use href="#bl-bean" class="il-gap" transform="translate(28 72) rotate(100)"/><use href="#bl-bean" class="il-k" transform="translate(28 72) rotate(100)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+      <div class="three mt">
+        <figure class="shot"><img src="assets/pumped-storage/home.webp" width="1280" height="800" loading="lazy" alt="The home page: a monsoon photo of Matheran above Karjat and the site title with links to read the story or find a project."><figcaption>/ &middot; home</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/explainer.webp" width="1280" height="800" loading="lazy" alt="The animated explainer How a hill becomes a battery, with upper and lower reservoirs, a tunnel, turbines and four steps."><figcaption>How a hill becomes a battery</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/story.webp" width="1280" height="800" loading="lazy" alt="The story page, What pumped storage asks of the Sahyadri, with its ten chapter links."><figcaption>/story &middot; 10 chapters</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · Projects -------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 7: Projects">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">07</span><span>The pages &middot; 2 of 5</span></div>
+          <h2>Projects: <em>39 dots</em> on one ridge</h2>
+          <p class="lead">Every pumped storage project planned in Maharashtra, 60,615 MW in all, in one table and on one map.</p>
+          <ul class="plain">
+            <li><strong>The table</strong> is sorted by trees to be felled, then forest land, then capacity &mdash; never by megawatts first. Filter by status, or show Western Ghats projects only.</li>
+            <li><strong>The map</strong> (Leaflet on OpenStreetMap) places each project from its coordinates; dot size is MW, colour is the clearance stage.</li>
+            <li><strong>A page per project</strong>: MW, trees, forest hectares, villages, a progress bar from MoU to operation, its timeline, its documents and a WhatsApp button.</li>
+          </ul>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A map sheet showing a wavy coastline and a zigzag mountain ridge running down beside it, dotted with circles of different sizes, one of them rust-coloured. Blot stands to the right of the map, pressing a green-headed pin into it. Handwritten: thirty-nine dots, one ridge.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<text class="il-t" x="596" y="70">39 dots,</text>
+<text class="il-t" x="596" y="106">one <tspan class="il-ta">ridge</tspan></text>
+<g transform="rotate(-3 360 230)">
+  <rect class="il-o" x="160" y="70" width="400" height="310" rx="6"/>
+  <path class="il-w" d="M160 70H240C226 110 250 140 232 180C216 220 246 260 228 300C216 330 236 360 226 380H160Z"/>
+  <path class="il-l" d="M300 90L318 120L306 150L326 180L310 210L332 240L314 270L336 300L318 330L338 360"/>
+  <circle class="il-as" cx="296" cy="112" r="9"/><circle class="il-as" cx="330" cy="140" r="12"/><circle class="il-as" cx="300" cy="168" r="7"/>
+  <circle class="il-as" cx="338" cy="196" r="14"/><circle class="il-as" cx="300" cy="226" r="10"/><circle class="il-cut" cx="342" cy="252" r="10"/>
+  <circle class="il-as" cx="304" cy="286" r="8"/><circle class="il-as" cx="350" cy="314" r="11"/><circle class="il-as" cx="310" cy="346" r="9"/>
+  <circle class="il-w" cx="460" cy="140" r="8"/><circle class="il-as" cx="420" cy="200" r="7"/>
+</g>
+<path class="il-l" d="M584 312L548 304" style="stroke-width:3"/>
+<circle class="il-a" cx="590" cy="313" r="9"/>
+<g transform="translate(578 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armR" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(-6 0)"/><use href="#bl-bean" class="il-gap" transform="translate(28 72) rotate(72)"/><use href="#bl-bean" class="il-k" transform="translate(28 72) rotate(72)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+      <div class="three mt">
+        <figure class="shot"><img src="assets/pumped-storage/projects.webp" width="1280" height="800" loading="lazy" alt="The projects table sorted by trees, with a status filter and a Western Ghats only switch; Shirawta PSP is first with 64,729 trees."><figcaption>/projects &middot; sorted by trees</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/projects-map.webp" width="1280" height="800" loading="lazy" alt="The projects map: dots along the Western Ghats from Nashik to the Goa border, coloured by status."><figcaption>The map, dot size = MW</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/project-karjat.webp" width="1280" height="800" loading="lazy" alt="The Saidongar-1 PSP, Karjat page: 3,000 MW, 48,557 trees, 233 ha of forest land, 6 villages, and a clearance progress bar."><figcaption>/projects/saidongar-1-karjat</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · Timeline & News ------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 8: Timeline and news">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">08</span><span>The pages &middot; 3 of 5</span></div>
+          <h2>Timeline and news, <em>every morning</em></h2>
+          <p><strong>Timeline</strong>: 89 events &mdash; MoUs, study terms, clearances, felling orders, hearings and protests &mdash; newest first. It opens on the &ldquo;Forest &amp; people&rdquo; filter, and can be narrowed by year, category, project or verified-only.</p>
+          <p><strong>News</strong>: reports from a fixed list of 75 vetted outlets, newest first, with tag filters that put trees, ecosystem and consent first. A daily sync adds new items; anything not yet checked by a person carries a <mark>not yet reviewed</mark> badge. The same list is the <code>/news.xml</code> RSS feed.</p>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A washing line strung across the scene with five dated cards pegged to it, one ticked green and one marked with an amber dot. Under an amber morning sun marked 07:40, Blot stands reading a newspaper. Handwritten: every morning.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<text class="il-t" x="40" y="60">every <tspan class="il-ta">morning</tspan></text>
+<path class="il-l" d="M30 122Q300 160 570 122"/>
+<g><rect class="il-o" x="64" y="132" width="62" height="46" rx="3"/><path class="il-thin" d="M74 152H114M74 164H104"/><path class="il-l" d="M95 124V138"/></g>
+<g><rect class="il-o" x="164" y="142" width="62" height="46" rx="3"/><path class="il-thin" d="M174 162H214M174 174H204"/><path class="il-al" d="M200 152L206 158L216 146" style="stroke-width:3.4"/><path class="il-l" d="M195 134V148"/></g>
+<g><rect class="il-o" x="264" y="146" width="62" height="46" rx="3"/><path class="il-thin" d="M274 166H314M274 178H304"/><path class="il-l" d="M295 138V152"/></g>
+<g><rect class="il-o" x="364" y="144" width="62" height="46" rx="3"/><path class="il-thin" d="M374 164H414M374 176H404"/><path class="il-l" d="M395 136V150"/></g>
+<g><rect class="il-o" x="464" y="136" width="62" height="46" rx="3"/><circle class="il-sun" cx="514" cy="148" r="6"/><path class="il-thin" d="M474 160H514M474 172H504"/><path class="il-l" d="M495 128V142"/></g>
+<circle class="il-sun" cx="700" cy="90" r="28"/>
+<path class="il-l" d="M700 44V52M746 90H738M733 57L727 63M667 57L673 63M654 90H662"/>
+<text class="il-m" x="700" y="148" text-anchor="middle" font-weight="600">07:40</text>
+<g transform="translate(560 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(0 -8)"/><rect class="il-o" x="26" y="70" width="68" height="44" rx="1.5" style="stroke-width:1.4"/><path class="il-kl" d="M60 70V114" style="opacity:.5"/><path class="il-kl" d="M32 80H54M32 88H52M32 96H54M66 80H88M66 88H84M66 96H88" style="opacity:.55"/><use href="#bl-bean" class="il-gap" transform="translate(28 72) rotate(-12)"/><use href="#bl-bean" class="il-k" transform="translate(28 72) rotate(-12)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(12)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(12)"/></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+      <div class="two mt">
+        <figure class="shot"><img src="assets/pumped-storage/timeline.webp" width="1280" height="800" loading="lazy" alt="The timeline page with its filters and the newest events."><figcaption>/timeline &middot; 89 events</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/news.webp" width="1280" height="800" loading="lazy" alt="The news page with tag filters and report cards."><figcaption>/news &middot; and /news.xml</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 · Shortcuts & Voices ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 9: Shortcuts and voices">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">09</span><span>The pages &middot; 4 of 5</span></div>
+          <h2>Shortcuts, and the <em>voices</em> they skip</h2>
+          <p><strong>Shortcuts</strong>: 13 cards, each naming a safeguard in environmental or forest law, what happened instead, and the documents that show it. Example: the land law requires a resettlement plan, but Karjat&rsquo;s draft EIA calls it &ldquo;not applicable&rdquo; by citing a 1,000 ha threshold &mdash; for a project that needs 377 ha. Filter by project; 7 are shown in official documents.</p>
+          <p><strong>Voices</strong>: 14 records from the affected villages &mdash; gram sabha resolutions, public hearings and objections &mdash; attributed by name, with an evidence label on each.</p>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="A long wooden fence with a signpost reading review over its gate. Further along, two posts are missing and the rails end in jagged breaks; a dotted trail of footprints walks straight through the gap. Blot stands at the right with a magnifying glass, looking back at the gap. Handwritten: the way around.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<text class="il-t" x="40" y="70">the way</text>
+<text class="il-t" x="40" y="106"><tspan class="il-ta">around</tspan></text>
+<path class="il-l" d="M120 322H344L352 316L346 326M408 322L400 316L406 328H528M120 358H344L350 352L344 364M408 358L402 352L406 364H528"/>
+<g>
+  <rect class="il-o" x="116" y="302" width="10" height="90"/><rect class="il-o" x="156" y="302" width="10" height="90"/><rect class="il-o" x="236" y="302" width="10" height="90"/><rect class="il-o" x="276" y="302" width="10" height="90"/><rect class="il-o" x="316" y="302" width="10" height="90"/>
+  <rect class="il-o" x="416" y="302" width="10" height="90"/><rect class="il-o" x="456" y="302" width="10" height="90"/><rect class="il-o" x="496" y="302" width="10" height="90"/>
+</g>
+<path class="il-l" d="M200 302V230" style="stroke-width:4"/>
+<rect class="il-o" x="148" y="210" width="104" height="38" rx="4"/>
+<text class="il-s" x="200" y="236" text-anchor="middle" font-weight="700">review &rarr;</text>
+<path class="il-dots" d="M50 380Q200 396 330 384Q376 380 420 386Q480 394 560 384" style="stroke:var(--i-cut)"/>
+<g transform="translate(560 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armR" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(-6 -2)"/><use href="#bl-bean" class="il-gap" transform="translate(28 72) rotate(80)"/><use href="#bl-bean" class="il-k" transform="translate(28 72) rotate(80)"/></g>
+<path class="il-l" d="M562 304L552 300" style="stroke-width:5"/>
+<circle class="il-o" cx="538" cy="296" r="16" style="fill-opacity:.4"/>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+      <div class="two mt">
+        <figure class="shot"><img src="assets/pumped-storage/shortcuts.webp" width="1280" height="800" loading="lazy" alt="The shortcuts page: 13 shortcuts, 7 shown in official documents, 6 projects involved; the first card sets the safeguard beside what happened."><figcaption>/shortcuts &middot; the safeguard vs what happened</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/voices.webp" width="1280" height="800" loading="lazy" alt="The voices page with consent and community records."><figcaption>/voices &middot; 14 records</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · Methodology, Glossary, About ------------------------------------ -->
+  <section class="slide" aria-label="Slide 10: Methodology, glossary and about">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">10</span><span>The pages &middot; 5 of 5</span></div>
+          <h2>How the numbers <em>are worked out</em></h2>
+          <p><strong>Methodology</strong>: 11 inputs and every formula behind the model &mdash; forest per GWh stored, round-trip loss (100 units in, about 77.5 out), emissions on today&rsquo;s grid, and battery vs pumped storage tariffs from recent tenders. It is labelled a model, not a measurement, and every input names its source.</p>
+          <p><strong>Glossary</strong>: 44 terms in plain words &mdash; ToR, EC, FC, ESA, gram sabha &mdash; grouped by category, each with its own link.</p>
+          <p><strong>About</strong>: the source policy, the full outlet list, corrections, the right of reply to developers, and the data downloads.</p>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blot stands at a chalkboard holding up a piece of chalk. The board reads: forest divided by GWh, 100 in, 77.5 out, and every input listed. Beside him is a stack of three books, the top one open and marked A to Z.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<rect class="il-o" x="50" y="70" width="360" height="230" rx="6" style="stroke-width:3.5"/>
+<path class="il-l" d="M110 300L96 392M350 300L364 392"/>
+<text class="il-t" x="80" y="126">forest &divide; GWh</text>
+<text class="il-t" x="80" y="176">100 in &rarr; <tspan class="il-ta">77.5</tspan> out</text>
+<text class="il-s" x="80" y="226">every input listed</text>
+<path class="il-thin" d="M80 250H330"/>
+<circle class="il-o" cx="370" cy="110" r="14"/><text class="il-num" x="370" y="118" font-size="19" text-anchor="middle">i</text>
+<rect class="il-o" x="620" y="350" width="140" height="42" rx="4"/>
+<rect class="il-as" x="630" y="312" width="124" height="38" rx="4"/>
+<rect class="il-o" x="616" y="276" width="134" height="36" rx="4"/>
+<path class="il-o" d="M610 276Q648 256 683 270Q718 256 756 276L752 282Q718 264 683 278Q648 264 614 282Z"/>
+<text class="il-s" x="683" y="304" text-anchor="middle">A&ndash;Z</text>
+<g transform="translate(410 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armR" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(-5 -5)"/><use href="#bl-bean" class="il-gap" transform="translate(28 72) rotate(125)"/><use href="#bl-bean" class="il-k" transform="translate(28 72) rotate(125)"/></g>
+<rect class="il-o" x="406" y="248" width="8" height="18" rx="2" transform="rotate(-35 410 257)"/>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+      <div class="three mt">
+        <figure class="shot"><img src="assets/pumped-storage/methodology.webp" width="1280" height="800" loading="lazy" alt="The methodology page with the model's inputs and formulas."><figcaption>/methodology &middot; 11 inputs</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/glossary.webp" width="1280" height="800" loading="lazy" alt="The glossary page with grouped terms."><figcaption>/glossary &middot; 44 terms</figcaption></figure>
+        <figure class="shot"><img src="assets/pumped-storage/about.webp" width="1280" height="800" loading="lazy" alt="The about page's download section listing projects.json, timeline.json, news.json, citations.json, glossary.json, model-params.json, citations.csv, stats.json and the RSS feed."><figcaption>/about &middot; download the data</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · How references are recorded ------------------------------------- -->
+  <section class="slide" aria-label="Slide 11: How every reference is recorded">
+    <div class="inner">
+      <div class="split wide-left">
+        <div>
+          <div class="eyebrow"><span class="num">11</span><span>How it was made &middot; the sources</span></div>
+          <h2>One row for <em>every number</em></h2>
+          <p class="lead">No number is typed into the copy. Each one is a token that reads a row in <code>data/citations.json</code>, and the build fails if a token doesn&rsquo;t resolve.</p>
+          <ul class="plain">
+            <li><strong>466 citation rows</strong>: 448 quoted word for word, 13 derived from other rows, and 5 still flagged (2 unlocated, 3 unreachable).</li>
+            <li>Each row keeps the document, its <strong>PDF page</strong>, the exact sentence and an evidence label. The ⓘ bubble shows it and links to <code>url#page=N</code>.</li>
+            <li>Sources are official documents first &mdash; all 42 forest committee minutes on Parivesh, expert committee minutes, MPCB EIA summaries, clearances &mdash; then 75 vetted outlets, 50 of them allowed for the daily sync.</li>
+            <li>Checking every number against its page <strong>corrected 6 figures</strong>, including Karjat&rsquo;s tree count.</li>
+          </ul>
+        </div>
+<pre><span class="k">"id"</span>: <span class="s">"project:saidongar-1-karjat:trees"</span>,
+<span class="k">"value"</span>: 48557,  <span class="k">"unit"</span>: <span class="s">"trees"</span>,
+<span class="k">"evidence"</span>: <span class="s">"documented"</span>,
+<span class="k">"status"</span>: <span class="s">"quoted"</span>,
+<span class="k">"docTitle"</span>: <span class="s">"FAC minutes, 2 Dec 2025"</span>,
+<span class="k">"outletId"</span>: <span class="s">"moefcc-parivesh"</span>,
+<span class="k">"page"</span>: 177,
+<span class="k">"quote"</span>: <span class="s">"Also, the proposal involves
+  felling of <mark>48557</mark> number of trees."</span></pre>
+      </div>
+      <figure class="illo mt" style="max-width:920px;margin-inline:auto">
+        <svg viewBox="0 0 800 300" role="img" aria-label="An explainer in four stages joined by green arrows. First, Blot holds a highlighter to a PDF page marked page 177, with one line highlighted in amber. Second, a quote card with the words felling of 48557 trees and a documented tag. Third, a table with one green row, labelled citations.json. Fourth, the number 48,557 on the site with an i bubble beside it.">
+<rect class="il-bg" width="800" height="300"/>
+<g transform="translate(10 99) scale(1.15)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(5 -4)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(-115)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(-115)"/></g>
+<rect class="il-o" x="150" y="40" width="130" height="200" rx="4"/>
+<path class="il-thin" d="M166 70H264M166 92H254M166 114H264M166 136H240M166 180H260M166 202H244"/>
+<rect class="il-hl" x="162" y="150" width="108" height="16" rx="3"/>
+<path class="il-l" d="M168 158H262"/>
+<text class="il-m" x="215" y="232" text-anchor="middle">p. 177</text>
+<line class="il-thin" x1="24" y1="250" x2="140" y2="250"/>
+<rect class="il-a" x="146" y="140" width="9" height="34" rx="2" transform="rotate(50 150 157)"/>
+<text class="il-s" x="215" y="272" text-anchor="middle">the PDF</text>
+<path class="il-al" d="M292 140H340" marker-end="url(#il-arrow)"/>
+<rect class="il-o" x="352" y="94" width="140" height="94" rx="8"/>
+<text class="il-s" x="366" y="126">&ldquo;felling of</text>
+<text class="il-s" x="366" y="150"><tspan class="il-ta">48557</tspan> trees&rdquo;</text>
+<rect x="366" y="160" width="90" height="18" rx="4" fill="none" style="stroke:var(--i-sec);stroke-width:1.6"/>
+<text class="il-m" x="411" y="173" font-size="10.5" text-anchor="middle" style="fill:var(--i-sec)">documented</text>
+<text class="il-s" x="422" y="272" text-anchor="middle">quoted words</text>
+<path class="il-al" d="M504 140H546" marker-end="url(#il-arrow)"/>
+<rect class="il-o" x="558" y="70" width="110" height="140" rx="4"/>
+<path class="il-thin" d="M558 98H668M558 126H668M558 182H668M600 70V210"/>
+<rect class="il-as" x="559" y="127" width="108" height="27" style="stroke:none"/>
+<path class="il-thin" d="M558 154H668"/>
+<text class="il-s" x="613" y="272" text-anchor="middle">one row</text>
+<text class="il-m" x="613" y="60" text-anchor="middle" font-size="12">citations.json</text>
+<path class="il-al" d="M676 140H694" marker-end="url(#il-arrow)"/>
+<text class="il-num" x="764" y="150" font-size="24" text-anchor="end">48,557</text>
+<circle class="il-o" cx="779" cy="128" r="8" style="stroke-width:1.8"/><text class="il-num" x="779" y="133" font-size="12" text-anchor="middle">i</text>
+<text class="il-s" x="736" y="272" text-anchor="middle">on the site</text>
+<rect class="il-grain" width="800" height="300" filter="url(#il-grain)"/>
+        </svg>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 12 · How it was built ------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 12: How it was built">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <div class="eyebrow"><span class="num">12</span><span>How it was made &middot; the build</span></div>
+          <h2>Git is the database; <em>a build</em> is the check</h2>
+          <ol class="steps">
+            <li><strong>Storage</strong> &mdash; one JSON file per entity in <code>data/</code>: projects, timeline, news, shortcuts, consent, ecology, outlets, glossary, facts, citations. Every change is a commit.</li>
+            <li><strong>Data layer</strong> &mdash; zod schemas are the one definition of every shape; loaders, cross-file integrity checks, selectors, the energy model and the <code>{ en, mr }</code> text helpers sit on top.</li>
+            <li><strong>Pages</strong> &mdash; Astro renders each page once per language into one static URL. A schema error fails the build, so bad data never ships.</li>
+            <li><strong>Daily sync</strong> &mdash; a Claude scheduled task runs the <code>sync-ghats-data</code> skill at 07:40 IST: search whitelisted outlets, dedupe, add as unreviewed, validate, commit.</li>
+            <li><strong>Hosting</strong> &mdash; Cloudflare Pages rebuilds on every push.</li>
+          </ol>
+          <div class="chips">
+            <span><b>2 days</b> &middot; 27&ndash;28 Oct 2026</span><span><b>38</b> commits</span><span><b>51</b> pages &times; 2 languages</span><span><b>43</b> tests (vitest)</span><span>Built with Claude Code</span>
+          </div>
+        </div>
+        <figure class="illo">
+          <svg viewBox="0 0 800 450" role="img" aria-label="Blot drops a JSON file onto a conveyor belt. Files ride the belt through an arch with a green tick, then into a box labelled astro, and a dotted arrow rises from the box to a cloud labelled pages.dev. An amber sun marked 07:40 hangs above. Handwritten: commit, check, ship.">
+<rect class="il-bg" width="800" height="450"/>
+<line class="il-thin" x1="24" y1="392" x2="776" y2="392"/>
+<text class="il-t" x="40" y="70">commit, check,</text>
+<text class="il-t" x="40" y="106"><tspan class="il-ta">ship</tspan></text>
+<circle class="il-sun" cx="360" cy="80" r="22"/>
+<text class="il-m" x="360" y="130" text-anchor="middle" font-weight="600">07:40</text>
+<rect class="il-o" x="190" y="330" width="380" height="22" rx="11"/>
+<circle class="il-o" cx="210" cy="341" r="7"/><circle class="il-o" cx="550" cy="341" r="7"/>
+<path class="il-l" d="M230 352L224 392M530 352L536 392"/>
+<g><path class="il-o" d="M236 290H262L272 300V330H236Z"/><text class="il-m" x="254" y="320" text-anchor="middle" font-size="12">{ }</text></g>
+<g><path class="il-o" d="M290 290H316L326 300V330H290Z"/><text class="il-m" x="308" y="320" text-anchor="middle" font-size="12">{ }</text></g>
+<path class="il-o" d="M344 330V262Q376 236 408 262V330H396V268Q376 252 356 268V330Z"/>
+<path class="il-al" d="M364 248L372 256L388 240" style="stroke-width:3.4"/>
+<rect class="il-o" x="440" y="236" width="110" height="94" rx="6"/>
+<text class="il-s" x="495" y="290" text-anchor="middle" font-weight="700">astro</text>
+<path class="il-thin" d="M454 304H536"/>
+<path class="il-dots" d="M520 232Q560 170 630 160"/>
+<path class="il-o" d="M620 166C600 166 596 140 616 136C614 112 646 104 660 118C672 96 712 102 714 128C740 128 744 166 718 166Z"/>
+<text class="il-s" x="668" y="156" text-anchor="middle" font-size="16">pages.dev</text>
+<g transform="translate(-6 182) scale(1.6)"><use href="#bl-plate"/><use href="#bl-armL" class="il-k"/><use href="#bl-legL" class="il-k"/><use href="#bl-legR" class="il-k"/><use href="#bl-seam"/><use href="#bl-trunk"/><use href="#bl-eyes" transform="translate(5 -3)"/><use href="#bl-bean" class="il-gap" transform="translate(92 72) rotate(-118)"/><use href="#bl-bean" class="il-k" transform="translate(92 72) rotate(-118)"/></g>
+<g transform="rotate(14 196 276)"><path class="il-o" d="M182 256H204L212 264V292H182Z"/><text class="il-m" x="197" y="282" text-anchor="middle" font-size="11">{ }</text></g>
+<rect class="il-grain" width="800" height="450" filter="url(#il-grain)"/>
+          </svg>
+        </figure>
+      </div>
+      <div class="flag"><p>Read it, check a number, and share a page: <a href="https://are-psp-useful.pages.dev"><strong>are-psp-useful.pages.dev</strong></a>. Code is MIT; data and text are CC BY 4.0.</p></div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <div class="ticks" id="ticks"></div>
+  <span class="counter" id="counter">01 / 12</span>
+</nav>
+
+<script>
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var counter = document.getElementById('counter');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var current = 0;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  slides.forEach(function (slide, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', slide.getAttribute('aria-label'));
+    b.addEventListener('click', function () { go(i); });
+    ticks.appendChild(b);
+  });
+  var tickButtons = Array.prototype.slice.call(ticks.children);
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    tickButtons.forEach(function (b, i) {
+      b.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+    paint();
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+  });
+
+  // A resize changes what offsetLeft means; stay on the slide the reader was on.
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' });
+    }, 120);
+  });
+
+  paint();
+})();
+
+// --- Theme toggle ---------------------------------------------------------
+// Three states, not two: with no data-theme the deck follows the OS setting,
+// and a two-way switch would throw that away.
+(function () {
+  var KEY = 'deck-theme';
+  var MODES = ['auto', 'light', 'dark'];
+  var META = {
+    auto:  { ico: '◑', lab: 'Auto',  say: 'follow system' },
+    light: { ico: '☀', lab: 'Light', say: 'light' },
+    dark:  { ico: '☾', lab: 'Dark',  say: 'dark' }
+  };
+
+  var btn = document.getElementById('theme');
+  var ico = document.getElementById('theme-ico');
+  var lab = document.getElementById('theme-lab');
+
+  function stored() {
+    try { return localStorage.getItem(KEY); } catch (e) { return null; }
+  }
+
+  var mode = MODES.indexOf(stored()) > -1 ? stored() : 'auto';
+
+  function apply(next, persist) {
+    mode = next;
+    if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', mode);
+
+    ico.textContent = META[mode].ico;
+    lab.textContent = META[mode].lab;
+    btn.setAttribute('aria-label', 'Theme: ' + META[mode].say + '. Activate to change.');
+
+    if (persist) {
+      // Storage can throw in a private window; the toggle must still work.
+      try {
+        if (mode === 'auto') localStorage.removeItem(KEY);
+        else localStorage.setItem(KEY, mode);
+      } catch (e) { /* ignored */ }
+    }
+  }
+
+  btn.addEventListener('click', function () {
+    apply(MODES[(MODES.indexOf(mode) + 1) % MODES.length], true);
+  });
+
+  apply(mode, false);
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="commons"></script>
+</body>
+</html>
