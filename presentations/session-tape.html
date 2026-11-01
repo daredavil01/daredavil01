@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Session Tape — the making of Sanket, Out Loud</title>
-<meta name="description" content="Thirty illustrated, interactive slides on how Claude Code built Sanket, Out Loud — version two of sankettambare.in — from four prompts in one afternoon, replayed from the session's own record.">
+<meta name="description" content="Thirty-four illustrated, interactive slides on how Claude Code built Sanket, Out Loud — version two of sankettambare.in — from four prompts in one afternoon, replayed from the session's own record.">
 <meta name="theme-color" content="#E7E4DD" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121210" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -659,6 +659,24 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
 .odo .lbl { font-size: 13px; color: var(--muted); line-height: 1.35; }
 @media (max-width: 900px) { .odo { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
+/* --------------------------------------------------------------- side C -- */
+.crawl { padding: 0; overflow: hidden; background: var(--lcd); border-color: var(--lcd); }
+.crawl-h { display: flex; justify-content: space-between; gap: 10px; padding: 9px 14px; font: 500 11px var(--mono); color: var(--lcd-ink); border-bottom: 1px solid #2a2824; }
+.crawl pre { margin: 0; padding: 14px; font: 400 12px/1.55 var(--mono); color: #d8d2c4; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 38vh; overflow: auto; }
+.crawl pre b { color: var(--lcd-ink); font-weight: 500; } .crawl pre i { color: #8a8478; font-style: normal; }
+.crawl-files { display: flex; flex-wrap: wrap; gap: 6px; }
+.crawl-files span { font: 500 11.5px var(--mono); padding: 5px 9px; border-radius: 8px; border: 1px solid var(--rule2); }
+.crawl-files .y { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 45%, transparent); background: var(--ok-soft); }
+.crawl-files .n { color: var(--rec); border-color: color-mix(in srgb, var(--rec) 45%, transparent); background: var(--rec-soft); text-decoration: line-through; }
+.gitg { width: 100%; height: auto; overflow: visible; }
+.rings { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.ring { display: grid; justify-items: center; gap: 6px; padding: 14px 8px; border-radius: 16px; background: var(--panel2); border: 1px solid var(--rule); }
+.ring svg { width: 100%; max-width: 120px; }
+.ring .arcv { transition: stroke-dashoffset 1.6s var(--ease); }
+.ring b { font: 300 30px/1 var(--serif); } .ring span { font: 500 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-align: center; } .ring small { font: 400 11px var(--mono); color: var(--muted); }
+.spk-out { font: 400 clamp(18px, 1.6vw, 22px)/1.4 var(--serif); padding: 12px 14px; border-radius: 12px; background: var(--rec-soft); min-height: 56px; }
+@media (max-width: 700px) { .rings { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
 /* --------------------------------------------------------------- finish -- */
 .finish { text-align: center; justify-items: center; }
 .finish blockquote { margin: 0; font: 300 clamp(40px, 6vw, 96px)/1.02 var(--serif); letter-spacing: -.02em; max-width: 16ch; }
@@ -692,7 +710,7 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
     <div class="cv-text">
       <p class="kick rv" style="--i:0">Session tape · the making of v2 · Sunday 1 November 2026</p>
       <h1 class="hd xl rv" style="--i:1">Four prompts in. <em>A website you can talk to,</em> out.</h1>
-      <p class="lede rv" style="--i:2">How Claude Code built <a href="https://v2.sankettambare.in/"><b>Sanket, Out Loud</b></a> — version two of sankettambare.in, for Wispr Flow's hiring challenge — in one afternoon. Every prompt, decision and bug in these thirty tracks is replayed from the session's own record.</p>
+      <p class="lede rv" style="--i:2">How Claude Code built <a href="https://v2.sankettambare.in/"><b>Sanket, Out Loud</b></a> — version two of sankettambare.in, for Wispr Flow's hiring challenge — in one afternoon. Every prompt, decision and bug in these thirty-four tracks is replayed from the session's own record.</p>
       <div class="cv-keys rv" style="--i:3">
         <button class="key ink" type="button" data-go="next">Start the tape <span aria-hidden="true">→</span></button>
         <button class="key" type="button" data-act="tape"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg>Play it out loud</button>
@@ -1367,9 +1385,126 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
   </div>
 </section>
 
+<!-- ============================================================ SIDE C -->
+<!-- C1 open web -->
+<section class="slide" id="open-web" data-log="16:44:12 COMMIT|c9657c1 · SEO: prerender the story, generate head tags and crawler files from the archive" data-t="8169" data-clock="16:23:48" data-side="C" data-title="A page crawlers could read" data-say="Side C. A second session, the same evening, took the site to the open web. The first problem: a crawler that doesn't run JavaScript saw an empty page.">
+  <div class="wrap grid2 wide-r">
+    <div class="stack">
+      <p class="kick rv" style="--i:0">Side C · to the open web · a second session, 16:23 → 19:23</p>
+      <h2 class="hd md rv" style="--i:1">A story <em>nobody's crawler could read.</em></h2>
+      <p class="lede rv" style="--i:2">The session titled “SEO audit and Cloudflare deployment” found the site was a client-rendered app: link previews and crawlers that don't run JavaScript got an empty <code>#root</code>, a relative share image, no canonical, no sitemap — and every unknown path answered 200 with the home page.</p>
+      <p class="lede rv" style="--i:3">The fix: <b>prerender all eleven chapters at build time</b> and hydrate them in the browser, with the head tags, JSON-LD and crawler files generated from the same archive. Largest paint under a 4× slower CPU: <b>~1.5 s → ~0.35 s</b>.</p>
+    </div>
+    <div class="stack rv" style="--i:3" data-noswipe>
+      <div class="seg2" role="group" aria-label="Which build"><button type="button" aria-pressed="false" data-crawl="before">v1.0 · before</button><button type="button" aria-pressed="true" data-crawl="after">v1.1 · after</button></div>
+      <div class="crawl card"><div class="crawl-h"><span>curl https://v2.sankettambare.in/</span><span id="crawlStat"></span></div><pre id="crawlPre"></pre></div>
+      <div class="crawl-files" id="crawlFiles"></div>
+    </div>
+  </div>
+</section>
+
+<!-- C2 the merge -->
+<section class="slide" id="merge" data-log="19:23:08 COMMIT|725013c · Fix the build after the live-data merge; accessibility 100; faster hydration" data-t="8169" data-clock="19:13:14" data-side="C" data-title="The merge that built neither" data-say="Prerendering and live data arrived on main together, and the merge built neither. One prompt asked for it to work end to end, and the two became one pipeline.">
+  <div class="wrap grid2">
+    <div class="stack">
+      <p class="kick rv" style="--i:0">19:13:14 → 19:23:08 · v2.1.0</p>
+      <h2 class="hd md rv" style="--i:1">The merge that <em>built neither.</em></h2>
+      <p class="lede rv" style="--i:2">Live data (v2.0.0) and prerendering (v1.1.0) reached <code>main</code> together. The build read a file that had moved, the app mixed both setups, and a test failed. Then came the session's last prompt:</p>
+      <div class="mini-prompt rv" style="--i:3"><span class="tc">19:13:14</span><q>Add remaining changes, pull latest changes from main. Add next commit to main directly, make sure changes are working end to end</q></div>
+      <div class="pipe rv" style="--i:4"><span>build-archive.mjs fetches the live archive once</span><i>→</i><span>head tags + prerendered HTML + prerender.json</span><i>→</i><span>the browser hydrates from the same data</span><i>→</i><span>the live fetch takes over</span></div>
+    </div>
+    <figure class="rv" style="--i:3">
+      <svg class="gitg" viewBox="0 0 520 300" role="img" aria-label="Two branches, live data and prerendering, merging into a broken build, then fixed in one pipeline.">
+        <g fill="none" stroke-width="3" stroke-linecap="round">
+          <path d="M40 150H130" stroke="var(--ink2)"/>
+          <path d="M130 150C170 150 170 70 210 70H300" stroke="var(--ok)"/>
+          <path d="M130 150C170 150 170 230 210 230H300" stroke="var(--voice)"/>
+          <path d="M300 70C340 70 340 150 380 150" stroke="var(--ok)"/>
+          <path d="M300 230C340 230 340 150 380 150" stroke="var(--voice)"/>
+          <path d="M380 150H480" stroke="var(--rec)"/>
+        </g>
+        <g font-family="Geist Mono, monospace" font-size="11" fill="var(--ink2)">
+          <circle cx="40" cy="150" r="8" fill="var(--panel2)" stroke="var(--ink2)" stroke-width="2"/><text x="20" y="178">a57cae4</text>
+          <circle cx="250" cy="70" r="8" fill="var(--panel2)" stroke="var(--ok)" stroke-width="2"/><text x="206" y="52" fill="var(--ok)">v2.0.0 live data</text>
+          <circle cx="250" cy="230" r="8" fill="var(--panel2)" stroke="var(--voice)" stroke-width="2"/><text x="200" y="258" fill="var(--voice)">v1.1.0 prerender</text>
+          <circle cx="380" cy="150" r="11" fill="var(--rec-soft)" stroke="var(--rec)" stroke-width="2"/><path d="M374 144l12 12M386 144l-12 12" stroke="var(--rec)" stroke-width="2"/><text x="340" y="126" fill="var(--rec)">merge · build ✗</text>
+          <circle cx="480" cy="150" r="11" fill="var(--ok)" stroke="var(--ok)" stroke-width="2"/><path d="M474 150l4 4 8-8" stroke="#fff" stroke-width="2" fill="none"/><text x="430" y="182" fill="var(--ok)">725013c ✓</text>
+        </g>
+      </svg>
+      <figcaption>Branch, merge, break, fix: four hours of the evening in one picture.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- C3 scores -->
+<section class="slide" id="scores" data-log="19:23:26 CLAUDE|Perf and a11y fixes complete: 24/24 tests pass, build succeeds, Lighthouse a11y/SEO/best-practices 100." data-t="8169" data-clock="19:23:08" data-side="C" data-title="87 to 100" data-say="Then the audit's leftovers. Accessibility went from eighty-seven to a hundred, and the longest main-thread task under a slower CPU went from six hundred and sixty-four milliseconds to one hundred and seventy-two.">
+  <div class="wrap">
+    <div class="grid2" style="align-items:end">
+      <div class="stack">
+        <p class="kick rv" style="--i:0">Lighthouse, measured in the session · 16:36 → 19:23</p>
+        <h2 class="hd md rv" style="--i:1">Accessibility <em>87 → 100.</em> Longest task <em>664 → 172 ms.</em></h2>
+      </div>
+      <p class="lede rv" style="--i:2">The first audit at 16:36 read: performance 48, accessibility 87, best practices 100, SEO 100. By 19:23 the session reported accessibility, SEO and best practices at 100, with 24 of 24 tests passing.</p>
+    </div>
+    <div class="grid2" style="align-items:start">
+      <div class="rings rv" style="--i:3" id="rings"></div>
+      <div class="stack rv" style="--i:4">
+        <div class="kb">
+          <div class="row"><span>longest task, before</span><span class="b" style="width:100%;background:var(--read)"></span><span>664 ms</span></div>
+          <div class="row"><span>longest task, after</span><span class="b n" style="width:25.9%"></span><span>172 ms</span></div>
+          <p class="note">Main-thread work at 4× CPU throttle. Largest contentful paint ≈ 0.3 s.</p>
+        </div>
+        <ul class="fixes">
+          <li><span class="tc">a11y</span><span>Invalid list and tab roles on the trek strip, bookshelf and then/now dots became labelled groups.</span></li>
+          <li><span class="tc">a11y</span><span>“Play the story” got a name when its label hides on phones; the skip link shows on focus.</span></li>
+          <li><span class="tc">a11y</span><span>Contrast: muted text darkened, and a deeper saffron for small text.</span></li>
+          <li><span class="tc">perf</span><span>Hydration and live updates run as transitions; an unchanged archive skips the re-render.</span></li>
+          <li><span class="tc">perf</span><span>Scroll position moved to its own context, so scrolling redraws the rail — not every chart.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- C4 live -->
+<section class="slide" id="live" data-log="19:53:28 COMMIT|ac384b5 · Fix the hero film button; steadier voice input and output" data-t="8169" data-clock="19:53:28" data-side="C" data-title="Live at v2.sankettambare.in" data-say="Then the site went live at v2 dot sankettambare dot in, and the voice got steadier: fewer gaps, better voices, and shorthand a voice can actually read.">
+  <div class="wrap">
+    <div class="grid2" style="align-items:end">
+      <div class="stack">
+        <p class="kick rv" style="--i:0">a624625 · ac384b5 · 19:50 → 19:53</p>
+        <h2 class="hd md rv" style="--i:1">Live at <a href="https://v2.sankettambare.in/"><em>v2.sankettambare.in.</em></a></h2>
+      </div>
+      <p class="lede rv" style="--i:2">The canonical address, Open Graph URLs, sitemap and robots file now follow the custom domain, and every <code>*.pages.dev</code> copy is <code>noindex</code>. The last commit fixed a hero “Watch the film” button that threw, and made the voice steadier.</p>
+    </div>
+    <div class="grid2 wide-l" style="align-items:start">
+      <div class="stack rv" style="--i:3">
+        <div class="browser"><div class="bar"><i></i><i></i><i></i><span>v2.sankettambare.in</span></div><img src="assets/out-loud/live-hero.webp" alt="The live site at v2.sankettambare.in" width="1440" height="900" loading="lazy" data-zoom style="aspect-ratio:auto;height:min(32vh,320px)"></div>
+        <ul class="fixes">
+          <li><span class="tc">voice</span><span>Speaks in chunks of up to ~220 characters instead of one sentence at a time — fewer gaps, steadier intonation.</span></li>
+          <li><span class="tc">voice</span><span>Neural voices (Edge “Natural”, Apple Premium, Google) are ranked above the old desktop engines.</span></li>
+          <li><span class="tc">web</span><span>Unknown paths get a real 404 — “Off course. It happens.” — instead of the home page with a 200.</span></li>
+          <li><span class="tc">mic</span><span>A “network” error (Brave blocks the speech service) retries on-device before giving up; holding Alt keeps listening through pauses.</span></li>
+        </ul>
+      </div>
+      <div class="toy card rv" style="--i:4" data-noswipe>
+        <p class="kick">speakable() — what the voice is handed</p>
+        <div class="toy-in"><input id="spkIn" type="text" value="My PB — 3:41:07 (Hyderabad) · 10K" aria-label="Text to make speakable"></div>
+        <div class="chips" id="spkChips">
+          <button class="chip" type="button">My PB — 3:41:07 (Hyderabad) · 10K</button>
+          <button class="chip" type="button">Half-marathon best 1:59:57 · 5:59 /km</button>
+          <button class="chip" type="button">22 hours on foot (Panhala → Pawankhind)</button>
+        </div>
+        <div class="spk-out" id="spkOut" aria-live="polite"></div>
+        <button class="key sm" type="button" id="spkSay">▶ Say it</button>
+        <p class="note">The site's own function, unchanged: dashes, brackets and dots become pauses; times, “km”, “PB” and “10K” are read the way a person would.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============================================================ LINER NOTES -->
 <!-- 25 speech -->
-<section class="slide" id="speech" data-t="1962" data-side="C" data-title="Uneven speech" data-say="Liner notes. Browser speech is uneven, so the site was designed for the worst engine.">
+<section class="slide" id="speech" data-t="1962" data-side="N" data-title="Uneven speech" data-say="Liner notes. Browser speech is uneven, so the site was designed for the worst engine.">
   <div class="wrap grid2 wide-r">
     <div class="stack">
       <p class="kick rv" style="--i:0">Liner notes · learned at 14:15:39</p>
@@ -1384,7 +1519,7 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
 </section>
 
 <!-- 26 word boundaries -->
-<section class="slide" id="words" data-t="867" data-side="C" data-title="Word boundaries" data-say="Words have boundaries. RunFolio is not a run, twenty twenty-two contains twenty-two, and bet hides inside between.">
+<section class="slide" id="words" data-t="867" data-side="N" data-title="Word boundaries" data-say="Words have boundaries. RunFolio is not a run, twenty twenty-two contains twenty-two, and bet hides inside between.">
   <div class="wrap grid2 wide-r">
     <div class="stack">
       <p class="kick rv" style="--i:0">Liner notes · engine fixes at 13:57:25</p>
@@ -1405,7 +1540,7 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
 </section>
 
 <!-- 27 honesty -->
-<section class="slide" id="honest" data-t="4697" data-side="C" data-title="Honest by construction" data-say="Honest by construction: quotes are looked up by fragment, counts are never guessed, and the film's narrator speaks about Sanket, never as Sanket. Building it even found places where the archive disagrees with itself.">
+<section class="slide" id="honest" data-t="4697" data-side="N" data-title="Honest by construction" data-say="Honest by construction: quotes are looked up by fragment, counts are never guessed, and the film's narrator speaks about Sanket, never as Sanket. Building it even found places where the archive disagrees with itself.">
   <div class="wrap grid2">
     <div class="stack">
       <p class="kick rv" style="--i:0">Liner notes · learnings.md, 15:01:14</p>
@@ -1429,7 +1564,7 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
 </section>
 
 <!-- 28 who did what -->
-<section class="slide" id="who" data-t="8151" data-side="C" data-title="Who did what" data-say="Who did what. The human wrote two hundred and fifty-five words. Claude made two hundred and one tool calls. A few things are still the human's job.">
+<section class="slide" id="who" data-t="8151" data-side="N" data-title="Who did what" data-say="Who did what. The human wrote two hundred and fifty-five words. Claude made two hundred and one tool calls. A few things are still the human's job.">
   <div class="wrap">
     <p class="kick rv" style="--i:0">Liner notes · the credits</p>
     <h2 class="hd md rv" style="--i:1">255 words from a person. <em>201 tool calls from Claude.</em></h2>
@@ -1462,25 +1597,25 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
 </section>
 
 <!-- 29 numbers -->
-<section class="slide" id="numbers" data-t="8169" data-side="C" data-title="By the numbers" data-say="By the numbers: four prompts, seventy-one minutes of work, sixty-seven files, seventeen tests, and zero questions asked.">
+<section class="slide" id="numbers" data-t="8169" data-side="N" data-title="By the numbers" data-say="By the numbers: four prompts and seventy-one minutes of work on the first tape. Today the site has eighty-one files and twenty-seven passing tests, and zero questions were asked.">
   <div class="wrap">
-    <p class="kick rv" style="--i:0">Liner notes · the counter at the end of the tape</p>
+    <p class="kick rv" style="--i:0">Liner notes · the first tape, and the repo today</p>
     <h2 class="hd md rv" style="--i:1">By the numbers.</h2>
     <div class="odo rv" style="--i:2" id="odo">
       <div class="c hl" data-v="4"><div class="v"></div><div class="lbl">prompts, 255 words</div></div>
       <div class="c" data-v="71"><div class="v"></div><div class="lbl">minutes of Claude at work</div></div>
       <div class="c" data-v="201"><div class="v"></div><div class="lbl">tool calls</div></div>
       <div class="c" data-v="29"><div class="v"></div><div class="lbl">screenshots it looked at</div></div>
-      <div class="c" data-v="67"><div class="v"></div><div class="lbl">files in the repo</div></div>
-      <div class="c" data-v="6077"><div class="v"></div><div class="lbl">lines of JS, JSX and CSS</div></div>
-      <div class="c" data-v="17"><div class="v"></div><div class="lbl">tests, all passing</div></div>
+      <div class="c" data-v="81"><div class="v"></div><div class="lbl">files in the repo today</div></div>
+      <div class="c" data-v="6836"><div class="v"></div><div class="lbl">lines of JS, JSX and CSS today</div></div>
+      <div class="c" data-v="27"><div class="v"></div><div class="lbl">tests, all passing today</div></div>
       <div class="c hl" data-v="0"><div class="v"></div><div class="lbl">questions asked</div></div>
     </div>
   </div>
 </section>
 
 <!-- 30 finish -->
-<section class="slide" id="finish" data-t="8169" data-side="C" data-title="Finish line" data-say="In June, Sanket wrote: I just start and the words just appear. That is also the best description of what voice does to typing. End of tape.">
+<section class="slide" id="finish" data-t="8169" data-side="N" data-title="Finish line" data-say="In June, Sanket wrote: I just start and the words just appear. That is also the best description of what voice does to typing. End of tape.">
   <div class="wrap finish">
     <p class="kick rv" style="--i:0">42.195 km · end of tape</p>
     <blockquote class="rv" style="--i:1">“I just start and <em>the words just appear!</em>”</blockquote>
@@ -1516,12 +1651,12 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
 <div class="jwrap" id="jcard" hidden role="dialog" aria-modal="true" aria-label="Track list">
   <div class="jcard">
     <div class="jc-front">
-      <p>Session tape · C-71</p>
-      <svg viewBox="0 0 300 190" width="100%" aria-hidden="true"><rect x="6" y="6" width="288" height="178" rx="14" fill="none" stroke="currentColor" stroke-width="2"/><rect x="34" y="28" width="232" height="92" rx="8" fill="none" stroke="currentColor" stroke-opacity=".5"/><rect x="74" y="56" width="152" height="40" rx="20" fill="none" stroke="currentColor"/><circle cx="102" cy="76" r="14" fill="none" stroke="var(--lcd-ink)" stroke-width="2"/><circle cx="198" cy="76" r="14" fill="none" stroke="var(--lcd-ink)" stroke-width="2"/><path d="M60 184l18-40h144l18 40" fill="none" stroke="currentColor"/><circle cx="20" cy="20" r="3" fill="currentColor"/><circle cx="280" cy="20" r="3" fill="currentColor"/><text x="150" y="44" text-anchor="middle" fill="currentColor" font-family="Geist Mono, monospace" font-size="10" letter-spacing="3">SIDE A · SIDE B</text></svg>
+      <p>Session tape · C-90</p>
+      <svg viewBox="0 0 300 190" width="100%" aria-hidden="true"><rect x="6" y="6" width="288" height="178" rx="14" fill="none" stroke="currentColor" stroke-width="2"/><rect x="34" y="28" width="232" height="92" rx="8" fill="none" stroke="currentColor" stroke-opacity=".5"/><rect x="74" y="56" width="152" height="40" rx="20" fill="none" stroke="currentColor"/><circle cx="102" cy="76" r="14" fill="none" stroke="var(--lcd-ink)" stroke-width="2"/><circle cx="198" cy="76" r="14" fill="none" stroke="var(--lcd-ink)" stroke-width="2"/><path d="M60 184l18-40h144l18 40" fill="none" stroke="currentColor"/><circle cx="20" cy="20" r="3" fill="currentColor"/><circle cx="280" cy="20" r="3" fill="currentColor"/><text x="150" y="44" text-anchor="middle" fill="currentColor" font-family="Geist Mono, monospace" font-size="10" letter-spacing="3">SIDE A · B · C</text></svg>
       <h3>Sanket, <em>Out Loud</em></h3>
       <p>The making of v2 · Claude Code · 1 Nov 2026</p>
     </div>
-    <div class="jc-spine"><span>SESSION TAPE — SANKET, OUT LOUD — 13:42 → 15:59</span></div>
+    <div class="jc-spine"><span>SESSION TAPE — SANKET, OUT LOUD — 13:42 → 19:53</span></div>
     <div class="jc-list" id="jcList"></div>
     <button class="key sm jclose" type="button" id="jClose">Close ✕</button>
   </div>
@@ -1630,13 +1765,14 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
   // ------------------------------------------------------------- slides
   const slides = $$(".slide");
   const deck = $("#deck");
-  const SIDE = { A: "Side A", B: "Side B", C: "Liner notes" };
+  const SIDE = { A: "Side A", B: "Side B", C: "Side C", N: "Liner notes" };
+  const clockOf = (s) => s.dataset.clock || clock(+s.dataset.t);
   let cur = -1;
   const onEnter = {};
   const onLeave = {};
   slides.forEach((s, i) => {
     const k = $(".kick", s);
-    if (k && !/^\s*\d\d:\d\d/.test(k.textContent)) k.insertAdjacentHTML("afterbegin", `<span class="tc">${clock(+s.dataset.t)}</span>`);
+    if (k && !/^\s*\d\d:\d\d/.test(k.textContent)) k.insertAdjacentHTML("afterbegin", `<span class="tc">${clockOf(s)}</span>`);
     else if (k) k.innerHTML = k.innerHTML.replace(/^(\s*)(\d\d:\d\d(:\d\d)?)/, '$1<span class="tc">$2</span>');
     s.setAttribute("aria-label", `${i + 1} of ${slides.length}: ${s.dataset.title}`);
   });
@@ -1658,10 +1794,10 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
     $("#npName").textContent = s.dataset.title;
     $("#lcdSide").textContent = SIDE[s.dataset.side].toUpperCase();
     $("#lcdTrack").textContent = `${pad(i + 1)}/${slides.length}`;
-    windClock(from, t);
+    if (s.dataset.clock) { cancelAnimationFrame(windRaf); $("#lcdClock").textContent = s.dataset.clock; } else windClock(from, t);
     setPlayhead(t);
     setMeter(t);
-    setLog(t);
+    if (s.dataset.log) { const [h, m] = s.dataset.log.split("|"); $("#mtLog").innerHTML = `<b>${esc(h)}</b><i>${esc(m)}</i>`; } else setLog(t);
     $$(".notch", mt).forEach((n) => n.classList.toggle("on", +n.dataset.i === i));
     try { history.replaceState(null, "", `#${s.id}`); } catch (e) { /* file:// */ }
     const cass = $("#cass");
@@ -1731,7 +1867,7 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
     }
     slides.forEach((s, i) => {
       const x = X(+s.dataset.t);
-      const c = s.dataset.side === "C";
+      const c = s.dataset.side === "C" || s.dataset.side === "N";
       S("path", { d: `M${x - 3.5} 8.5h7l-3.5 4z`, class: `notch${c ? " c" : ""}${i === cur ? " on" : ""}`, "data-i": i }, mt);
     });
     const ph = S("g", { class: "ph", id: "ph" }, mt);
@@ -1778,7 +1914,7 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
     const r = mt.getBoundingClientRect();
     const t = tOf(ev.clientX - r.left - mtLeft, mtW);
     let best = 0;
-    slides.forEach((s, i) => { if (s.dataset.side !== "C" && +s.dataset.t <= t + 5) best = i; });
+    slides.forEach((s, i) => { if ((s.dataset.side === "A" || s.dataset.side === "B") && +s.dataset.t <= t + 5) best = i; });
     go(best);
   });
 
@@ -2605,6 +2741,60 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
   $$("#bndChips .chip").forEach((c) => c.addEventListener("click", () => { $("#bndIn").value = c.textContent; renderBnd(); }));
   renderBnd();
 
+  // ------------------------------------------------------------- side C: crawler view
+  const CRAWL = {
+    before: { stat: "≈ 40 words of text", files: [["canonical", 0], ["sitemap.xml", 0], ["robots sitemap", 0], ["llms.txt", 0], ["JSON-LD", 0], ["real 404", 0]],
+      pre: '<b>&lt;title&gt;</b>Sanket, Out Loud<b>&lt;/title&gt;</b>\n<b>&lt;meta property="og:image"</b> content="<i>/og.png</i>"&gt;   <i>← relative</i>\n…\n<b>&lt;body&gt;</b>\n  <b>&lt;div id="root"&gt;&lt;/div&gt;</b>   <i>← all a crawler gets</i>\n  <b>&lt;noscript&gt;</b> one paragraph <b>&lt;/noscript&gt;</b>\n\n<i>GET /anything → 200, the home page again</i>' },
+    after: { stat: "4,853 words of text", files: [["canonical", 1], ["sitemap.xml", 1], ["robots.txt", 1], ["llms.txt", 1], ["JSON-LD Person", 1], ["real 404", 1]],
+      pre: '<b>&lt;link rel="canonical"</b> href="https://v2.sankettambare.in/"&gt;\n<b>&lt;script type="application/ld+json"&gt;</b> ProfilePage → Person …\n<b>&lt;body&gt;</b>\n  <b>&lt;div id="root"&gt;</b>\n    <b>&lt;h1&gt;</b><i>Sanket Tambare:</i> Don\'t read about me. Ask me.<b>&lt;/h1&gt;</b>\n    … all eleven chapters, prerendered …\n\n<i>GET /robots.txt  200   GET /sitemap.xml  200</i>\n<i>GET /llms.txt    200   GET /nope         404</i>' },
+  };
+  function crawl(k) {
+    $$("[data-crawl]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.crawl === k ? "true" : "false"));
+    const c = CRAWL[k];
+    $("#crawlPre").innerHTML = c.pre;
+    $("#crawlStat").textContent = c.stat;
+    $("#crawlFiles").innerHTML = c.files.map(([n, y]) => `<span class="${y ? "y" : "n"}">${y ? "✓" : "✕"} ${n}</span>`).join("");
+  }
+  $$("[data-crawl]").forEach((b) => b.addEventListener("click", () => crawl(b.dataset.crawl)));
+  crawl("after");
+  onEnter["open-web"] = () => { crawl("before"); setTimeout(() => { if (slides[cur]?.id === "open-web") crawl("after"); }, 2600); };
+
+  // ------------------------------------------------------------- side C: score rings
+  const RINGS = [["Accessibility", 87, 100], ["SEO", 100, 100], ["Best practices", 100, 100], ["Performance", 48, null]];
+  $("#rings").innerHTML = RINGS.map(([n, a, b]) => `<div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg2)" stroke-width="10"/><circle class="arcv" cx="60" cy="60" r="50" fill="none" stroke="${b === 100 ? "var(--ok)" : "var(--read)"}" stroke-width="10" stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="314.16" stroke-dashoffset="314.16" data-a="${a}" data-b="${b ?? a}"/></svg><b>${b ?? a}</b><span>${n}</span><small>${b === null ? "first audit, 16:36" : a === b ? "from the start" : `${a} → ${b}`}</small></div>`).join("");
+  const setRings = (key) => $$("#rings .arcv").forEach((c) => c.setAttribute("stroke-dashoffset", (314.16 * (1 - +c.dataset[key] / 100)).toFixed(1)));
+  onEnter.scores = () => { setRings("a"); setTimeout(() => setRings("b"), reduce ? 0 : 900); };
+  onLeave.scores = () => $$("#rings .arcv").forEach((c) => c.setAttribute("stroke-dashoffset", "314.16"));
+
+  // ------------------------------------------------------------- side C: speakable() (src/lib/speech.js, unchanged)
+  function speakable(text) {
+    return String(text || "")
+      .replace(/https?:\/\/\S+/g, "")
+      .replace(/[*_`#>]/g, "")
+      .replace(/\p{Extended_Pictographic}/gu, "")
+      .replace(/\b(\d{1,2}):(\d{2}):(\d{2})\b/g, (_, h, m, s) => `${Number(h)} hours ${Number(m)} minutes ${Number(s)} seconds`)
+      .replace(/(\d+) \/km/g, "$1 per kilometre")
+      .replace(/\bkm\b/g, "kilometres")
+      .replace(/\b(\d+)K\b/g, "$1 K")
+      .replace(/\bPBs?\b/g, (m) => (m === "PB" ? "personal best" : "personal bests"))
+      .replace(/\s*[—–]\s*|\s+-\s+/g, ", ")
+      .replace(/\s*[()]\s*/g, ", ")
+      .replace(/\s*·\s*/g, ", ")
+      .replace(/["“”]/g, "")
+      .replace(/,\s*([,.!?])/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  const spkIn = $("#spkIn");
+  const renderSpk = () => {
+    $("#spkOut").textContent = speakable(spkIn.value);
+    $$("#spkChips .chip").forEach((c) => c.setAttribute("aria-pressed", c.textContent === spkIn.value ? "true" : "false"));
+  };
+  spkIn.addEventListener("input", renderSpk);
+  $$("#spkChips .chip").forEach((c) => c.addEventListener("click", () => { spkIn.value = c.textContent; renderSpk(); }));
+  $("#spkSay").addEventListener("click", () => speakOnce(speakable(spkIn.value), $("#spkSay")));
+  renderSpk();
+
   // ------------------------------------------------------------- who + numbers
   const HB = [["write", 55, "var(--rec)"], ["read + web", 51, "var(--read)"], ["look", 44, "var(--look)"], ["plan", 25, "var(--ink2)"], ["run · test", 18, "var(--ok)"], ["ship", 8, "var(--ink)"]];
   $("#hbars").innerHTML = HB.map(([n, v, c], i) => `<div class="hbar"><span>${n}</span><span class="b" style="width:${(v / 55) * 100}%;background:${c};transition-delay:${i * 90}ms"></span><span class="v">${v}</span></div>`).join("");
@@ -2694,8 +2884,8 @@ body.playing .caption { opacity: 1; transform: translate(-50%, 0); }
 
   // ------------------------------------------------------------- index (J-card)
   const jcard = $("#jcard");
-  const groups = { A: "Side A · the site", B: "Side B · live data and the film", C: "Liner notes" };
-  $("#jcList").innerHTML = Object.entries(groups).map(([k, name]) => `<div><h4>${name}</h4><ol>${slides.map((s, i) => (s.dataset.side === k ? `<li><button type="button" data-i="${i}"><span class="n">${pad(i + 1)}</span><span class="t">${esc(s.dataset.title)}</span><span class="c">${clock(+s.dataset.t).slice(0, 5)}</span></button></li>` : "")).join("")}</ol></div>`).join("");
+  const groups = { A: "Side A · the site", B: "Side B · live data and the film", C: "Side C · to the open web", N: "Liner notes" };
+  $("#jcList").innerHTML = Object.entries(groups).map(([k, name]) => `<div><h4>${name}</h4><ol>${slides.map((s, i) => (s.dataset.side === k ? `<li><button type="button" data-i="${i}"><span class="n">${pad(i + 1)}</span><span class="t">${esc(s.dataset.title)}</span><span class="c">${clockOf(s).slice(0, 5)}</span></button></li>` : "")).join("")}</ol></div>`).join("");
   let lastFocus = null;
   function openIndex() {
     lastFocus = document.activeElement;
