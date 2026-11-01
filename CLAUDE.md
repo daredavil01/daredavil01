@@ -68,6 +68,15 @@ presentations/
                                    rebuilt — every prompt and design question,
                                    the paths not taken, the ink renderer, the bugs
   assets/day-island/              Screenshots used by that deck (webp)
+  session-tape.html               Session Tape: the 30-slide interactive deck on
+                                   how Claude Code built Sanket, Out Loud (personal
+                                   site v2) from four prompts — a field-recorder
+                                   transport that scrubs the session's real
+                                   timeline, the prompts as voice memos, toys that
+                                   run the site's own code, the film in two shapes
+  assets/out-loud/                Screenshots (webp) used by that deck, plus the
+                                   film in both shapes, its posters, captions and
+                                   storyboard frames
   digital-hub.html                The Digital Hub: the 30-slide illustrated tour
                                    of sankettambare.in — map, journey, passport,
                                    architecture, Ask the Archive (fixed 1920×1080
