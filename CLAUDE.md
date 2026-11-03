@@ -102,6 +102,14 @@ presentations/
                                    the narrated tour film (Blot, inline SVG)
   assets/logbook/                 Screenshots (webp) plus the tour film, its poster
                                    and captions
+  training-page.html              Ten Set Out: the 22-slide illustrated, narrated
+                                   deck on building sankettambare.in/training in one
+                                   day — the prompts, the API → export pivot, the
+                                   import, the group of ten, facts, the Remotion
+                                   film (page's own stick figures, inline SVG)
+  assets/training/                Screenshots and two screen recordings from the
+                                   live preview, film stills, the film and its
+                                   captions, and vo/NN.mp3 narration per slide
   brand-kit.html                  One Diary, Three Moods: the 12-slide illustrated
                                    deck on Dare Write's Brand Kit at
                                    brand-kit.sankettambare.in — three directions,

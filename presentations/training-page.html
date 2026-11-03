@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Ten Set Out: a 22-slide illustrated, narrated deck on how sankettambare.in/training was built in one day with Claude Code — the Strava API start, the switch to the bulk export, the design prompts, the stick figures that walk each activity's terrain, the facts, the Remotion film, and the making of this deck.">
+<title>Ten Set Out — building /training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap">
+
+<script>
+// Before first paint: the stored theme must already be on <html>, and `js`
+// tells the CSS it may hide things the script will later reveal.
+(function(){
+  document.documentElement.className += ' js';
+  try{
+    var t = localStorage.getItem('deck-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ /* private mode, blocked storage — follow the system */ }
+})();
+</script>
+
+<style>
+/* ---------------------------------------------------------------------------
+ * Topographic ink by day (the homepage's paper, ink and rust), the training
+ * page's night navy by dark. The narrator is the page's own stick figure,
+ * drawn from the same joint table (src/components/Training/poses.js), in
+ * riso: paper, one ink, one rust spot. Sport colours are the page's
+ * validated set and appear only where the page itself shows them.
+ * ------------------------------------------------------------------------- */
+:root{
+  color-scheme: light;
+  --paper:#f4ecda; --paper-2:#e6dcc4; --card:#fbf6ea; --sunk:#e9dfc8;
+  --ink:#2b2620; --prose:#433b33; --muted:#6e6255; --faint:#9a8d7d;
+  --rule:rgba(43,38,32,.18); --hair:rgba(43,38,32,.08);
+  --rust:#c4642f; --rust-text:#9e4518; --rust-soft:rgba(196,100,47,.14);
+  --gold:#b98200; --gold-soft:rgba(237,161,0,.16);
+  --night:#0b1220; --night-2:#111a2e; --night-ink:#eef2fb; --night-muted:#8fa0bf;
+  --run:#eb6834; --walk:#1baf7a; --hike:#eda100; --ride:#2a78d6; --other:#8a8783;
+  --fig:#2b2620; --fig-2:#c4642f;
+  --shadow:0 1px 2px rgba(43,38,32,.06),0 16px 36px -14px rgba(43,38,32,.30);
+  --focus:#c4642f;
+  --font-display:"Instrument Serif",Georgia,serif;
+  --font-body:"Newsreader",Georgia,serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --font-hand:"Caveat","Segoe Print",cursive;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#0b1220; --paper-2:#111a2e; --card:#131d33; --sunk:#1a2540;
+    --ink:#eef2fb; --prose:#d5dcea; --muted:#9aa9c6; --faint:#6f7f9f;
+    --rule:rgba(238,242,251,.15); --hair:rgba(238,242,251,.06);
+    --rust:#ff7a59; --rust-text:#ff9a7d; --rust-soft:rgba(255,122,89,.14);
+    --gold:#f5b400; --gold-soft:rgba(245,180,0,.14);
+    --run:#d95926; --walk:#199e70; --hike:#c98500; --ride:#3987e5;
+    --fig:#eef2fb; --fig-2:#ff7a59;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 18px 40px -16px rgba(0,0,0,.7);
+    --focus:#ff9a7d;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#0b1220; --paper-2:#111a2e; --card:#131d33; --sunk:#1a2540;
+  --ink:#eef2fb; --prose:#d5dcea; --muted:#9aa9c6; --faint:#6f7f9f;
+  --rule:rgba(238,242,251,.15); --hair:rgba(238,242,251,.06);
+  --rust:#ff7a59; --rust-text:#ff9a7d; --rust-soft:rgba(255,122,89,.14);
+  --gold:#f5b400; --gold-soft:rgba(245,180,0,.14);
+  --run:#d95926; --walk:#199e70; --hike:#c98500; --ride:#3987e5;
+  --fig:#eef2fb; --fig-2:#ff7a59;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 18px 40px -16px rgba(0,0,0,.7);
+  --focus:#ff9a7d;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.55;
+  background:var(--paper);overflow:hidden;
+  background-image:
+    repeating-radial-gradient(circle at 82% 118%,transparent 0 46px,var(--hair) 46px 47px),
+    radial-gradient(120% 90% at 10% 0%,var(--paper-2),transparent 60%);
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+a{color:var(--rust-text);text-underline-offset:3px;}
+img,video{max-width:100%;}
+button{font:inherit;color:inherit;}
+
+/* --- Top bar ------------------------------------------------------------- */
+.top{
+  position:fixed;inset:0 0 auto 0;z-index:20;display:flex;align-items:center;gap:10px;
+  padding:12px 18px;pointer-events:none;
+}
+.top > *{pointer-events:auto;}
+.home{font-family:var(--font-mono);font-size:12.5px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:6px 12px;}
+.brand{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-right:auto;}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:12px;
+  background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:6px 12px;cursor:pointer;
+}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+/* --- Deck shell ---------------------------------------------------------- */
+.track{
+  display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  height:100dvh;scrollbar-width:none;
+}
+.track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100%;width:100%;height:100dvh;scroll-snap-align:start;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  padding:62px 30px 118px;overflow-y:auto;overflow-x:hidden;
+}
+.slide > .inner{margin:auto 0;}
+.inner{width:100%;max-width:1180px;}
+.eyebrow{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;
+  font-family:var(--font-mono);font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--rust-text);
+}
+.eyebrow .num{color:var(--paper);background:var(--ink);padding:2px 8px;letter-spacing:.06em;border-radius:3px;}
+.eyebrow .when{color:var(--muted);letter-spacing:.08em;}
+h1,h2{font-family:var(--font-display);font-weight:400;letter-spacing:-.01em;margin:0 0 12px;color:var(--ink);}
+h1{font-size:clamp(52px,8vw,112px);line-height:.95;}
+h2{font-size:clamp(32px,3.9vw,52px);line-height:1.02;}
+h2 em,h1 em{color:var(--rust);font-style:italic;}
+h3{font-family:var(--font-mono);font-size:11.5px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;}
+h4{font-family:var(--font-display);font-weight:400;font-size:24px;line-height:1.1;margin:0 0 6px;color:var(--ink);}
+p{margin:0 0 12px;color:var(--prose);}
+.lead{font-size:clamp(17px,1.7vw,21px);color:var(--muted);max-width:62ch;}
+.note{font-size:14.5px;color:var(--muted);}
+.small{font-size:14px;}
+.hand{font-family:var(--font-hand);font-weight:600;}
+strong{color:var(--ink);font-weight:600;}
+code{font-family:var(--font-mono);font-size:.8em;background:var(--sunk);border-radius:4px;padding:1px 5px;color:var(--ink);}
+pre{
+  font-family:var(--font-mono);font-size:12.5px;line-height:1.6;background:var(--card);border:1px solid var(--rule);
+  border-radius:12px;padding:12px 14px;overflow-x:auto;margin:0;color:var(--prose);
+}
+pre .c{color:var(--faint);} pre .k{color:var(--rust-text);}
+
+/* --- Layout -------------------------------------------------------------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:center;}
+.split.l{grid-template-columns:1.15fr .85fr;}
+.split.r{grid-template-columns:.85fr 1.15fr;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.split > *,.two > *,.three > *,.four > *{min-width:0;}
+.stack > * + *{margin-top:14px;}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+@media (max-width:900px){
+  .split,.split.l,.split.r,.two,.three{grid-template-columns:1fr;gap:22px;}
+  .four{grid-template-columns:1fr 1fr;}
+  .slide{padding:62px 16px 150px;}
+  .top .brand{display:none;}
+}
+
+/* --- Pieces -------------------------------------------------------------- */
+.card{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:14px 16px;box-shadow:0 1px 0 var(--rule);}
+.card p:last-child{margin-bottom:0;}
+.card.rust{border-left:3px solid var(--rust);}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11.5px;color:var(--prose);
+  background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:3px 10px;
+}
+.chip.rust{background:var(--rust-soft);color:var(--rust-text);border-color:transparent;}
+.chip.gold{background:var(--gold-soft);color:var(--ink);border-color:transparent;}
+.chip i{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.prompt{
+  position:relative;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:16px 18px 14px 18px;
+  font-family:var(--font-mono);font-size:14px;line-height:1.6;color:var(--ink);box-shadow:var(--shadow);
+}
+.prompt::before{content:"› prompt";display:block;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--rust-text);margin-bottom:6px;}
+.prompt .t{position:absolute;top:14px;right:16px;font-size:11px;color:var(--muted);}
+.prompt.q::before{content:"? asked back";}
+.qa{list-style:none;padding:0;margin:0;font-size:14.5px;}
+.qa li{padding:8px 0;border-top:1px dashed var(--rule);}
+.qa li:first-child{border-top:0;}
+.qa b{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--rust-text);display:block;letter-spacing:.04em;}
+ul.plain{list-style:none;margin:0;padding:0;}
+ul.plain li{position:relative;padding-left:20px;margin-bottom:8px;color:var(--prose);font-size:16px;}
+ul.plain li::before{content:"";position:absolute;left:3px;top:10px;width:8px;height:2px;background:var(--rust);}
+.big{font-family:var(--font-display);font-size:clamp(42px,5vw,68px);line-height:1;color:var(--ink);}
+.big small{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-top:6px;}
+.commit{font-family:var(--font-mono);font-size:12px;color:var(--muted);}
+.commit b{color:var(--rust-text);font-weight:500;}
+
+/* Screens: real captures from the live preview. */
+.shot{margin:0;position:relative;}
+.shot img,.shot video{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--rule);box-shadow:var(--shadow);background:var(--night);}
+/* Screens never push a slide past the fold on a laptop: tall ones crop from the top. */
+.shot img{max-height:58vh;object-fit:cover;object-position:top;}
+.two .shot img,.three .shot img{max-height:27vh;}
+.shot.phone img{max-height:52vh;width:auto;}
+.clip video{max-height:44vh;object-fit:cover;object-position:top;}
+.shot figcaption{font-size:13.5px;color:var(--muted);margin-top:8px;font-style:italic;}
+.shot.tilt-l img{transform:rotate(-1deg);} .shot.tilt-r img{transform:rotate(1deg);}
+.shot.crop{overflow:hidden;border-radius:12px;}
+.shot.phone img{border-radius:22px;border:6px solid #05070c;max-width:240px;margin:0 auto;}
+.shot .tag{position:absolute;top:10px;left:10px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:3px 8px;border-radius:999px;}
+.clip{position:relative;}
+.clip video{cursor:pointer;}
+
+/* --- The narrator --------------------------------------------------------
+ * A speech bubble from one of the ten. The full narration for the slide sits
+ * in .vo (hidden); the Narration drawer shows it and can read it aloud.
+ * ------------------------------------------------------------------------- */
+.say{display:flex;align-items:flex-end;gap:6px;margin-top:12px;max-width:620px;}
+.say svg{width:44px!important;height:58px!important;}
+.say svg{flex:0 0 auto;width:54px;height:70px;overflow:visible;}
+.say p{
+  position:relative;margin:0 0 30px;background:var(--card);border:1.5px solid var(--ink);border-radius:16px 16px 16px 4px;
+  padding:7px 13px;font-family:var(--font-hand);font-size:21px;line-height:1.15;color:var(--ink);
+}
+.vo{display:none;}
+
+/* Figures and scenes */
+svg.scene{width:100%;height:auto;display:block;overflow:visible;}
+.fig line,.fig path.l{stroke:var(--fig);stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.fig circle.h{fill:var(--fig);}
+.fig.rust line,.fig.rust path.l{stroke:var(--fig-2);} .fig.rust circle.h{fill:var(--fig-2);}
+.fig .pack{fill:var(--fig);} .fig.rust .pack{fill:var(--fig-2);}
+.ink{stroke:var(--ink);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.ink-f{fill:var(--ink);} .rust-f{fill:var(--rust);} .rust-s{stroke:var(--rust);fill:none;}
+.paper-f{fill:var(--card);} .muted-t{fill:var(--muted);} .ink-t{fill:var(--ink);}
+.lab{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;fill:var(--muted);}
+.lab.ink{fill:var(--ink);stroke:none;}
+.handt{font-family:var(--font-hand);font-size:22px;fill:var(--ink);}
+.grain{opacity:.5;}
+/* Gait: two poses alternate. */
+.gait .b{opacity:0;}
+.on .gait .a{animation:gaitA .5s steps(1) infinite;}
+.on .gait .b{animation:gaitB .5s steps(1) infinite;}
+@keyframes gaitA{0%{opacity:1}50%{opacity:0}}
+@keyframes gaitB{0%{opacity:0}50%{opacity:1}}
+.flame{transform-box:fill-box;transform-origin:50% 100%;}
+.on .flame{animation:flick .35s ease-in-out infinite alternate;}
+@keyframes flick{from{transform:scaleY(.82)}to{transform:scaleY(1.12)}}
+
+/* --- Motion --------------------------------------------------------------
+ * The script puts .on on the slide in view and takes it off when it leaves,
+ * so coming back replays. Hidden things wait for `.js`, so the deck reads
+ * with scripts off; keyframed pieces rest in their FINAL state and play from
+ * their first frame only while their slide is .on.
+ * ------------------------------------------------------------------------- */
+.js .r{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .7s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--d,0) * 110ms);}
+.js .on .r{opacity:1;transform:none;}
+.draw{stroke-dasharray:1;stroke-dashoffset:0;}
+.on .draw{animation:draw 1.8s cubic-bezier(.4,.1,.2,1) both;animation-delay:calc(var(--d,0) * 120ms);}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.pop{transform-box:fill-box;transform-origin:50% 100%;}
+.on .pop{animation:pop .5s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(var(--d,0) * 140ms + .4s);}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:none;opacity:1}}
+.walkin{transform-box:view-box;}
+.on .walkin{animation:walkin 2.6s cubic-bezier(.3,.6,.3,1) both;animation-delay:calc(var(--d,0) * 120ms);}
+@keyframes walkin{from{transform:translateX(-260px);opacity:0}25%{opacity:1}to{transform:none}}
+@media (prefers-reduced-motion: reduce){
+  .js .r{transition:none;opacity:1;transform:none;}
+  .on .draw,.on .pop,.on .walkin,.on .gait .a,.on .gait .b,.on .flame{animation:none;}
+  .gait .b{opacity:0;}
+}
+
+/* --- Slide 2: the day ---------------------------------------------------- */
+.day{position:relative;}
+.day .pin{cursor:pointer;}
+.day .pin line{pointer-events:none;}
+.day .pin circle{transition:none;}
+.day .pin:hover circle,.day .pin[aria-pressed="true"] circle{r:9;}
+.day .pin[aria-pressed="true"] circle{fill:var(--rust);}
+.day-card{min-height:118px;}
+.day-card .t{font-family:var(--font-mono);font-size:12px;color:var(--rust-text);}
+
+/* Pipeline stages */
+.stages{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;counter-reset:st;}
+.stage{position:relative;background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:10px 11px 11px;font-size:13.5px;line-height:1.35;}
+.stage::before{counter-increment:st;content:counter(st);position:absolute;top:-11px;left:10px;background:var(--ink);color:var(--paper);font-family:var(--font-mono);font-size:11px;padding:1px 7px;border-radius:999px;}
+.stage b{display:block;font-family:var(--font-display);font-weight:400;font-size:19px;margin:4px 0 3px;color:var(--ink);}
+.stage code{font-size:11px;}
+.stages.four-up{grid-template-columns:repeat(4,1fr);}
+.stage:not(:last-child)::after{content:"→";position:absolute;right:-12px;top:42%;font-family:var(--font-mono);color:var(--rust);font-size:16px;}
+@media (max-width:900px){.stages,.stages.four-up{grid-template-columns:1fr 1fr;} .stage::after{display:none;}}
+
+/* Table of bugs */
+.bugs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.bug{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:10px 13px;font-size:14px;}
+.bug b{display:block;font-family:var(--font-display);font-weight:400;font-size:19px;color:var(--ink);margin-bottom:2px;}
+.bug .fix{color:var(--rust-text);font-family:var(--font-mono);font-size:11.5px;display:block;margin-top:5px;}
+@media (max-width:900px){.bugs{grid-template-columns:1fr;}}
+
+/* Film strip */
+.strip{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;}
+.strip figure{margin:0;}
+.strip img{display:block;width:100%;border-radius:6px;border:1px solid var(--rule);}
+.strip figcaption{font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:.04em;}
+@media (max-width:900px){.strip{grid-template-columns:repeat(4,1fr);}}
+.film{max-width:250px;margin:0 auto;}
+/* Short laptop screens (720–780 px tall): the same slides, tighter. The
+   narrator's bubble steps aside (the Narration drawer still has every word). */
+@media (max-height:800px) and (min-width:901px){
+  .slide{padding:54px 30px 100px;}
+  h1{font-size:clamp(48px,6.4vw,88px);}
+  h2{font-size:clamp(28px,3.2vw,42px);margin-bottom:8px;}
+  .lead{font-size:16.5px;}
+  .say{display:none;}
+  .prompt{font-size:12.5px;padding:12px 14px 10px;}
+  ul.plain li{font-size:14.5px;margin-bottom:5px;}
+  .card{padding:10px 13px;}
+  .shot img{max-height:48vh;} .two .shot img,.three .shot img{max-height:22vh;}
+  .clip video{max-height:36vh;} .shot.phone img{max-height:44vh;}
+  .film{max-width:200px;}
+  .stage{font-size:12.5px;padding:8px 9px;} .stage b{font-size:17px;}
+  .bug{padding:8px 11px;font-size:13px;}
+  .strip figcaption{display:none;}
+  svg.scene{max-height:40vh;}
+}
+.film video{border-radius:18px;border:6px solid #05070c;background:#05070c;}
+
+/* --- Rail + ridge progress ---------------------------------------------- */
+.rail{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;gap:10px;
+  padding:8px 18px 12px;background:linear-gradient(to top,var(--paper) 60%,transparent);
+}
+.rail > button{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--rule);background:var(--card);cursor:pointer;font-family:var(--font-mono);
+}
+.rail > button:disabled{opacity:.35;cursor:default;}
+.ridge{flex:1;min-width:0;height:62px;position:relative;}
+.ridge svg{width:100%;height:100%;overflow:visible;display:block;}
+.ridge .tick{cursor:pointer;}
+.ridge .tick rect{fill:transparent;}
+.ridge .tick circle{fill:var(--card);stroke:var(--ink);stroke-width:1.5;}
+.ridge .tick[aria-current="true"] circle{fill:var(--rust);stroke:var(--rust);}
+.ridge .tick.past circle{fill:var(--ink);}
+.counter{font-family:var(--font-mono);font-size:12px;color:var(--muted);min-width:56px;text-align:right;}
+
+/* Narration drawer */
+.drawer{
+  position:fixed;left:50%;bottom:86px;z-index:30;transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  width:min(760px,calc(100% - 24px));background:var(--card);border:1.5px solid var(--ink);border-radius:16px;
+  padding:14px 18px 12px;box-shadow:var(--shadow);transition:opacity .25s,transform .3s;
+}
+.drawer.open{opacity:1;transform:translate(-50%,0);pointer-events:auto;}
+.drawer p{margin:0 0 10px;font-size:17px;line-height:1.5;color:var(--ink);}
+.drawer .ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.drawer .who{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--rust-text);margin-bottom:6px;}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="home" data-island-return href="../index.html#run/training-deck">&larr; Home</a>
+  <span class="brand">Ten Set Out · building /training</span>
+  <button class="pill" type="button" id="narrate" aria-pressed="false" aria-controls="drawer" title="Narration (N)">&#9998; Narration</button>
+  <button class="pill" type="button" id="theme" aria-label="Theme: follow system. Activate to change.">
+    <span id="theme-ico" aria-hidden="true">&#9681;</span><span id="theme-lab">Auto</span>
+  </button>
+</div>
+
+<div class="track" id="track" tabindex="-1">
+
+  <!-- 01 · Title ------------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 1: Ten Set Out">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">DECK</span> sankettambare.in/training · built with Claude Code</p>
+      <h1 class="r" style="--d:1">Ten set <em>out.</em></h1>
+      <p class="lead r" style="--d:2">How a page of Strava activities became a story you can walk: one day, eleven prompts, nine commits, a Strava API that went behind a paywall, a bulk export instead, and ten stick figures who walk every activity's terrain.</p>
+      <div class="row r" style="--d:3">
+        <span class="chip"><span data-to="358">358</span>&nbsp;activities</span>
+        <span class="chip"><span data-to="1431">1,431</span>&nbsp;km</span>
+        <span class="chip">05:48 → 13:06, 3 Nov 2026</span>
+        <span class="chip rust">22 slides · narrated</span>
+      </div>
+      <svg class="scene r" style="--d:2;margin-top:18px" viewBox="0 0 1100 230" role="img" aria-label="A ridge line draws itself; ten stick figures walk along it, one resting by a campfire and one planting a flag at the summit.">
+        <path class="ink draw" pathLength="1" d="M0 200 C80 196 120 150 190 150 S300 182 360 168 450 92 520 96 610 150 680 136 760 60 830 54 930 120 1000 108 1060 126 1100 140"/>
+        <path d="M0 200 C80 196 120 150 190 150 S300 182 360 168 450 92 520 96 610 150 680 136 760 60 830 54 930 120 1000 108 1060 126 1100 140 L1100 230 L0 230Z" fill="var(--rust-soft)"/>
+        <g class="walkin" style="--d:4">
+          <g class="F" data-p="stand" data-x="70" data-y="190" data-s="1.15"></g>
+          <g class="F" data-p="walk" data-g="1" data-x="180" data-y="150" data-s="1.15"></g>
+          <g class="F" data-p="hike" data-x="300" data-y="174" data-s="1.15" data-c="rust"></g>
+          <g class="F" data-p="rest" data-x="400" data-y="140" data-s="1.15"></g>
+          <g class="F" data-p="climb" data-x="478" data-y="104" data-s="1.15"></g>
+          <g class="F" data-p="run" data-g="1" data-x="590" data-y="140" data-s="1.15" data-c="rust"></g>
+          <g class="F" data-p="walk" data-g="1" data-x="676" data-y="136" data-s="1.15"></g>
+          <g class="F" data-p="climb" data-x="760" data-y="66" data-s="1.15"></g>
+          <g class="F" data-p="summit" data-x="830" data-y="54" data-s="1.15" data-c="rust"></g>
+          <g class="F" data-p="run" data-g="1" data-x="990" data-y="110" data-s="1.15"></g>
+        </g>
+        <text class="handt" x="840" y="20">the 51.3 km Night Trail Run</text>
+      </svg>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="stand" data-s="1.2"></g></svg><p>We'll walk the day it was built. Arrow keys, or swipe.</p></div>
+      <p class="vo">This is the story of one page, sankettambare dot in slash training, and how it was built in a single day with Claude Code. It began as a plan to pull everything from the Strava API. That plan hit a paywall within the hour. What shipped instead reads Strava's own bulk export, and turns three hundred and fifty-eight activities into a story: a night map of light, a spiral of days, and ten stick figures who walk the terrain of any day you pick. We'll follow those ten through the whole build, one staying behind at every turn that mattered.</p>
+    </div>
+  </section>
+
+  <!-- 02 · The day ----------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 2: The day at a glance">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">02</span> The day at a glance <span class="when">3 Nov 2026 · IST</span></p>
+      <h2 class="r" style="--d:1">Eleven prompts. Nine commits. <em>One ridge.</em></h2>
+      <p class="lead r" style="--d:2">Every pin is a prompt you typed; every square is a commit Claude pushed. Click a pin to read it.</p>
+      <div class="day r" style="--d:3">
+        <svg class="scene" id="daychart" viewBox="0 0 1100 230" role="group" aria-label="Timeline of the build day from 05:48 to 13:06"></svg>
+      </div>
+      <div class="card day-card r" style="--d:4" id="daycard" aria-live="polite"><span class="t">05:48</span><p>Pick a pin.</p></div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="walk" data-s="1.2"></g></svg><p>Seven hours, start to finish. The quiet gap is me thinking.</p></div>
+      <p class="vo">Here's the whole day on one line. The pins are the eleven prompts, starting at five forty-eight in the morning and ending at six minutes past one, with this deck. The squares are the nine commits, about twelve thousand lines in all. Notice the rhythm: a prompt, a burst of work, a commit, then a pause where you looked at what came back and decided what it needed next. That pause is where most of the good ideas came from.</p>
+    </div>
+  </section>
+
+  <!-- 03 · First ask --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 3: The first ask">
+    <div class="inner">
+      <div class="split l">
+        <div>
+          <p class="eyebrow r"><span class="num">03</span> The idea <span class="when">05:48</span></p>
+          <h2 class="r" style="--d:1">Everything Strava knows, <em>except the photos.</em></h2>
+          <div class="prompt r" style="--d:2"><span class="t">05:48</span>I want to import all data from strava for activities using strava API. Add it in seprate table and add dedicated page for this. First phase is identifying data that can be pulled. I don't want images for activities, all the other data is needed. Research strava API and ask questions to clarify requirement</div>
+          <ul class="plain r" style="--d:3;margin-top:16px">
+            <li><strong>The approach was in the prompt:</strong> research first, then ask, then build.</li>
+            <li>The site already had a pattern for this: a <code>/videos</code> page synced from YouTube, one Supabase table, an admin sync button.</li>
+            <li>So the question was never "can it be built" but "what exactly is <em>all the data</em>".</li>
+          </ul>
+        </div>
+        <svg class="scene r" style="--d:2" viewBox="0 0 420 340" role="img" aria-label="A stick figure reads a long scroll of Strava fields with a magnifying glass.">
+          <rect class="paper-f" x="150" y="30" width="230" height="270" rx="10" stroke="var(--ink)" stroke-width="2"/>
+          <g class="lab ink" font-size="13">
+            <text x="168" y="62">distance · moving_time</text><text x="168" y="88">elevation · avg_hr · max_hr</text>
+            <text x="168" y="114">splits_metric · laps</text><text x="168" y="140">best_efforts · gear</text>
+            <text x="168" y="166">segment_efforts · kudos</text><text x="168" y="192">streams: hr, cadence…</text>
+            <text x="168" y="218">calories · device</text>
+          </g>
+          <line x1="168" y1="244" x2="300" y2="244" class="ink" stroke-dasharray="4 5"/>
+          <text x="168" y="276" class="handt" fill="var(--rust)" style="fill:var(--rust)">photos ✗</text>
+          <circle cx="132" cy="168" r="30" class="ink" stroke-width="4"/><line x1="110" y1="190" x2="88" y2="214" class="ink" stroke-width="6"/>
+          <g class="F" data-p="stand" data-x="70" data-y="300" data-s="2"></g>
+        </svg>
+      </div>
+      <div class="say r" style="--d:4"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="stand" data-s="1.2"></g></svg><p>"Ask questions" turned out to be the most important two words.</p></div>
+      <p class="vo">The first prompt arrived at five forty-eight. Import all the activity data from the Strava API, into its own table, with a dedicated page. No photos, everything else. And crucially: research the API first, and ask questions before building. That instruction shaped the whole day. The site already had a template for this kind of thing, the videos page synced from YouTube, so the real work was deciding what "all the data" meant.</p>
+    </div>
+  </section>
+
+  <!-- 04 · Research ---------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 4: What the API offers, and four questions">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">04</span> Research <span class="when">05:48 – 05:53</span></p>
+      <h2 class="r" style="--d:1">Three depths, one rate limit, <em>four questions.</em></h2>
+      <div class="split">
+        <div class="stack">
+          <div class="three r" style="--d:2">
+            <div class="card"><h4>Summary</h4><p class="small">The activity list: distance, time, climb, heart rate. One call per 200.</p></div>
+            <div class="card"><h4>Detail</h4><p class="small">Splits, laps, best efforts, segment efforts, gear, device. One call each.</p></div>
+            <div class="card"><h4>Streams</h4><p class="small">Every second: HR, cadence, altitude, GPS. One more call each.</p></div>
+          </div>
+          <div class="card rust r" style="--d:3"><p class="small"><strong>1,000 calls a day</strong> (100 per 15 min). A deep backfill of ~1,000 activities is two days of syncing. And Strava's Nov 2024 API terms bar using its data to train AI models, which made indexing it into <code>/ask</code> the riskiest choice.</p></div>
+        </div>
+        <div class="card r" style="--d:3">
+          <h3>Asked back, and answered</h3>
+          <ul class="qa">
+            <li><b>How deep?</b>Summary + detail. Streams were left out because of the rate limit.</li>
+            <li><b>Your token sees private activities and raw GPS. What's public?</b>Store all, show public only.</li>
+            <li><b>How do new activities arrive?</b>An admin "Sync now" plus a nightly job.</li>
+            <li><b>How does it connect to the site?</b>Link races to /sports, fill /now, index in /ask, tags + /stats.</li>
+            <li><b>Name and views?</b><code>/training</code>: list, year heatmap, stats &amp; PRs, route map.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="hike" data-s="1.2"></g></svg><p>Each question came with a recommended answer and the cost of each option.</p></div>
+      <p class="vo">Research found three depths of data. The summary list, the detail of each activity, and the per-second streams. Each level costs API calls, and Strava allows a thousand a day, so a deep backfill takes two days. Then came five questions, each with a recommended option and the trade-off spelled out. You chose summary plus detail, store everything but show only public activities, a sync button plus a nightly job, and every connection into the rest of the site.</p>
+    </div>
+  </section>
+
+  <!-- 05 · Version 1 on the API ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 5: Version one, on the API">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">05</span> Version one <span class="when">06:16 · <span class="commit"><b>3842c04</b> · 57 files · +3,886</span></span></p>
+      <h2 class="r" style="--d:1">A whole feature, built on the API, <em>in 28 minutes.</em></h2>
+      <div class="split l">
+        <svg class="scene r" style="--d:2" viewBox="0 0 640 300" role="img" aria-label="Diagram: Strava API to an OAuth script and an owner-only sync endpoint, into five Supabase tables, out to the /training page, races, /now, /stats and /ask.">
+          <g font-family="IBM Plex Mono" font-size="12">
+            <rect x="10" y="110" width="120" height="70" rx="10" class="paper-f" stroke="var(--ink)" stroke-width="2"/><text x="70" y="140" text-anchor="middle" class="ink-t">Strava</text><text x="70" y="160" text-anchor="middle" class="muted-t">API v3</text>
+            <rect x="180" y="60" width="150" height="54" rx="10" class="paper-f" stroke="var(--ink)" stroke-width="2"/><text x="255" y="84" text-anchor="middle" class="ink-t">strava:auth</text><text x="255" y="102" text-anchor="middle" class="muted-t">OAuth, token rotation</text>
+            <rect x="180" y="176" width="150" height="54" rx="10" class="paper-f" stroke="var(--ink)" stroke-width="2"/><text x="255" y="200" text-anchor="middle" class="ink-t">/api/strava-sync</text><text x="255" y="218" text-anchor="middle" class="muted-t">owner-only + nightly</text>
+            <rect x="380" y="40" width="130" height="220" rx="10" class="paper-f" stroke="var(--rust)" stroke-width="2"/>
+            <text x="445" y="66" text-anchor="middle" fill="var(--rust-text)">0038</text>
+            <text x="445" y="96" text-anchor="middle" class="ink-t">activities</text><text x="445" y="122" text-anchor="middle" class="ink-t">activity_private</text><text x="445" y="148" text-anchor="middle" class="ink-t">gear</text><text x="445" y="174" text-anchor="middle" class="ink-t">athlete</text><text x="445" y="200" text-anchor="middle" class="ink-t">auth (service)</text>
+            <text x="445" y="236" text-anchor="middle" class="muted-t">Supabase + RLS</text>
+            <text x="540" y="70" class="ink-t">/training</text><text x="540" y="100" class="ink-t">/sports/:id</text><text x="540" y="130" class="ink-t">/now</text><text x="540" y="160" class="ink-t">/stats</text><text x="540" y="190" class="ink-t">/ask</text><text x="540" y="220" class="ink-t">tags</text>
+          </g>
+          <path class="ink draw" pathLength="1" style="--d:3" d="M130 140 L180 88 M130 150 L180 202 M330 88 L380 110 M330 202 L380 180 M510 150 L535 66 M510 150 L535 96 M510 150 L535 126 M510 150 L535 156 M510 150 L535 186 M510 150 L535 216"/>
+        </svg>
+        <div class="stack r" style="--d:3">
+          <ul class="plain">
+            <li><strong>Five tables</strong> in <code>0038_training.sql</code>. Raw GPS and the private note sit in an owner-only table, not a hidden column.</li>
+            <li><strong>Rate-limit aware sync</strong>: it reads Strava's usage headers and stops before the cap.</li>
+            <li><strong>The site's route rules</strong>: a manifest entry, page meta, a share card, an SEO entity kind, the nav and the Blueprint room, all in the same commit.</li>
+            <li>You applied <code>0038</code> on production through the SQL editor.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="run" data-s="1.2"></g></svg><p>It worked. It just wasn't going to stay free.</p></div>
+      <p class="vo">The first version landed at sixteen past six. Fifty-seven files: five tables with row-level security, an OAuth script with token rotation, an owner-only sync endpoint that watches Strava's rate-limit headers, the page with its list, heatmap, records and routes, and every integration you'd asked for. The site's own rules came along too: every new route needs a share card, meta tags and an SEO entry, so those landed in the same commit. You applied the schema on production straight away.</p>
+    </div>
+  </section>
+
+  <!-- 06 · The pivot --------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 6: The pivot to the bulk export">
+    <div class="inner">
+      <div class="split r">
+        <svg class="scene r" style="--d:1" viewBox="0 0 460 330" role="img" aria-label="A stick figure turns back from a locked gate marked with a price tag, and walks towards a box labelled export.zip.">
+          <path class="ink" d="M10 290 L450 290"/>
+          <g><rect x="250" y="120" width="12" height="170" class="ink-f"/><rect x="390" y="120" width="12" height="170" class="ink-f"/>
+            <path class="ink" d="M262 140 L390 140 M262 200 L390 200 M262 260 L390 260 M290 140 L290 290 M320 140 L320 290 M350 140 L350 290"/>
+            <rect x="290" y="168" width="64" height="40" rx="8" class="rust-f"/><text x="322" y="194" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" fill="#fff">$ API</text></g>
+          <g class="F" data-p="walk" data-g="1" data-x="190" data-y="290" data-s="2" data-flip="1"></g>
+          <path class="rust-s draw" pathLength="1" stroke-width="3" stroke-dasharray="6 7" d="M180 230 C150 190 130 180 100 200" style="--d:2"/>
+          <g class="pop" style="--d:3"><rect x="20" y="226" width="96" height="64" rx="6" class="paper-f" stroke="var(--ink)" stroke-width="2.5"/><path class="ink" d="M20 246 L116 246"/><text x="68" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" class="ink-t">export.zip</text></g>
+        </svg>
+        <div>
+          <p class="eyebrow r"><span class="num">06</span> The pivot <span class="when">06:25 · <span class="commit"><b>777f333</b> · +1,289 / −1,384</span></span></p>
+          <h2 class="r" style="--d:1">The API went behind a paywall. <em>The export didn't.</em></h2>
+          <div class="prompt r" style="--d:2"><span class="t">06:25</span>Can we use strava exported data instead of strava API as it is behind paywall now?</div>
+          <div class="two r" style="--d:3;margin-top:14px">
+            <div class="card"><h3>Lost</h3><p class="small">Kudos, comments, segment efforts, workout type, Strava's own PR ranks, and live sync.</p></div>
+            <div class="card rust"><h3>Gained</h3><p class="small">Every original <code>.fit</code> file: per-second heart rate, cadence, power, stride, altitude. More than the API's detail level ever gave, with no rate limit.</p></div>
+          </div>
+          <p class="note r" style="--d:4">Four more questions, four recommended answers: visibility from the CSV column (else show all), parse the GPS files, remove the API code, keep the zip in a gitignored folder. The OAuth script, the sync endpoint, the admin page and the nightly step were deleted in the same commit.</p>
+        </div>
+      </div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="rest" data-s="1.2"></g></svg><p>One of us sat down here. The API code didn't come with us.</p></div>
+      <p class="vo">Thirty-seven minutes in, the real constraint showed up: Strava's API had gone behind a paid subscription. Could the bulk export do the job instead? It could, and in one way it did it better. The export loses kudos, segment efforts and live sync, but it carries every original FIT file from the watch, with per-second heart rate, cadence and power that the API's detail level never returned. The pivot was a clean one: the API code was deleted rather than left switched off, so nothing half-used stayed behind.</p>
+    </div>
+  </section>
+
+  <!-- 07 · Import pipeline --------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 7: The import pipeline">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">07</span> The import <span class="when">0039 · 0040 · <code>scripts/strava-import.mjs</code></span></p>
+      <h2 class="r" style="--d:1">From a zip to two tables, <em>never the same row twice.</em></h2>
+      <div class="stages r" style="--d:2">
+        <div class="stage"><b>Unzip</b>Raw files stay in gitignored <code>tmp/strava-export/</code>. Nothing raw is committed.</div>
+        <div class="stage"><b>Parse</b><code>fit-file-parser</code> for <code>.fit.gz</code>; GPX and TCX by regex. No CSV? The FIT session becomes the summary.</div>
+        <div class="stage"><b>Compute</b>Splits per km, laps, best efforts (400 m → marathon) and PR ranks from the track. The export has none of them.</div>
+        <div class="stage"><b>Dedupe</b>Upsert on Strava's id, plus <code>findDuplicates</code>: same sport, starts within 60 s.</div>
+        <div class="stage"><b>Protect</b>Existing rows are re-sent without <code>name</code>, so a generated "Morning Run" never overwrites a real title.</div>
+        <div class="stage"><b>Write</b>Public row + owner-only private row; thinned streams to <code>profile</code>; per-second facts to <code>extra._stats</code>.</div>
+      </div>
+      <div class="split" style="margin-top:22px">
+        <pre class="r" style="--d:3"><span class="c"># the whole import, re-runnable</span>
+<span class="k">npm run</span> strava:import -- --dir=tmp/strava-export
+<span class="c">#  358 activities · 355 .fit · 3 .gpx</span>
+<span class="c">#  first run: 358 new</span>
+<span class="c">#  every run after: 0 new, 358 updated</span></pre>
+        <div class="card r" style="--d:4"><p class="small"><strong>Why "re-sent without name" matters.</strong> supabase-js builds its column list from the batch, so a key that's absent is left alone in Postgres. One rule makes re-imports safe without a read-before-write.</p></div>
+      </div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="walk" data-s="1.2"></g></svg><p>Run it twice, get the same table. That was your one rule.</p></div>
+      <p class="vo">The import is six stages. Unzip into a temporary folder that git ignores, so raw data never reaches the repository. Parse the FIT files, and the few GPX ones. Compute what the export doesn't contain: splits, laps, best efforts and personal-record ranks, all from the GPS track. Then the duplicates rule you asked for: upsert on Strava's id, and also skip any other file that starts within sixty seconds in the same sport. Existing rows are re-sent without their name, so a generated "Morning Run" never replaces a title you wrote. Run it ten times and you get the same three hundred and fifty-eight rows.</p>
+    </div>
+  </section>
+
+  <!-- 08 · Privacy ----------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 8: Privacy by table">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <p class="eyebrow r"><span class="num">08</span> Privacy</p>
+          <h2 class="r" style="--d:1">The files know where you live. <em>The page doesn't.</em></h2>
+          <ul class="plain r" style="--d:2">
+            <li>The export has <strong>raw GPS without Strava's privacy zones</strong>: every run starts at a doorstep.</li>
+            <li>Raw tracks, start and end points, the private note and body weight go to <code>strava_activity_private</code>, readable only by the owner (RLS), never a hidden column on the public row.</li>
+            <li>The public row keeps <code>route_polyline</code>, <strong>trimmed 400 m at each end</strong>.</li>
+            <li><code>profile</code> (the per-second streams for the day story) is stored <strong>without a single position</strong>.</li>
+          </ul>
+        </div>
+        <svg class="scene r" style="--d:2" viewBox="0 0 460 330" role="img" aria-label="A route from a house: the first and last stretches near the house fade away; a stick figure walks only on the visible middle part.">
+          <g transform="translate(46 238)"><path class="ink" d="M0 0 L0 -40 L28 -62 L56 -40 L56 0 Z"/><rect x="20" y="-22" width="14" height="22" class="ink-f"/></g>
+          <path d="M100 236 C140 236 150 200 190 190" stroke="var(--ink)" stroke-width="3" fill="none" stroke-dasharray="3 7" opacity=".35"/>
+          <path class="draw" pathLength="1" d="M190 190 C240 176 250 110 310 100 S410 140 400 200 S320 260 270 250" stroke="var(--rust)" stroke-width="5" fill="none" stroke-linecap="round" style="--d:2"/>
+          <path d="M270 250 C230 246 160 256 110 246" stroke="var(--ink)" stroke-width="3" fill="none" stroke-dasharray="3 7" opacity=".35"/>
+          <text x="128" y="290" class="lab">400 m · trimmed</text><text x="300" y="80" class="lab ink">public route_polyline</text>
+          <g class="F" data-p="walk" data-g="1" data-x="312" data-y="100" data-s="1.4"></g>
+        </svg>
+      </div>
+      <div class="say r" style="--d:4"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="stand" data-s="1.2"></g></svg><p>Privacy is decided by which table it's in, not which column is shown.</p></div>
+      <p class="vo">The export carries a risk the API hid: raw GPS without Strava's privacy zones, so every activity begins at a front door. The rule here is privacy by table, not by column. Raw tracks, start and end points, the private note and body weight live in a table only the owner can read. The public row gets a route with four hundred metres trimmed off each end, and the per-second profile that powers the stick figures stores no positions at all.</p>
+    </div>
+  </section>
+
+  <!-- 09 · Design brief ------------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 9: The design brief">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">09</span> Design <span class="when">06:49 · <span class="commit"><b>0de7770</b> · 39 files · +3,556</span></span></p>
+      <h2 class="r" style="--d:1">"Be as creative <em>as possible."</em></h2>
+      <div class="split">
+        <div class="stack">
+          <div class="prompt r" style="--d:2"><span class="t">06:49</span>Completely redesign the UI for training page, use dummy data for now. The animated version should be shown in atlas mode. Also, enhance the UI for how data is shown in classic mode. BE AS CREATIVE AS POSSIBLE.</div>
+          <div class="prompt r" style="--d:3">MAKE SURE YOU CREATE THE MOST AMAZING, INTERACTIVE, USER-FRIENDLY UI DESIGN that will hook users to the experience.</div>
+        </div>
+        <div class="stack r" style="--d:3">
+          <div class="card"><h4>Sample data first</h4><p class="small">A seeded demo log (<code>trainingDemo.js</code>, ids from <code>DEMO_ID_BASE</code>) let the design run ahead of the import. It's shown while the table is empty or with <code>?demo=1</code>, always labelled "Sample data", and it vanished by itself when real rows arrived.</p></div>
+          <div class="card"><h4>Two layouts, one data hook</h4><p class="small"><code>useViewMode()</code> picks the site's atlas or classic shell; both read <code>useTrainingData()</code> and the same URL filters.</p></div>
+          <div class="card"><h4>A colour set that was checked</h4><p class="small">Run, walk, hike, ride, swim as <code>--tr-*</code> tokens with separate dark steps, run through the dataviz palette validator. Text never wears them.</p></div>
+        </div>
+      </div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="hike" data-s="1.2" data-c="rust"></g></svg><p>Dummy data meant design didn't wait for the zip.</p></div>
+      <p class="vo">At ten to seven came the design brief, twice, in capitals. Redesign completely, animate it in atlas mode, enrich the classic layout, and make it the kind of page people stay on. The key move was building on sample data: a seeded, realistic log, clearly labelled, so the design could go ahead before a single real activity had been imported. It disappears on its own once the table has rows. Both layouts read the same data hook and the same filters, and the sport colours were validated as a set before any chart used them.</p>
+    </div>
+  </section>
+
+  <!-- 10 · Atlas ------------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 10: Atlas mode, a story you scroll">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">10</span> Atlas mode · the story</p>
+      <h2 class="r" style="--d:1">A story you scroll, <em>chapters that play once.</em></h2>
+      <div class="split r" style="--d:2">
+        <figure class="shot clip"><video src="assets/training/clip-light-painting.mp4" poster="assets/training/clip-light-painting-poster.webp" muted loop playsinline preload="none" aria-label="Screen recording: routes drawing themselves as light on a dark map"></video><figcaption>Light painting: every public route, oldest first, as a trail of light. Recorded on the live preview.</figcaption></figure>
+        <div class="two">
+          <figure class="shot"><img src="assets/training/atlas-hero.webp" alt="Atlas hero: Training, an odometer reading 1,431 kilometres, gauges for laps of the Earth, hours and Everests, and the film beside it." loading="lazy"><figcaption>The odometer hero</figcaption></figure>
+          <figure class="shot"><img src="assets/training/atlas-spiral.webp" alt="A spiral of days: one turn per year, beads sized by distance, 274 days on the move in the centre." loading="lazy"><figcaption>The spiral of days</figcaption></figure>
+          <figure class="shot"><img src="assets/training/atlas-race.webp" alt="Race your past selves: horizontal lanes per year racing on best efforts." loading="lazy"><figcaption>Race your past selves</figcaption></figure>
+          <figure class="shot"><img src="assets/training/atlas-clock.webp" alt="A start-time dial: 118 starts at 6 am." loading="lazy"><figcaption>Whenever the day allows</figcaption></figure>
+        </div>
+      </div>
+      <p class="note r" style="--d:3">Also in the atlas: weekly tides, a medal case, milestones, a departures board and the full log. Each chapter animates once, on first view (<code>useInView</code>), then belongs to the reader: scrubbers, play/pause, filters. <code>prefers-reduced-motion</code> skips straight to the end state.</p>
+      <div class="say r" style="--d:4"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="run" data-g="1" data-s="1.2"></g></svg><p>Press the video. That's the map drawing itself.</p></div>
+      <p class="vo">Atlas mode is the story version. It opens on an odometer rolling up the kilometres, then paints every route on a dark map as light, oldest first. Then a spiral with one turn per year, a race against your own past best efforts, a dial of the hours you start at, weekly tides, a medal case and a departures board. Every chapter plays once when you first reach it, then hands the controls to the reader. Readers who ask for less motion get the finished picture straight away.</p>
+    </div>
+  </section>
+
+  <!-- 11 · Classic ----------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 11: Classic mode, six tabs">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">11</span> Classic mode · the reference</p>
+      <h2 class="r" style="--d:1">Six tabs for people <em>who came to look something up.</em></h2>
+      <div class="three r" style="--d:2">
+        <figure class="shot"><img src="assets/training/classic-top.webp" alt="Classic header: Training, six counters and a monthly sparkline." loading="lazy"><figcaption>Header: six counters, a sparkline, the film</figcaption></figure>
+        <figure class="shot"><img src="assets/training/classic-overview.webp" alt="Overview tab: the year-against-year race line and the day story." loading="lazy"><figcaption>Overview: year against year</figcaption></figure>
+        <figure class="shot"><img src="assets/training/classic-calendar.webp" alt="Calendar tab: a clickable year heatmap with month bars and weekday rhythm." loading="lazy"><figcaption>Calendar: click any day</figcaption></figure>
+        <figure class="shot"><img src="assets/training/classic-log.webp" alt="Log tab: activities grouped by month with sport icons and distances." loading="lazy"><figcaption>Log: searchable, by month</figcaption></figure>
+        <figure class="shot"><img src="assets/training/classic-stats.webp" alt="Stats and PRs tab: totals by sport and year and best efforts with progress bars." loading="lazy"><figcaption>Stats &amp; PRs</figcaption></figure>
+        <figure class="shot"><img src="assets/training/classic-routes.webp" alt="Routes tab: a grid of route outlines." loading="lazy"><figcaption>Routes</figcaption></figure>
+      </div>
+      <p class="note r" style="--d:3">Tabs are URL state (<code>?tab=</code>, never <code>?view=</code>, which belongs to the shell), so every view is a link you can share.</p>
+      <div class="say r" style="--d:4"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="stand" data-s="1.2"></g></svg><p>Same numbers as the atlas. Different job.</p></div>
+      <p class="vo">Classic mode is for the reader who came to look something up. Six tabs: an overview with a year-against-year race line, a searchable log, a calendar where every day can be clicked, the facts, stats and personal records, and a grid of routes. The tab lives in the URL, so any view can be shared. The two layouts never compute a number differently, because both read one data hook.</p>
+    </div>
+  </section>
+
+  <!-- 12 · Real data lands --------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 12: Real data lands">
+    <div class="inner">
+      <div class="split l">
+        <div>
+          <p class="eyebrow r"><span class="num">12</span> Real data <span class="when">08:51 · <span class="commit"><b>9f812ee</b> · +600</span></span></p>
+          <h2 class="r" style="--d:1">The zip arrives, <em>and it isn't the one the docs describe.</em></h2>
+          <div class="prompt r" style="--d:2"><span class="t">08:51</span>@activities.zip This is activities data use this and add in data. Make sure you keep raw data in temp folder. Extracted data will be added in db tables using script. In script, make sure duplicate data is not added in db rows</div>
+          <ul class="plain r" style="--d:3;margin-top:14px">
+            <li><strong>No <code>activities.csv</code>.</strong> Just <code>activities/&lt;id&gt;.fit.gz</code> and three <code>.gpx</code>. The importer learned a <em>files-only</em> mode: the FIT session record becomes the summary (<code>activityFromFit</code>), names default the way Strava names them ("Morning Run").</li>
+            <li>You added the service key as an env secret at 09:02; the first run wrote <strong>358 rows</strong>.</li>
+          </ul>
+        </div>
+        <div class="stack r" style="--d:3">
+          <div class="four">
+            <div class="card"><div class="big" data-to="178">178</div><p class="note">walks</p></div>
+            <div class="card"><div class="big" data-to="86">86</div><p class="note">runs</p></div>
+            <div class="card"><div class="big" data-to="62">62</div><p class="note">strength</p></div>
+            <div class="card"><div class="big" data-to="31">31</div><p class="note">hikes</p></div>
+          </div>
+          <svg class="scene" viewBox="0 0 460 150" role="img" aria-label="Two stick figures unload a crate marked 358 onto a shelf of rows.">
+            <path class="ink" d="M10 130 L450 130"/>
+            <g class="pop" style="--d:1"><rect x="160" y="70" width="120" height="60" rx="6" class="paper-f" stroke="var(--ink)" stroke-width="2.5"/><path class="ink" d="M160 86 L280 86"/><text x="220" y="118" text-anchor="middle" font-family="Instrument Serif" font-size="30" class="ink-t">358</text></g>
+            <g class="F" data-p="lift" data-x="120" data-y="130" data-s="1.4"></g>
+            <g class="F" data-p="walk" data-g="1" data-x="330" data-y="130" data-s="1.4" data-c="rust"></g>
+            <g class="lab"><text x="370" y="62">0 duplicates</text><text x="370" y="80">on re-run</text></g>
+          </svg>
+        </div>
+      </div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="lift" data-s="1.2"></g></svg><p>Real data never matches the docs. Plan for that.</p></div>
+      <p class="vo">At eight fifty-one the real export arrived, and it didn't match the documentation: no activities CSV at all, just the FIT files and three GPX files. So the importer gained a files-only mode, reading the summary from each FIT session and naming activities the way Strava would. You added the database key as a secret, and the first run wrote three hundred and fifty-eight activities: a hundred and seventy-eight walks, eighty-six runs, sixty-two strength sessions and thirty-one hikes. Every run since has found nothing new to add.</p>
+    </div>
+  </section>
+
+  <!-- 13 · Only a few fields ------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 13: Only a few fields">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">13</span> The gap</p>
+      <h2 class="r" style="--d:1">The page showed a dozen fields. <em>The files held fifty.</em></h2>
+      <div class="split r">
+        <svg class="scene r" style="--d:2" viewBox="0 0 460 300" role="img" aria-label="A small stick figure holds a tiny card of a few fields while a tall stack of per-second records towers behind.">
+          <g opacity=".9">
+            <rect x="230" y="20" width="200" height="250" rx="6" fill="var(--sunk)"/>
+            <g class="lab" font-size="11"><text x="244" y="44">t hr spd cad alt pwr</text><text x="244" y="62">0 98 2.7 152 561 210</text><text x="244" y="80">1 99 2.8 154 561 214</text><text x="244" y="98">2 101 2.8 156 562 219</text><text x="244" y="116">3 102 2.9 156 562 220</text><text x="244" y="134">4 104 2.9 158 563 223</text><text x="244" y="152">… stride · contact</text><text x="244" y="170">… bounce · ratio</text><text x="244" y="188">… effort pace · temp</text><text x="244" y="206">… sets · reps</text></g>
+            <text x="330" y="254" text-anchor="middle" font-family="Instrument Serif" font-size="30" class="ink-t">1.16 M rows</text>
+          </g>
+          <rect x="70" y="150" width="100" height="70" rx="6" class="paper-f" stroke="var(--ink)" stroke-width="2"/>
+          <g class="lab ink" font-size="11"><text x="80" y="172">distance</text><text x="80" y="190">time · climb</text><text x="80" y="208">avg hr</text></g>
+          <g class="F" data-p="stand" data-x="120" data-y="280" data-s="1.5"></g>
+          <path class="ink" d="M10 280 L450 280"/>
+        </svg>
+        <div class="stack r" style="--d:3">
+          <p>Profiling all 355 FIT files found about <strong>50 recorded variables</strong> and <strong>1,155,167 per-second records</strong>: heart rate, speed, cadence, altitude, power, step length, ground contact, vertical oscillation, COROS Effort Pace, temperature per lap, and strength sets with reps.</p>
+          <p>The first design used the summary columns. Everything per-second was being parsed, used for splits, and thrown away.</p>
+          <div class="card rust"><p class="small"><strong>Device:</strong> a COROS PACE 3. Parsing needed <code>{force:true, speedUnit:"m/s", lengthUnit:"m", elapsedRecordField:true, mode:"list"}</code>, or speeds came back in km/h and records nested by lap.</p></div>
+        </div>
+      </div>
+      <div class="say r" style="--d:4"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="climb" data-s="1.2"></g></svg><p>The interesting part was in the 1.16 million rows we weren't using.</p></div>
+      <p class="vo">Once real data was in, the gap was obvious. The page used a dozen summary fields, but the files held about fifty variables across more than a million per-second records: heart rate, cadence, power, stride length, ground contact, even the sets and reps of strength sessions. The first pass parsed all of that to work out the splits, and then threw it away. The next two prompts were about using it.</p>
+    </div>
+  </section>
+
+  <!-- 14 · The reference image ----------------------------------------------- -->
+  <section class="slide" aria-label="Slide 14: The reference image">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">14</span> The reference <span class="when">09:08 · <span class="commit"><b>4fc9009</b> · +762</span></span></p>
+      <h2 class="r" style="--d:1">A chart with hikers on it, <em>and a better idea of a day.</em></h2>
+      <div class="split">
+        <div class="stack">
+          <div class="prompt r" style="--d:2"><span class="t">09:08</span>Particular training day can be visualised more intuitively. Revamp graph plots, create something interesting from data. I am sharing reference image</div>
+          <p class="r" style="--d:3">The reference was a subscriber-growth chart with little hikers climbing its line. The idea it gave: <strong>an activity is a walk along its terrain.</strong> Draw the day's elevation as a line, and put people on it at the moments that mattered.</p>
+          <ul class="plain r" style="--d:4">
+            <li><code>storyOf(splits)</code> turns per-km splits into points and <em>beats</em>: start, fastest km, longest stop, biggest climb, heart-rate peak, finish.</li>
+            <li><code>poseFor()</code> picks the stride from that km's pace against the day's median: walk, run, fast, hike, climb, rest by a campfire, summit with a flag.</li>
+            <li><code>fitBeats()</code> keeps only the figures that fit at the real pixel width.</li>
+          </ul>
+        </div>
+        <svg class="scene r" style="--d:2" viewBox="0 0 480 330" role="img" aria-label="A redrawn sketch: a rising chart line with small hikers climbing it, and labels at the moments that mattered.">
+          <text x="10" y="22" class="lab">a sketch of the idea, redrawn</text>
+          <path class="ink" d="M30 300 L470 300 M30 300 L30 40" stroke-width="1.5" opacity=".5"/>
+          <path class="draw" pathLength="1" d="M30 280 C80 270 100 250 140 248 S200 210 240 200 300 150 330 152 380 100 420 80 450 70 470 64" stroke="var(--rust)" stroke-width="4" fill="none" style="--d:2"/>
+          <path d="M30 280 C80 270 100 250 140 248 S200 210 240 200 300 150 330 152 380 100 420 80 450 70 470 64 L470 300 L30 300Z" fill="var(--gold-soft)"/>
+          <g class="pop" style="--d:2"><g class="F" data-p="stand" data-x="40" data-y="278" data-s=".9"></g></g>
+          <g class="pop" style="--d:3"><g class="F" data-p="fast" data-x="150" data-y="246" data-s=".9"></g><text x="150" y="196" text-anchor="middle" class="lab ink">fastest km</text></g>
+          <g class="pop" style="--d:4"><g class="F" data-p="rest" data-x="250" data-y="198" data-s=".9"></g><text x="262" y="150" text-anchor="middle" class="lab ink">paused</text></g>
+          <g class="pop" style="--d:5"><g class="F" data-p="climb" data-x="380" data-y="100" data-s=".9"></g><text x="372" y="52" text-anchor="middle" class="lab ink">biggest climb</text></g>
+          <g class="pop" style="--d:6"><g class="F" data-p="summit" data-x="462" data-y="68" data-s=".9" data-c="rust"></g></g>
+        </svg>
+      </div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="summit" data-s="1.2" data-c="rust"></g></svg><p>A good reference image beats a paragraph of adjectives.</p></div>
+      <p class="vo">At eight minutes past nine you shared a reference: a growth chart with tiny hikers climbing its line. The idea it unlocked was simple. An activity is a walk along its own terrain. So each day became its elevation drawn as a line, with figures standing at the moments that mattered: the start, the fastest kilometre, the longest stop, the biggest climb, the heart-rate peak, and the finish. Each figure's stride comes from that kilometre's pace, and a long stop sits them down by a campfire.</p>
+    </div>
+  </section>
+
+  <!-- 15 · A group of ten ---------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 15: A group of ten">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">15</span> Ten set out <span class="when">09:16 · <span class="commit"><b>f908c4b</b> · 21 files · +945</span></span></p>
+      <h2 class="r" style="--d:1">Ten set out together. <em>One stays at every moment.</em></h2>
+      <div class="split r">
+        <div class="stack">
+          <div class="prompt r" style="--d:2"><span class="t">09:16</span>Animate thoze sticky figures on map. Aa graph plots, sticky figures raise along with it. A group of 10 first, where few stay along the way and at the end they are distributed. Inspect the uploaded data and make sure you have used everything and add changes. Add these graphs on the main page as well</div>
+          <figure class="shot clip r" style="--d:3"><video src="assets/training/clip-day-story.mp4" poster="assets/training/clip-day-story-poster.webp" muted loop playsinline preload="none" aria-label="Screen recording: the day story of the 51.3 km Night Trail Run, ten figures walking the terrain line as it draws"></video><figcaption>The 51.3 km Night Trail Run, recorded on the live preview. The clock is the activity's own; the map is walked in step.</figcaption></figure>
+        </div>
+        <div class="stack r" style="--d:3">
+          <svg class="scene" id="ten" viewBox="0 0 560 230" role="img" aria-label="Live drawing: ten stick figures walk a terrain line as it draws itself; one stays behind at each marked moment until they are spread along the whole ridge."></svg>
+          <ul class="plain">
+            <li><strong><code>positionAt(points, t)</code></strong> maps the activity's own clock to a place on the line; stops hold the group still.</li>
+            <li><strong><code>pickSlots()</code></strong>: the moments first, then the remaining figures placed one at a time <em>as far as possible from every taken spot</em>, so they end up spread out.</li>
+            <li><strong><code>terrainOf()</code></strong> draws hills from the altitude stream (240 samples), not one net change per km.</li>
+            <li><strong><code>profile</code> jsonb</strong> (0040, which you ran on prod at 09:26) carries the thinned streams, never a position.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="run" data-g="1" data-s="1.2" data-c="rust"></g></svg><p>That's us. The drawing above runs the page's own rule.</p></div>
+      <p class="vo">Eight minutes later came the prompt that gave this deck its name. Animate the figures. Let them rise with the line as it draws. Start with a group of ten, have a few stay along the way, and at the end have them spread out. The drawing on this slide follows the page's rule: the terrain draws itself on the activity's own clock, the group walks at its tip, and one figure stays at each moment. Once the moments are covered, each remaining figure goes wherever is furthest from the others, so the ten finish spread across the whole ridge. The same prompt asked that the whole file be used, so a new column, profile, now carries the per-second streams, with no positions in it.</p>
+    </div>
+  </section>
+
+  <!-- 16 · Everything in the file -------------------------------------------- -->
+  <section class="slide" aria-label="Slide 16: Using everything in the file">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">16</span> Use everything</p>
+      <h2 class="r" style="--d:1">Every kilometre gets <em>its own row of numbers.</em></h2>
+      <div class="split l">
+        <figure class="shot r" style="--d:2"><img src="assets/training/detail-splits.webp" alt="Activity page: the splits table with pace, heart rate, cadence, power, stride, ground contact and vertical bounce per kilometre." loading="lazy"><figcaption>An activity's splits table now carries cadence, power, stride, ground contact and bounce when the watch recorded them.</figcaption></figure>
+        <div class="stack r" style="--d:3">
+          <div class="card"><h4>Streams, thinned</h4><p class="small">1.16 M records become ~240 samples per activity: HR, speed, cadence, altitude, power, step, contact, bounce. Enough for a curve, light enough for the page.</p></div>
+          <div class="card"><h4>Sessions without splits</h4><p class="small">Strength and yoga get <code>SessionStory</code>: heart rate over time plus the set blocks, instead of an empty terrain.</p></div>
+          <div class="card"><h4>On the main page too</h4><p class="small"><code>DayPicker</code> puts the story in the Overview and the atlas, with chips for the latest, the longest, the latest hike and the latest session, and under any calendar day.</p></div>
+        </div>
+      </div>
+      <div class="say r" style="--d:4"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="lift" data-s="1.2"></g></svg><p>Even the gym sessions got a story.</p></div>
+      <p class="vo">"Make sure you have used everything" meant going back through the file. Each activity's per-second streams are thinned to about two hundred and forty samples, which is plenty for a smooth curve and light enough to load. The splits table grew columns for cadence, power, stride, ground contact and bounce. Strength and yoga sessions, which have no kilometres, got their own story: heart rate across the session with the sets marked on it. And the day story moved onto the main page, with quick picks for the latest, the longest, and any day on the calendar.</p>
+    </div>
+  </section>
+
+  <!-- 17 · Facts ------------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 17: Every variable, and the facts">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">17</span> Facts <span class="when">09:36 · <span class="commit"><b>0e0f712</b> · +886</span></span></p>
+      <h2 class="r" style="--d:1"><span data-to="44">44</span> variables. <span data-to="34">34</span> facts. <em>And where they lie.</em></h2>
+      <div class="split">
+        <div class="stack">
+          <div class="prompt r" style="--d:2"><span class="t">09:36</span>Show all the possible data variables and interesting facts derived from it</div>
+          <ul class="plain r" style="--d:3">
+            <li><strong><code>deepStatsOf()</code> at import</strong> boils each activity's seconds down to ~10 numbers in <code>extra._stats</code>: HR in 10-bpm bins, drift on runs of 8 km+, negative split, peaks, steps. No new migration.</li>
+            <li><strong><code>VARIABLES</code></strong> lists every kept field with its source and its coverage ("cadence: 263 of 358").</li>
+            <li>1,515,160 steps · 6 am · Sunday carries 38% of the km · 153-day streak · 157 spm · 1.78× Everest.</li>
+          </ul>
+          <div class="card rust r" style="--d:4"><h3>Honest about the data</h3><p class="small">Zones are measured against the 98th percentile of maxima (182 bpm), not one 195 bpm spike. A 49 km/h GPS jump is not shown as "top speed". Wrist temperature reads high, and the page says so. Three 2024 GPX runs don't stretch "longest break" to 525 days.</p></div>
+        </div>
+        <div class="two r" style="--d:3">
+          <figure class="shot"><img src="assets/training/atlas-numbers.webp" alt="By the numbers: groups of facts, How much, When, Bests, Heart, Running form." loading="lazy"><figcaption>Atlas: "By the numbers"</figcaption></figure>
+          <figure class="shot phone"><img src="assets/training/m-facts.webp" alt="The Facts tab on a phone." loading="lazy"><figcaption>Classic Facts, on a phone</figcaption></figure>
+        </div>
+      </div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="stand" data-s="1.2"></g></svg><p>A fact you can't trust is worse than no fact.</p></div>
+      <p class="vo">The next prompt asked for everything: every variable, and every fact you could draw from it. The per-second facts, like time in heart-rate zones, heart-rate drift on long runs and total steps, are computed once at import and stored as a few numbers per activity, so the page never loads the streams. The result is forty-four variables, each with how many activities record it, and thirty-four facts. Just as important was what got left out. One heart-rate spike of a hundred and ninety-five isn't treated as the true maximum, and a GPS glitch at forty-nine kilometres an hour isn't presented as a top speed.</p>
+    </div>
+  </section>
+
+  <!-- 18 · Bugs and learnings ------------------------------------------------ -->
+  <section class="slide" aria-label="Slide 18: What broke, and what it taught">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">18</span> Learnings</p>
+      <h2 class="r" style="--d:1">What broke, <em>and the one-line reason why.</em></h2>
+      <div class="bugs r" style="--d:2">
+        <div class="bug"><b>The hike page crashed</b>"Cannot read properties of undefined (reading 'km')". A requestAnimationFrame timestamp can come before the start time, so <em>t</em> went negative and the index went to −1.<span class="fix">fix: clamp t ≥ 0 in positionAt / tipAt, with a test</span></div>
+        <div class="bug"><b>Routes drew in with gaps</b><code>pathLength</code> plus a non-scaling stroke dashes in screen space, so the "100%" dash was too short once scaled.<span class="fix">fix: measure the dash in JS at real pixels</span></div>
+        <div class="bug"><b>The night map was a speck</b>A few hikes to far-off forts set the frame for every street run.<span class="fix">fix: frame the routes within 15 km of the median, with an "Everywhere" toggle</span></div>
+        <div class="bug"><b>Campfires everywhere</b>Hikers pause on most kilometres, so most figures sat down.<span class="fix">fix: a stop sits a figure down only if it's ≥30% of that km</span></div>
+        <div class="bug"><b>Figures bunched at the start</b>On a wide line every pace figure "fit", so the first few kilometres took all ten.<span class="fix">fix: pickSlots spreads pace figures, never ranks them first</span></div>
+        <div class="bug"><b>CI failed on someone else's lint</b>Two old errors in unrelated files blocked the PR.<span class="fix">fix: 07:18, fixed with a reason in the disable comment</span></div>
+      </div>
+      <div class="say r" style="--d:4"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="rest" data-s="1.2"></g></svg><p>Every one of these was caught on a screenshot, not in review.</p></div>
+      <p class="vo">Some things broke along the way, and each had a one-line cause. The hike page crashed because an animation timestamp can come before the start time, so time went negative. Routes drew in with gaps because of how dashed strokes scale. The night map was too small because a few distant treks set the frame. Hikers sat by campfires on almost every kilometre. On a wide screen, all ten figures bunched up at the start. Every one of these turned up in a screenshot taken after a change, which is why each change ended with one.</p>
+    </div>
+  </section>
+
+  <!-- 19 · The film ---------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 19: The film, made with Remotion">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">19</span> The film <span class="when">12:13 · <span class="commit"><b>20fae90</b> · 31 files · +2,548</span></span></p>
+      <h2 class="r" style="--d:1">Sixty seconds, vertical, <em>made from the same numbers.</em></h2>
+      <div class="split l">
+        <div class="stack">
+          <div class="prompt r" style="--d:2"><span class="t">12:13</span>Now, I want to create a dynamic video which explains all the features of this new page. This should be 60 seconds vertical video. Make sure you are using remotion for creating video. Use animations and all in motion effects in video. Make sure you are creating best video with best story narration. Add that video on page as well</div>
+          <div class="stages four-up r" style="--d:3">
+            <div class="stage"><b>Data</b><code>data.mjs</code> reads the public table through the page's own modules (Vite SSR).</div>
+            <div class="stage"><b>Voice</b>Each scene's line spoken by Piper <code>en_GB-cori-high</code>, then measured.</div>
+            <div class="stage"><b>Score</b>Synthesised sample by sample to the scene cuts; nothing to license.</div>
+            <div class="stage"><b>Remotion</b>1080×1920 @ 30 fps; every motion a function of the frame.</div>
+          </div>
+          <div class="strip r" style="--d:4">
+            <figure><img src="assets/training/film-02.webp" alt="" loading="lazy"><figcaption>pulse</figcaption></figure>
+            <figure><img src="assets/training/film-09.webp" alt="" loading="lazy"><figcaption>358 fall</figcaption></figure>
+            <figure><img src="assets/training/film-16.webp" alt="" loading="lazy"><figcaption>light</figcaption></figure>
+            <figure><img src="assets/training/film-23.webp" alt="" loading="lazy"><figcaption>streak</figcaption></figure>
+            <figure><img src="assets/training/film-31.webp" alt="" loading="lazy"><figcaption>the ten</figcaption></figure>
+            <figure><img src="assets/training/film-41.webp" alt="" loading="lazy"><figcaption>facts</figcaption></figure>
+            <figure><img src="assets/training/film-49.webp" alt="" loading="lazy"><figcaption>two ways</figcaption></figure>
+            <figure><img src="assets/training/film-56.webp" alt="" loading="lazy"><figcaption>finale</figcaption></figure>
+          </div>
+        </div>
+        <figure class="shot film r" style="--d:2">
+          <video controls preload="none" playsinline poster="assets/training/film-poster.webp" width="720" height="1280" aria-label="The /training film: 60 seconds, narrated">
+            <source src="assets/training/the-training-story.mp4" type="video/mp4">
+            <track kind="captions" src="assets/training/the-training-story.vtt" srclang="en" label="English (narration)">
+          </video>
+          <figcaption>The film, as it sits on the page. Sound on.</figcaption>
+        </figure>
+      </div>
+      <div class="say r" style="--d:5"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="walk" data-g="1" data-s="1.2"></g></svg><p>We're in it too, at 0:31.</p></div>
+      <p class="vo">Just after noon came the film: sixty seconds, vertical, made with Remotion, and placed on the page. The pipeline has four steps. The data step reads the public table through the page's own code, so the film can never disagree with the page. Each scene's line is spoken and measured first. A synthesised score is cut to the scene boundaries. Then Remotion renders every frame from the frame number, never from a clock. The eight scenes go from a heartbeat to an invitation, with the group of ten at thirty-one seconds.</p>
+    </div>
+  </section>
+
+  <!-- 20 · What the film taught ---------------------------------------------- -->
+  <section class="slide" aria-label="Slide 20: What the film taught">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">20</span> Film learnings</p>
+      <h2 class="r" style="--d:1">Let the voice <em>set the clock.</em></h2>
+      <div class="three r" style="--d:2">
+        <div class="card"><h4>Narration sizes the scenes</h4><p class="small">Each line is spoken first and measured; each scene is its line plus padding; spare time is shared out by weight. The film locks at exactly 60.0 s, and a line is sped up (≤1.2×) only if it has to be.</p></div>
+        <div class="card"><h4>Numbers are said as words</h4><p class="small">Piper read "1,431" digit group by digit group and dragged. The script now says "fourteen hundred and thirty-one", while the captions still show the figures.</p></div>
+        <div class="card"><h4>Cards follow sentences</h4><p class="small">The five fact cards ran ahead of the voice. Now each lands when its sentence starts (timed by its share of the letters), stays at least 1.2 s, and the music hits on the same frame.</p></div>
+        <div class="card"><h4>Captions are paged</h4><p class="small">A page ends at a sentence, at 6 words, or at a comma once it has 3. Breaking at every comma left one-word captions like "hikes,".</p></div>
+        <div class="card"><h4>Frames, not clocks</h4><p class="small">Remotion renders frames out of order. A figure's stride, a flame's flicker and a camera push are all functions of the frame number.</p></div>
+        <div class="card"><h4>Small and lazy on the page</h4><p class="small">A 720×1280 web copy at 3.4 MB, <code>preload="none"</code>, chapter chips that jump to each scene, and a test that fails the build above 6 MB.</p></div>
+      </div>
+      <p class="note r" style="--d:3">Remotion is free for individuals; a company of more than three people needs its company licence. That's noted in <code>docs/strava.md</code>.</p>
+      <div class="say r" style="--d:4"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="stand" data-s="1.2"></g></svg><p>Every one of these came from looking at stills.</p></div>
+      <p class="vo">The film taught its own lessons. The narration sets the clock: every line is spoken first, and each scene is sized around its line, so the film lands on exactly sixty seconds. Numbers are spoken as words, because the voice stumbled over digits. The fact cards wait for their sentences instead of racing ahead of them. Captions break at sentence ends, not at every comma. And in Remotion, everything moves by frame number. On the page, the film costs nothing until someone presses play.</p>
+    </div>
+  </section>
+
+  <!-- 21 · Shipping ---------------------------------------------------------- -->
+  <section class="slide" aria-label="Slide 21: Shipping it">
+    <div class="inner">
+      <div class="split">
+        <div>
+          <p class="eyebrow r"><span class="num">21</span> Shipping</p>
+          <h2 class="r" style="--d:1">Checks every push. <em>Production on merge.</em></h2>
+          <ul class="plain r" style="--d:2">
+            <li><strong>Before every push:</strong> <span data-to="816">816</span> Jest tests, ESLint, a Vite build, and Playwright screenshots at desktop and phone width with zero console errors.</li>
+            <li><strong>The database moved first:</strong> you ran <code>0038</code>, <code>0039</code> and <code>0040</code> on production as each landed. Code reads new columns only once they exist (the importer probes for <code>profile</code>).</li>
+            <li><strong>Every push deploys a preview</strong> on Cloudflare Pages; the branch is live there now with real data and the film.</li>
+            <li><strong>Production</strong> follows when <a href="https://github.com/daredavil01/personal-site/pull/69">personal-site#69</a> merges.</li>
+          </ul>
+          <div class="card r" style="--d:3"><h3>After every new export</h3><pre style="border:0;padding:0;background:none">npm run strava:import -- --dir=tmp/strava-export
+npm run og:fallbacks -- --only=training
+npm run ask:index
+npm run training:film -- --publish</pre></div>
+        </div>
+        <div class="stack r" style="--d:2">
+          <svg class="scene" viewBox="0 0 460 230" role="img" aria-label="Stick figures reach a summit; one plants a flag marked PR 69.">
+            <path class="ink draw" pathLength="1" d="M10 220 C90 214 130 160 190 150 S280 60 320 40 400 120 450 140" style="--d:1"/>
+            <path d="M10 220 C90 214 130 160 190 150 S280 60 320 40 400 120 450 140 L450 230 L10 230Z" fill="var(--rust-soft)"/>
+            <g class="F" data-p="hike" data-x="130" data-y="176" data-s="1.3"></g>
+            <g class="F" data-p="climb" data-x="240" data-y="96" data-s="1.3"></g>
+            <g class="pop" style="--d:3"><line x1="336" y1="40" x2="336" y2="-30" class="ink"/><path d="M336 -30 L386 -16 L336 -2 Z" class="rust-f"/><text x="342" y="-12" font-family="IBM Plex Mono" font-size="12" fill="#fff">#69</text></g>
+            <g class="F" data-p="summit" data-x="320" data-y="40" data-s="1.3" data-c="rust"></g>
+          </svg>
+          <figure class="shot"><img src="assets/training/classic-top.webp" alt="The classic page live on the preview, with the film beside the title." loading="lazy"><figcaption>The branch preview, with the film in the header.</figcaption></figure>
+        </div>
+      </div>
+      <div class="say r" style="--d:4"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="summit" data-s="1.2" data-c="rust"></g></svg><p>Schema on prod first, code after: nothing reads a column that isn't there.</p></div>
+      <p class="vo">Shipping followed one routine. Before every push: eight hundred and sixteen tests, the linter, a full build, and screenshots at desktop and phone size with no console errors. The database always moved first. You ran each migration on production as soon as it landed, and the code was written so it never reads a column before that column exists. Every push deploys a preview of the branch, which is live now with real data and the film. Production follows when pull request sixty-nine is merged. After each new Strava export, four commands bring everything up to date.</p>
+    </div>
+  </section>
+
+  <!-- 22 · This deck, and what to reuse -------------------------------------- -->
+  <section class="slide" aria-label="Slide 22: How this deck was made, and what to reuse">
+    <div class="inner">
+      <p class="eyebrow r"><span class="num">22</span> This deck <span class="when">13:06</span></p>
+      <h2 class="r" style="--d:1">The tenth figure <em>plants the flag.</em></h2>
+      <div class="split">
+        <div class="stack">
+          <div class="prompt r" style="--d:2"><span class="t">13:06</span>I want to create a presentation around how we have developed this page called training … Make sure you embed the process till creation of this presentation … make sure you create a strong storyline of how this was developed, and make sure it is user friendly and has as much technical details as possible.</div>
+          <div class="card r" style="--d:3"><h3>How this deck was made</h3><ul class="plain small">
+            <li>Your prompts, and the answers you gave, were read verbatim from the session log with their timestamps; commits and line counts came from <code>git log</code>.</li>
+            <li>Screens and the two recordings were captured with Playwright on the live preview; recordings cut to muted H.264 loops with ffmpeg; every image is webp under 120 KB.</li>
+            <li>The illo skill had no image backend in this cloud session, so the stick figures are inline SVG built from the page's own pose table, in riso ink.</li>
+            <li>Narration: each slide's paragraph is read aloud by the same Piper voice as the film.</li>
+          </ul></div>
+        </div>
+        <div class="stack r" style="--d:3">
+          <h3>The approach, if you want to reuse it</h3>
+          <ol class="plain" style="padding-left:0">
+            <li><strong>Ask before building.</strong> Four rounds of questions, each with a recommended answer and the trade-off.</li>
+            <li><strong>Design on sample data,</strong> clearly labelled, so design never waits for the import.</li>
+            <li><strong>Let the real data redesign it.</strong> The best feature came after the zip, not before.</li>
+            <li><strong>A reference image beats adjectives.</strong></li>
+            <li><strong>Screenshot every change.</strong> Every bug on slide 18 was caught that way.</li>
+            <li><strong>Guard what's easy to lose:</strong> tests for the media files, the route card, and duplicate rows.</li>
+          </ol>
+          <svg class="scene" viewBox="0 0 460 120" role="img" aria-label="The ten figures spread along a ridge; the last plants a flag at the summit.">
+            <path class="ink" d="M0 110 C60 106 90 80 140 78 S220 96 260 72 330 26 370 22 420 60 460 70"/>
+            <g class="F" data-p="stand" data-x="20" data-y="108" data-s=".8"></g><g class="F" data-p="rest" data-x="66" data-y="96" data-s=".8"></g>
+            <g class="F" data-p="walk" data-x="112" data-y="82" data-s=".8"></g><g class="F" data-p="hike" data-x="160" data-y="80" data-s=".8" data-c="rust"></g>
+            <g class="F" data-p="run" data-x="206" data-y="88" data-s=".8"></g><g class="F" data-p="climb" data-x="252" data-y="76" data-s=".8"></g>
+            <g class="F" data-p="fast" data-x="296" data-y="52" data-s=".8"></g><g class="F" data-p="climb" data-x="336" data-y="30" data-s=".8"></g>
+            <g class="pop" style="--d:4"><g class="F" data-p="summit" data-x="372" data-y="22" data-s=".8" data-c="rust"></g></g>
+            <g class="F" data-p="walk" data-x="430" data-y="64" data-s=".8"></g>
+          </svg>
+        </div>
+      </div>
+      <div class="row r" style="--d:4;margin-top:10px">
+        <a class="chip rust" href="https://claude-nifty-tesla-aou02j.daredavil.pages.dev/training">Open the page (preview) ↗</a>
+        <a class="chip" href="https://github.com/daredavil01/personal-site/pull/69">personal-site#69 ↗</a>
+        <a class="chip" href="https://github.com/daredavil01/personal-site/blob/main/docs/strava.md">docs/strava.md ↗</a>
+      </div>
+      <p class="vo">The last prompt asked for this deck, built from the whole process, up to and including making it. Your prompts and answers were taken word for word from the session log, the commits from git, and the screens and recordings were captured from the live preview. The stick figures are drawn from the same joint table the page uses, and the narration you're hearing is the film's voice. If you want to reuse the approach, it fits in six lines. Ask before you build. Design on labelled sample data. Let the real data redesign it. Show a reference image instead of describing one. Screenshot every change. And put tests on the things that are easiest to lose. Ten set out together this morning, and now they're spread along the whole ridge.</p>
+    </div>
+  </section>
+
+</div>
+
+<nav class="rail" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <div class="ridge" id="ridge"></div>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <button type="button" id="replay" aria-label="Replay this slide's animation" title="Replay (R)">&#8635;</button>
+  <span class="counter" id="counter">01 / 22</span>
+</nav>
+
+<div class="drawer" id="drawer" role="region" aria-label="Narration">
+  <p class="who" id="vo-who">Narration · slide 1</p>
+  <p id="vo-text"></p>
+  <div class="ctl">
+    <button class="pill" type="button" id="vo-play">&#9654; Listen</button>
+    <button class="pill" type="button" id="vo-auto" aria-pressed="false" title="Play each slide's narration and move on">Auto-advance</button>
+    <span class="note" id="vo-note">Voice: Piper en_GB-cori-high</span>
+  </div>
+  <audio id="vo-audio" preload="none"></audio>
+</div>
+
+<script>
+// ===========================================================================
+// The figures. The joint table below is the page's own
+// (personal-site src/components/Training/poses.js): feet at (0,0), facing
+// right, ~60 units tall. Any <g class="F" data-p="pose"> is filled with one.
+// data-g="1" alternates the two frames of its gait while the slide is on.
+// ===========================================================================
+var P = function (x, y) { return [x, y]; };
+var POSES = {
+  stand: {
+    head: P(0, -52), neck: P(0, -44), hip: P(0, -25), kL: P(-2, -12), fL: P(-4, 0), kR: P(2, -12), fR: P(4, 0), eL: P(-4, -34), hL: P(-5, -24), eR: P(4, -34), hR: P(5, -24),
+  },
+  walk: {
+    head: P(2, -52), neck: P(1, -44), hip: P(0, -25), kL: P(-4, -12), fL: P(-9, 0), kR: P(4, -13), fR: P(7, 0), eL: P(-5, -35), hL: P(-8, -27), eR: P(6, -35), hR: P(9, -28),
+  },
+  walkB: {
+    head: P(2, -52), neck: P(1, -44), hip: P(0, -25), kL: P(3, -13), fL: P(6, 0), kR: P(-3, -12), fR: P(-8, 0), eL: P(5, -35), hL: P(8, -28), eR: P(-4, -35), hR: P(-7, -27),
+  },
+  run: {
+    head: P(6, -50), neck: P(4, -43), hip: P(0, -26), kL: P(-5, -15), fL: P(-13, -9), kR: P(8, -15), fR: P(6, 0), eL: P(-3, -36), hL: P(-8, -31), eR: P(9, -35), hR: P(13, -40),
+  },
+  runB: {
+    head: P(6, -50), neck: P(4, -43), hip: P(0, -26), kL: P(6, -14), fL: P(3, 0), kR: P(-3, -15), fR: P(-11, -11), eL: P(9, -35), hL: P(13, -40), eR: P(-3, -36), hR: P(-8, -31),
+  },
+  fast: {
+    head: P(10, -48), neck: P(7, -41), hip: P(0, -26), kL: P(-7, -17), fL: P(-17, -12), kR: P(11, -17), fR: P(10, 0), eL: P(-2, -35), hL: P(-9, -29), eR: P(12, -33), hR: P(18, -39),
+  },
+  hike: {
+    head: P(4, -51), neck: P(3, -43), hip: P(0, -25), kL: P(-4, -12), fL: P(-8, 0), kR: P(5, -14), fR: P(8, 0), eL: P(-3, -34), hL: P(-6, -26), eR: P(8, -35), hR: P(12, -30),
+    pack: true, pole: [P(12, -30), P(16, 0)],
+  },
+  climb: {
+    head: P(7, -49), neck: P(5, -41), hip: P(0, -24), kL: P(-3, -11), fL: P(-7, 0), kR: P(9, -18), fR: P(12, -8), eL: P(-2, -32), hL: P(-5, -24), eR: P(11, -35), hR: P(15, -30),
+    pack: true, pole: [P(15, -30), P(19, -8)],
+  },
+  rest: {
+    head: P(3, -37), neck: P(2, -30), hip: P(-1, -13), kL: P(9, -15), fL: P(10, 0), kR: P(8, -14), fR: P(12, 0), eL: P(6, -22), hL: P(10, -17), eR: P(6, -21), hR: P(11, -16),
+    rock: true, fire: true,
+  },
+  summit: {
+    head: P(0, -52), neck: P(0, -44), hip: P(0, -25), kL: P(-3, -12), fL: P(-6, 0), kR: P(3, -12), fR: P(6, 0), eL: P(-7, -50), hL: P(-9, -59), eR: P(7, -50), hR: P(9, -59),
+    flag: true,
+  },
+  ride: {
+    head: P(9, -50), neck: P(5, -43), hip: P(-4, -32), kL: P(3, -24), fL: P(1, -12), kR: P(4, -26), fR: P(6, -14), eL: P(9, -36), hL: P(13, -33), eR: P(9, -36), hR: P(13, -33),
+    bike: true,
+  },
+  swim: {
+    head: P(16, -10), neck: P(10, -10), hip: P(-6, -8), kL: P(-13, -9), fL: P(-21, -6), kR: P(-13, -6), fR: P(-21, -10), eL: P(16, -18), hL: P(23, -14), eR: P(4, -4), hR: P(-2, -3),
+    water: true,
+  },
+  lift: {
+    head: P(0, -52), neck: P(0, -44), hip: P(0, -25), kL: P(-5, -13), fL: P(-6, 0), kR: P(5, -13), fR: P(6, 0), eL: P(-9, -46), hL: P(-10, -57), eR: P(9, -46), hR: P(10, -57),
+    barbell: true,
+  },
+  yoga: {
+    head: P(0, -53), neck: P(0, -45), hip: P(0, -26), kL: P(-1, -13), fL: P(0, 0), kR: P(10, -20), fR: P(1, -16), eL: P(-4, -55), hL: P(0, -63), eR: P(4, -55), hR: P(0, -63),
+  },
+};
+
+
+var GAIT = { walk: 'walkB', run: 'runB', fast: 'runB', walkB: 'walk', runB: 'run' };
+var NS = 'http://www.w3.org/2000/svg';
+
+function figMarkup(pose) {
+  var j = POSES[pose] || POSES.stand;
+  function L(a, b, w) { return '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke-width="' + w + '"/>'; }
+  var s = '';
+  if (j.rock) s += '<ellipse cx="-2" cy="-5" rx="10" ry="6" class="pack"/>';
+  if (j.fire) s += '<g transform="translate(24 0)"><path d="M-8 0 L8 -3 M-8 -3 L8 0" stroke="#5b3a29" stroke-width="3" stroke-linecap="round"/><path class="flame" d="M0 -3 C-7 -9 -2 -14 0 -21 C2 -15 8 -11 0 -3 Z" fill="#f97316"/><path class="flame" d="M0 -4 C-3 -8 -1 -10 0 -14 C1 -10 3 -8 0 -4 Z" fill="#fcd34d"/></g>';
+  if (j.flag) s += '<line x1="16" y1="2" x2="16" y2="-64" stroke-width="2.5"/><path d="M16 -64 L32 -58 L16 -52 Z" fill="var(--rust)"/>';
+  if (j.pack) s += '<rect class="pack" x="' + (j.neck[0] - 10) + '" y="' + (j.neck[1] + 2) + '" width="8" height="14" rx="3"/>';
+  s += L(j.neck, j.hip, 6) + L(j.hip, j.kL, 5) + L(j.kL, j.fL, 5) + L(j.hip, j.kR, 5) + L(j.kR, j.fR, 5)
+    + L(j.neck, j.eL, 4) + L(j.eL, j.hL, 4) + L(j.neck, j.eR, 4) + L(j.eR, j.hR, 4);
+  if (j.pole) s += L(j.pole[0], j.pole[1], 2);
+  if (j.barbell) s += '<line x1="-20" y1="-57" x2="20" y2="-57" stroke-width="2.5"/><line x1="-17" y1="-63" x2="-17" y2="-51" stroke-width="5"/><line x1="17" y1="-63" x2="17" y2="-51" stroke-width="5"/>';
+  s += '<circle class="h" cx="' + j.head[0] + '" cy="' + j.head[1] + '" r="5.5"/>';
+  return s;
+}
+
+function drawFig(g) {
+  var pose = g.getAttribute('data-p') || 'stand';
+  var x = +(g.getAttribute('data-x') || 0), y = +(g.getAttribute('data-y') || 0), k = +(g.getAttribute('data-s') || 1);
+  var flip = g.getAttribute('data-flip') ? -1 : 1;
+  g.setAttribute('class', 'F fig' + (g.getAttribute('data-c') === 'rust' ? ' rust' : '') + (g.getAttribute('data-g') && GAIT[pose] ? ' gait' : ''));
+  g.setAttribute('transform', 'translate(' + x + ' ' + y + ') scale(' + (k * flip) + ' ' + k + ')');
+  if (g.getAttribute('data-g') && GAIT[pose]) {
+    g.innerHTML = '<g class="a">' + figMarkup(pose) + '</g><g class="b">' + figMarkup(GAIT[pose]) + '</g>';
+  } else {
+    g.innerHTML = figMarkup(pose);
+  }
+}
+Array.prototype.forEach.call(document.querySelectorAll('g.F'), drawFig);
+
+// ===========================================================================
+// Slide 2 — the day as a ridge: prompts as pins, commits as squares.
+// Times are IST on 3 Nov 2026, read from the session log and `git log`.
+// ===========================================================================
+(function () {
+  var svg = document.getElementById('daychart');
+  var card = document.getElementById('daycard');
+  if (!svg) return;
+  var PROMPTS = [
+    ['05:48', 'prompt', 'I want to import all data from strava for activities using strava API … Research strava API and ask questions to clarify requirement'],
+    ['06:25', 'prompt', 'Can we use strava exported data instead of strava API as it is behind paywall now?'],
+    ['06:36', 'note', '0038_training_sql applied through UI on prod, create another script for new schema changes required'],
+    ['06:41', 'note', 'applied 0039'],
+    ['06:49', 'prompt', 'Completely redesign the UI for training page, use dummy data for now … BE AS CREATIVE AS POSSIBLE.'],
+    ['07:18', 'prompt', 'Fix this lint and push again'],
+    ['08:51', 'prompt', '@activities.zip This is activities data use this and add in data … make sure duplicate data is not added in db rows'],
+    ['09:02', 'note', 'Supabase secret added in env variable'],
+    ['09:08', 'prompt', 'Particular training day can be visualised more intuitively. Revamp graph plots … I am sharing reference image'],
+    ['09:16', 'prompt', 'Animate thoze sticky figures on map … A group of 10 first, where few stay along the way and at the end they are distributed'],
+    ['09:25', 'prompt', 'Give me content for supabase/migrations/0040_training_profile.sql'],
+    ['09:26', 'note', '0040 executed on prod'],
+    ['09:36', 'prompt', 'Show all the possible data variables and interesting facts derived from it'],
+    ['12:13', 'prompt', 'Now, I want to create a dynamic video which explains all the features of this new page … using remotion'],
+    ['13:06', 'prompt', 'I want to create a presentation around how we have developed this page called training …']
+  ];
+  var COMMITS = [
+    ['06:16', '3842c04', 'Add /training: every Strava activity, synced from the API', 3886],
+    ['06:38', '777f333', 'Read /training from a Strava bulk export instead of the API', 1289],
+    ['07:13', '0de7770', 'Redesign /training: an animated atlas story and a richer classic layout', 3556],
+    ['07:19', '3043992', 'Fix the two lint errors failing CI', 6],
+    ['09:01', '9f812ee', 'Import Strava activity files without activities.csv, never duplicating rows', 600],
+    ['09:16', '4fc9009', 'Tell each activity as a walk along its terrain', 762],
+    ['09:36', 'f908c4b', 'Ten set out together: the day story animates, and uses everything in the file', 945],
+    ['12:03', '0e0f712', 'Facts: every variable the watch records, and what follows from it', 886],
+    ['12:46', '20fae90', 'Training film: a 60-second vertical, narrated Remotion film of /training', 2548]
+  ];
+  var T0 = 5 * 60 + 30, T1 = 13 * 60 + 20;
+  function mins(t) { var p = t.split(':'); return +p[0] * 60 + +p[1]; }
+  function X(t) { return 30 + (mins(t) - T0) / (T1 - T0) * 1040; }
+  var html = '<path class="ink" d="M30 170 L1070 170" stroke-width="1.5"/>';
+  for (var h = 6; h <= 13; h++) {
+    var x = X((h < 10 ? '0' : '') + h + ':00');
+    html += '<line x1="' + x + '" y1="166" x2="' + x + '" y2="174" stroke="var(--muted)"/><text class="lab" x="' + x + '" y="194" text-anchor="middle">' + h + ':00</text>';
+  }
+  // Commit bars: height by lines added (sqrt), below the line.
+  COMMITS.forEach(function (c, i) {
+    var x = X(c[0]), hgt = 6 + Math.sqrt(c[3]) * 0.5;
+    html += '<g class="pin" tabindex="0" role="button" aria-pressed="false" data-kind="commit" data-i="' + i + '" aria-label="Commit ' + c[1] + ' at ' + c[0] + '"><rect x="' + (x - 5) + '" y="' + (170 - hgt) + '" width="10" height="' + hgt + '" class="rust-f" opacity=".75" rx="2"/></g>';
+  });
+  PROMPTS.forEach(function (p, i) {
+    var x = X(p[0]), y = p[1] === 'prompt' ? 58 + (i % 3) * 22 : 120;
+    html += '<g class="pin" tabindex="0" role="button" aria-pressed="false" data-kind="prompt" data-i="' + i + '" aria-label="Prompt at ' + p[0] + '">'
+      + '<line x1="' + x + '" y1="' + (y + 6) + '" x2="' + x + '" y2="170" stroke="var(--ink)" stroke-width="1" stroke-dasharray="2 3"/>'
+      + '<circle cx="' + x + '" cy="' + y + '" r="' + (p[1] === 'prompt' ? 7 : 4.5) + '" fill="' + (p[1] === 'prompt' ? 'var(--card)' : 'var(--muted)') + '" stroke="var(--ink)" stroke-width="2"/></g>';
+  });
+  html += '<text class="lab" x="30" y="24">● prompt   · small note   ▮ commit (height ∝ √lines added)</text>';
+  svg.innerHTML = html;
+  var pins = Array.prototype.slice.call(svg.querySelectorAll('.pin'));
+  function show(pin) {
+    pins.forEach(function (p) { p.setAttribute('aria-pressed', p === pin ? 'true' : 'false'); });
+    var i = +pin.getAttribute('data-i');
+    if (pin.getAttribute('data-kind') === 'commit') {
+      var c = COMMITS[i];
+      card.innerHTML = '<span class="t">' + c[0] + ' · commit ' + c[1] + ' · +' + c[3].toLocaleString('en-GB') + ' lines</span><p>' + c[2] + '</p>';
+    } else {
+      var p = PROMPTS[i];
+      card.innerHTML = '<span class="t">' + p[0] + ' · ' + (p[1] === 'prompt' ? 'prompt' : 'note') + '</span><p style="font-family:var(--font-mono);font-size:14px">' + p[2] + '</p>';
+    }
+  }
+  pins.forEach(function (pin) {
+    pin.addEventListener('click', function () { show(pin); });
+    pin.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); show(pin); } });
+  });
+  show(pins.filter(function (p) { return p.getAttribute('data-kind') === 'prompt'; })[0]);
+})();
+
+// ===========================================================================
+// Slide 15 — the group of ten, live. The page's rule in miniature: the
+// terrain draws on its own clock, the group walks at the tip, one stays at
+// each moment, and the rest are spread so each is as far as possible from
+// every spot already taken (pickSlots).
+// ===========================================================================
+var Ten = (function () {
+  var svg = document.getElementById('ten');
+  if (!svg) return { start: function () {}, stop: function () {} };
+  var W = 520, X0 = 20, BASE = 200, H = 120;
+  // A made-up ridge (the deck has no access to the activity's stream).
+  var pts = [];
+  for (var i = 0; i <= 120; i++) {
+    var u = i / 120;
+    var e = 0.35 * Math.sin(u * 6.2) + 0.25 * Math.sin(u * 13 + 1) + 0.5 * u + 0.12 * Math.sin(u * 31);
+    pts.push([X0 + u * W, e]);
+  }
+  var lo = Math.min.apply(null, pts.map(function (p) { return p[1]; }));
+  var hi = Math.max.apply(null, pts.map(function (p) { return p[1]; }));
+  pts = pts.map(function (p) { return [p[0], BASE - (p[1] - lo) / (hi - lo) * H]; });
+  function yAt(x) {
+    var u = Math.max(0, Math.min(120, (x - X0) / W * 120)), k = Math.floor(u), f = u - k;
+    var a = pts[k], b = pts[Math.min(120, k + 1)];
+    return a[1] + (b[1] - a[1]) * f;
+  }
+  var d = 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L');
+  // The moments, then the spread (as pickSlots would place them).
+  var moments = [
+    { u: 0, pose: 'stand', label: 'Start' }, { u: 0.17, pose: 'fast', label: 'Fastest km' },
+    { u: 0.42, pose: 'rest', label: 'Paused' }, { u: 0.71, pose: 'climb', label: 'Biggest climb' },
+    { u: 1, pose: 'summit', label: 'Finish' }
+  ];
+  var slots = moments.slice();
+  while (slots.length < 10) {
+    var best = 0, bestD = -1;
+    for (var c = 1; c < 100; c++) {
+      var cu = c / 100;
+      var dist = Math.min.apply(null, slots.map(function (s) { return Math.abs(s.u - cu); }));
+      if (dist > bestD) { bestD = dist; best = cu; }
+    }
+    slots.push({ u: best, pose: 'walk', label: null });
+  }
+  slots.sort(function (a, b) { return a.u - b.u; });
+
+  svg.innerHTML = '<defs><clipPath id="tenclip"><rect id="tenrect" x="0" y="0" width="0" height="260"/></clipPath></defs>'
+    + '<path d="' + d + '" fill="none" stroke="var(--rule)" stroke-width="2" stroke-dasharray="4 6"/>'
+    + '<g clip-path="url(#tenclip)"><path d="' + d + ' L' + (X0 + W) + ' 230 L' + X0 + ' 230Z" fill="var(--gold-soft)"/>'
+    + '<path d="' + d + '" fill="none" stroke="var(--rust)" stroke-width="3.5" stroke-linejoin="round"/></g>'
+    + '<g id="tenstay"></g><g id="tengo"></g>'
+    + '<text class="lab" x="20" y="226">0 km</text><text class="lab" x="540" y="226" text-anchor="end">finish</text>'
+    + '<text class="lab ink" id="tencount" x="20" y="22">10 moving</text>';
+  var rect = document.getElementById('tenrect'), stay = document.getElementById('tenstay'), go = document.getElementById('tengo'), count = document.getElementById('tencount');
+  var raf = 0, t0 = 0, PLAY = 7000, HOLD = 2600;
+  function frame(now) {
+    if (!t0) t0 = now;
+    var ms = (now - t0) % (PLAY + HOLD);
+    var p = Math.min(1, Math.max(0, ms / PLAY));
+    var tipX = X0 + p * W;
+    rect.setAttribute('width', tipX);
+    var stayed = slots.filter(function (s) { return s.u <= p + 1e-6; });
+    var html = '';
+    stayed.forEach(function (s, k) {
+      var x = X0 + s.u * W;
+      html += '<g class="fig' + (k % 3 === 1 ? ' rust' : '') + '" transform="translate(' + x + ' ' + yAt(x) + ') scale(.62)">' + figMarkup(s.pose === 'walk' ? (k % 2 ? 'hike' : 'stand') : s.pose) + '</g>';
+      if (s.label) html += '<text class="lab ink" x="' + x + '" y="' + (yAt(x) - 46 - (k % 2) * 14) + '" text-anchor="middle" font-size="11">' + s.label + '</text>';
+    });
+    stay.innerHTML = html;
+    var moving = 10 - stayed.length, g = '';
+    for (var m = 0; m < moving; m++) {
+      var x = Math.max(X0, tipX - m * 9);
+      var pose = Math.floor((now / 160) + m) % 2 ? 'walk' : 'walkB';
+      g += '<g class="fig' + (m % 3 === 1 ? ' rust' : '') + '" transform="translate(' + x + ' ' + yAt(x) + ') scale(.62)">' + figMarkup(pose) + '</g>';
+    }
+    go.innerHTML = g;
+    count.textContent = moving ? moving + ' moving · ' + stayed.length + ' stayed' : 'all ten spread along the ridge';
+    raf = requestAnimationFrame(frame);
+  }
+  function still() {
+    t0 = 0;
+    frame(performance.now() + PLAY);
+    cancelAnimationFrame(raf);
+  }
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  still();
+  return {
+    start: function () { if (reduce.matches) { still(); return; } cancelAnimationFrame(raf); t0 = 0; raf = requestAnimationFrame(frame); },
+    stop: function () { cancelAnimationFrame(raf); }
+  };
+})();
+
+// ===========================================================================
+// Narration: each slide's .vo paragraph, shown in the drawer and read aloud
+// from assets/training/vo/NN.mp3 (Piper en_GB-cori-high, the film's voice).
+// Auto-advance plays a slide's narration, then moves on.
+// ===========================================================================
+var Narration = (function () {
+  var drawer = document.getElementById('drawer');
+  var btn = document.getElementById('narrate');
+  var text = document.getElementById('vo-text');
+  var who = document.getElementById('vo-who');
+  var play = document.getElementById('vo-play');
+  var autoBtn = document.getElementById('vo-auto');
+  var audio = document.getElementById('vo-audio');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var at = 0, open = false, auto = false;
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function setPlaying(on) { play.innerHTML = on ? '&#10073;&#10073; Pause' : '&#9654; Listen'; }
+  function load(i) {
+    var vo = slides[i] && slides[i].querySelector('.vo');
+    text.textContent = vo ? vo.textContent : '';
+    who.textContent = 'Narration · slide ' + (i + 1);
+    var src = 'assets/training/vo/' + pad(i + 1) + '.mp3';
+    if (audio.getAttribute('src') !== src) { audio.pause(); audio.setAttribute('src', src); setPlaying(false); }
+  }
+  function speak() { var p = audio.play(); if (p && p.catch) p.catch(function () { setPlaying(false); }); setPlaying(true); }
+  play.addEventListener('click', function () { if (audio.paused) speak(); else { audio.pause(); setPlaying(false); } });
+  audio.addEventListener('ended', function () {
+    setPlaying(false);
+    if (auto && at < slides.length - 1) window.deckGo(at + 1);
+  });
+  autoBtn.addEventListener('click', function () {
+    auto = !auto;
+    autoBtn.setAttribute('aria-pressed', auto ? 'true' : 'false');
+    if (auto && audio.paused) speak();
+  });
+  function setOpen(v) {
+    open = v;
+    drawer.classList.toggle('open', open);
+    btn.setAttribute('aria-pressed', open ? 'true' : 'false');
+    if (!open) { audio.pause(); setPlaying(false); auto = false; autoBtn.setAttribute('aria-pressed', 'false'); }
+  }
+  btn.addEventListener('click', function () { setOpen(!open); });
+  return {
+    slide: function (i) {
+      var moved = i !== at;
+      at = i;
+      load(i);
+      if (moved && auto && open) speak();
+    },
+    toggle: function () { setOpen(!open); }
+  };
+})();
+
+
+// ===========================================================================
+// The deck: navigation, the ridge progress bar, count-ups, clips, narration.
+// ===========================================================================
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var counter = document.getElementById('counter');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var current = 0;
+  var N = slides.length;
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  // --- The ridge: one tick per slide; the group walks to the current one and
+  //     one figure stays at each chapter turn it has passed.
+  var ridge = document.getElementById('ridge');
+  var STAYS = [2, 5, 7, 9, 12, 14, 16, 18, 20]; // slides (0-based) where one stays
+  var RW = 1000, RH = 62;
+  function rx(i) { return 12 + i / (N - 1) * (RW - 24); }
+  function ry(i) { return 50 - 26 * (0.5 + 0.5 * Math.sin(i / (N - 1) * Math.PI * 1.15 - 0.3)) - 6 * Math.sin(i * 1.7); }
+  var rd = 'M' + slides.map(function (_, i) { return rx(i).toFixed(1) + ' ' + ry(i).toFixed(1); }).join(' L');
+  ridge.innerHTML = '<svg viewBox="0 0 ' + RW + ' ' + RH + '" preserveAspectRatio="none" aria-hidden="false" role="group" aria-label="Slides">'
+    + '<path d="' + rd + '" fill="none" stroke="var(--rule)" stroke-width="2" vector-effect="non-scaling-stroke"/>'
+    + '<path id="ridge-done" d="' + rd + '" fill="none" stroke="var(--rust)" stroke-width="2.5" vector-effect="non-scaling-stroke" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>'
+    + slides.map(function (s, i) {
+      return '<g class="tick" role="button" tabindex="0" data-i="' + i + '" aria-label="' + s.getAttribute('aria-label') + '">'
+        + '<rect x="' + (rx(i) - 18) + '" y="0" width="36" height="62"/><circle cx="' + rx(i) + '" cy="' + ry(i) + '" r="5" vector-effect="non-scaling-stroke"/></g>';
+    }).join('')
+    + '<g id="ridge-figs"></g></svg>';
+  var ticks = Array.prototype.slice.call(ridge.querySelectorAll('.tick'));
+  ticks.forEach(function (t) {
+    t.addEventListener('click', function () { go(+t.getAttribute('data-i')); });
+    t.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); go(+t.getAttribute('data-i')); } });
+  });
+  var figsG = document.getElementById('ridge-figs');
+  var done = document.getElementById('ridge-done');
+  function paintRidge() {
+    // The SVG is stretched horizontally; draw figures in a counter-scaled group.
+    var box = ridge.getBoundingClientRect();
+    var sx = box.width / RW || 1;
+    var html = '';
+    var stayed = STAYS.filter(function (s) { return s <= current; });
+    stayed.forEach(function (s, k) {
+      html += '<g transform="translate(' + rx(s) + ' ' + ry(s) + ') scale(' + (0.34 / sx) + ' 0.34)"><g class="fig' + (k % 3 === 1 ? ' rust' : '') + '">' + figMarkup(['stand', 'rest', 'hike', 'climb', 'stand', 'rest', 'walk', 'climb', 'hike'][k]) + '</g></g>';
+    });
+    var moving = 10 - stayed.length;
+    for (var m = 0; m < moving; m++) {
+      html += '<g transform="translate(' + Math.max(4, rx(current) - m * 13 / sx) + ' ' + ry(current) + ') scale(' + (0.34 / sx) + ' 0.34)"><g class="fig' + (m === 0 ? ' rust' : '') + '">' + figMarkup(current === N - 1 && m === 0 ? 'summit' : (m % 2 ? 'walk' : 'walkB')) + '</g></g>';
+    }
+    // On a phone the ridge is too short for ten people: ticks only.
+    figsG.innerHTML = box.width < 640 ? '' : html;
+    done.setAttribute('stroke-dashoffset', String(1 - current / (N - 1)));
+    ticks.forEach(function (t, i) {
+      t.setAttribute('aria-current', i === current ? 'true' : 'false');
+      t.classList.toggle('past', i < current);
+    });
+  }
+
+  // --- Count-ups
+  function countUp(slide) {
+    if (still.matches) return;
+    slide.querySelectorAll('[data-to]').forEach(function (el) {
+      var to = +el.getAttribute('data-to'), t0 = null;
+      function tick(t) {
+        if (t0 === null) t0 = t;
+        var p = Math.min(1, (t - t0) / 1300);
+        el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))).toLocaleString('en-GB');
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  // --- Clips play on their slide, muted, and stop when it leaves.
+  function clips(slide, on) {
+    slide.querySelectorAll('.clip video').forEach(function (v) {
+      if (on && !still.matches) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      else v.pause();
+    });
+    if (!on) slide.querySelectorAll('video:not([muted])').forEach(function (v) { if (!v.muted) v.pause(); });
+  }
+
+  function activate() {
+    slides.forEach(function (s, i) {
+      var on = i === current;
+      if (on && !s.classList.contains('on')) { s.classList.add('on'); countUp(s); clips(s, true); if (s.querySelector('#ten')) Ten.start(); }
+      if (!on && s.classList.contains('on')) { s.classList.remove('on'); clips(s, false); if (s.querySelector('#ten')) Ten.stop(); }
+    });
+  }
+
+  function paint() {
+    counter.textContent = pad(current + 1) + ' / ' + pad(N);
+    prev.disabled = current === 0;
+    next.disabled = current === N - 1;
+    activate();
+    paintRidge();
+    Narration.slide(current);
+    try { history.replaceState(null, '', '#' + (current + 1)); } catch (e) { /* file:// in some browsers */ }
+  }
+
+  function go(i, instant) {
+    current = Math.max(0, Math.min(N - 1, i));
+    track.scrollTo({ left: slides[current].offsetLeft, behavior: instant ? 'auto' : 'smooth' });
+    paint();
+  }
+  window.deckGo = function (i) { go(i); };
+  window.deckAt = function () { return current; };
+  window.deckCount = N;
+
+  function replay() {
+    var s = slides[current];
+    s.classList.remove('on');
+    void s.offsetWidth; // restart the keyframes
+    s.classList.add('on');
+    countUp(s);
+    if (s.querySelector('#ten')) Ten.start();
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+  document.getElementById('replay').addEventListener('click', replay);
+
+  // Keep the counter honest when the deck is swiped or scrolled directly.
+  var settle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== current) { current = i; paint(); }
+    }, 90);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'VIDEO' || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || (e.key === ' ' && tag !== 'BUTTON')) { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(N - 1); }
+    else if (e.key === 'r' || e.key === 'R') { replay(); }
+    else if (e.key === 'n' || e.key === 'N') { Narration.toggle(); }
+  });
+
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () { track.scrollTo({ left: slides[current].offsetLeft, behavior: 'auto' }); paintRidge(); }, 120);
+  });
+
+  // #7 opens slide 7 — handy for presenting from a link.
+  var m = /^#(\d+)$/.exec(location.hash);
+  if (m) go(+m[1] - 1, true); else paint();
+})();
+
+// --- Theme toggle -----------------------------------------------------------
+// Three states, not two: with no data-theme the deck follows the OS setting.
+(function () {
+  var KEY = 'deck-theme';
+  var MODES = ['auto', 'light', 'dark'];
+  var META = {
+    auto:  { ico: '◑', lab: 'Auto',  say: 'follow system' },
+    light: { ico: '☀', lab: 'Light', say: 'light' },
+    dark:  { ico: '☾', lab: 'Dark',  say: 'dark' }
+  };
+  var btn = document.getElementById('theme');
+  var ico = document.getElementById('theme-ico');
+  var lab = document.getElementById('theme-lab');
+  function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  var mode = MODES.indexOf(stored()) > -1 ? stored() : 'auto';
+  function apply(next, persist) {
+    mode = next;
+    if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', mode);
+    ico.textContent = META[mode].ico;
+    lab.textContent = META[mode].lab;
+    btn.setAttribute('aria-label', 'Theme: ' + META[mode].say + '. Activate to change.');
+    if (persist) {
+      try { if (mode === 'auto') localStorage.removeItem(KEY); else localStorage.setItem(KEY, mode); } catch (e) { /* ignored */ }
+    }
+  }
+  btn.addEventListener('click', function () { apply(MODES[(MODES.indexOf(mode) + 1) % MODES.length], true); });
+  apply(mode, false);
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="run"></script>
+</body>
+</html>
