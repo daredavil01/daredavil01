@@ -890,12 +890,12 @@ svg.scene{width:100%;height:auto;display:block;overflow:visible;}
       <div class="split">
         <div>
           <p class="eyebrow r"><span class="num">21</span> Shipping</p>
-          <h2 class="r" style="--d:1">Checks every push. <em>Production on merge.</em></h2>
+          <h2 class="r" style="--d:1">Checks every push. <em>Live on merge.</em></h2>
           <ul class="plain r" style="--d:2">
             <li><strong>Before every push:</strong> <span data-to="816">816</span> Jest tests, ESLint, a Vite build, and Playwright screenshots at desktop and phone width with zero console errors.</li>
             <li><strong>The database moved first:</strong> you ran <code>0038</code>, <code>0039</code> and <code>0040</code> on production as each landed. Code reads new columns only once they exist (the importer probes for <code>profile</code>).</li>
-            <li><strong>Every push deploys a preview</strong> on Cloudflare Pages; the branch is live there now with real data and the film.</li>
-            <li><strong>Production</strong> follows when <a href="https://github.com/daredavil01/personal-site/pull/69">personal-site#69</a> merges.</li>
+            <li><strong>Every push deployed a preview</strong> on Cloudflare Pages, so each change was checked on real data before it reached anyone.</li>
+            <li><strong>Production:</strong> <a href="https://github.com/daredavil01/personal-site/pull/69">personal-site#69</a> merged on 3 Nov 2026 (118 files, 9 commits), and the page went live at <a href="https://sankettambare.in/training">sankettambare.in/training</a>.</li>
           </ul>
           <div class="card r" style="--d:3"><h3>After every new export</h3><pre style="border:0;padding:0;background:none">npm run strava:import -- --dir=tmp/strava-export
 npm run og:fallbacks -- --only=training
@@ -911,11 +911,11 @@ npm run training:film -- --publish</pre></div>
             <g class="pop" style="--d:3"><line x1="336" y1="40" x2="336" y2="-30" class="ink"/><path d="M336 -30 L386 -16 L336 -2 Z" class="rust-f"/><text x="342" y="-12" font-family="IBM Plex Mono" font-size="12" fill="#fff">#69</text></g>
             <g class="F" data-p="summit" data-x="320" data-y="40" data-s="1.3" data-c="rust"></g>
           </svg>
-          <figure class="shot"><img src="assets/training/classic-top.webp" alt="The classic page live on the preview, with the film beside the title." loading="lazy"><figcaption>The branch preview, with the film in the header.</figcaption></figure>
+          <figure class="shot"><img src="assets/training/classic-top.webp" alt="The classic page with the film beside the title." loading="lazy"><figcaption>The page, with the film in the header.</figcaption></figure>
         </div>
       </div>
       <div class="say r" style="--d:4"><svg viewBox="-30 -72 60 76" aria-hidden="true"><g class="F" data-p="summit" data-s="1.2" data-c="rust"></g></svg><p>Schema on prod first, code after: nothing reads a column that isn't there.</p></div>
-      <p class="vo">Shipping followed one routine. Before every push: eight hundred and sixteen tests, the linter, a full build, and screenshots at desktop and phone size with no console errors. The database always moved first. You ran each migration on production as soon as it landed, and the code was written so it never reads a column before that column exists. Every push deploys a preview of the branch, which is live now with real data and the film. Production follows when pull request sixty-nine is merged. After each new Strava export, four commands bring everything up to date.</p>
+      <p class="vo">Shipping followed one routine. Before every push: eight hundred and sixteen tests, the linter, a full build, and screenshots at desktop and phone size with no console errors. The database always moved first. You ran each migration on production as soon as it landed, and the code was written so it never reads a column before that column exists. Every push deployed a preview of the branch, so each change was checked on real data first. Then pull request sixty-nine was merged, and the page went live. After each new Strava export, four commands bring everything up to date.</p>
     </div>
   </section>
 
@@ -956,7 +956,7 @@ npm run training:film -- --publish</pre></div>
         </div>
       </div>
       <div class="row r" style="--d:4;margin-top:10px">
-        <a class="chip rust" href="https://claude-nifty-tesla-aou02j.daredavil.pages.dev/training">Open the page (preview) ↗</a>
+        <a class="chip rust" href="https://sankettambare.in/training">Open the page ↗</a>
         <a class="chip" href="https://github.com/daredavil01/personal-site/pull/69">personal-site#69 ↗</a>
         <a class="chip" href="https://github.com/daredavil01/personal-site/blob/main/docs/strava.md">docs/strava.md ↗</a>
       </div>
