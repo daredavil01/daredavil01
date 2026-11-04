@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RunFolio Pitch Deck</title>
+<meta name="description" content="RunFolio — an AI race companion for India's runners. Twelve-slide pitch deck for Startup Buildathon India 2026 (Open Innovation).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* ───────────────────────── Race Bib — tokens ───────────────────────── */
+:root{
+  --asphalt:#141416; --asphalt-2:#1f1f23; --bib:#f6f3ea; --bib-2:#ece6d6;
+  --ink:#141416; --muted:#6b675e; --line:#d6cfbd;
+  --orange:#ff4f1a; --orange-ink:#d93d0c; --volt:#d4ff3a; --sky:#3d7bff;
+  --display:"Big Shoulders Display", "Arial Narrow", sans-serif;
+  --body:"Archivo", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--asphalt);color:var(--ink);font-family:var(--body);overflow:hidden}
+body{-webkit-font-smoothing:antialiased}
+
+/* Fixed 1920×1080 canvas, scaled to fit */
+#viewport{position:fixed;inset:0;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;transform:translate(-50%,-50%)}
+.slide{position:absolute;inset:0;padding:96px 120px 150px;background:var(--bib);overflow:hidden;
+  opacity:0;visibility:hidden;transition:opacity .35s ease, transform .35s ease;transform:translateX(24px)}
+.slide.is-active{opacity:1;visibility:visible;transform:none}
+.slide.dark{background:var(--asphalt);color:var(--bib)}
+.slide.dark .muted{color:#a8a397}
+
+/* asphalt texture for dark slides */
+.slide.dark::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1.4px);background-size:7px 7px}
+
+/* ───────────────────────── Type ───────────────────────── */
+.kicker{font:700 20px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--orange-ink);display:flex;gap:16px;align-items:center}
+.dark .kicker{color:var(--volt)}
+.kicker::before{content:"";width:44px;height:6px;background:currentColor}
+h1,h2{font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:-.005em;line-height:.88}
+h2{font-size:100px;margin-top:20px;max-width:1680px}
+h2 em{font-style:normal;color:var(--orange)}
+.dark h2 em{color:var(--volt)}
+h3{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:44px;line-height:.95;letter-spacing:.005em}
+p,li{font-size:26px;line-height:1.38}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono)}
+.lede{font-size:31px;line-height:1.35;max-width:1250px;margin-top:26px}
+
+/* ───────────────────────── Bib card ───────────────────────── */
+.bib{position:relative;background:var(--bib);color:var(--ink);border-radius:18px;padding:34px 38px;
+  box-shadow:0 1px 0 rgba(0,0,0,.06),0 18px 40px -22px rgba(0,0,0,.35)}
+.slide:not(.dark) .bib{background:#fffdf7;border:2px solid var(--line)}
+.bib .pin{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--asphalt);box-shadow:inset 0 0 0 3px #9a958a}
+.slide:not(.dark) .bib .pin{background:var(--bib-2);box-shadow:inset 0 0 0 3px var(--line)}
+.pin.tl{top:14px;left:14px}.pin.tr{top:14px;right:14px}.pin.bl{bottom:14px;left:14px}.pin.br{bottom:14px;right:14px}
+.bib .band{margin:-34px -38px 24px;padding:14px 38px;border-radius:16px 16px 0 0;background:var(--orange);color:#fff;
+  font:700 18px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;display:flex;justify-content:space-between}
+.bib .band.volt{background:var(--volt);color:var(--ink)}
+.bib .band.ink{background:var(--asphalt);color:var(--bib)}
+.perf{border:0;border-top:3px dashed var(--line);margin:22px -38px}
+.chipbar{height:44px;background:repeating-linear-gradient(90deg,var(--ink) 0 3px,transparent 3px 7px,var(--ink) 7px 8px,transparent 8px 13px,var(--ink) 13px 18px,transparent 18px 21px)}
+
+/* tags */
+.tag{display:inline-flex;align-items:center;gap:10px;font:700 17px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  padding:9px 14px;border-radius:999px;border:2px solid currentColor}
+.tag.solid{background:var(--ink);color:var(--volt);border-color:var(--ink)}
+.tag.or{color:var(--orange-ink)}
+.tag.now{background:var(--volt);color:var(--ink);border-color:var(--volt)}
+
+/* ───────────────────────── Chrome: header + course strip ───────────────────────── */
+.hud{position:absolute;left:120px;right:120px;top:40px;display:flex;justify-content:space-between;
+  font:700 16px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);z-index:5;pointer-events:none}
+.hud b{color:var(--orange-ink)}
+#course{position:absolute;left:120px;right:120px;bottom:44px;height:62px;z-index:10}
+#course .road{position:absolute;left:0;right:0;top:22px;height:6px;border-radius:3px;background:var(--line)}
+#course .done{position:absolute;left:0;top:22px;height:6px;border-radius:3px;background:var(--orange);transition:width .4s ease}
+#course button{position:absolute;top:13px;width:24px;height:24px;margin-left:-12px;border-radius:50%;border:4px solid var(--line);
+  background:var(--bib);cursor:pointer;padding:0;transition:transform .2s}
+#course button.passed{border-color:var(--orange);background:var(--orange)}
+#course button.here{border-color:var(--ink);background:var(--volt);transform:scale(1.35)}
+#course button:focus-visible{outline:3px solid var(--sky);outline-offset:4px}
+#course .km{position:absolute;top:44px;font:700 14px/1 var(--mono);letter-spacing:.1em;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
+#course .runner{position:absolute;top:-16px;transform:translateX(-50%);transition:left .4s ease;font:700 14px/1 var(--mono);
+  background:var(--ink);color:var(--volt);padding:6px 9px;border-radius:6px;letter-spacing:.08em;white-space:nowrap}
+body.on-dark #course .road{background:#3a3a40}
+body.on-dark #course button{background:var(--asphalt);border-color:#3a3a40}
+body.on-dark #course button.passed{border-color:var(--orange);background:var(--orange)}
+body.on-dark #course button.here{border-color:var(--bib)}
+body.on-dark #course .runner{background:var(--volt);color:var(--ink)}
+body.on-dark .hud{color:#8d897f}
+body.on-dark .hud b{color:var(--volt)}
+
+/* ───────────────────────── Slide 1 — Title ───────────────────────── */
+.s-title{display:grid;grid-template-columns:1.2fr 1fr;gap:80px;align-items:center;padding-top:40px}
+.titlebib{transform:rotate(-2.2deg);padding:0;overflow:hidden}
+.titlebib .band{margin:0;border-radius:0;font-size:20px;padding:20px 40px}
+.titlebib .num{font:900 230px/.8 var(--display);letter-spacing:-.02em;padding:46px 40px 8px;text-transform:uppercase}
+.titlebib .num span{color:var(--orange)}
+.titlebib .sub{padding:0 40px 30px;font:600 34px/1.2 var(--body)}
+.titlebib .row{display:flex;justify-content:space-between;align-items:end;padding:22px 40px 34px;border-top:3px dashed var(--line)}
+.titlebib .row div{font:700 18px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.titlebib .row .chipbar{width:240px;height:56px}
+.title-copy h1{font-size:108px;color:var(--bib)}
+.title-copy h1 em{font-style:normal;color:var(--volt)}
+.title-copy p{font-size:26px;color:#c9c4b7;margin-top:24px;max-width:700px}
+.title-copy .tags{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.title-copy .tag{color:#c9c4b7}
+
+/* ───────────────────────── Slide 2 — Problem ───────────────────────── */
+.s-problem{display:grid;grid-template-columns:1fr 1fr;gap:70px;margin-top:46px}
+.scatter{position:relative;height:540px}
+.frag{position:absolute;width:390px;padding:22px 26px;border-radius:12px;background:#fffdf7;border:2px solid var(--line);
+  box-shadow:0 14px 30px -18px rgba(0,0,0,.4)}
+.frag small{display:block;font:700 15px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.frag b{font:800 34px/1 var(--display);text-transform:uppercase}
+.frag .x{position:absolute;top:14px;right:16px;font:700 15px/1 var(--mono);color:var(--orange-ink)}
+.pains{display:grid;gap:26px;align-content:start}
+.pain{display:grid;grid-template-columns:96px 1fr;gap:22px;align-items:start;padding-bottom:24px;border-bottom:3px dashed var(--line)}
+.pain:last-child{border-bottom:0}
+.pain .n{font:900 96px/.8 var(--display);color:var(--orange)}
+.pain h3{font-size:46px}
+.pain p{margin-top:8px;color:var(--muted)}
+
+/* ───────────────────────── Slide 3 — Why now ───────────────────────── */
+.s-now{display:grid;grid-template-columns:1.25fr 1fr;gap:70px;margin-top:40px}
+.chart{position:relative;height:560px}
+.chart svg{width:100%;height:100%;overflow:visible}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-content:start}
+.stat{padding:24px 26px;border-radius:14px;background:var(--asphalt-2);border:2px solid #2d2d33}
+.stat .v{font:900 76px/.9 var(--display);color:var(--volt)}
+.stat .v small{font-size:40px;color:var(--bib)}
+.stat p{font-size:21px;margin-top:10px;color:#c9c4b7;line-height:1.3}
+.src{position:absolute;left:120px;right:120px;bottom:118px;font:500 14px/1.4 var(--mono);color:#8d897f}
+.slide:not(.dark) .src{color:var(--muted)}
+
+/* ───────────────────────── Slide 4 — Corrals ───────────────────────── */
+.corrals{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:30px;margin-top:50px}
+.corral .band{font-size:17px}
+.corral .letter{font:900 150px/.75 var(--display);color:var(--orange);float:right;margin:-6px -4px 0 12px}
+.corral h3{font-size:50px}
+.corral .who{margin-top:14px;font-size:23px;color:var(--muted)}
+.corral dl{margin-top:20px;display:grid;gap:14px}
+.corral dt{font:700 15px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--orange-ink)}
+.corral dd{font-size:22px;line-height:1.35;margin-top:4px}
+.corral.a{background:var(--asphalt)!important;color:var(--bib);border-color:var(--asphalt)!important}
+.corral.a .who{color:#c9c4b7}.corral.a dt{color:var(--volt)}
+.corral.a .pin{background:var(--bib)!important;box-shadow:inset 0 0 0 3px #9a958a!important}
+
+/* ───────────────────────── Slide 5 — Loop ───────────────────────── */
+.loop{position:relative;margin-top:70px;height:440px}
+.loop svg{position:absolute;inset:0;width:100%;height:100%}
+.cp{position:absolute;top:0;width:300px;text-align:left}
+.cp .disc{width:118px;height:118px;border-radius:50%;background:var(--asphalt);color:var(--volt);display:grid;place-items:center;
+  font:900 54px/1 var(--display);border:6px solid var(--bib);box-shadow:0 0 0 4px var(--asphalt)}
+.cp.race .disc{background:var(--orange);color:#fff;box-shadow:0 0 0 4px var(--orange)}
+.cp h3{margin-top:26px;font-size:54px}
+.cp p{font-size:22px;margin-top:8px;color:var(--muted);line-height:1.33}
+.cp .tag{margin-top:16px;font-size:14px;padding:7px 11px}
+.principle{position:absolute;left:120px;right:120px;bottom:126px;display:flex;align-items:center;gap:26px;padding:22px 30px;
+  background:var(--asphalt);color:var(--bib);border-radius:14px}
+.principle b{font:900 38px/1 var(--display);text-transform:uppercase;color:var(--volt);white-space:nowrap}
+.principle p{font-size:24px;color:#d8d3c6}
+
+/* ───────────────────────── Slide 6 — Prototype ───────────────────────── */
+.s-proto{display:grid;grid-template-columns:1.45fr 1fr;gap:60px;margin-top:40px}
+.shots{position:relative;height:600px}
+.shot{position:absolute;border-radius:14px;overflow:hidden;border:3px solid var(--ink);background:#fff;box-shadow:0 26px 50px -26px rgba(0,0,0,.5)}
+.shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.shot .cap{position:absolute;left:12px;bottom:12px;font:700 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:var(--volt);padding:7px 10px;border-radius:6px}
+.facts{display:grid;gap:0;align-content:start}
+.fact{display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:baseline;padding:17px 0;border-bottom:3px dashed var(--line)}
+.fact:last-child{border-bottom:0}
+.fact .v{font:900 64px/.85 var(--display);color:var(--orange)}
+.fact p{font-size:23px;line-height:1.3}
+
+/* ───────────────────────── Slide 7 — Certificate → race ───────────────────────── */
+.s-cert{display:grid;grid-template-columns:1fr 150px 1.1fr;gap:30px;align-items:center;margin-top:44px}
+.cert{transform:rotate(-2deg);padding:40px;background:#fffdf7;border:2px solid var(--line);border-radius:6px;position:relative;
+  box-shadow:0 30px 50px -28px rgba(0,0,0,.5);height:470px}
+.cert::after{content:"";position:absolute;inset:14px;border:3px double #c9b98d;pointer-events:none}
+.cert .org{font:700 17px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:#8a7a4c;text-align:center}
+.cert .ttl{font:900 64px/.9 var(--display);text-transform:uppercase;text-align:center;margin-top:18px;color:#3b3220}
+.cert .nm{font:italic 600 40px/1 Georgia,serif;text-align:center;margin-top:30px;color:#3b3220}
+.cert .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px;text-align:center}
+.cert .grid small{display:block;font:700 13px/1 var(--mono);letter-spacing:.14em;color:#8a7a4c}
+.cert .grid b{font:700 30px/1.3 var(--mono);color:#3b3220}
+.cert .seal{position:absolute;right:40px;top:36px;width:92px;height:92px;transform:rotate(12deg);border-radius:50%;border:4px solid #c9b98d;display:grid;place-items:center;
+  font:700 14px/1.1 var(--mono);text-align:center;color:#8a7a4c;letter-spacing:.08em}
+.cert .scan{position:absolute;left:14px;right:14px;height:4px;background:var(--orange);box-shadow:0 0 20px 4px rgba(255,79,26,.5);top:30%;animation:scan 2.6s ease-in-out infinite alternate}
+@keyframes scan{from{top:8%}to{top:90%}}
+.arrow{display:grid;justify-items:center;gap:14px;font:700 15px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;text-align:center}
+.arrow .ar{font:900 120px/1 var(--display);color:var(--orange)}
+.form{padding:0}
+.form .band{margin:0;border-radius:16px 16px 0 0}
+.form .fld{display:grid;grid-template-columns:200px 1fr 90px;gap:16px;align-items:center;padding:12px 34px;border-bottom:2px solid var(--line)}
+.form .fld:last-child{border-bottom:0}
+.form .fld span{font:700 15px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.form .fld b{font:700 27px/1.2 var(--mono)}
+.form .fld i{font:700 15px/1 var(--mono);font-style:normal;text-align:right;color:#1f8a3b}
+.form .fld i.lo{color:var(--orange-ink)}
+.cert-notes{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+
+/* ───────────────────────── Slide 8 — Race-day planner ───────────────────────── */
+.s-plan{display:grid;grid-template-columns:1fr 430px;gap:50px;margin-top:36px}
+.band-card{padding:0;overflow:hidden}
+.band-card .band{margin:0;border-radius:16px 16px 0 0}
+.band-card .inner{padding:24px 34px 30px}
+.wx{display:flex;gap:14px;flex-wrap:wrap}
+.paceband{margin-top:22px;height:330px;position:relative}
+.paceband svg{width:100%;height:100%;overflow:visible}
+.why{display:grid;gap:14px;align-content:start}
+.why .bib{padding:20px 26px}
+.why h3{font-size:36px}
+.why p{font-size:19px;margin-top:6px;color:var(--muted);line-height:1.3}
+.big-time{font:900 80px/.85 var(--display);color:var(--orange)}
+.big-time small{font-size:36px;color:var(--ink)}
+
+/* ───────────────────────── Slide 9 — After the line ───────────────────────── */
+.quad{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;margin-top:44px}
+.quad .bib{padding:0;overflow:hidden;display:flex;flex-direction:column}
+.quad .band{margin:0;border-radius:16px 16px 0 0}
+.quad .vis{height:250px;position:relative;background:var(--bib-2);border-bottom:2px solid var(--line);overflow:hidden}
+.quad .txt{padding:22px 26px 26px}
+.quad h3{font-size:40px}
+.quad p{font-size:20px;margin-top:8px;color:var(--muted);line-height:1.33}
+.quad .tag{margin-top:14px;font-size:13px;padding:6px 10px}
+.chat{padding:22px;display:grid;gap:12px;align-content:start}
+.bubble{font-size:16px;line-height:1.35;padding:11px 14px;border-radius:14px;max-width:88%}
+.bubble.me{justify-self:end;background:var(--ink);color:var(--bib);border-bottom-right-radius:4px}
+.bubble.ai{background:#fff;border:2px solid var(--line);border-bottom-left-radius:4px}
+.poster{position:absolute;inset:0}
+.poster img{width:100%;height:100%;object-fit:cover;object-position:58% 30%;filter:saturate(1.15) contrast(1.05)}
+.poster .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,20,22,0) 30%,rgba(20,20,22,.92));}
+.poster .t{position:absolute;left:18px;right:18px;bottom:16px;color:#fff}
+.poster .t small{font:700 12px/1 var(--mono);letter-spacing:.16em;color:var(--volt)}
+.poster .t b{display:block;font:900 64px/.85 var(--display);margin-top:6px}
+.poster .t span{font:700 13px/1 var(--mono);letter-spacing:.1em}
+.wave{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--asphalt)}
+.wave i{display:block;width:9px;border-radius:5px;background:var(--volt);animation:wv 1.1s ease-in-out infinite alternate}
+@keyframes wv{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
+.wave .say{position:absolute;left:18px;right:18px;bottom:16px;font:600 16px/1.35 var(--body);color:var(--bib);text-align:center}
+
+/* ───────────────────────── Slide 10 — Architecture ───────────────────────── */
+.arch{position:relative;margin-top:24px;height:640px}
+.arch svg.wires{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.node{position:absolute;padding:16px 20px;border-radius:12px;background:var(--asphalt-2);border:2px solid #34343b;color:var(--bib)}
+.node small{display:block;font:700 13px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#8d897f;margin-bottom:7px}
+.node b{font:800 30px/1 var(--display);text-transform:uppercase;letter-spacing:.01em}
+.node span{display:block;font-size:16px;color:#bdb8ab;margin-top:6px;line-height:1.3}
+.node.ai{border-color:var(--volt);box-shadow:0 0 0 1px var(--volt) inset}
+.node.ai b{color:var(--volt)}
+.node.edge{border-color:var(--orange)}
+.node.edge b{color:var(--orange)}
+.region{position:absolute;border:2px dashed #3d3d45;border-radius:22px}
+.region>em{position:absolute;top:-13px;left:24px;background:var(--asphalt);padding:0 12px;font:700 14px/1.6 var(--mono);font-style:normal;letter-spacing:.14em;color:#8d897f;text-transform:uppercase}
+
+/* ───────────────────────── Slide 11 — Field + money ───────────────────────── */
+.s-biz{display:grid;grid-template-columns:1.15fr 1fr;gap:56px;margin-top:40px}
+table.field{width:100%;border-collapse:collapse;font-size:21px}
+table.field th{font:700 15px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;padding:0 8px 14px;vertical-align:bottom}
+table.field th:first-child{text-align:left}
+table.field th.us{color:var(--orange-ink)}
+table.field td{padding:13px 8px;border-top:2px solid var(--line);text-align:center;font:700 26px/1 var(--mono)}
+table.field td:first-child{text-align:left;font:500 21px/1.25 var(--body)}
+table.field td.us{background:var(--asphalt);color:var(--volt)}
+table.field tr:first-child td.us{border-radius:10px 10px 0 0}
+.y{color:#1f8a3b}.n{color:#b9b2a1}.h{color:var(--orange-ink)}
+.tiers{display:grid;gap:16px}
+.tier{display:grid;grid-template-columns:1fr auto;gap:6px 20px;align-items:baseline;padding:20px 26px}
+.tier h3{font-size:38px}
+.tier .p{font:900 44px/1 var(--display);color:var(--orange);text-align:right}
+.tier .p small{font-size:22px;color:var(--muted)}
+.tier p{grid-column:1/-1;font-size:20px;color:var(--muted);line-height:1.32}
+
+/* ───────────────────────── Slide 12 — Finish ───────────────────────── */
+.checker{position:absolute;left:0;right:0;top:0;height:24px;
+  background:conic-gradient(var(--bib) 25%,var(--asphalt) 0 50%,var(--bib) 0 75%,var(--asphalt) 0) 0 0/24px 24px}
+.s-finish{display:grid;grid-template-columns:1.5fr 1fr;gap:60px;margin-top:34px}
+.road-map{position:relative;padding-left:46px}
+.road-map::before{content:"";position:absolute;left:14px;top:14px;bottom:14px;width:6px;border-radius:3px;background:linear-gradient(var(--volt),var(--orange))}
+.ms{position:relative;padding:0 0 22px}
+.ms::before{content:"";position:absolute;left:-42px;top:6px;width:22px;height:22px;border-radius:50%;background:var(--asphalt);border:5px solid var(--volt)}
+.ms.later::before{border-color:var(--orange)}
+.ms small{font:700 15px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--volt)}
+.ms.later small{color:var(--orange)}
+.ms h3{font-size:36px;margin-top:6px}
+.ms p{font-size:20px;color:#c9c4b7;margin-top:4px;line-height:1.32}
+.founder .bib{padding-bottom:30px}
+.founder h3{font-size:56px}
+.founder p{font-size:21px;line-height:1.35;margin-top:10px}
+.ask{margin-top:24px;padding:24px 28px;border-radius:14px;border:3px solid var(--volt)}
+.ask b{font:900 40px/1 var(--display);text-transform:uppercase;color:var(--volt)}
+.ask p{font-size:21px;color:#d8d3c6;margin-top:8px;line-height:1.35}
+
+/* ───────────────────────── Controls ───────────────────────── */
+.ctrl{position:fixed;bottom:14px;right:16px;display:flex;gap:8px;z-index:30}
+.ctrl button{font:700 13px/1 var(--mono);letter-spacing:.08em;padding:10px 13px;border-radius:8px;border:0;background:rgba(246,243,234,.12);color:#cfcabd;cursor:pointer}
+.ctrl button:hover{background:var(--volt);color:var(--ink)}
+.ctrl button:focus-visible{outline:3px solid var(--sky)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,#course .done,#course .runner{transition:none}
+  .cert .scan,.wave i{animation:none}
+}
+
+/* ───────────────────────── Print / PDF: one slide per page ───────────────────────── */
+@page{size:1920px 1080px;margin:0}
+body.print{overflow:visible;height:auto}
+body.print #viewport{position:static;display:block}
+body.print #stage{position:static;transform:none!important;width:1920px;height:auto}
+body.print .slide{position:relative;opacity:1;visibility:visible;transform:none;width:1920px;height:1080px;page-break-after:always;break-after:page}
+body.print .ctrl, body.print [data-island-return], body.print .island-return{display:none!important}
+body.print #course{display:none}
+body.print .slide.dark::before{display:none}
+body.print .hud, body.print .sr{display:none}
+body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
+body.print .cert .scan{display:none}
+body.print .slide .pstrip{display:block}
+.pstrip{display:none;position:absolute;left:120px;right:120px;bottom:52px;font:700 15px/1 var(--mono);letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.dark .pstrip{color:#8d897f}
+.pstrip .r{float:right}
+@media print{
+  html,body{overflow:visible!important;height:auto!important;background:none}
+  #viewport{position:static!important;display:block!important}
+  #stage{position:static!important;transform:none!important;height:auto!important}
+  .slide{position:relative!important;opacity:1!important;visibility:visible!important;transform:none!important;width:1920px;height:1080px;break-after:page}
+  .ctrl,#course,[data-island-return],.island-return{display:none!important}
+  .pstrip{display:block}
+}
+</style>
+</head>
+<body>
+<a data-island-return href="../index.html#run/runfolio-buildathon">← Home</a>
+
+<div id="viewport">
+<main id="stage" aria-roledescription="carousel" aria-label="RunFolio pitch deck">
+
+<!-- ═════════ 01 · TITLE ═════════ -->
+<section class="slide dark" aria-label="Slide 1: RunFolio — every race, read by AI">
+  <div class="s-title">
+    <div class="bib titlebib">
+      <span class="pin tl"></span><span class="pin tr"></span><span class="pin bl"></span><span class="pin br"></span>
+      <div class="band"><span>Startup Buildathon India 2026</span><span>Open Innovation</span></div>
+      <div class="num">Run<span>Folio</span></div>
+      <div class="sub">Every race, read by AI.</div>
+      <div class="row">
+        <div>Sanket Tambare · Pune<br>runfolio.in · live today</div>
+        <div class="chipbar" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="title-copy">
+      <p class="kicker">Pitch deck · 12 splits</p>
+      <h1 style="margin-top:26px">The AI race companion for <em>India's 2.5M</em> runners.</h1>
+      <p>Snap a finisher certificate and the race is logged. Get a race-day plan built for the course, the heat and your own history. Then a debrief, and a poster worth sharing.</p>
+      <div class="tags"><span class="tag">Gemini</span><span class="tag">Nano Banana</span><span class="tag">Gemini Live</span><span class="tag">Google Cloud</span></div>
+    </div>
+  </div>
+  <div class="pstrip"><span>RunFolio · Buildathon 2026</span><span class="r">KM 0.0 · 01 / 12</span></div>
+</section>
+
+<!-- ═════════ 02 · PROBLEM ═════════ -->
+<section class="slide" aria-label="Slide 2: The problem">
+  <p class="kicker">The problem</p>
+  <h2>India races more than ever. <em>Runners remember less.</em></h2>
+  <div class="s-problem">
+    <div class="scatter" aria-label="Where a runner's race history lives today">
+      <div class="frag" style="left:0;top:0;transform:rotate(-4deg)"><small>Organiser website</small><b>Results page, 404 next year</b><span class="x">✕</span></div>
+      <div class="frag" style="left:300px;top:70px;transform:rotate(3deg)"><small>Timing company</small><b>Certificate PDF</b><span class="x">✕</span></div>
+      <div class="frag" style="left:30px;top:180px;transform:rotate(2deg)"><small>Camera roll</small><b>Bib photo, 4,000 pics deep</b><span class="x">✕</span></div>
+      <div class="frag" style="left:340px;top:265px;transform:rotate(-3deg)"><small>WhatsApp club group</small><b>Results screenshot</b><span class="x">✕</span></div>
+      <div class="frag" style="left:10px;top:375px;transform:rotate(-1.5deg)"><small>Race-day plan</small><b>A generic chart, at 30 °C</b><span class="x">✕</span></div>
+    </div>
+    <div class="pains">
+      <div class="pain"><div class="n">1</div><div><h3>Scattered history</h3><p>Results live with whoever timed the race. Nobody, the runner included, holds the complete record.</p></div></div>
+      <div class="pain"><div class="n">2</div><div><h3>Guesswork race days</h3><p>Pace charts ignore heat, humidity, hills and your own past splits. Runners find the fade at km 30 instead of planning for it.</p></div></div>
+      <div class="pain"><div class="n">3</div><div><h3>No debrief</h3><p>Strava and watches log every run but never <i>understand</i> a race, and many runners don't own a watch at all.</p></div></div>
+    </div>
+  </div>
+  <div class="pstrip"><span>The problem</span><span class="r">02 / 12</span></div>
+</section>
+
+<!-- ═════════ 03 · WHY NOW ═════════ -->
+<section class="slide dark" aria-label="Slide 3: Why now">
+  <p class="kicker">Why now</p>
+  <h2>A running boom <em>with no memory layer.</em></h2>
+  <div class="s-now">
+    <div class="chart" id="growth" aria-label="Runners in India taking part in at least one organised race: about 10,000 in 2004, about 1 million in 2019, about 2.5 million in 2025"></div>
+    <div class="stats">
+      <div class="stat"><div class="v">65K<small>+</small></div><p>Tata Mumbai Marathon runners in 2025. It started with 19,000.</p></div>
+      <div class="stat"><div class="v">1,000<small>+</small></div><p>organised road races across India every year, many now in Tier-2 towns</p></div>
+      <div class="stat"><div class="v">$4.8<small>B</small></div><p>Indian running-gear market by 2033, double 2024's $2.4B (IMARC)</p></div>
+      <div class="stat"><div class="v">+59<small>%</small></div><p>year-on-year growth in running-club activity on Strava in India</p></div>
+    </div>
+  </div>
+  <p class="src">Sources: Procam International via Forbes India and Local Samosa (2.5M participants a year); ThePrint (small-town marathons); Social Samosa; IMARC via Local Samosa. Organiser and industry figures are indicative, not audited.</p>
+  <div class="pstrip"><span>Why now</span><span class="r">03 / 12</span></div>
+</section>
+
+<!-- ═════════ 04 · CUSTOMERS ═════════ -->
+<section class="slide" aria-label="Slide 4: Who it is for">
+  <p class="kicker">Who it's for</p>
+  <h2>Three start corrals.</h2>
+  <div class="corrals">
+    <div class="bib corral a">
+      <span class="pin tl"></span><span class="pin tr"></span><span class="pin bl"></span><span class="pin br"></span>
+      <div class="band volt"><span>Corral A · primary</span><span>B2C</span></div>
+      <div class="letter">A</div>
+      <h3>The race runner</h3>
+      <p class="who">25–45, urban professional, 3–10 races a year from 5K to ultra. Phone-first, in a run club, often without a GPS watch.</p>
+      <dl>
+        <dt>Wants</dt><dd>A PB, a strong finish in the heat, and a journey worth showing.</dd>
+        <dt>Pays for</dt><dd>Unlimited AI imports, a plan and debrief for every race, HD posters.</dd>
+      </dl>
+    </div>
+    <div class="bib corral">
+      <span class="pin tl"></span><span class="pin tr"></span><span class="pin bl"></span><span class="pin br"></span>
+      <div class="band"><span>Corral B</span><span>B2B-small</span></div>
+      <div class="letter">B</div>
+      <h3>Clubs &amp; coaches</h3>
+      <p class="who">20–200 runners each, coordinated over WhatsApp and spreadsheets.</p>
+      <dl>
+        <dt>Wants</dt><dd>Every member's race history, plan and debrief in one roster.</dd>
+        <dt>Pays for</dt><dd>A monthly club seat.</dd>
+      </dl>
+    </div>
+    <div class="bib corral">
+      <span class="pin tl"></span><span class="pin tr"></span><span class="pin bl"></span><span class="pin br"></span>
+      <div class="band ink"><span>Corral C</span><span>B2B</span></div>
+      <div class="letter">C</div>
+      <h3>Organisers &amp; timers</h3>
+      <p class="who">Race organisers and timing companies whose results die in a PDF.</p>
+      <dl>
+        <dt>Wants</dt><dd>Results that get shared, and runners who come back next year.</dd>
+        <dt>Pays for</dt><dd>A branded poster and runner page for every finisher.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="pstrip"><span>Who it's for</span><span class="r">04 / 12</span></div>
+</section>
+
+<!-- ═════════ 05 · SOLUTION LOOP ═════════ -->
+<section class="slide" aria-label="Slide 5: The solution loop">
+  <p class="kicker">The solution</p>
+  <h2>One loop. <em>Five checkpoints.</em></h2>
+  <div class="loop">
+    <svg viewBox="0 0 1680 440" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M59 59 H1620" stroke="#141416" stroke-width="8" stroke-dasharray="2 18" stroke-linecap="round" fill="none"/>
+    </svg>
+    <div class="cp" style="left:0"><div class="disc">01</div><h3>Capture</h3><p>Photograph a certificate, bib or results screenshot. The race is logged.</p><span class="tag solid">Gemini · vision</span></div>
+    <div class="cp" style="left:345px"><div class="disc">02</div><h3>Plan</h3><p>Per-km pacing for this course, this forecast and your history.</p><span class="tag solid">Gemini · tools + grounding</span></div>
+    <div class="cp race" style="left:690px"><div class="disc">03</div><h3>Race</h3><p>A printed pace band, or a voice pacer in your ear.</p><span class="tag solid">Gemini Live</span></div>
+    <div class="cp" style="left:1035px"><div class="disc">04</div><h3>Debrief</h3><p>Plan against actual: where you faded, why, and what to change.</p><span class="tag solid">Gemini · reasoning</span></div>
+    <div class="cp" style="left:1380px"><div class="disc">05</div><h3>Share</h3><p>A finisher poster and a portfolio page, which bring the next runner in.</p><span class="tag solid">Nano Banana</span></div>
+  </div>
+  <div class="principle"><b>The rule</b><p>Every number comes from a deterministic, cited formula that's already live on RunFolio. Gemini explains it and personalises it. It never invents a pace.</p></div>
+  <div class="pstrip"><span>The solution</span><span class="r">05 / 12</span></div>
+</section>
+
+<!-- ═════════ 06 · PROTOTYPE ═════════ -->
+<section class="slide" aria-label="Slide 6: The live prototype">
+  <p class="kicker">Current prototype · runfolio.in</p>
+  <h2>Already <em>on the course.</em></h2>
+  <div class="s-proto">
+    <div class="shots">
+      <figure class="shot" style="left:0;top:0;width:740px;height:462px"><img src="assets/runfolio-buildathon/profile.webp" alt="A RunFolio runner profile: cover photo, name, bio and stats — 26 races, 589.2 km, fastest marathon 5:05:53"><span class="cap">Runner profile</span></figure>
+      <figure class="shot" style="left:420px;top:300px;width:450px;height:300px"><img src="assets/runfolio-buildathon/split.webp" alt="The split planner tool: pick a race, a goal time and a strategy"><span class="cap">Split planner</span></figure>
+      <figure class="shot" style="left:720px;top:30px;width:200px;height:420px;border-radius:26px;border-width:6px"><img src="assets/runfolio-buildathon/profile-phone.webp" alt="The same runner profile on a phone"></figure>
+    </div>
+    <div class="facts">
+      <div class="fact"><div class="v">1</div><p><b>Shareable race portfolio.</b> Photos first, PBs and stats computed for you, grid, ledger and stats views, all on one link.</p></div>
+      <div class="fact"><div class="v">6</div><p><b>Free tools, no login.</b> Pace, splits, race predictor, training plans and TMM/Khadakwasla blocks, each with its method and sources cited.</p></div>
+      <div class="fact"><div class="v">OG</div><p><b>Share cards</b> generated per race, so links unfurl with your name and time.</p></div>
+      <div class="fact"><div class="v">523</div><p><b>Unit tests</b>, row-level security on every table, and pages that work with JavaScript off.</p></div>
+    </div>
+  </div>
+  <div class="pstrip"><span>Current prototype</span><span class="r">06 / 12</span></div>
+</section>
+
+<!-- ═════════ 07 · CERTIFICATE → RACE ═════════ -->
+<section class="slide" aria-label="Slide 7: Certificate to race">
+  <p class="kicker">AI feature 01 · Capture</p>
+  <h2>Snap the certificate. <em>It's logged.</em></h2>
+  <div class="s-cert">
+    <div class="cert" aria-label="Illustrative finisher certificate">
+      <div class="org">City Half Marathon · 2026</div>
+      <div class="ttl">Certificate of<br>Completion</div>
+      <div class="nm">A. Runner</div>
+      <div class="grid">
+        <div><small>CATEGORY</small><b>21.1 K</b></div>
+        <div><small>NET TIME</small><b>01:57:42</b></div>
+        <div><small>BIB</small><b>4127</b></div>
+        <div><small>GUN TIME</small><b>02:01:10</b></div>
+        <div><small>RANK</small><b>812</b></div>
+        <div><small>DATE</small><b>14.12.26</b></div>
+      </div>
+      <div class="seal">TIMING<br>PARTNER</div>
+      <div class="scan" aria-hidden="true"></div>
+    </div>
+    <div class="arrow"><span class="ar">→</span>Gemini<br>Flash<br>· vision ·</div>
+    <div class="bib form">
+      <div class="band volt"><span>New race · confirm</span><span>JSON schema</span></div>
+      <div class="fld"><span>Event</span><b>City Half Marathon</b><i>0.98</i></div>
+      <div class="fld"><span>Date</span><b>2026-12-14</b><i>0.97</i></div>
+      <div class="fld"><span>Distance</span><b>21.0975 km</b><i>0.99</i></div>
+      <div class="fld"><span>Net time</span><b>1:57:42</b><i>0.99</i></div>
+      <div class="fld"><span>Bib</span><b>4127</b><i>0.95</i></div>
+      <div class="fld"><span>Splits</span><b>10K 55:31</b><i class="lo">0.71 ⚑</i></div>
+    </div>
+  </div>
+  <div class="cert-notes">
+    <span class="tag or">Any layout, any language</span><span class="tag or">Confidence for every field; low scores flagged</span><span class="tag or">The runner confirms; nothing auto-publishes</span><span class="tag or">Bulk: 30 photos → Vertex batch</span><span class="tag or">No watch needed</span>
+  </div>
+  <div class="pstrip"><span>AI · Capture</span><span class="r">07 / 12</span></div>
+</section>
+
+<!-- ═════════ 08 · RACE-DAY PLANNER ═════════ -->
+<section class="slide" aria-label="Slide 8: Race-day planner">
+  <p class="kicker">AI feature 02 · Plan</p>
+  <h2>A plan for <em>this</em> race, not <em>a</em> race.</h2>
+  <div class="s-plan">
+    <div class="bib band-card">
+      <div class="band"><span>Pace band · half marathon · example</span><span>Goal 1:55 · heat-adjusted</span></div>
+      <div class="inner">
+        <div class="wx"><span class="tag">Start 06:00</span><span class="tag">27 °C → 31 °C</span><span class="tag">82% humidity</span><span class="tag">+64 m climb, km 12–14</span><span class="tag solid">Gel · km 7 · 14</span></div>
+        <div class="paceband" id="paceband" aria-label="Per-kilometre target pace: easing in at 5:45 for the first three kilometres, 5:36 to km 10, 5:33 through the climb with km 13 at 5:50, then 5:28 to the finish"></div>
+      </div>
+    </div>
+    <div class="why">
+      <div class="bib"><span class="pin tl"></span><span class="pin tr"></span><div class="big-time">≈1:57:54<small> finish</small></div><p>Honest about the heat: about three minutes slower than the cool, flat-course maths, and on purpose.</p></div>
+      <div class="bib"><h3>How it's built</h3><p>Gemini calls RunFolio's own cited calculators for every number, grounds on course elevation and the forecast, and reads your last five races' splits.</p></div>
+      <div class="bib"><h3>Then it explains</h3><p>"You faded 6% after km 15 in your last two halves. Bank nothing early. The climb is where we hold back."</p></div>
+    </div>
+  </div>
+  <div class="pstrip"><span>AI · Plan</span><span class="r">08 / 12</span></div>
+</section>
+
+<!-- ═════════ 09 · AFTER THE LINE ═════════ -->
+<section class="slide" aria-label="Slide 9: Debrief, coach, posters and voice">
+  <p class="kicker">AI features 03–06 · After the line</p>
+  <h2>Debrief. Coach. <em>Share.</em> Talk.</h2>
+  <div class="quad">
+    <div class="bib">
+      <div class="band ink"><span>03 · Debrief</span><span>Gemini</span></div>
+      <div class="vis" id="debrief" aria-label="Chart of planned against actual pace per kilometre, with the actual pace fading after km 15"></div>
+      <div class="txt"><h3>Plan vs actual</h3><p>Finds where it went wrong and why: heat, the hill, or a start that was too fast.</p><span class="tag now">Buildathon scope</span></div>
+    </div>
+    <div class="bib">
+      <div class="band ink"><span>04 · Coach</span><span>Gemini</span></div>
+      <div class="vis chat">
+        <div class="bubble me">Can I go sub-4:30 at TMM in January?</div>
+        <div class="bubble ai">Your Pune half (1:57) predicts about 4:05 on paper (Riegel). In Mumbai's humidity, 4:25–4:30 is realistic. Here's a 9-week block…</div>
+      </div>
+      <div class="txt"><h3>AI coach</h3><p>Knows your whole race history, with context caching to keep it cheap. It builds the next block and gives an injury caveat every time.</p><span class="tag">Next</span></div>
+    </div>
+    <div class="bib">
+      <div class="band"><span>05 · Poster</span><span>Nano Banana</span></div>
+      <div class="vis"><div class="poster"><img src="assets/runfolio-buildathon/race-photo.webp" alt=""><div class="ov"></div><div class="t"><small>FINISHER · MUMBAI</small><b>5:05:53</b><span>42.195 KM · RUNFOLIO.IN</span></div></div></div>
+      <div class="txt"><h3>Finisher posters</h3><p>Your race photo plus your verified result, made into a poster. This is the moment people share, and what organisers pay for.</p><span class="tag now">Buildathon scope</span></div>
+    </div>
+    <div class="bib">
+      <div class="band volt"><span>06 · Voice</span><span>Gemini Live</span></div>
+      <div class="vis"><div class="wave" id="wave" aria-hidden="true"><div class="say">"12 seconds ahead at km 18. Ease off, the climb is next."</div></div></div>
+      <div class="txt"><h3>Race-day voice</h3><p>A hands-free pacer on race morning and a spoken debrief afterwards. A year-in-review reel scored with Lyria.</p><span class="tag">Roadmap</span></div>
+    </div>
+  </div>
+  <div class="pstrip"><span>AI · After the line</span><span class="r">09 / 12</span></div>
+</section>
+
+<!-- ═════════ 10 · ARCHITECTURE ═════════ -->
+<section class="slide dark" aria-label="Slide 10: Architecture on Google Cloud">
+  <p class="kicker">Technical architecture</p>
+  <h2>All on <em>Google Cloud</em>, Mumbai first.</h2>
+  <div class="arch" id="arch">
+    <svg class="wires" aria-hidden="true"></svg>
+    <div class="region" style="left:330px;top:30px;width:1350px;height:590px"><em>asia-south1 · Mumbai  ·  DR in asia-south2 · Delhi</em></div>
+    <div class="node edge" data-n="user" style="left:0;top:230px;width:270px"><small>Client</small><b>Runner</b><span>Phone browser, desktop, no app install</span></div>
+    <div class="node edge" data-n="lb" style="left:380px;top:230px;width:260px"><small>Edge</small><b>Load Balancer</b><span>Cloud CDN · Cloud Armor</span></div>
+    <div class="node" data-n="run" style="left:720px;top:110px;width:300px"><small>App</small><b>Cloud Run</b><span>Astro SSR, autoscaling, min instances up on race weekends</span></div>
+    <div class="node" data-n="sql" style="left:1110px;top:80px;width:260px"><small>Data</small><b>Cloud SQL</b><span>Postgres, row-level security kept</span></div>
+    <div class="node" data-n="idp" style="left:1400px;top:80px;width:250px"><small>Auth</small><b>Identity Platform</b><span>Email + Google sign-in</span></div>
+    <div class="node" data-n="gcs" style="left:1110px;top:250px;width:260px"><small>Files</small><b>Cloud Storage</b><span>Photos, certificates, posters, signed uploads</span></div>
+    <div class="node" data-n="bq" style="left:1400px;top:250px;width:250px"><small>Insight</small><b>BigQuery</b><span>Anonymised city and race trends</span></div>
+    <div class="node" data-n="ps" style="left:720px;top:380px;width:300px"><small>Async</small><b>Pub/Sub → Workers</b><span>Absorbs the post-race spike: 65K finishers, one morning</span></div>
+    <div class="node ai" data-n="vx" style="left:1110px;top:430px;width:540px"><small>AI · Vertex AI</small><b>Gemini · Nano Banana · Live</b><span>Structured output, function calling over our calculators, Search grounding, context caching, batch prediction</span></div>
+    <div class="node" data-n="ops" style="left:380px;top:420px;width:260px"><small>Ops</small><b>Scheduler · Secrets</b><span>Monitoring, budget alert for every AI call</span></div>
+  </div>
+  <div class="pstrip"><span>Architecture</span><span class="r">10 / 12</span></div>
+</section>
+
+<!-- ═════════ 11 · FIELD + MONEY ═════════ -->
+<section class="slide" aria-label="Slide 11: Competition and business model">
+  <p class="kicker">Competition · business model</p>
+  <h2>A different race. <em>A clear way to pay.</em></h2>
+  <div class="s-biz">
+    <div>
+      <table class="field">
+        <thead><tr><th></th><th>Strava<br>+ Runna</th><th>Watch<br>apps</th><th>Registration<br>sites</th><th class="us">RunFolio</th></tr></thead>
+        <tbody>
+          <tr><td>Built around races, not runs</td><td class="n">—</td><td class="n">—</td><td class="h">½</td><td class="us">●</td></tr>
+          <tr><td>Works with no watch</td><td class="h">½</td><td class="n">—</td><td class="y">●</td><td class="us">●</td></tr>
+          <tr><td>Whole history across organisers</td><td class="h">½</td><td class="h">½</td><td class="n">—</td><td class="us">●</td></tr>
+          <tr><td>Heat-aware plan for a named race</td><td class="n">—</td><td class="h">½</td><td class="n">—</td><td class="us">●</td></tr>
+          <tr><td>Cited, deterministic numbers</td><td class="n">—</td><td class="h">½</td><td class="n">—</td><td class="us">●</td></tr>
+          <tr><td>Indian pricing and context</td><td class="n">—</td><td class="n">—</td><td class="y">●</td><td class="us">●</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="font-size:16px;margin-top:14px">● yes · ½ partly · — no. This is our reading of public features as of November 2026.</p>
+    </div>
+    <div class="tiers">
+      <div class="bib tier"><h3>Free</h3><div class="p">₹0</div><p>Portfolio, manual logging, every calculator, and a few AI imports and plans a month. The growth engine.</p></div>
+      <div class="bib tier" style="border-color:var(--orange)"><h3>RunFolio Pro</h3><div class="p">₹999<small>/yr</small></div><p>Unlimited imports, a plan and debrief for every race, the AI coach, HD posters. Or ₹149 a month.</p></div>
+      <div class="bib tier"><h3>Clubs &amp; coaches</h3><div class="p">₹2–5K<small>/mo</small></div><p>Roster of members' races, plans and debriefs.</p></div>
+      <div class="bib tier"><h3>Organisers</h3><div class="p">per finisher</div><p>Branded posters and runner pages sent with results. Later: registration affiliates and sponsored cards.</p></div>
+    </div>
+  </div>
+  <div class="pstrip"><span>Competition · Business</span><span class="r">11 / 12</span></div>
+</section>
+
+<!-- ═════════ 12 · FINISH ═════════ -->
+<section class="slide dark" aria-label="Slide 12: Roadmap, founder and the ask">
+  <div class="checker" aria-hidden="true"></div>
+  <p class="kicker">Roadmap · founder · the ask</p>
+  <h2>The finish line <em>is the start corral.</em></h2>
+  <div class="s-finish">
+    <div class="road-map">
+      <div class="ms"><small>Now · live</small><h3>Race portfolio + 6 cited tools</h3><p>runfolio.in: profiles, photos, stats, share cards, /explore.</p></div>
+      <div class="ms"><small>20–21 Nov · City Buildathon</small><h3>Certificate-to-race + race-day planner</h3><p>Gemini on Vertex AI, Cloud Run workers, the first Nano Banana poster.</p></div>
+      <div class="ms later"><small>Dec 2026 – Jan 2027</small><h3>Move to Google Cloud · TMM 2027 pilot</h3><p>Plans before Mumbai, debriefs and posters after it, for the runners in our network.</p></div>
+      <div class="ms later"><small>Q1–Q2 2027</small><h3>Pro, clubs, the first organiser</h3><p>Gemini Live pacer, Hindi and Marathi debriefs, the first organiser paying per finisher.</p></div>
+    </div>
+    <div class="founder">
+      <div class="bib">
+        <span class="pin tl"></span><span class="pin tr"></span><span class="pin bl"></span><span class="pin br"></span>
+        <div class="band"><span>Founder · solo</span><span>Pune</span></div>
+        <h3>Sanket Tambare</h3>
+        <p>Software developer and marathon runner: 26 races, 589 km of them logged on RunFolio, and a training partner at United Enduros. He built RunFolio's live product alone, end to end.</p>
+        <p class="muted" style="font-size:19px">The user and the builder are the same person.</p>
+      </div>
+      <div class="ask"><b>The ask</b><p>Google AI and Cloud credits to run Gemini at race-day scale, mentors on Vertex AI, and introductions to two race organisers for a poster pilot.</p></div>
+    </div>
+  </div>
+  <div class="pstrip"><span>runfolio.in</span><span class="r">KM 42.2 · 12 / 12</span></div>
+</section>
+
+<div class="hud" aria-hidden="true"><span>RunFolio · <b>Buildathon '26</b></span><span id="hud-split">Split 01 / 12</span></div>
+<nav id="course" aria-label="Slides"></nav>
+</main>
+</div>
+
+<div class="ctrl">
+  <button type="button" id="prev" aria-label="Previous slide">← PREV</button>
+  <button type="button" id="next" aria-label="Next slide">NEXT →</button>
+  <button type="button" id="full" aria-label="Toggle full screen">⛶</button>
+</div>
+<p class="sr" aria-live="polite" id="live"></p>
+
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const N = slides.length;
+  const stage = document.getElementById('stage');
+  const course = document.getElementById('course');
+  const hud = document.getElementById('hud-split');
+  const live = document.getElementById('live');
+  const params = new URLSearchParams(location.search);
+  const KM = 42.195;
+
+  /* ── charts drawn once, as SVG, so print/PDF carries them ── */
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent, text) => { const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; parent && parent.appendChild(e); return e; };
+
+  // Growth chart: indicative participants (millions)
+  (() => {
+    const host = document.getElementById('growth');
+    const W = 1000, H = 560, pad = {l: 20, r: 40, t: 40, b: 70};
+    const s = el('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img'}, host);
+    el('title', {}, s, 'Indicative race participants in India');
+    const pts = [[2004, 0.01], [2019, 1.0], [2025, 2.5]];
+    const x = y => pad.l + (y - 2004) / (2025 - 2004) * (W - pad.l - pad.r);
+    const y = v => H - pad.b - v / 2.7 * (H - pad.t - pad.b);
+    for (let v = 0; v <= 2.5; v += 0.5) {
+      el('line', {x1: pad.l, x2: W - pad.r, y1: y(v), y2: y(v), stroke: '#2f2f35', 'stroke-width': 2}, s);
+    }
+    const d = 'M' + pts.map(p => `${x(p[0])} ${y(p[1])}`).join(' L');
+    el('path', {d: d + ` L${x(2025)} ${y(0)} L${x(2004)} ${y(0)} Z`, fill: 'rgba(212,255,58,.12)'}, s);
+    el('path', {d, fill: 'none', stroke: '#d4ff3a', 'stroke-width': 8, 'stroke-linejoin': 'round', 'stroke-linecap': 'round'}, s);
+    const labels = [['10K', 'runners'], ['~1M', ''], ['2.5M', 'race at least once a year']];
+    pts.forEach((p, i) => {
+      el('circle', {cx: x(p[0]), cy: y(p[1]), r: 14, fill: '#141416', stroke: '#d4ff3a', 'stroke-width': 6}, s);
+      el('text', {x: x(p[0]), y: H - 26, 'text-anchor': i === 0 ? 'start' : i === 2 ? 'end' : 'middle', fill: '#8d897f', 'font-family': 'JetBrains Mono', 'font-weight': 700, 'font-size': 22}, s, p[0]);
+      const tx = i === 2 ? x(p[0]) - 30 : x(p[0]) + (i === 0 ? 0 : -10);
+      const ty = i === 0 ? y(p[1]) - 70 : y(p[1]) - 34;
+      el('text', {x: tx, y: ty, 'text-anchor': i === 2 ? 'end' : i === 0 ? 'start' : 'middle', fill: i === 2 ? '#d4ff3a' : '#f6f3ea', 'font-family': 'Big Shoulders Display', 'font-weight': 900, 'font-size': i === 2 ? 120 : 64}, s, labels[i][0]);
+      if (labels[i][1]) el('text', {x: tx, y: ty + (i === 2 ? 40 : 30), 'text-anchor': i === 2 ? 'end' : 'start', fill: '#a8a397', 'font-family': 'Archivo', 'font-size': 22}, s, labels[i][1]);
+    });
+    el('text', {x: x(2011), y: y(1.75), fill: '#ff4f1a', 'font-family': 'JetBrains Mono', 'font-weight': 700, 'font-size': 22, 'letter-spacing': 2}, s, '250× IN 21 YEARS');
+  })();
+
+  // Pace band: per-km seconds (example half marathon)
+  const plan = [345,345,345,336,336,336,336,336,336,336,333,333,350,333,333,333,328,328,328,328,328];
+  const mmss = t => `${Math.floor(t/60)}:${String(Math.round(t%60)).padStart(2,'0')}`;
+  (() => {
+    const host = document.getElementById('paceband');
+    const W = 1180, H = 330, top = 30, base = 250, n = plan.length, bw = W / n;
+    const s = el('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img'}, host);
+    el('title', {}, s, 'Per-kilometre target pace');
+    // elevation silhouette
+    const elev = [0,2,4,5,4,6,8,7,9,11,14,22,34,40,30,20,14,10,8,6,4];
+    const ex = i => i * bw + bw / 2, ey = v => base - v * 2.2;
+    el('path', {d: `M0 ${base} ` + elev.map((v,i)=>`L${ex(i)} ${ey(v)}`).join(' ') + ` L${W} ${base} Z`, fill: '#ece6d6'}, s);
+    const lo = 320, hi = 355;
+    plan.forEach((t, i) => {
+      const h = 40 + (hi - t) / (hi - lo) * 150; // faster = taller
+      const fill = i === 12 ? '#141416' : (t >= 340 ? '#ffb39a' : t >= 333 ? '#ff7f55' : '#ff4f1a');
+      el('rect', {x: i * bw + 5, y: base - h, width: bw - 10, height: h, rx: 6, fill}, s);
+      el('text', {x: ex(i), y: base - h - 10, 'text-anchor': 'middle', 'font-family': 'JetBrains Mono', 'font-weight': 700, 'font-size': 15, fill: '#141416'}, s, mmss(t));
+      el('text', {x: ex(i), y: base + 30, 'text-anchor': 'middle', 'font-family': 'JetBrains Mono', 'font-weight': 700, 'font-size': 16, fill: '#6b675e'}, s, i + 1);
+    });
+    [6, 13].forEach(i => { // gels after km 7 and 14
+      el('text', {x: ex(i), y: base + 62, 'text-anchor': 'middle', 'font-size': 26}, s, '◆');
+    });
+    el('text', {x: ex(12), y: top - 6, 'text-anchor': 'middle', 'font-family': 'JetBrains Mono', 'font-weight': 700, 'font-size': 15, fill: '#d93d0c'}, s, 'CLIMB · HOLD EFFORT');
+    el('text', {x: 0, y: H - 2, 'font-family': 'JetBrains Mono', 'font-size': 15, fill: '#6b675e'}, s, 'KM →  bar height = pace target · shaded = elevation · ◆ = gel');
+    const total = plan.reduce((a,b)=>a+b,0) - plan[20] + plan[20]*1.0975;
+    host.dataset.total = total;
+  })();
+
+  // Debrief: plan vs actual
+  (() => {
+    const host = document.getElementById('debrief');
+    const W = 400, H = 250;
+    const s = el('svg', {viewBox: `0 0 ${W} ${H}`, width: '100%', height: '100%', role: 'img'}, host);
+    const actual = [338,336,334,332,333,334,335,336,337,334,336,338,362,341,347,352,356,361,358,355,350];
+    const x = i => 24 + i * (W - 48) / 20, y = t => 30 + (t - 325) / 45 * (H - 80);
+    const line = (arr, c, w, dash) => el('path', {d: 'M' + arr.map((t,i)=>`${x(i)} ${y(t)}`).join(' L'), fill: 'none', stroke: c, 'stroke-width': w, 'stroke-dasharray': dash || '', 'stroke-linejoin': 'round'}, s);
+    el('rect', {x: x(14), y: 18, width: x(20) - x(14), height: H - 58, fill: 'rgba(255,79,26,.12)', rx: 6}, s);
+    line(plan, '#141416', 4, '8 7');
+    line(actual, '#ff4f1a', 5);
+    el('text', {x: x(17), y: 36, 'text-anchor': 'middle', 'font-family': 'JetBrains Mono', 'font-weight': 700, 'font-size': 13, fill: '#d93d0c'}, s, 'THE FADE');
+    el('text', {x: 24, y: H - 14, 'font-family': 'JetBrains Mono', 'font-size': 12, fill: '#6b675e'}, s, '- - plan   — actual   (slower ↓)');
+  })();
+
+  // Voice waveform
+  (() => {
+    const w = document.getElementById('wave');
+    for (let i = 0; i < 26; i++) { const b = document.createElement('i');
+      b.style.height = (30 + Math.abs(Math.sin(i * 1.7)) * 110) + 'px'; b.style.animationDelay = (i * 57 % 900) + 'ms'; w.insertBefore(b, w.firstChild); }
+  })();
+
+  // Architecture wires
+  const drawWires = () => {
+    const arch = document.getElementById('arch');
+    const svg = arch.querySelector('svg.wires');
+    svg.innerHTML = '';
+    const box = n => { const e = arch.querySelector(`[data-n="${n}"]`); return {x: e.offsetLeft, y: e.offsetTop, w: e.offsetWidth, h: e.offsetHeight}; };
+    const wire = (a, b, c = '#5a5a63', dash = '') => {
+      const A = box(a), B = box(b);
+      const x1 = A.x + A.w, y1 = A.y + A.h / 2, x2 = B.x, y2 = B.y + B.h / 2, mx = (x1 + x2) / 2;
+      el('path', {d: `M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`, fill: 'none', stroke: c, 'stroke-width': 4, 'stroke-dasharray': dash}, svg);
+      el('circle', {cx: x2, cy: y2, r: 7, fill: c}, svg);
+    };
+    wire('user', 'lb', '#ff4f1a'); wire('lb', 'run', '#ff4f1a');
+    wire('run', 'sql'); wire('run', 'gcs'); wire('run', 'ps', '#5a5a63');
+    wire('ps', 'vx', '#d4ff3a'); wire('run', 'vx', '#d4ff3a', '10 8');
+    wire('lb', 'ops', '#5a5a63', '4 8');
+  };
+
+  /* ── navigation ── */
+  let i = 0;
+  const kmAt = k => (k / (N - 1)) * KM;
+  const pct = k => (k / (N - 1)) * 100;
+  const road = document.createElement('div'); road.className = 'road'; course.appendChild(road);
+  const done = document.createElement('div'); done.className = 'done'; course.appendChild(done);
+  const runner = document.createElement('div'); runner.className = 'runner'; course.appendChild(runner);
+  const dots = slides.map((s, k) => {
+    const b = document.createElement('button'); b.type = 'button';
+    b.style.left = pct(k) + '%';
+    b.setAttribute('aria-label', `Go to slide ${k + 1}: ${s.getAttribute('aria-label').replace(/^Slide \d+: /, '')}`);
+    b.addEventListener('click', () => go(k));
+    course.appendChild(b);
+    if (k === 0 || k === N - 1 || k % 3 === 0) { const t = document.createElement('span'); t.className = 'km'; t.style.left = pct(k) + '%';
+      t.textContent = k === N - 1 ? 'FINISH' : k === 0 ? 'START' : 'KM ' + kmAt(k).toFixed(1); course.appendChild(t); }
+    return b;
+  });
+
+  function go(k, fromHash) {
+    i = Math.max(0, Math.min(N - 1, k));
+    slides.forEach((s, j) => { s.classList.toggle('is-active', j === i); s.setAttribute('aria-hidden', j === i ? 'false' : 'true'); });
+    dots.forEach((d, j) => { d.classList.toggle('passed', j < i); d.classList.toggle('here', j === i); d.toggleAttribute('aria-current', j === i); });
+    done.style.width = pct(i) + '%';
+    runner.style.left = pct(i) + '%';
+    runner.textContent = i === N - 1 ? 'FINISHED' : 'KM ' + kmAt(i).toFixed(1);
+    hud.textContent = `Split ${String(i + 1).padStart(2, '0')} / ${N}`;
+    document.body.classList.toggle('on-dark', slides[i].classList.contains('dark'));
+    live.textContent = `Slide ${i + 1} of ${N}`;
+    if (!fromHash) history.replaceState(null, '', '#' + (i + 1));
+    if (slides[i].querySelector('#arch')) drawWires();
+  }
+
+  const fit = () => {
+    if (document.body.classList.contains('print')) return;
+    const sc = Math.min(innerWidth / 1920, innerHeight / 1080);
+    stage.style.transform = `translate(-50%,-50%) scale(${sc})`;
+  };
+  addEventListener('resize', fit);
+
+  document.getElementById('prev').addEventListener('click', () => go(i - 1));
+  document.getElementById('next').addEventListener('click', () => go(i + 1));
+  document.getElementById('full').addEventListener('click', () => {
+    if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.();
+  });
+  addEventListener('keydown', e => {
+    if (e.target.closest('input,textarea')) return;
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key) && !e.target.closest('button')) { e.preventDefault(); go(i + 1); }
+    else if (['ArrowRight', 'PageDown'].includes(e.key)) { e.preventDefault(); go(i + 1); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(i - 1); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(N - 1);
+    else if (e.key === 'f') document.getElementById('full').click();
+  });
+  let tx = null;
+  addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive: true});
+  addEventListener('touchend', e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1)); tx = null; });
+  addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+
+  if (params.has('print')) {
+    document.body.classList.add('print');
+    slides.forEach(s => s.classList.add('is-active'));
+    drawWires();
+  } else {
+    const n = parseInt(location.hash.slice(1), 10);
+    go(n ? n - 1 : 0, true);
+    fit();
+  }
+  addEventListener('beforeprint', () => { slides.forEach(s => s.classList.add('is-active')); drawWires(); });
+  addEventListener('afterprint', () => go(i, true));
+  document.fonts?.ready.then(() => { if (slides[i].querySelector('#arch') || params.has('print')) drawWires(); });
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="run"></script>
+</body>
+</html>

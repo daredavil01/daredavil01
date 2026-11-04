@@ -110,6 +110,12 @@ presentations/
   assets/training/                Screenshots and two screen recordings from the
                                    live preview, film stills, the film and its
                                    captions, and vo/NN.mp3 narration per slide
+  runfolio-buildathon.html        RunFolio — Every Race, Read by AI: the 12-slide
+                                   race-bib pitch deck for Startup Buildathon India
+                                   2026 (Gemini, Nano Banana, Google Cloud); ?print
+                                   lays every slide out for PDF export
+  assets/runfolio-buildathon/     Live-site screenshots (webp) used by that deck,
+                                   plus the exported runfolio-buildathon.pdf
   brand-kit.html                  One Diary, Three Moods: the 12-slide illustrated
                                    deck on Dare Write's Brand Kit at
                                    brand-kit.sankettambare.in — three directions,
