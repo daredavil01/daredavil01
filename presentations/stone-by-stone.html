@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Stone by Stone — build a site you keep improving</title>
-<meta name="description" content="A 3-hour build-along workshop in 30 illustrated slides: from a one-page idea to your own domain with Claude, Claude Code, GitHub, a web framework and Cloudflare — with sankettambare.in as the case study.">
+<meta name="description" content="A 3-hour build-along workshop in 40 illustrated slides: from a one-page idea to your own domain with Claude, Claude Code, GitHub, a web framework and Cloudflare — with sankettambare.in and four featured projects as case studies.">
 <meta property="og:title" content="Stone by Stone — build a site you keep improving">
 <meta property="og:description" content="A 3-hour build-along workshop: idea → research → three docs → phased build with Claude Code → GitHub → Cloudflare → your domain.">
 <meta property="og:image" content="../assets/island/renders/og.jpg">
@@ -103,9 +103,40 @@ table.cmp td:nth-child(3){background:rgba(255,106,26,.08)}
 .title-slide figure.illo{width:760px}
 .title-meta{font:600 22px var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-top:44px;color:var(--ink2);line-height:1.7}
 .agenda{display:grid;grid-template-columns:150px 1fr;gap:0;font-size:26px;line-height:1.3}
-.agenda div{padding:11px 0;border-bottom:2px solid rgba(27,42,107,.14)}
+.agenda div{padding:8px 0;border-bottom:2px solid rgba(27,42,107,.14)}
 .agenda .tm{font:700 21px var(--mono);color:var(--acc);padding-top:15px}
 .agenda .brk{color:var(--ink2);font-style:italic}
+/* screenshots + project slides */
+.proj .grid{grid-template-columns:700px 1fr;gap:60px}
+.shots{position:relative;width:100%;height:800px}
+.shot{position:absolute;margin:0;border:3px solid var(--ink);border-radius:16px;overflow:hidden;background:#fff;box-shadow:12px 12px 0 rgba(255,106,26,.24)}
+.shot .bar{height:30px;background:var(--ink);display:flex;gap:7px;align-items:center;padding:0 12px}
+.shot .bar i{width:10px;height:10px;border-radius:50%;background:var(--paper);opacity:.55}
+.shot .bar span{font:600 14px var(--mono);color:var(--paper);margin-left:10px;letter-spacing:.04em}
+.shot img{display:block;width:100%;height:auto}
+.shot.phone{border-width:4px;border-radius:28px}
+.shot figcaption{position:absolute;right:10px;bottom:10px;font:700 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:5px 9px;border-radius:7px}
+figure.illo.mini{position:absolute;width:250px;border-width:3px;box-shadow:8px 8px 0 rgba(255,106,26,.24);z-index:3}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+.facts div{border-top:4px solid var(--ink);padding-top:8px}
+.facts b{display:block;font:800 50px/1 var(--disp);letter-spacing:-.02em}
+.facts span{font-size:19px;line-height:1.3;display:block;margin-top:4px;color:var(--ink2)}
+.facts .a b{color:var(--acc)}
+.visit{font:700 22px var(--mono);margin-top:18px}
+.visit a{text-decoration-thickness:3px}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.thumbs figure{margin:0}
+.thumbs .shot{position:relative;box-shadow:7px 7px 0 rgba(27,42,107,.14)}
+.thumbs figcaption{font-size:20px;line-height:1.3;margin-top:10px}
+.thumbs figcaption b{font:800 23px var(--disp);display:block}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.qa .card h3{font-size:28px}
+.connect{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 34px;font:600 25px var(--mono);margin-top:26px}
+.connect a{text-decoration:none;border-bottom:3px solid var(--acc);padding-bottom:3px}
+.connect span{display:block;font:700 15px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-bottom:2px}
+.qrbox{display:flex;gap:22px;align-items:center;margin-top:34px}
+.qrbox svg.qr{width:170px;height:170px;color:var(--ink);background:#fff;padding:12px;border:3px solid var(--ink);border-radius:14px}
+.qrbox p{font:600 22px/1.45 var(--mono);margin:0}
 /* hud */
 #hud{position:absolute;left:120px;right:120px;bottom:52px;display:flex;align-items:center;gap:28px;font:600 17px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);z-index:5;pointer-events:none}
 #hud .brand{white-space:nowrap}
@@ -180,23 +211,82 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
     </div>
     <figure class="illo grain" data-scene="title" data-alt="Cairn, a small pebble with an orange trail blaze, balances one orange stone over its head beside a five-stone cairn."></figure>
   </div>
-  <aside class="notes" data-min="2">Welcome. By the end of the three hours everyone has a site live on the internet, built the way it can keep growing. Meet Cairn — a river pebble with a trail blaze. Every slide has Cairn doing the step. The whole workshop is one idea: add one stone at a time, on top of the last.</aside>
+  <aside class="notes" data-min="1">Welcome. By the end of the three hours everyone has a site live on the internet, built the way it can keep growing. Meet Cairn — a river pebble with a trail blaze. Every slide has Cairn doing the step. The whole workshop is one idea: add one stone at a time, on top of the last.</aside>
 </section>
 
-<section class="slide grain" data-part="1" data-time="0:02" data-n="02">
+<section class="slide grain" data-part="0" data-time="0:01" data-n="02">
   <div class="grid">
     <div>
-      <p class="kick"><b>01 · The idea</b><span class="t">0:02</span></p>
+      <p class="kick"><b>00 · Welcome</b><span class="t">0:01</span></p>
+      <h2>Hi, I'm <em>Sanket</em></h2>
+      <p class="lead" style="font-size:32px">Software engineer at <b>Bridgenext</b> in Pune — full-stack development, data pipelines and DORA metrics. Computer science at Rajarambapu Institute of Technology; technology policy at the Takshashila Institution, and a NAST fellow working on AI governance.</p>
+      <ul class="pts tight">
+        <li>Endurance runner — 10K races to a 50K ultra</li>
+        <li>Trekker of the Sahyadri forts</li>
+        <li>Writes in English and Marathi — essays, a monthly newsletter, the <i>Dare Write's</i> podcast</li>
+        <li>Builds sites for causes: NGOs, a birding marathon, a data story on the Sahyadri</li>
+      </ul>
+      <p class="visit">sankettambare.in · card.sankettambare.in</p>
+    </div>
+    <figure class="illo grain" data-scene="hello" data-alt="Cairn holds a visiting card for Sanket Tambare high over its head."></figure>
+  </div>
+  <aside class="notes" data-min="2">Thirty seconds on who I am, then why I'm the one teaching this: I'm not a web designer. Everything you'll see today was built in evenings and weekends, with Claude Code doing most of the typing. That's the point — the method matters more than the background.</aside>
+</section>
+
+<section class="slide grain" data-part="0" data-time="0:03" data-n="03">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>00 · Welcome</b><span class="t">0:03</span></p>
+      <h2>Why this <em>workshop</em></h2>
+      <p class="lead" style="font-size:32px">When I showed you my site, the response was the same every time: <i>“I want one of these.”</i></p>
+      <ul class="pts">
+        <li><b>Building got cheap.</b> An AI coding agent writes the code; you bring the judgment.</li>
+        <li><b>Keeping it alive didn't.</b> Most sites built in an afternoon are never touched again.</li>
+        <li><b>You already have the hard skill.</b> Scoping, phasing, cutting, checking — that's project management, and it's exactly what this needs.</li>
+      </ul>
+      <p class="pull">Today isn't about a website. It's about a way of building you can repeat.</p>
+    </div>
+    <figure class="illo grain" data-scene="why" data-alt="Cairn points from a tall finished cairn labelled sankettambare.in to an empty dashed patch of ground labelled yours."></figure>
+  </div>
+  <aside class="notes" data-min="2">Name the room's real worry: "I'm not technical." The workshop is designed for that. The engineering decisions are made once, in documents, with research behind them — the same way you'd run any project.</aside>
+</section>
+
+<section class="slide grain" data-part="0" data-time="0:05" data-n="04">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>00 · Welcome</b><span class="t">0:05</span></p>
+      <h2>What we'll <em>learn</em> today</h2>
+      <ol class="steps">
+        <li><b>Shape an idea</b> with Claude — an interview, deep research, three short documents</li>
+        <li><b>Choose a stack you own</b> — and know the pros and cons of each choice</li>
+        <li><b>Keep data apart from code</b>, so either can change without the other</li>
+        <li><b>Build in phases</b> with Claude Code — one session each, checked before it counts</li>
+        <li><b>Ship it</b> — GitHub, Cloudflare and your own domain</li>
+        <li><b>Keep it growing</b> — every later change is a prompt</li>
+      </ol>
+      <p class="check">by 3:00 — a live URL, a GitHub repo, three planning docs and the prompt pack to keep going.</p>
+    </div>
+    <figure class="illo grain" data-scene="learn" data-alt="Cairn hops across four stepping stones over a stream, labelled idea, docs, code and live."></figure>
+  </div>
+  <aside class="notes" data-min="2">Read the six out loud; they're also the six parts of the agenda. The checkpoint line is the promise — come back to it at the end and ask who has all four.</aside>
+</section>
+
+
+<section class="slide grain" data-part="1" data-time="0:07" data-n="05">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:07</span></p>
       <h2>The three hours</h2>
       <div class="agenda">
-        <div class="tm">0:00</div><div><b>Idea</b> — why own the stack, what it is</div>
+        <div class="tm">0:00</div><div><b>Welcome</b> — who I am, why this, what you'll learn</div>
+        <div class="tm">0:08</div><div><b>Idea</b> — why own the stack, what it is</div>
         <div class="tm">0:20</div><div><b>Shape</b> — idea.md → interview → deep research → three docs → data</div>
         <div class="tm">1:05</div><div><b>Decide</b> — framework and host, pros and cons</div>
         <div class="tm">1:20</div><div class="brk">Break — 10 minutes</div>
         <div class="tm">1:30</div><div><b>Build</b> — repo, data apart from code, one phase per session, audits</div>
         <div class="tm">2:20</div><div><b>Ship</b> — GitHub → Cloudflare → your domain</div>
-        <div class="tm">2:40</div><div><b>Case study</b> — sankettambare.in, 31 versions in</div>
-        <div class="tm">2:52</div><div><b>Iterate</b> — every change from now on is a prompt</div>
+        <div class="tm">2:38</div><div><b>Case study</b> — sankettambare.in and four featured projects</div>
+        <div class="tm">2:52</div><div><b>Iterate</b> — then your feedback, and thank you</div>
       </div>
     </div>
     <figure class="illo grain" data-scene="agenda" data-alt="A trail of seven small cairns climbing up the panel, each a part of the workshop; Cairn sets off from the first."></figure>
@@ -204,10 +294,10 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="2">This is build-along: laptops open, you type the prompts. Each part ends with a checkpoint — "you should now have…". If you fall behind, the prompt pack has every prompt, so you can catch up during the break. We spend most time on Shape and Build: a good plan is what makes the build fast.</aside>
 </section>
 
-<section class="slide grain" data-part="1" data-time="0:04" data-n="03">
+<section class="slide grain" data-part="1" data-time="0:08" data-n="06">
   <div class="grid">
     <div>
-      <p class="kick"><b>01 · The idea</b><span class="t">0:04</span></p>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:08</span></p>
       <h2>Sandcastles<br>and <em>cairns</em></h2>
       <p class="lead">Lovable, Bolt and v0 build a beautiful sandcastle in an afternoon. Then the tide comes: the idea changes, credits run out, the code lives in someone else's editor — and nobody adds a second wing.</p>
       <p class="lead">A cairn is built stone by stone. Each visit adds one, and it stands because every stone sits on the last.</p>
@@ -218,10 +308,10 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="3">Be fair to the app builders: they are excellent for a prototype or a one-week event page. Prototype there if you like. The point is what happens on day 30 and day 300. Ask the room: who has built something on one of those tools — and who changed it a month later? Usually no hands for the second question.</aside>
 </section>
 
-<section class="slide grain wide" data-part="1" data-time="0:07" data-n="04">
+<section class="slide grain wide" data-part="1" data-time="0:10" data-n="07">
   <div class="grid">
     <div>
-      <p class="kick"><b>01 · The idea</b><span class="t">0:07</span></p>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:10</span></p>
       <h2>The iteration test</h2>
       <table class="t cmp">
         <tr><th>Ask of any site</th><th>App builder</th><th>Your own stack</th></tr>
@@ -238,10 +328,10 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="3">This is the test to run on any tool, including the one we use today. The right-hand column is what makes iteration cheap. Notice nothing in it is about AI — it's ownership, plain files and history. The AI part is what makes that ownership affordable for someone who isn't a developer.</aside>
 </section>
 
-<section class="slide grain" data-part="1" data-time="0:10" data-n="05">
+<section class="slide grain" data-part="1" data-time="0:12" data-n="08">
   <div class="grid">
     <div>
-      <p class="kick"><b>01 · The idea</b><span class="t">0:10</span></p>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:12</span></p>
       <h2>The stack: <em>four stones</em></h2>
       <div class="cols" style="gap:22px">
         <div class="card"><p class="k">The builder</p><h3>Claude Code</h3><p>Reads the repo, writes the code, runs the build, checks its own work. In a terminal, an IDE, the desktop app, the browser or your phone.</p></div>
@@ -255,10 +345,10 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="3">Each stone does one job and can be swapped without touching the others — that's the scalable part. Framework is the only one we'll debate; the other three are the spine. Claude chat (with Research) shapes the plan; Claude Code builds it.</aside>
 </section>
 
-<section class="slide grain" data-part="1" data-time="0:13" data-n="06">
+<section class="slide grain" data-part="1" data-time="0:14" data-n="09">
   <div class="grid">
     <div>
-      <p class="kick"><b>01 · The idea</b><span class="t">0:13</span></p>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:14</span></p>
       <h2>“Scalable” means<br>it <em>compounds</em></h2>
       <p class="lead">Not traffic. Scalable here means the hundredth change costs no more than the first — small, reviewed, reversible, live in a minute.</p>
       <div class="big-n">
@@ -273,10 +363,10 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="2">Thirty-one major versions: every one was a new page or a full redesign, and none started from scratch. That's what we want you to have: a site where adding is normal. The case study at the end shows the habits that made that possible.</aside>
 </section>
 
-<section class="slide grain" data-part="1" data-time="0:15" data-n="07">
+<section class="slide grain" data-part="1" data-time="0:16" data-n="10">
   <div class="grid">
     <div>
-      <p class="kick"><b>01 · The idea</b><span class="t">0:15</span></p>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:16</span></p>
       <h2>Before you start</h2>
       <div class="cols">
         <div>
@@ -306,7 +396,7 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
 </section>
 
 <!-- ═════════ PART 2 · SHAPE ═════════ -->
-<section class="slide grain" data-part="2" data-time="0:20" data-n="08">
+<section class="slide grain" data-part="2" data-time="0:20" data-n="11">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:20 · exercise, 10 min</span></p>
@@ -326,7 +416,7 @@ Time I'll give it       <span class="m">per week, honestly</span></pre>
   <aside class="notes" data-min="10">Ten minutes, timer on screen. Walk the room. The two lines people skip are "what it must never be" and "time I'll give it" — those two decide most of the design. Someone who gives it 20 minutes a week needs a site that's easy to add to, not a showpiece.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:30" data-n="09">
+<section class="slide grain" data-part="2" data-time="0:30" data-n="12">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:30 · Claude chat</span></p>
@@ -341,7 +431,7 @@ Keep asking until you could write the concept without guessing. Then rewrite it 
   <aside class="notes" data-min="10">The trick is "before you write anything". Without it Claude produces a polished concept full of guesses. Answer by voice if typing is slow. Two or three rounds is typical. If it asks nothing, tell it to ask — weak questions mean your idea.md is already clear, which is fine too.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:40" data-n="10">
+<section class="slide grain" data-part="2" data-time="0:40" data-n="13">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:40 · Research on</span></p>
@@ -360,7 +450,7 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
   <aside class="notes" data-min="10">Research runs for several minutes — start it, then use the wait to collect content (slide 13). Ask people to open two or three of the cited links: reading the sources is the point. Item 2 is where the good design ideas come from; push people to name the sites they admire.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:50" data-n="11">
+<section class="slide grain" data-part="2" data-time="0:50" data-n="14">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:50</span></p>
@@ -377,7 +467,7 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
   <aside class="notes" data-min="7">These three files are the hand-off from chat to code. Claude Code will read them in every session, so they have to be short enough to read and precise enough to act on. The decisions doc uses a lightweight ADR shape — "what would make us revisit it" is the line that saves you later.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:57" data-n="12">
+<section class="slide grain" data-part="2" data-time="0:57" data-n="15">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:57</span></p>
@@ -395,7 +485,7 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
   <aside class="notes" data-min="3">This is the PM superpower in the room — you already know scope control. Apply it to yourself. Ask Claude: "cut this plan by half and tell me what we lose". Brief plans also keep Claude Code's context small, which keeps its work accurate.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="1:00" data-n="13">
+<section class="slide grain" data-part="2" data-time="1:00" data-n="16">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">1:00</span></p>
@@ -413,7 +503,7 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
 </section>
 
 <!-- ═════════ PART 3 · DECIDE ═════════ -->
-<section class="slide grain wide" data-part="3" data-time="1:05" data-n="14">
+<section class="slide grain wide" data-part="3" data-time="1:05" data-n="17">
   <div class="grid">
     <div>
       <p class="kick"><b>03 · Decide</b><span class="t">1:05</span></p>
@@ -431,7 +521,7 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
   <aside class="notes" data-min="7">Rule of thumb: content first, choose Astro; app first, Next.js or SvelteKit; already fluent in React and need heavy interactivity, React + Vite — but plan for SEO on day one. The case study is React + Vite and paid for it in SEO work (slide 28). Let people choose; the rest of the workshop is the same either way.</aside>
 </section>
 
-<section class="slide grain wide" data-part="3" data-time="1:12" data-n="15">
+<section class="slide grain wide" data-part="3" data-time="1:12" data-n="18">
   <div class="grid">
     <div>
       <p class="kick"><b>03 · Decide</b><span class="t">1:12</span></p>
@@ -451,7 +541,7 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
 </section>
 
 <!-- ═════════ PART 4 · BUILD ═════════ -->
-<section class="slide grain" data-part="4" data-time="1:30" data-n="16">
+<section class="slide grain" data-part="4" data-time="1:30" data-n="19">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:30 · Claude Code</span></p>
@@ -478,7 +568,7 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
   <aside class="notes" data-min="10">Put the three docs and INVENTORY.md in a new folder, cd into it, run claude, paste the prompt. Claude asks before running commands — read what it asks. Creating the GitHub repo by hand is deliberate: everyone should see where their code lives. The two lines are git remote add origin … and git push -u origin main.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:40" data-n="17">
+<section class="slide grain" data-part="4" data-time="1:40" data-n="20">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:40</span></p>
@@ -496,7 +586,7 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
   <aside class="notes" data-min="5">This is the most important engineering idea of the day, and it's one sentence: content in one place, code in another, one door between them. Put it in CLAUDE.md so every session follows it. It's also what lets non-developers edit the site: they edit content/, never src/.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:45" data-n="18">
+<section class="slide grain" data-part="4" data-time="1:45" data-n="21">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:45</span></p>
@@ -517,7 +607,7 @@ Personal site. Astro → Cloudflare Workers.
   <aside class="notes" data-min="5">The "Lessons" line is how the site gets smarter: when something breaks and you fix it, ask Claude to add one line so no future session repeats it. The case study's CLAUDE.md is long because it's a big site; yours should fit on this slide for the first month.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:50" data-n="19">
+<section class="slide grain" data-part="4" data-time="1:50" data-n="22">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:50</span></p>
@@ -536,7 +626,7 @@ Personal site. Astro → Cloudflare Workers.
   <aside class="notes" data-min="5">This loop is the whole method. People's instinct is one endless chat; that's where quality decays. When you come back tomorrow, you don't need to remember anything — the plan file says where you are. /rewind restores code and conversation to an earlier point when a turn goes wrong.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:55" data-n="20">
+<section class="slide grain" data-part="4" data-time="1:55" data-n="23">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:55 · Phase 1 now</span></p>
@@ -553,7 +643,7 @@ Keep content in content/ and read it only through src/lib/content. When done: ru
   <aside class="notes" data-min="20">The longest build-along block: about 20 minutes. Same prompt for every later phase — change the number. If a design comes out generic, give it taste: name two sites from the research and say what to borrow. Screenshots of sites you like work well as input too.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="2:05" data-n="21">
+<section class="slide grain" data-part="4" data-time="2:05" data-n="24">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">2:05</span></p>
@@ -571,7 +661,7 @@ Keep content in content/ and read it only through src/lib/content. When done: ru
   <aside class="notes" data-min="5">"It says it's done" is not done. The single most useful line in a CLAUDE.md is the command that checks the work. A reviewer that didn't write the code catches what the writer explained away.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="2:10" data-n="22">
+<section class="slide grain" data-part="4" data-time="2:10" data-n="25">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">2:10</span></p>
@@ -585,7 +675,7 @@ Keep content in content/ and read it only through src/lib/content. When done: ru
 </section>
 
 <!-- ═════════ PART 5 · SHIP ═════════ -->
-<section class="slide grain" data-part="5" data-time="2:20" data-n="23">
+<section class="slide grain" data-part="5" data-time="2:20" data-n="26">
   <div class="grid">
     <div>
       <p class="kick"><b>05 · Ship</b><span class="t">2:20</span></p>
@@ -604,7 +694,7 @@ git push -u origin phase-2
   <aside class="notes" data-min="5">For today, pushing straight to main is fine. Branches plus pull requests become valuable once deploys are wired: every branch gets its own preview URL, so you check a change on your phone before it's live.</aside>
 </section>
 
-<section class="slide grain" data-part="5" data-time="2:25" data-n="24">
+<section class="slide grain" data-part="5" data-time="2:25" data-n="27">
   <div class="grid">
     <div>
       <p class="kick"><b>05 · Ship</b><span class="t">2:25</span></p>
@@ -624,7 +714,7 @@ git push -u origin phase-2
   <aside class="notes" data-min="10">If the build fails on Cloudflare but works locally, paste the build log into Claude Code — it's almost always a Node version or a missing environment variable. Have people open their workers.dev URL on their phones; that moment is the high point of the workshop.</aside>
 </section>
 
-<section class="slide grain" data-part="5" data-time="2:35" data-n="25">
+<section class="slide grain" data-part="5" data-time="2:35" data-n="28">
   <div class="grid">
     <div>
       <p class="kick"><b>05 · Ship</b><span class="t">2:35</span></p>
@@ -644,10 +734,10 @@ git push -u origin phase-2
 </section>
 
 <!-- ═════════ PART 6 · CASE STUDY ═════════ -->
-<section class="slide grain" data-part="6" data-time="2:40" data-n="26">
+<section class="slide grain" data-part="6" data-time="2:38" data-n="29">
   <div class="grid">
     <div>
-      <p class="kick"><b>06 · Case study</b><span class="t">2:40</span></p>
+      <p class="kick"><b>06 · Case study</b><span class="t">2:38</span></p>
       <h2>sankettambare.in</h2>
       <p class="lead" style="font-size:31px">A personal site built and grown this way: books, races, treks, projects, writing, a newsletter, and a chatbot over all of it.</p>
       <div class="chips"><span class="chip">React 18 + Vite</span><span class="chip">Tailwind</span><span class="chip">Cloudflare Pages + Functions</span><span class="chip">GitHub</span><span class="chip acc">Claude Code</span></div>
@@ -663,10 +753,42 @@ git push -u origin phase-2
   <aside class="notes" data-min="4">Open the live site and click three things. Numbers come from the repo: the route manifest lists 43 routes; the changelog is at v31. The stack is not the one I'd pick from scratch today — that's why the framework slide was neutral.</aside>
 </section>
 
-<section class="slide grain" data-part="6" data-time="2:44" data-n="27">
+<section class="slide grain" data-part="6" data-time="2:40" data-n="30">
+  <div class="grid" style="grid-template-columns:1fr 420px;gap:50px;align-items:start">
+    <div>
+      <p class="kick"><b>06 · Case study</b><span class="t">2:40 · possibilities</span></p>
+      <h2>What a personal site <em>can become</em></h2>
+      <div class="thumbs">
+        <figure><figure class="shot" style="position:relative"><div class="bar"><i></i><i></i><i></i><span>sankettambare.in</span></div><img src="assets/stone-by-stone/site-home.webp" alt="The sankettambare.in homepage: a globe of everything, My World." loading="lazy" decoding="async"></figure><figcaption><b>A world map of you</b>Every trek, race and post placed on one globe.</figcaption></figure>
+        <figure><figure class="shot" style="position:relative"><div class="bar"><i></i><i></i><i></i><span>/ask</span></div><img src="assets/stone-by-stone/site-ask.webp" alt="Ask the Archive: a search box with starter questions and counts of what it has read." loading="lazy" decoding="async"></figure><figcaption><b>A chatbot over your archive</b>Answers from your own posts, with sources.</figcaption></figure>
+        <figure><figure class="shot" style="position:relative"><div class="bar"><i></i><i></i><i></i><span>/logbook</span></div><img src="assets/stone-by-stone/site-logbook.webp" alt="The Wanderer&#39;s Logbook: every essay drawn as a map." loading="lazy" decoding="async"></figure><figcaption><b>Your writing, as data</b>Every essay, mapped by meaning.</figcaption></figure>
+        <figure><figure class="shot" style="position:relative"><div class="bar"><i></i><i></i><i></i><span>/training</span></div><img src="assets/stone-by-stone/site-training.webp" alt="The Training page: totals, a distance chart and a film." loading="lazy" decoding="async"></figure><figcaption><b>Your training log</b>Every Strava activity, records and routes.</figcaption></figure>
+        <figure><figure class="shot" style="position:relative"><div class="bar"><i></i><i></i><i></i><span>/newsletter</span></div><img src="assets/stone-by-stone/site-newsletter.webp" alt="The Newsletter page: a monthly letter built from the month&#39;s records." loading="lazy" decoding="async"></figure><figcaption><b>A monthly newsletter</b>Drafted from what the site recorded.</figcaption></figure>
+        <figure><figure class="shot" style="position:relative"><div class="bar"><i></i><i></i><i></i><span>/stats</span></div><img src="assets/stone-by-stone/site-stats.webp" alt="The Stats page: an almanac of the year in numbers." loading="lazy" decoding="async"></figure><figcaption><b>A yearly almanac</b>Your numbers, computed, never typed.</figcaption></figure>
+      </div>
+    </div>
+    <div style="position:relative">
+      <h3 style="margin-top:100px">Start with four pages.<br>Then add a room at a time:</h3>
+      <ul class="pts tight" style="margin-top:14px">
+        <li>Books you've read, with notes</li>
+        <li>Races, treks, travel — with photos</li>
+        <li>Projects as case studies</li>
+        <li>Talks and decks, embedded</li>
+        <li>Videos from your channel</li>
+        <li>A “now” page and a changelog</li>
+        <li>Tags that link it all together</li>
+        <li>A share card for every page</li>
+      </ul>
+      <figure class="illo grain mini" style="position:relative;margin-top:14px;width:220px" data-scene="rooms" data-alt="Cairn adds a small room-shaped stone to a cairn of rooms."></figure>
+    </div>
+  </div>
+  <aside class="notes" data-min="2">This is the "what's possible" slide — every tile is a live page on sankettambare.in, and every one was a single phase of the method you learned today. None of them was planned on day one. Encourage people to write their own list into later.md.</aside>
+</section>
+
+<section class="slide grain" data-part="6" data-time="2:42" data-n="31">
   <div class="grid">
     <div>
-      <p class="kick"><b>06 · Case study</b><span class="t">2:44</span></p>
+      <p class="kick"><b>06 · Case study</b><span class="t">2:42</span></p>
       <h2>What kept it <em>iterating</em></h2>
       <div class="cols" style="gap:18px">
         <div class="card"><p class="k">One source per fact</p><p>Name, bio, links in one file; every page and crawler reads it.</p></div>
@@ -682,10 +804,10 @@ git push -u origin phase-2
   <aside class="notes" data-min="4">None of these were planned on day one; each arrived after something broke. Steal them in this order: changelog, content apart, lessons in CLAUDE.md. The guard test is the one that lets you move fast later — a rule the build enforces doesn't depend on anyone remembering it.</aside>
 </section>
 
-<section class="slide grain" data-part="6" data-time="2:48" data-n="28">
+<section class="slide grain" data-part="6" data-time="2:44" data-n="32">
   <div class="grid">
     <div>
-      <p class="kick"><b>06 · Case study</b><span class="t">2:48</span></p>
+      <p class="kick"><b>06 · Case study</b><span class="t">2:44</span></p>
       <h2>What broke, and <em>what it taught</em></h2>
       <div class="card" style="margin-bottom:16px"><p class="k">Blank to crawlers</p><p>A React app renders in the browser; GPTBot, ClaudeBot and most crawlers don't run JavaScript. Fix: an edge middleware writes each page as plain HTML. <b>Lesson: pick a framework that renders HTML, or plan for it on day one.</b></p></div>
       <div class="card" style="margin-bottom:16px"><p class="k">10 ms of CPU</p><p>Share images were drawn per request at the edge; one took ~400 ms, so production returned errors and links unfurled with no image. Fix: render them at build time and commit the PNGs. <b>Lesson: local dev doesn't enforce limits — test on the real deploy.</b></p></div>
@@ -696,11 +818,121 @@ git push -u origin phase-2
   <aside class="notes" data-min="4">Each of these cost a day. Each is now one line in the project's CLAUDE.md, which is why it never happened twice. Your site will have its own three; the habit of writing them down is what transfers.</aside>
 </section>
 
-<!-- ═════════ PART 7 · ITERATE ═════════ -->
-<section class="slide grain" data-part="7" data-time="2:52" data-n="29">
+<!-- ═════════ FEATURED PROJECTS ═════════ -->
+<section class="slide grain proj" data-part="7" data-time="2:46" data-n="33">
   <div class="grid">
     <div>
-      <p class="kick"><b>07 · Iterate</b><span class="t">2:52</span></p>
+      <p class="kick"><b>07 · Featured projects</b><span class="t">2:46 · 1 of 4</span></p>
+      <h2>Visiting <em>Card</em></h2>
+      <p class="lead" style="font-size:30px">An interactive visiting card. Flip it, toss it, pick the version of you that fits the person you're handing it to.</p>
+      <ul class="pts tight">
+        <li><b>Five themes</b> — Wanderer, Terminal, Sahyadri, Blueprint, Holographic</li>
+        <li><b>Five views</b> — General, Developer, Runner, Trekker, Writer</li>
+        <li><b>The link carries the choice</b> (<code>?theme=terminal&amp;view=developer</code>), so each audience gets its own URL</li>
+        <li>Download a vCard, copy the details, open the résumé; motion and sound toggles</li>
+      </ul>
+      <div class="chips"><span class="chip">Vite</span><span class="chip">TypeScript</span><span class="chip">Cloudflare Pages</span><span class="chip acc">Claude Code</span></div>
+      <p class="small muted">The perfect first project: small, personal, and live in an evening.</p>
+      <p class="visit">→ card.sankettambare.in</p>
+    </div>
+    <div class="shots">
+      <figure class="shot" style="left:0;top:10px;width:700px"><div class="bar"><i></i><i></i><i></i><span>card.sankettambare.in</span></div><img src="assets/stone-by-stone/card-desk.webp" alt="The visiting card in the Sahyadri theme: name, tagline and four stats on a sunset card." loading="lazy" decoding="async"></figure>
+      <figure class="shot" style="left:250px;top:330px;width:620px"><div class="bar"><i></i><i></i><i></i><span>?theme=terminal&amp;view=developer</span></div><img src="assets/stone-by-stone/card-terminal.webp" alt="The same card in the Terminal theme, Developer view: green on black." loading="lazy" decoding="async"></figure>
+      <figure class="shot phone" style="left:740px;top:0;width:220px"><img src="assets/stone-by-stone/card-phone.webp" alt="The visiting card on a phone." loading="lazy" decoding="async"></figure>
+      <figure class="illo grain mini" style="left:10px;bottom:0" data-scene="flipcard" data-alt="Cairn tosses a visiting card into the air."></figure>
+    </div>
+  </div>
+  <aside class="notes" data-min="2">Show it live: flip the card, change the theme, copy the URL. Point out that the URL holds the state — the same idea as keeping data apart from code. This is what I'd suggest anyone build first if a whole site feels too big.</aside>
+</section>
+
+<section class="slide grain proj" data-part="7" data-time="2:48" data-n="34">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>07 · Featured projects</b><span class="t">2:48 · 2 of 4</span></p>
+      <h2 style="font-size:68px">Vetal Tekdi <em>Birding Marathon</em></h2>
+      <p class="lead" style="font-size:26px">A bilingual event site for the Vetal Tekdi Bachav Kruti Samiti: one week, one hill, every bird counted — and every sighting becomes evidence for saving Pune's last wild hill.</p>
+      <div class="facts">
+        <div class="a"><b>164</b><span>species in one week, 2025</span></div>
+        <div><b>92</b><span>eBird checklists</span></div>
+        <div><b>111→164</b><span>species per edition, 2023–25</span></div>
+      </div>
+      <ul class="pts tight">
+        <li><b>Live from eBird</b> — the species seen on the hill this week, with photos</li>
+        <li>A bird guide filtered by habitat and season; scoring; registration</li>
+        <li>English and Marathi, fast on a phone on the hill</li>
+      </ul>
+      <div class="chips"><span class="chip">Astro</span><span class="chip">Tailwind</span><span class="chip">Cloudflare Pages + Functions</span><span class="chip acc">eBird API</span></div>
+      <p class="visit">→ vtbm.in</p>
+    </div>
+    <div class="shots">
+      <figure class="shot" style="left:0;top:0;width:760px"><div class="bar"><i></i><i></i><i></i><span>vtbm.in</span></div><img src="assets/stone-by-stone/vtbm-desk.webp" alt="The VTBM homepage: Edition 4, Day 3 of 8, over a photo of the hill." loading="lazy" decoding="async"></figure>
+      <figure class="shot" style="left:160px;top:380px;width:640px"><div class="bar"><i></i><i></i><i></i><span>vtbm.in/birds</span></div><img src="assets/stone-by-stone/vtbm-birds.webp" alt="The Birds of Vetal Tekdi page with habitat and season filters and bird photos." loading="lazy" decoding="async"></figure>
+      <figure class="shot phone" style="left:800px;top:60px;width:200px"><img src="assets/stone-by-stone/vtbm-phone.webp" alt="The VTBM homepage on a phone." loading="lazy" decoding="async"></figure>
+      <figure class="illo grain mini" style="left:0;bottom:-10px" data-scene="bird" data-alt="Cairn looks up at a bird on a tree branch."></figure>
+    </div>
+  </div>
+  <aside class="notes" data-min="2">The data is the hero here: the site pulls the week's sightings from eBird, so it keeps itself current during the event without anyone editing it. That's the data layer apart from the code, with a public API as the data layer.</aside>
+</section>
+
+<section class="slide grain proj" data-part="7" data-time="2:50" data-n="35">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>07 · Featured projects</b><span class="t">2:50 · 3 of 4</span></p>
+      <h2><em>RunFolio</em></h2>
+      <p class="lead" style="font-size:30px">The portfolio for runners — every finish line, worth framing. Race photos, splits and PBs turned into one public profile and one link.</p>
+      <ul class="pts tight">
+        <li><b>Log any race</b> — distance, time, bib and photos; road, trail or track</li>
+        <li><b>Share one link</b> that reads like a magazine spread — ledger, gallery or stats, and the URL carries the choice</li>
+        <li>Free tools for runners; Strava sync coming back soon</li>
+        <li>A real product: sign-in, profiles, image storage</li>
+      </ul>
+      <div class="facts">
+        <div class="a"><b>26</b><span>races on my own profile</span></div>
+        <div><b>589 km</b><span>of racing logged</span></div>
+        <div><b>free</b><span>for every runner</span></div>
+      </div>
+      <div class="chips"><span class="chip">Astro</span><span class="chip">Cloudflare Workers</span><span class="chip">Supabase</span><span class="chip">R2</span></div>
+      <p class="visit">→ runfolio.in</p>
+    </div>
+    <div class="shots">
+      <figure class="shot" style="left:0;top:0;width:760px"><div class="bar"><i></i><i></i><i></i><span>runfolio.in</span></div><img src="assets/stone-by-stone/runfolio-desk.webp" alt="The RunFolio homepage: Every finish line, worth framing." loading="lazy" decoding="async"></figure>
+      <figure class="shot" style="left:230px;top:360px;width:720px"><div class="bar"><i></i><i></i><i></i><span>runfolio.in/runner/sankettambare</span></div><img src="assets/stone-by-stone/runfolio-profile.webp" alt="A RunFolio runner profile with a race photo, bio and totals." loading="lazy" decoding="async"></figure>
+      <figure class="illo grain mini" style="left:0;bottom:-10px" data-scene="finish" data-alt="Cairn runs under a finish-line banner."></figure>
+    </div>
+  </div>
+  <aside class="notes" data-min="2">Same stack, bigger ambition: a multi-user product. It started exactly like today — a concept doc and a phased plan — and grew phase by phase. Same Cloudflare + Astro foundation the workshop recommends.</aside>
+</section>
+
+<section class="slide grain proj" data-part="7" data-time="2:51" data-n="36">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>07 · Featured projects</b><span class="t">2:51 · 4 of 4</span></p>
+      <h2>Pumped Storage: <em>are they useful?</em></h2>
+      <p class="lead" style="font-size:29px">An independent, bilingual data story on Maharashtra's push for pumped storage projects in the Sahyadri — the trees and forest first, then the clearances and the people.</p>
+      <ul class="pts tight">
+        <li><b>Every number has a source</b> — an ⓘ bubble quotes the document and page</li>
+        <li><b>Projects sorted by trees to be felled</b>, with forest land and capacity</li>
+        <li>A story, a timeline, a glossary, a map; a daily news sync</li>
+        <li>Open data downloads; English and Marathi</li>
+      </ul>
+      <div class="chips"><span class="chip">Astro 5</span><span class="chip">Cloudflare Pages</span><span class="chip acc">sources, not opinions</span></div>
+      <p class="small muted">Proof the method isn't only for portfolios: a public-interest site, researched and built the same way.</p>
+      <p class="visit">→ are-psp-useful.pages.dev</p>
+    </div>
+    <div class="shots">
+      <figure class="shot" style="left:0;top:0;width:760px"><div class="bar"><i></i><i></i><i></i><span>are-psp-useful.pages.dev</span></div><img src="assets/stone-by-stone/psp-desk.webp" alt="The Pumped Storage homepage: a photo of the Sahyadri and the question in the title." loading="lazy" decoding="async"></figure>
+      <figure class="shot" style="left:200px;top:380px;width:700px"><div class="bar"><i></i><i></i><i></i><span>/projects</span></div><img src="assets/stone-by-stone/psp-projects.webp" alt="The Projects page: a table sorted by trees to be felled, each figure with a source bubble." loading="lazy" decoding="async"></figure>
+      <figure class="illo grain mini" style="left:0;bottom:-10px" data-scene="hills" data-alt="Cairn stands beside a tree on a hill, pointing at a source note."></figure>
+    </div>
+  </div>
+  <aside class="notes" data-min="1">Here the deep-research step is the product: every figure cites its document. The same Claude research prompt you used this morning is how a site like this gets its facts — with you checking the sources.</aside>
+</section>
+
+<!-- ═════════ PART 8 · ITERATE ═════════ -->
+<section class="slide grain" data-part="8" data-time="2:52" data-n="37">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>08 · Iterate</b><span class="t">2:52</span></p>
       <h2>From now on, a change<br>is <em>a prompt</em></h2>
       <div class="cols3" style="margin-bottom:22px">
         <div class="card"><p class="k">Laptop</p><p>Claude Code in the terminal, VS Code or the desktop app.</p></div>
@@ -715,10 +947,10 @@ git push -u origin phase-2
   <aside class="notes" data-min="4">This is the payoff for the setup: the hard part is done once. Show a change made from the phone if there's time — a one-line copy edit, pushed to a branch, preview link opened in the room.</aside>
 </section>
 
-<section class="slide grain" data-part="7" data-time="2:56" data-n="30">
+<section class="slide grain" data-part="8" data-time="2:54" data-n="38">
   <div class="grid">
     <div>
-      <p class="kick"><b>07 · Iterate</b><span class="t">2:56 · homework</span></p>
+      <p class="kick"><b>08 · Iterate</b><span class="t">2:54 · homework</span></p>
       <h2>Seven days, <em>seven stones</em></h2>
       <div class="cols" style="gap:30px">
         <ol class="steps" style="margin:0">
@@ -746,6 +978,48 @@ git push -u origin phase-2
     <figure class="illo grain" data-scene="week" data-alt="A trail of seven cairns, Monday to Sunday, shrinking toward the horizon; Cairn waves from the first."></figure>
   </div>
   <aside class="notes" data-min="4">Close on the habit, not the stack. One stone a day for a week and the site is yours in a way no app builder gives you. Share the prompt pack link in the chat. Ask people to send their URL by Sunday.</aside>
+</section>
+
+<section class="slide grain" data-part="9" data-time="2:56" data-n="39">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>09 · Close</b><span class="t">2:56 · your turn</span></p>
+      <h2>How <em>was it?</em></h2>
+      <div class="qa">
+        <div class="card"><p class="k">1 · Overall</p><h3>How was it, 1 to 5?</h3><p>And one word for today.</p></div>
+        <div class="card"><p class="k">2 · The learning</p><h3>What stood out most?</h3><p>The one idea you'll use tomorrow.</p></div>
+        <div class="card"><p class="k">3 · Your site</p><h3>How far did you get?</h3><p>Docs, repo, workers.dev, your domain?</p></div>
+        <div class="card"><p class="k">4 · Friction</p><h3>Where did you get stuck?</h3><p>The step that needs more time or a better prompt.</p></div>
+        <div class="card"><p class="k">5 · Next time</p><h3>What should I add or cut?</h3><p>A topic you wanted, a part that dragged.</p></div>
+        <div class="card"><p class="k">6 · Share</p><h3>Send me your URL</h3><p>By Sunday — I'll look at every one.</p></div>
+      </div>
+    </div>
+    <figure class="illo grain" data-scene="feedback" data-alt="Cairn sits on a stone beside a row of five stones numbered one to five, the fifth in orange, under the words your turn."></figure>
+  </div>
+  <aside class="notes" data-min="3">Go round the room for question 2 — one sentence each; write the answers on the whiteboard. Collect the rest in the chat or by email. The answers to 4 and 5 shape the next run of this workshop.</aside>
+</section>
+
+<section class="slide grain" data-part="9" data-time="2:59" data-n="40">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>09 · Close</b><span class="t">2:59</span></p>
+      <h1 style="font-size:132px">Thank <em>you</em></h1>
+      <p class="lead" style="margin-top:22px">Add one stone a day. Send me what you build.</p>
+      <div class="connect">
+        <div><span>Website</span><a href="https://sankettambare.in">sankettambare.in</a></div>
+        <div><span>Visiting card</span><a href="https://card.sankettambare.in/">card.sankettambare.in</a></div>
+        <div><span>LinkedIn</span><a href="https://www.linkedin.com/in/sankettambare/">in/sankettambare</a></div>
+        <div><span>GitHub</span><a href="https://github.com/daredavil01">daredavil01</a></div>
+        <div><span>Substack</span><a href="https://sankettambare.substack.com">sankettambare.substack.com</a></div>
+        <div><span>X</span><a href="https://twitter.com/i_daredavil">@i_daredavil</a></div>
+        <div><span>Email</span><a href="mailto:sanket.tambare01@gmail.com">sanket.tambare01@gmail.com</a></div>
+        <div><span>The prompt pack</span><a href="assets/stone-by-stone/prompt-pack.html">every prompt from today</a></div>
+      </div>
+      <div class="qrbox"><svg viewBox="0 0 29 29" class="qr" role="img" aria-label="QR code for card.sankettambare.in" shape-rendering="crispEdges"><path d="M0,0h1v1h-1zM1,0h1v1h-1zM2,0h1v1h-1zM3,0h1v1h-1zM4,0h1v1h-1zM5,0h1v1h-1zM6,0h1v1h-1zM8,0h1v1h-1zM12,0h1v1h-1zM18,0h1v1h-1zM22,0h1v1h-1zM23,0h1v1h-1zM24,0h1v1h-1zM25,0h1v1h-1zM26,0h1v1h-1zM27,0h1v1h-1zM28,0h1v1h-1zM0,1h1v1h-1zM6,1h1v1h-1zM12,1h1v1h-1zM16,1h1v1h-1zM17,1h1v1h-1zM18,1h1v1h-1zM19,1h1v1h-1zM22,1h1v1h-1zM28,1h1v1h-1zM0,2h1v1h-1zM2,2h1v1h-1zM3,2h1v1h-1zM4,2h1v1h-1zM6,2h1v1h-1zM9,2h1v1h-1zM10,2h1v1h-1zM11,2h1v1h-1zM13,2h1v1h-1zM15,2h1v1h-1zM16,2h1v1h-1zM17,2h1v1h-1zM20,2h1v1h-1zM22,2h1v1h-1zM24,2h1v1h-1zM25,2h1v1h-1zM26,2h1v1h-1zM28,2h1v1h-1zM0,3h1v1h-1zM2,3h1v1h-1zM3,3h1v1h-1zM4,3h1v1h-1zM6,3h1v1h-1zM8,3h1v1h-1zM11,3h1v1h-1zM14,3h1v1h-1zM15,3h1v1h-1zM16,3h1v1h-1zM18,3h1v1h-1zM19,3h1v1h-1zM22,3h1v1h-1zM24,3h1v1h-1zM25,3h1v1h-1zM26,3h1v1h-1zM28,3h1v1h-1zM0,4h1v1h-1zM2,4h1v1h-1zM3,4h1v1h-1zM4,4h1v1h-1zM6,4h1v1h-1zM8,4h1v1h-1zM10,4h1v1h-1zM11,4h1v1h-1zM12,4h1v1h-1zM13,4h1v1h-1zM14,4h1v1h-1zM16,4h1v1h-1zM18,4h1v1h-1zM22,4h1v1h-1zM24,4h1v1h-1zM25,4h1v1h-1zM26,4h1v1h-1zM28,4h1v1h-1zM0,5h1v1h-1zM6,5h1v1h-1zM8,5h1v1h-1zM10,5h1v1h-1zM12,5h1v1h-1zM13,5h1v1h-1zM14,5h1v1h-1zM15,5h1v1h-1zM18,5h1v1h-1zM19,5h1v1h-1zM22,5h1v1h-1zM28,5h1v1h-1zM0,6h1v1h-1zM1,6h1v1h-1zM2,6h1v1h-1zM3,6h1v1h-1zM4,6h1v1h-1zM5,6h1v1h-1zM6,6h1v1h-1zM8,6h1v1h-1zM10,6h1v1h-1zM12,6h1v1h-1zM14,6h1v1h-1zM16,6h1v1h-1zM18,6h1v1h-1zM20,6h1v1h-1zM22,6h1v1h-1zM23,6h1v1h-1zM24,6h1v1h-1zM25,6h1v1h-1zM26,6h1v1h-1zM27,6h1v1h-1zM28,6h1v1h-1zM8,7h1v1h-1zM10,7h1v1h-1zM14,7h1v1h-1zM17,7h1v1h-1zM18,7h1v1h-1zM0,8h1v1h-1zM4,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM9,8h1v1h-1zM10,8h1v1h-1zM11,8h1v1h-1zM12,8h1v1h-1zM13,8h1v1h-1zM14,8h1v1h-1zM15,8h1v1h-1zM16,8h1v1h-1zM17,8h1v1h-1zM19,8h1v1h-1zM20,8h1v1h-1zM21,8h1v1h-1zM22,8h1v1h-1zM23,8h1v1h-1zM24,8h1v1h-1zM25,8h1v1h-1zM28,8h1v1h-1zM1,9h1v1h-1zM3,9h1v1h-1zM5,9h1v1h-1zM8,9h1v1h-1zM10,9h1v1h-1zM11,9h1v1h-1zM22,9h1v1h-1zM24,9h1v1h-1zM25,9h1v1h-1zM26,9h1v1h-1zM27,9h1v1h-1zM28,9h1v1h-1zM1,10h1v1h-1zM2,10h1v1h-1zM4,10h1v1h-1zM6,10h1v1h-1zM8,10h1v1h-1zM9,10h1v1h-1zM12,10h1v1h-1zM13,10h1v1h-1zM14,10h1v1h-1zM15,10h1v1h-1zM23,10h1v1h-1zM28,10h1v1h-1zM0,11h1v1h-1zM1,11h1v1h-1zM2,11h1v1h-1zM3,11h1v1h-1zM4,11h1v1h-1zM5,11h1v1h-1zM7,11h1v1h-1zM8,11h1v1h-1zM10,11h1v1h-1zM12,11h1v1h-1zM13,11h1v1h-1zM15,11h1v1h-1zM16,11h1v1h-1zM17,11h1v1h-1zM20,11h1v1h-1zM21,11h1v1h-1zM25,11h1v1h-1zM27,11h1v1h-1zM28,11h1v1h-1zM0,12h1v1h-1zM4,12h1v1h-1zM5,12h1v1h-1zM6,12h1v1h-1zM7,12h1v1h-1zM9,12h1v1h-1zM11,12h1v1h-1zM13,12h1v1h-1zM17,12h1v1h-1zM19,12h1v1h-1zM21,12h1v1h-1zM27,12h1v1h-1zM2,13h1v1h-1zM3,13h1v1h-1zM5,13h1v1h-1zM7,13h1v1h-1zM9,13h1v1h-1zM11,13h1v1h-1zM13,13h1v1h-1zM14,13h1v1h-1zM16,13h1v1h-1zM18,13h1v1h-1zM21,13h1v1h-1zM22,13h1v1h-1zM23,13h1v1h-1zM24,13h1v1h-1zM25,13h1v1h-1zM26,13h1v1h-1zM27,13h1v1h-1zM28,13h1v1h-1zM1,14h1v1h-1zM2,14h1v1h-1zM3,14h1v1h-1zM4,14h1v1h-1zM6,14h1v1h-1zM7,14h1v1h-1zM8,14h1v1h-1zM9,14h1v1h-1zM11,14h1v1h-1zM16,14h1v1h-1zM17,14h1v1h-1zM18,14h1v1h-1zM21,14h1v1h-1zM22,14h1v1h-1zM23,14h1v1h-1zM24,14h1v1h-1zM25,14h1v1h-1zM26,14h1v1h-1zM28,14h1v1h-1zM0,15h1v1h-1zM4,15h1v1h-1zM5,15h1v1h-1zM9,15h1v1h-1zM10,15h1v1h-1zM11,15h1v1h-1zM14,15h1v1h-1zM17,15h1v1h-1zM18,15h1v1h-1zM20,15h1v1h-1zM23,15h1v1h-1zM27,15h1v1h-1zM28,15h1v1h-1zM1,16h1v1h-1zM5,16h1v1h-1zM6,16h1v1h-1zM8,16h1v1h-1zM10,16h1v1h-1zM13,16h1v1h-1zM14,16h1v1h-1zM15,16h1v1h-1zM16,16h1v1h-1zM17,16h1v1h-1zM18,16h1v1h-1zM19,16h1v1h-1zM21,16h1v1h-1zM23,16h1v1h-1zM27,16h1v1h-1zM0,17h1v1h-1zM1,17h1v1h-1zM2,17h1v1h-1zM4,17h1v1h-1zM5,17h1v1h-1zM7,17h1v1h-1zM9,17h1v1h-1zM12,17h1v1h-1zM17,17h1v1h-1zM18,17h1v1h-1zM22,17h1v1h-1zM23,17h1v1h-1zM24,17h1v1h-1zM25,17h1v1h-1zM27,17h1v1h-1zM28,17h1v1h-1zM3,18h1v1h-1zM4,18h1v1h-1zM5,18h1v1h-1zM6,18h1v1h-1zM7,18h1v1h-1zM12,18h1v1h-1zM13,18h1v1h-1zM14,18h1v1h-1zM15,18h1v1h-1zM18,18h1v1h-1zM20,18h1v1h-1zM21,18h1v1h-1zM22,18h1v1h-1zM26,18h1v1h-1zM28,18h1v1h-1zM2,19h1v1h-1zM4,19h1v1h-1zM8,19h1v1h-1zM9,19h1v1h-1zM11,19h1v1h-1zM13,19h1v1h-1zM15,19h1v1h-1zM16,19h1v1h-1zM17,19h1v1h-1zM20,19h1v1h-1zM22,19h1v1h-1zM23,19h1v1h-1zM27,19h1v1h-1zM28,19h1v1h-1zM0,20h1v1h-1zM1,20h1v1h-1zM2,20h1v1h-1zM3,20h1v1h-1zM6,20h1v1h-1zM7,20h1v1h-1zM8,20h1v1h-1zM10,20h1v1h-1zM11,20h1v1h-1zM13,20h1v1h-1zM17,20h1v1h-1zM19,20h1v1h-1zM20,20h1v1h-1zM21,20h1v1h-1zM22,20h1v1h-1zM23,20h1v1h-1zM24,20h1v1h-1zM25,20h1v1h-1zM28,20h1v1h-1zM8,21h1v1h-1zM9,21h1v1h-1zM10,21h1v1h-1zM12,21h1v1h-1zM13,21h1v1h-1zM14,21h1v1h-1zM16,21h1v1h-1zM17,21h1v1h-1zM18,21h1v1h-1zM19,21h1v1h-1zM20,21h1v1h-1zM24,21h1v1h-1zM28,21h1v1h-1zM0,22h1v1h-1zM1,22h1v1h-1zM2,22h1v1h-1zM3,22h1v1h-1zM4,22h1v1h-1zM5,22h1v1h-1zM6,22h1v1h-1zM8,22h1v1h-1zM9,22h1v1h-1zM11,22h1v1h-1zM16,22h1v1h-1zM17,22h1v1h-1zM19,22h1v1h-1zM20,22h1v1h-1zM22,22h1v1h-1zM24,22h1v1h-1zM25,22h1v1h-1zM26,22h1v1h-1zM28,22h1v1h-1zM0,23h1v1h-1zM6,23h1v1h-1zM9,23h1v1h-1zM12,23h1v1h-1zM14,23h1v1h-1zM17,23h1v1h-1zM18,23h1v1h-1zM19,23h1v1h-1zM20,23h1v1h-1zM24,23h1v1h-1zM27,23h1v1h-1zM0,24h1v1h-1zM2,24h1v1h-1zM3,24h1v1h-1zM4,24h1v1h-1zM6,24h1v1h-1zM8,24h1v1h-1zM9,24h1v1h-1zM13,24h1v1h-1zM14,24h1v1h-1zM15,24h1v1h-1zM17,24h1v1h-1zM19,24h1v1h-1zM20,24h1v1h-1zM21,24h1v1h-1zM22,24h1v1h-1zM23,24h1v1h-1zM24,24h1v1h-1zM25,24h1v1h-1zM27,24h1v1h-1zM28,24h1v1h-1zM0,25h1v1h-1zM2,25h1v1h-1zM3,25h1v1h-1zM4,25h1v1h-1zM6,25h1v1h-1zM11,25h1v1h-1zM12,25h1v1h-1zM17,25h1v1h-1zM18,25h1v1h-1zM21,25h1v1h-1zM27,25h1v1h-1zM0,26h1v1h-1zM2,26h1v1h-1zM3,26h1v1h-1zM4,26h1v1h-1zM6,26h1v1h-1zM10,26h1v1h-1zM11,26h1v1h-1zM12,26h1v1h-1zM15,26h1v1h-1zM18,26h1v1h-1zM20,26h1v1h-1zM21,26h1v1h-1zM25,26h1v1h-1zM26,26h1v1h-1zM27,26h1v1h-1zM28,26h1v1h-1zM0,27h1v1h-1zM6,27h1v1h-1zM9,27h1v1h-1zM10,27h1v1h-1zM11,27h1v1h-1zM14,27h1v1h-1zM17,27h1v1h-1zM20,27h1v1h-1zM24,27h1v1h-1zM25,27h1v1h-1zM27,27h1v1h-1zM28,27h1v1h-1zM0,28h1v1h-1zM1,28h1v1h-1zM2,28h1v1h-1zM3,28h1v1h-1zM4,28h1v1h-1zM5,28h1v1h-1zM6,28h1v1h-1zM8,28h1v1h-1zM9,28h1v1h-1zM12,28h1v1h-1zM15,28h1v1h-1zM17,28h1v1h-1zM18,28h1v1h-1zM20,28h1v1h-1zM22,28h1v1h-1zM24,28h1v1h-1zM25,28h1v1h-1zM27,28h1v1h-1z" fill="currentColor"/></svg><p>Scan for my card —<br>save the contact,<br>every link in one place.</p></div>
+    </div>
+    <figure class="illo grain" data-scene="thanks" data-alt="Cairn waves from the top of a finished cairn, under the words thank you."></figure>
+  </div>
+  <aside class="notes" data-min="1">Leave this slide up while people pack. The QR code opens the visiting card, which has every link and a contact download.</aside>
 </section>
 
 <div id="hud"><span class="brand">Stone by Stone</span><div id="trail" aria-hidden="true"></div><span id="count"></span></div>
@@ -1132,6 +1406,74 @@ const S = {
       s += st.svg + T(x + 70 * k + 18, y - 10, days[i], { s: Math.max(20, 32 * k), a: 'start' });
     });
     return s + mascot(62, 706, .7, 'wave', { look: 'r' });
+  },  hello() {
+    let s = ground(640) + mascot(400, 640, 1.35, 'carry', { look: 'r' });
+    const y = 640 - 64 * 1.35 - 66 * 1.35;
+    s += `<g transform="rotate(-4 400 ${y - 90})"><rect x="230" y="${y - 176}" width="340" height="176" rx="14" fill="${PAPER}" stroke="${INK}" stroke-width="6"/>`;
+    s += `<rect x="252" y="${y - 154}" width="30" height="30" rx="6" fill="url(#hO)" stroke="${INK}" stroke-width="3.5" transform="rotate(45 267 ${y - 139})"/>`;
+    s += T(410, y - 118, 'Sanket Tambare', { s: 40 }) + T(410, y - 84, 'developer · runner · writer', { s: 25 });
+    s += L(`M260,${y - 50} L540,${y - 50}`, { w: 3, c: 'rgba(27,42,107,.4)' }) + T(400, y - 22, 'Pune', { s: 24 }) + '</g>';
+    return s + motion(600, y - 120) + L(`M196,${y - 130} l-14,-6 M192,${y - 114} l-16,-2`, { w: 4 }) + T(400, 120, 'hello!', { s: 46 });
+  },
+  why() {
+    const list = []; for (let i = 0; i < 8; i++) list.push([170 - i * 13, 50 - i * 2, {}]);
+    const st = stack(210, 640, list);
+    let s = ground(640) + st.svg + T(210, st.top - 30, 'sankettambare.in', { s: 30 });
+    s += `<ellipse cx="610" cy="626" rx="120" ry="26" fill="none" stroke="${ACC}" stroke-width="5" stroke-dasharray="8 12"/>` + T(610, 690, 'yours?', { s: 40, c: ACC });
+    s += mascot(420, 640, 1.05, 'point', { look: 'r' }) + arrow(530, 520, 590, 590, { w: 4, bend: -.25 });
+    return s;
+  },
+  learn() {
+    let s = `<path d="M30,560 Q200,540 400,560 T770,556 L770,660 Q600,676 400,660 T30,664Z" fill="url(#hN)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
+    s += L('M80,600 q20,-10 40,0 M300,620 q20,-10 40,0 M540,598 q20,-10 40,0', { w: 3.5 });
+    const xs = [130, 300, 470, 640], names = ['idea', 'docs', 'code', 'live'];
+    xs.forEach((x, i) => { s += stone(x, 580, 120, 50, { seed: 150 + i, acc: i === 3 }) + T(x, 652, names[i], { s: 32, c: i === 3 ? ACC : undefined }); });
+    s += mascot(300, 560, 1, 'wave', { look: 'r' });
+    s += L('M340,440 Q390,370 450,470', { w: 4, dash: '3 10' }) + L('M500,470 Q560,380 620,500', { w: 4, dash: '3 10' });
+    return s + T(400, 180, 'four stones, one afternoon', { s: 36 });
+  },
+  rooms() {
+    const st = stack(330, 640, [[230, 96, { label: 'home', fs: 32 }], [196, 86, { label: 'about', fs: 30 }], [162, 76, { label: 'work', fs: 30 }], [128, 66, { label: 'books', fs: 28 }]]);
+    return ground(640) + st.svg + mascot(560, 640, 1.2, 'carry', { flip: true, look: 'l' }) + stone(560, 470, 110, 50, { acc: true, label: 'next', fs: 30, seed: 160 }) + arrow(520, 430, 370, st.top - 10, { w: 4, bend: .3 });
+  },
+  flipcard() {
+    let s = ground(640) + mascot(330, 640, 1.3, 'up', { look: 'r', up: true });
+    s += `<g transform="rotate(-18 520 300)"><rect x="410" y="230" width="230" height="130" rx="12" fill="${PAPER}" stroke="${INK}" stroke-width="6"/><rect x="430" y="250" width="70" height="12" rx="6" fill="${ACC}"/>` + L('M430,290 L600,290 M430,320 L560,320', { w: 4, c: 'rgba(27,42,107,.45)' }) + '</g>';
+    s += L('M440,420 Q470,380 520,390', { w: 4, dash: '3 10' }) + L('M640,240 q30,20 10,60', { w: 4 }) + L('M380,180 q-30,10 -30,50', { w: 4 });
+    return s + T(560, 520, 'flip it', { s: 44 });
+  },
+  bird() {
+    let s = ground(640) + L('M560,640 L560,360 M560,450 L470,380', { w: 12 });
+    s += `<path d="M420,380 C380,250 520,170 600,220 C700,180 760,300 700,380 C680,430 560,440 520,420 C470,440 420,420 420,380Z" fill="url(#hN)" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`;
+    s += `<path d="M450,372 C460,352 492,348 502,364 L520,356 L506,372 C500,384 470,388 452,380Z" fill="${INK}"/><circle cx="492" cy="360" r="2.5" fill="${PAPER}"/>` + L('M480,384 L478,398 M490,384 L490,398', { w: 3 });
+    s += mascot(240, 640, 1.25, 'down', { look: 'r', up: true });
+    s += stone(240, 470, 110, 50, { fill: 'url(#hO)', seed: 170, label: '164', fs: 34, acc: true });
+    return s + T(240, 150, 'every bird', { s: 40 }) + T(240, 194, 'counted', { s: 40 });
+  },
+  finish() {
+    let s = ground(640) + L('M150,640 L150,230 M650,640 L650,230', { w: 10 });
+    s += `<rect x="140" y="200" width="520" height="80" rx="10" fill="url(#hO)" stroke="${INK}" stroke-width="6"/>` + T(400, 255, 'FINISH', { s: 54, c: PAPER });
+    s += L('M150,600 L650,600', { w: 4, dash: '14 10' });
+    s += mascot(420, 640, 1.3, 'up', { look: 'r' }) + L('M250,500 l-60,0 M260,540 l-80,0 M250,580 l-50,0', { w: 5 });
+    return s;
+  },
+  hills() {
+    let s = `<path d="M30,640 L200,420 L300,520 L460,330 L620,500 L770,400 L770,640Z" fill="url(#hS2)" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`;
+    s += L('M560,640 L560,500', { w: 9 }) + `<circle cx="560" cy="460" r="62" fill="url(#hN)" stroke="${INK}" stroke-width="6"/>`;
+    s += `<circle cx="640" cy="300" r="40" fill="${PAPER}" stroke="${ACC}" stroke-width="6"/>` + T(640, 316, 'i', { s: 48, c: ACC });
+    s += mascot(380, 640, 1.2, 'point', { look: 'r', up: true });
+    return s + T(260, 180, 'trees first', { s: 44 });
+  },
+  feedback() {
+    let s = ground(640) + stone(200, 610, 170, 70, { seed: 180 }) + mascot(200, 580, 1.15, 'down', { sit: true, look: 'r' });
+    [360, 450, 540, 630, 720].forEach((x, i) => { s += stone(x, 610, 70 + i * 4, 44 + i * 2, { seed: 181 + i, acc: i === 4, label: String(i + 1), fs: 30 }); });
+    s += `<path d="M300,200 h360 a24,24 0 0 1 24,24 v120 a24,24 0 0 1 -24,24 h-250 l-60,50 l10,-50 h-60 a24,24 0 0 1 -24,-24 v-120 a24,24 0 0 1 24,-24Z" fill="${PAPER}" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`;
+    return s + T(480, 300, 'your turn', { s: 56 });
+  },
+  thanks() {
+    const list = []; for (let i = 0; i < 7; i++) list.push([230 - i * 22, 66 - i * 3, {}]);
+    const st = stack(400, 660, list);
+    return ground(660) + st.svg + mascot(400, st.top + 4, .95, 'wave', { look: 'r' }) + T(400, 150, 'thank you', { s: 60 }) + L('M300,170 q-20,-30 0,-60 M500,170 q20,-30 0,-60', { w: 4 });
   },
 };
 
