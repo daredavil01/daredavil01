@@ -1,0 +1,1211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stone by Stone — build a site you keep improving</title>
+<meta name="description" content="A 3-hour build-along workshop in 30 illustrated slides: from a one-page idea to your own domain with Claude, Claude Code, GitHub, a web framework and Cloudflare — with sankettambare.in as the case study.">
+<meta property="og:title" content="Stone by Stone — build a site you keep improving">
+<meta property="og:description" content="A 3-hour build-along workshop: idea → research → three docs → phased build with Claude Code → GitHub → Cloudflare → your domain.">
+<meta property="og:image" content="../assets/island/renders/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbf7ee; --paper2:#f3eddd; --ink:#1b2a6b; --ink2:#4a5583; --acc:#ff6a1a; --acc-soft:#ffe2cf;
+  --stone:#e6dec9; --tint:#dfe3ef; --out:#e4ddcb;
+  --disp:"Bricolage Grotesque",system-ui,sans-serif; --body:"Source Serif 4",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace; --hand:"Caveat",cursive;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--out);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
+body{overflow:hidden}
+#viewport{position:fixed;inset:0}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center}
+.grain{background-color:var(--paper);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.16 0 0 0 0 0.42 0 0 0 .08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.slide{position:absolute;inset:0;padding:92px 120px 130px;opacity:0;visibility:hidden;transition:opacity .35s ease;overflow:hidden}
+.slide.is-active{opacity:1;visibility:visible}
+.slide::before{content:"";position:absolute;inset:34px;border:2px solid rgba(27,42,107,.16);border-radius:30px;pointer-events:none}
+.grid{display:grid;grid-template-columns:1fr 720px;gap:80px;height:100%;align-items:center;position:relative}
+.wide .grid{grid-template-columns:1fr 380px;align-items:start}
+.wide .grid > figure{margin-top:40px}
+.kick{font:600 21px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);display:flex;gap:16px;align-items:center;margin:0 0 26px}
+.kick b{background:var(--ink);color:var(--paper);padding:7px 11px 6px;border-radius:8px;letter-spacing:.06em}
+.kick .t{color:var(--acc);font-weight:700}
+h1,h2,h3{font-family:var(--disp);font-weight:800;letter-spacing:-.025em;margin:0;color:var(--ink)}
+h1{font-size:150px;line-height:.9}
+h2{font-size:80px;line-height:.98;margin-bottom:28px}
+h2 em,h1 em{font-style:normal;color:var(--acc)}
+h3{font-size:34px;letter-spacing:-.01em;margin-bottom:8px}
+p{margin:0 0 20px}
+.lead{font-size:36px;line-height:1.32;max-width:1000px}
+.small{font-size:25px;line-height:1.4}
+.muted{color:var(--ink2)}
+ul.pts{list-style:none;margin:0;padding:0}
+ul.pts li{position:relative;padding-left:44px;font-size:30px;line-height:1.32;margin-bottom:16px}
+ul.pts li::before{content:"";position:absolute;left:4px;top:.42em;width:22px;height:16px;background:var(--acc);border-radius:55% 45% 48% 52% / 60% 58% 42% 40%;border:2.5px solid var(--ink)}
+ul.pts.tight li{font-size:26px;margin-bottom:10px}
+ol.steps{list-style:none;counter-reset:s;margin:0;padding:0}
+ol.steps li{counter-increment:s;position:relative;padding-left:66px;font-size:27px;line-height:1.35;margin-bottom:16px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:-2px;width:46px;height:40px;display:grid;place-items:center;font:700 22px var(--mono);color:var(--paper);background:var(--ink);border-radius:52% 48% 46% 54% / 58% 56% 44% 42%}
+code,kbd{font-family:var(--mono);font-size:.82em;background:var(--tint);padding:2px 8px;border-radius:6px}
+kbd{border:2px solid var(--ink);background:#fff}
+b,strong{font-weight:600}
+a{color:var(--ink);text-decoration-color:var(--acc);text-decoration-thickness:3px;text-underline-offset:5px}
+.pull{font:700 46px/1.15 var(--disp);letter-spacing:-.015em;border-left:10px solid var(--acc);padding:6px 0 6px 30px;margin:34px 0 0;max-width:980px}
+.check{font:600 22px/1.4 var(--mono);background:var(--acc-soft);border-left:8px solid var(--acc);padding:14px 20px;border-radius:0 12px 12px 0;margin-top:26px}
+.check::before{content:"✓ YOU SHOULD NOW HAVE  ";color:var(--acc);letter-spacing:.06em}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}
+.chip{font:600 20px var(--mono);border:2.5px solid var(--ink);border-radius:999px;padding:8px 16px;background:#fff}
+.chip.acc{background:var(--acc);color:#fff;border-color:var(--acc)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:34px}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.card{border:3px solid var(--ink);border-radius:20px;padding:22px 24px;background:#fffdf8;box-shadow:7px 7px 0 rgba(27,42,107,.14)}
+.card p{font-size:23px;line-height:1.38;margin:0}
+.card .k{font:700 17px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:8px}
+figure.illo{width:720px;aspect-ratio:800/720;margin:0;border:3px solid var(--ink);border-radius:28px;box-shadow:12px 12px 0 rgba(255,106,26,.24);overflow:hidden;position:relative}
+.wide figure.illo{width:380px}
+figure.illo svg{display:block;width:100%;height:100%}
+figure.illo figcaption{position:absolute;left:18px;bottom:12px;font:600 15px var(--mono);letter-spacing:.1em;color:var(--ink2);text-transform:uppercase}
+.lb{font-family:var(--hand);font-weight:700;fill:var(--ink)}
+/* prompt cards */
+.prompt{border:3px solid var(--ink);border-radius:18px;background:#fff;box-shadow:8px 8px 0 var(--ink);margin-top:10px}
+.prompt .pbar{display:flex;justify-content:space-between;align-items:center;background:var(--ink);color:var(--paper);font:700 17px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:10px 12px 10px 20px;border-radius:14px 14px 0 0}
+.prompt .pbar span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--acc);margin-right:12px;vertical-align:1px}
+.prompt button{font:700 15px var(--mono);letter-spacing:.1em;text-transform:uppercase;background:var(--paper);color:var(--ink);border:0;border-radius:8px;padding:7px 12px;cursor:pointer}
+.prompt button.ok{background:var(--acc);color:#fff}
+.prompt pre{margin:0;padding:18px 24px 20px;font:400 20.5px/1.46 var(--mono);white-space:pre-wrap;color:var(--ink)}
+.prompt pre i{font-style:normal;color:var(--acc);font-weight:700}
+pre.term{margin:0;font:400 21px/1.5 var(--mono);background:var(--ink);color:var(--paper);border-radius:16px;padding:20px 26px;white-space:pre-wrap}
+pre.term .c{color:#9fb0e8}
+pre.tree{margin:0;font:400 22px/1.45 var(--mono);background:#fffdf8;border:3px solid var(--ink);border-radius:16px;padding:20px 26px;white-space:pre}
+pre.tree .a{color:var(--acc);font-weight:700}
+pre.tree .m{color:var(--ink2)}
+/* tables */
+table.t{border-collapse:collapse;width:100%;font:21px/1.34 var(--body)}
+table.t th{font:700 16px var(--mono);letter-spacing:.12em;text-transform:uppercase;text-align:left;padding:10px 14px;border-bottom:3px solid var(--ink);color:var(--ink2)}
+table.t td{padding:12px 14px;border-bottom:2px solid rgba(27,42,107,.16);vertical-align:top}
+table.t td:first-child{font:700 25px var(--disp);letter-spacing:-.01em;white-space:nowrap}
+table.t td .best{display:block;font:600 15px var(--mono);letter-spacing:.06em;color:var(--acc);text-transform:uppercase;margin-top:4px;white-space:normal}
+table.t .p::before{content:"+ ";font-weight:700;color:var(--ink)}
+table.t .m::before{content:"− ";font-weight:700;color:var(--acc)}
+table.t td div{margin-bottom:4px}
+table.cmp td:first-child{font:600 21px var(--body);white-space:normal;width:30%}
+table.cmp td:nth-child(3){background:rgba(255,106,26,.08)}
+.big-n{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:22px 0}
+.big-n div{border-top:5px solid var(--ink);padding-top:12px}
+.big-n b{display:block;font:800 92px/1 var(--disp);letter-spacing:-.03em}
+.big-n span{font-size:23px;line-height:1.3;display:block;margin-top:6px}
+.big-n .a b{color:var(--acc)}
+/* title + dark */
+.title-slide .grid{grid-template-columns:1fr 760px}
+.title-slide figure.illo{width:760px}
+.title-meta{font:600 22px var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-top:44px;color:var(--ink2);line-height:1.7}
+.agenda{display:grid;grid-template-columns:150px 1fr;gap:0;font-size:26px;line-height:1.3}
+.agenda div{padding:11px 0;border-bottom:2px solid rgba(27,42,107,.14)}
+.agenda .tm{font:700 21px var(--mono);color:var(--acc);padding-top:15px}
+.agenda .brk{color:var(--ink2);font-style:italic}
+/* hud */
+#hud{position:absolute;left:120px;right:120px;bottom:52px;display:flex;align-items:center;gap:28px;font:600 17px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);z-index:5;pointer-events:none}
+#hud .brand{white-space:nowrap}
+#trail{flex:1;display:flex;gap:7px;align-items:flex-end;justify-content:center}
+#trail i{display:block;width:22px;height:14px;border:2px solid var(--ink);border-radius:55% 45% 48% 52% / 60% 58% 42% 40%;background:transparent;opacity:.45}
+#trail i.on{background:var(--ink);opacity:.85}
+#trail i.here{background:var(--acc);border-color:var(--acc);opacity:1;transform:translateY(-4px) scale(1.25)}
+#trail i.sec{margin-left:14px}
+#count{white-space:nowrap;min-width:240px;text-align:right}
+#ctrl{position:fixed;right:14px;top:12px;display:flex;gap:8px;z-index:20}
+#ctrl button{font:700 13px var(--mono);letter-spacing:.08em;background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:10px;padding:8px 11px;cursor:pointer}
+#ctrl button:hover{background:var(--ink);color:var(--paper)}
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:36vh;overflow:auto;background:var(--ink);color:var(--paper);padding:16px 24px 56px;font:17px/1.5 var(--body);display:none;z-index:15;border-top:4px solid var(--acc)}
+body.show-notes #notes{display:block}
+#notes .nh{font:700 13px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#ffb386;margin-bottom:6px;display:flex;gap:22px;flex-wrap:wrap}
+#notes p{margin:0 0 8px;max-width:1100px}
+aside.notes{display:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+[data-island-return]{position:fixed;top:14px;left:14px;z-index:30;font:600 14px var(--mono);background:var(--paper);padding:6px 10px;border-radius:8px}
+/* print */
+body.print{overflow:visible;height:auto;background:#fff}
+body.print #viewport{position:static}
+body.print #stage{position:static;transform:none!important;width:1920px;height:auto}
+body.print .slide{position:relative;opacity:1;visibility:visible;width:1920px;height:1080px;page-break-after:always;break-after:page;transition:none}
+body.print .slide::after{content:attr(data-n);position:absolute;right:120px;bottom:56px;font:600 17px var(--mono);letter-spacing:.1em;color:var(--ink2)}
+body.print #hud,body.print #ctrl,body.print #notes,body.print [data-island-return]{display:none!important}
+body.print .prompt button{display:none}
+body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
+@page{size:1920px 1080px;margin:0}
+@media print{
+  html,body{overflow:visible!important;height:auto!important;background:#fff}
+  #viewport{position:static!important}
+  #stage{position:static!important;transform:none!important;height:auto!important}
+  .slide{position:relative!important;opacity:1!important;visibility:visible!important;page-break-after:always;break-after:page}
+  .slide:last-of-type{page-break-after:auto;break-after:auto}
+  #hud,#ctrl,#notes,[data-island-return],.prompt button{display:none!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<a data-island-return href="../index.html#build/stone-by-stone">← Home</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="hS" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="#e6dec9"/><circle cx="4.5" cy="4.5" r="1.35" fill="#1b2a6b" opacity=".2"/></pattern>
+    <pattern id="hS2" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="#d9cfb5"/><circle cx="4.5" cy="4.5" r="1.5" fill="#1b2a6b" opacity=".22"/></pattern>
+    <pattern id="hN" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#d3d9ec"/><circle cx="4" cy="4" r="1.6" fill="#1b2a6b" opacity=".32"/></pattern>
+    <pattern id="hO" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#ff6a1a"/><circle cx="4" cy="4" r="1.4" fill="#b8400a" opacity=".45"/></pattern>
+    <pattern id="hT" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#efe1bd"/><circle cx="4" cy="4" r="1.3" fill="#1b2a6b" opacity=".18"/></pattern>
+    <pattern id="hP" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#fbf7ee"/><circle cx="5" cy="5" r="1.1" fill="#1b2a6b" opacity=".1"/></pattern>
+    <filter id="mis" x="-4%" y="-4%" width="108%" height="108%">
+      <feOffset in="SourceAlpha" dx="4" dy="3" result="o"/>
+      <feFlood flood-color="#ff6a1a" flood-opacity=".2"/>
+      <feComposite in2="o" operator="in" result="c"/>
+      <feMerge><feMergeNode in="c"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<div id="viewport"><div id="stage">
+
+<!-- ═════════ PART 1 · THE IDEA ═════════ -->
+<section class="slide grain title-slide" data-part="1" data-time="0:00" data-n="01">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>A build-along workshop</b><span class="t">3 hours</span></p>
+      <h1>Stone<br>by <em>stone</em></h1>
+      <p class="lead" style="margin-top:34px">Build a personal site you will still be improving a year from now — from a one-page idea to your own domain, in one session.</p>
+      <div class="chips"><span class="chip">Claude</span><span class="chip">Claude Code</span><span class="chip">GitHub</span><span class="chip">a web framework</span><span class="chip acc">Cloudflare</span></div>
+      <p class="title-meta">Sanket Tambare · sankettambare.in<br>Press → to begin · N for notes · F for full screen</p>
+    </div>
+    <figure class="illo grain" data-scene="title" data-alt="Cairn, a small pebble with an orange trail blaze, balances one orange stone over its head beside a five-stone cairn."></figure>
+  </div>
+  <aside class="notes" data-min="2">Welcome. By the end of the three hours everyone has a site live on the internet, built the way it can keep growing. Meet Cairn — a river pebble with a trail blaze. Every slide has Cairn doing the step. The whole workshop is one idea: add one stone at a time, on top of the last.</aside>
+</section>
+
+<section class="slide grain" data-part="1" data-time="0:02" data-n="02">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:02</span></p>
+      <h2>The three hours</h2>
+      <div class="agenda">
+        <div class="tm">0:00</div><div><b>Idea</b> — why own the stack, what it is</div>
+        <div class="tm">0:20</div><div><b>Shape</b> — idea.md → interview → deep research → three docs → data</div>
+        <div class="tm">1:05</div><div><b>Decide</b> — framework and host, pros and cons</div>
+        <div class="tm">1:20</div><div class="brk">Break — 10 minutes</div>
+        <div class="tm">1:30</div><div><b>Build</b> — repo, data apart from code, one phase per session, audits</div>
+        <div class="tm">2:20</div><div><b>Ship</b> — GitHub → Cloudflare → your domain</div>
+        <div class="tm">2:40</div><div><b>Case study</b> — sankettambare.in, 31 versions in</div>
+        <div class="tm">2:52</div><div><b>Iterate</b> — every change from now on is a prompt</div>
+      </div>
+    </div>
+    <figure class="illo grain" data-scene="agenda" data-alt="A trail of seven small cairns climbing up the panel, each a part of the workshop; Cairn sets off from the first."></figure>
+  </div>
+  <aside class="notes" data-min="2">This is build-along: laptops open, you type the prompts. Each part ends with a checkpoint — "you should now have…". If you fall behind, the prompt pack has every prompt, so you can catch up during the break. We spend most time on Shape and Build: a good plan is what makes the build fast.</aside>
+</section>
+
+<section class="slide grain" data-part="1" data-time="0:04" data-n="03">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:04</span></p>
+      <h2>Sandcastles<br>and <em>cairns</em></h2>
+      <p class="lead">Lovable, Bolt and v0 build a beautiful sandcastle in an afternoon. Then the tide comes: the idea changes, credits run out, the code lives in someone else's editor — and nobody adds a second wing.</p>
+      <p class="lead">A cairn is built stone by stone. Each visit adds one, and it stands because every stone sits on the last.</p>
+      <p class="pull">The question isn't “can I build it today?” It's “will I still improve it tomorrow?”</p>
+    </div>
+    <figure class="illo grain" data-scene="sand" data-alt="Left: a sandcastle with a wave about to wash it away, labelled one-off. Right: Cairn adds a stone to a growing cairn, labelled stone by stone."></figure>
+  </div>
+  <aside class="notes" data-min="3">Be fair to the app builders: they are excellent for a prototype or a one-week event page. Prototype there if you like. The point is what happens on day 30 and day 300. Ask the room: who has built something on one of those tools — and who changed it a month later? Usually no hands for the second question.</aside>
+</section>
+
+<section class="slide grain wide" data-part="1" data-time="0:07" data-n="04">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:07</span></p>
+      <h2>The iteration test</h2>
+      <table class="t cmp">
+        <tr><th>Ask of any site</th><th>App builder</th><th>Your own stack</th></tr>
+        <tr><td>Where does the code live?</td><td>In the platform (export is possible, then you're on your own)</td><td>Your GitHub repo — every version, forever</td></tr>
+        <tr><td>Where does the content live?</td><td>Mixed into the generated components</td><td>Plain files in <code>content/</code>, apart from the code</td></tr>
+        <tr><td>Change one word — how long?</td><td>Open the builder, prompt, hope nothing else moves</td><td>Edit a file or ask Claude Code; live in a minute</td></tr>
+        <tr><td>What does keeping it cost?</td><td>A monthly plan or credits</td><td>Free tiers cover a personal site</td></tr>
+        <tr><td>Who can work on it?</td><td>That platform's agent</td><td>Any agent, any developer, you</td></tr>
+        <tr><td>What's the history?</td><td>A chat log</td><td>Git log + a changelog of every change</td></tr>
+      </table>
+    </div>
+    <figure class="illo grain" data-scene="dome" data-alt="Cairn pushes against a locked glass dome over a small website, unable to reach it."></figure>
+  </div>
+  <aside class="notes" data-min="3">This is the test to run on any tool, including the one we use today. The right-hand column is what makes iteration cheap. Notice nothing in it is about AI — it's ownership, plain files and history. The AI part is what makes that ownership affordable for someone who isn't a developer.</aside>
+</section>
+
+<section class="slide grain" data-part="1" data-time="0:10" data-n="05">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:10</span></p>
+      <h2>The stack: <em>four stones</em></h2>
+      <div class="cols" style="gap:22px">
+        <div class="card"><p class="k">The builder</p><h3>Claude Code</h3><p>Reads the repo, writes the code, runs the build, checks its own work. In a terminal, an IDE, the desktop app, the browser or your phone.</p></div>
+        <div class="card"><p class="k">The memory</p><h3>GitHub</h3><p>Every change is a commit: history, review, rollback. A push is also what triggers a deploy.</p></div>
+        <div class="card"><p class="k">The shape</p><h3>A framework</h3><p>Pages, components, content collections — conventions an agent already knows. Astro is our default; slide 14 compares it.</p></div>
+        <div class="card"><p class="k">The stage</p><h3>Cloudflare</h3><p>Builds on every push, serves from the edge, and holds the domain, DNS and SSL in one place. Generous free tier.</p></div>
+      </div>
+    </div>
+    <figure class="illo grain" data-scene="stack" data-alt="An explainer cairn: Cloudflare is the bottom stone, GitHub above it, then the framework; Cairn, labelled Claude Code, stands on top adding a stone."></figure>
+  </div>
+  <aside class="notes" data-min="3">Each stone does one job and can be swapped without touching the others — that's the scalable part. Framework is the only one we'll debate; the other three are the spine. Claude chat (with Research) shapes the plan; Claude Code builds it.</aside>
+</section>
+
+<section class="slide grain" data-part="1" data-time="0:13" data-n="06">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:13</span></p>
+      <h2>“Scalable” means<br>it <em>compounds</em></h2>
+      <p class="lead">Not traffic. Scalable here means the hundredth change costs no more than the first — small, reviewed, reversible, live in a minute.</p>
+      <div class="big-n">
+        <div class="a"><b>31</b><span>major versions of sankettambare.in — each a new page or a redesign</span></div>
+        <div><b>43</b><span>routes, each with its own share card</span></div>
+        <div><b>1</b><span>stone a day — a typo, a photo, a page</span></div>
+      </div>
+      <p class="small muted">Numbers from the case-study repo's route manifest and changelog.</p>
+    </div>
+    <figure class="illo grain" data-scene="compound" data-alt="A tall cairn of ten stones marked v1 at the bottom to v31 at the top; Cairn waves from the summit."></figure>
+  </div>
+  <aside class="notes" data-min="2">Thirty-one major versions: every one was a new page or a full redesign, and none started from scratch. That's what we want you to have: a site where adding is normal. The case study at the end shows the habits that made that possible.</aside>
+</section>
+
+<section class="slide grain" data-part="1" data-time="0:15" data-n="07">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:15</span></p>
+      <h2>Before you start</h2>
+      <div class="cols">
+        <div>
+          <h3>Accounts</h3>
+          <ul class="pts tight">
+            <li><b>Claude</b> on a paid plan — chat with Research, plus Claude Code</li>
+            <li><b>GitHub</b> — free</li>
+            <li><b>Cloudflare</b> — free plan</li>
+            <li>A <b>domain</b> — optional today; buy it at Cloudflare or any registrar</li>
+          </ul>
+        </div>
+        <div>
+          <h3>On your laptop</h3>
+          <ul class="pts tight">
+            <li><b>Node.js</b> LTS and <b>Git</b></li>
+            <li><b>Claude Code</b> — install from code.claude.com</li>
+            <li>An editor (VS Code is fine)</li>
+            <li>A folder of your stuff: bio, photo, CV, project links</li>
+          </ul>
+        </div>
+      </div>
+      <p class="check">four accounts signed in, <code>claude</code> runs in a terminal. No laptop setup? Claude Code on the web runs in the cloud at claude.ai/code.</p>
+    </div>
+    <figure class="illo grain" data-scene="prework" data-alt="Cairn points along a row of four stones, each ticked: Claude, GitHub, Cloudflare, Node."></figure>
+  </div>
+  <aside class="notes" data-min="5">This was the pre-work email; use these five minutes to fix anyone who's stuck. The usual blocker is the Node install on a locked-down work laptop — send those people to Claude Code on the web, which needs only a browser and a GitHub connection.</aside>
+</section>
+
+<!-- ═════════ PART 2 · SHAPE ═════════ -->
+<section class="slide grain" data-part="2" data-time="0:20" data-n="08">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>02 · Shape</b><span class="t">0:20 · exercise, 10 min</span></p>
+      <h2>Write <em>idea.md</em></h2>
+      <p class="lead">One page, in your own words, before any AI. It's rough on purpose — the next step sharpens it.</p>
+      <pre class="tree"><span class="a"># idea.md</span>
+Who is it for?          <span class="m">one sentence</span>
+What should they do?    <span class="m">the one action — hire, read, contact</span>
+Three things it must do
+What I already have     <span class="m">posts, photos, CV, projects</span>
+What it must never be   <span class="m">corporate? cluttered? slow?</span>
+Time I'll give it       <span class="m">per week, honestly</span></pre>
+      <p class="check">idea.md saved — a Google Doc or a text file is fine.</p>
+    </div>
+    <figure class="illo grain" data-scene="idea" data-alt="Cairn pushes a giant pencil across a sheet of paper labelled idea.md, leaving an ink line behind."></figure>
+  </div>
+  <aside class="notes" data-min="10">Ten minutes, timer on screen. Walk the room. The two lines people skip are "what it must never be" and "time I'll give it" — those two decide most of the design. Someone who gives it 20 minutes a week needs a site that's easy to add to, not a showpiece.</aside>
+</section>
+
+<section class="slide grain" data-part="2" data-time="0:30" data-n="09">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>02 · Shape</b><span class="t">0:30 · Claude chat</span></p>
+      <h2>Let Claude <em>interview</em> you</h2>
+      <div class="prompt"><div class="pbar"><span>Prompt · Claude chat</span><button>Copy</button></div><pre>Here is idea.md, a rough idea for my personal website. Before you write anything, interview me. Ask at most 5 questions at a time, most important first: audience, the one thing a visitor should do, content I already have, tone, what it must never be, and time I can give it each week.
+
+Keep asking until you could write the concept without guessing. Then rewrite it as <i>concept.md</i>: problem, audience, goals, non-goals, pages, content sources, how I'll know it works. Under 600 words.</pre></div>
+      <p class="small muted" style="margin-top:20px">Paste idea.md under it. Start a Claude Project for this site so the documents stay together.</p>
+    </div>
+    <figure class="illo grain" data-scene="interview" data-alt="Cairn sits on a stone while three question marks drift out of a laptop toward it, labelled one batch at a time."></figure>
+  </div>
+  <aside class="notes" data-min="10">The trick is "before you write anything". Without it Claude produces a polished concept full of guesses. Answer by voice if typing is slow. Two or three rounds is typical. If it asks nothing, tell it to ask — weak questions mean your idea.md is already clear, which is fine too.</aside>
+</section>
+
+<section class="slide grain" data-part="2" data-time="0:40" data-n="10">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>02 · Shape</b><span class="t">0:40 · Research on</span></p>
+      <h2><em>Deep research</em>, one aspect at a time</h2>
+      <div class="prompt"><div class="pbar"><span>Prompt · Claude chat, Research on</span><button>Copy</button></div><pre>Using concept.md, research each aspect separately:
+1. 3–5 well-regarded personal sites in my field — what makes each work
+2. Design patterns: homepage structure, navigation, project case studies, type and colour systems
+3. Frameworks for a content-first site in 2026 — Astro, Next.js, SvelteKit, React + Vite — for someone iterating with an AI coding agent
+4. Hosting: Cloudflare vs alternatives — limits, pricing, custom domains
+5. SEO, accessibility and performance baselines
+Cite every claim with a link. Flag what you could not verify.</pre></div>
+      <p class="small muted" style="margin-top:18px">Turn Research on from the chat box's tools menu. If one aspect comes back thin, re-run it on its own.</p>
+    </div>
+    <figure class="illo grain" data-scene="research" data-alt="Cairn presses a magnifier over concept.md; five rays fan out to pages for peers, design, framework, hosting and SEO."></figure>
+  </div>
+  <aside class="notes" data-min="10">Research runs for several minutes — start it, then use the wait to collect content (slide 13). Ask people to open two or three of the cited links: reading the sources is the point. Item 2 is where the good design ideas come from; push people to name the sites they admire.</aside>
+</section>
+
+<section class="slide grain" data-part="2" data-time="0:50" data-n="11">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>02 · Shape</b><span class="t">0:50</span></p>
+      <h2>Three documents out</h2>
+      <div class="cols3" style="margin-bottom:22px">
+        <div class="card"><p class="k">Why + what</p><h3>concept.md</h3><p>Audience, goals, non-goals, pages, success.</p></div>
+        <div class="card"><p class="k">How</p><h3>technical-decisions.md</h3><p>Each decision: options, pros/cons, choice, when to revisit.</p></div>
+        <div class="card"><p class="k">When</p><h3>phased-plan.md</h3><p>Phase 0 setup, Phase 1 live, then ≤ 5 features a phase.</p></div>
+      </div>
+      <div class="prompt"><div class="pbar"><span>Prompt · Claude chat</span><button>Copy</button></div><pre>From concept.md and the research, write three files. 1) <i>concept.md</i>, final. 2) <i>technical-decisions.md</i>: one entry per decision — framework, hosting, where content lives (kept apart from code), styling, images, SEO, analytics — with options, pros, cons, choice, and what would make us revisit it. 3) <i>phased-plan.md</i>: Phase 0 setup, Phase 1 the smallest site that can go live, later phases of at most 5 one-line features, each with how to verify it and what is out of scope.</pre></div>
+    </div>
+    <figure class="illo grain" data-scene="three" data-alt="Cairn carries three stacked slabs over its head: concept, decisions, plan."></figure>
+  </div>
+  <aside class="notes" data-min="7">These three files are the hand-off from chat to code. Claude Code will read them in every session, so they have to be short enough to read and precise enough to act on. The decisions doc uses a lightweight ADR shape — "what would make us revisit it" is the line that saves you later.</aside>
+</section>
+
+<section class="slide grain" data-part="2" data-time="0:57" data-n="12">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>02 · Shape</b><span class="t">0:57</span></p>
+      <h2>Be brief:<br>the plan is a list of <em>cuts</em></h2>
+      <ul class="pts">
+        <li><b>One line per feature.</b> If it needs a paragraph, it's two features.</li>
+        <li><b>Phase 1 is the smallest site that can go live</b> — home, about, work, contact.</li>
+        <li><b>At most five features a phase</b>, and every phase ends deployed.</li>
+        <li>New ideas go to <code>later.md</code>, never into the current phase.</li>
+      </ul>
+      <p class="pull">A long feature list is a wish. A short one is a plan.</p>
+    </div>
+    <figure class="illo grain" data-scene="cuts" data-alt="Cairn pushes an extra stone out of a small cart marked phase 1, at most five, toward a pile marked later."></figure>
+  </div>
+  <aside class="notes" data-min="3">This is the PM superpower in the room — you already know scope control. Apply it to yourself. Ask Claude: "cut this plan by half and tell me what we lose". Brief plans also keep Claude Code's context small, which keeps its work accurate.</aside>
+</section>
+
+<section class="slide grain" data-part="2" data-time="1:00" data-n="13">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>02 · Shape</b><span class="t">1:00</span></p>
+      <h2>Gather <em>all the data</em> before any code</h2>
+      <p class="lead">An agent designs around the content it's given. Real titles, real photos and the real number of projects make a layout that fits; lorem ipsum makes one that breaks the day you fill it.</p>
+      <div class="cols" style="gap:24px">
+        <div><ul class="pts tight"><li>Bio in three lengths</li><li>Photos — originals</li><li>Projects: title, one line, link, image</li><li>Writing, talks, CV, social links</li></ul></div>
+        <div class="card"><p class="k">Formats</p><p>Prose → Markdown with frontmatter<br>Lists → JSON or YAML<br>Images → <code>content/images/</code></p></div>
+      </div>
+      <p class="check">a content folder, and <code>INVENTORY.md</code> listing what each page needs — ask Claude to write it from concept.md.</p>
+    </div>
+    <figure class="illo grain" data-scene="data" data-alt="Cairn pushes a stone into one of three baskets labelled text, images and links."></figure>
+  </div>
+  <aside class="notes" data-min="5">The most common reason a first version looks wrong is missing content. Prompt: "List every piece of content the site in concept.md needs, grouped by page, with the format and fields for each. Write it as INVENTORY.md." Then fill the gaps. You can keep collecting while we pick the stack.</aside>
+</section>
+
+<!-- ═════════ PART 3 · DECIDE ═════════ -->
+<section class="slide grain wide" data-part="3" data-time="1:05" data-n="14">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>03 · Decide</b><span class="t">1:05</span></p>
+      <h2>Choosing the framework</h2>
+      <table class="t">
+        <tr><th>Framework</th><th>For</th><th>Against</th></tr>
+        <tr><td>Astro<span class="best">content first</span></td><td><div class="p">Ships no JavaScript unless a part needs it</div><div class="p">Content collections: typed, validated Markdown</div><div class="p">Cloudflare bought the Astro team (Jan 2026); first-class adapter</div></td><td><div class="m">Not for app-heavy dashboards</div><div class="m">Smaller ecosystem than React</div></td></tr>
+        <tr><td>Next.js<span class="best">app first</span></td><td><div class="p">Biggest ecosystem; full-stack React</div><div class="p">Most examples for an agent to learn from</div></td><td><div class="m">Heavier pages, more concepts (server vs client)</div><div class="m">Smoothest on Vercel; Cloudflare via an adapter</div></td></tr>
+        <tr><td>SvelteKit<span class="best">polished, light</span></td><td><div class="p">Small bundles, simple syntax</div><div class="p">Official Cloudflare adapter</div></td><td><div class="m">Smaller ecosystem</div><div class="m">Fewer examples to copy</div></td></tr>
+        <tr><td>React + Vite<span class="best">the case study</span></td><td><div class="p">Simple mental model, huge ecosystem</div><div class="p">Fine for very interactive sites</div></td><td><div class="m">Renders in the browser: crawlers see a blank page unless you add a fallback</div><div class="m">More JavaScript per page</div></td></tr>
+      </table>
+    </div>
+    <figure class="illo grain" data-scene="fork" data-alt="Cairn looks up at a signpost with four arms: Astro, Next.js, SvelteKit, React plus Vite."></figure>
+  </div>
+  <aside class="notes" data-min="7">Rule of thumb: content first, choose Astro; app first, Next.js or SvelteKit; already fluent in React and need heavy interactivity, React + Vite — but plan for SEO on day one. The case study is React + Vite and paid for it in SEO work (slide 28). Let people choose; the rest of the workshop is the same either way.</aside>
+</section>
+
+<section class="slide grain wide" data-part="3" data-time="1:12" data-n="15">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>03 · Decide</b><span class="t">1:12</span></p>
+      <h2>Choosing the host</h2>
+      <table class="t">
+        <tr><th>Host</th><th>For</th><th>Against</th></tr>
+        <tr><td>Cloudflare<span class="best">our pick</span></td><td><div class="p">Static requests free and unlimited on Workers</div><div class="p">Domain, DNS, SSL and edge functions in one place</div><div class="p">Commercial use allowed on the free plan</div></td><td><div class="m">Free Workers allow 10 ms CPU per request</div><div class="m">Pages vs Workers is confusing — new projects: Workers</div></td></tr>
+        <tr><td>Vercel</td><td><div class="p">Best Next.js experience; preview per PR</div></td><td><div class="m">Free Hobby plan is non-commercial</div><div class="m">Pro is per seat, per month</div></td></tr>
+        <tr><td>Netlify</td><td><div class="p">Simple; built-in forms</div></td><td><div class="m">Credit-based free plan; sites pause at the limit</div></td></tr>
+        <tr><td>GitHub Pages</td><td><div class="p">Free, zero setup, beside the code</div></td><td><div class="m">Static only — no functions, few headers or redirects</div></td></tr>
+      </table>
+      <p class="small muted" style="margin-top:16px">Free-tier terms change — check each vendor's pricing page the day you choose.</p>
+    </div>
+    <figure class="illo grain" data-scene="balance" data-alt="Cairn balances on a plank resting on a stone, free tier on one end and limits on the other."></figure>
+  </div>
+  <aside class="notes" data-min="5">Cloudflare wins for a personal site on cost and on having the domain in the same dashboard. The one gotcha is the 10 ms CPU limit for code on the free plan — the case study hit it rendering images at request time (slide 28). Static pages don't count against it. Then: break, 10 minutes.</aside>
+</section>
+
+<!-- ═════════ PART 4 · BUILD ═════════ -->
+<section class="slide grain" data-part="4" data-time="1:30" data-n="16">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>04 · Build</b><span class="t">1:30 · Claude Code</span></p>
+      <h2>Phase 0: <em>the repo</em></h2>
+      <div class="cols" style="grid-template-columns:1.25fr 1fr;gap:26px">
+        <div class="prompt" style="margin:0"><div class="pbar"><span>Prompt · Claude Code</span><button>Copy</button></div><pre style="font-size:18.5px">Read docs/technical-decisions.md. Do Phase 0: git init on main, scaffold the framework we chose, create content/ from content/INVENTORY.md with my real content (no lorem ipsum), a CLAUDE.md under 30 lines, and CHANGELOG.md. Make sure the build passes, then commit "Phase 0".</pre></div>
+        <pre class="tree" style="font-size:19px">my-site/
+├─ <span class="a">content/</span>   <span class="m">what it says</span>
+│  ├─ profile.json
+│  ├─ projects/*.md
+│  └─ images/
+├─ <span class="a">src/</span>       <span class="m">how it looks</span>
+│  ├─ lib/content
+│  ├─ components/
+│  └─ pages/
+├─ docs/      <span class="m">the 3 docs</span>
+├─ CLAUDE.md
+└─ CHANGELOG.md</pre>
+      </div>
+      <p class="check">a folder with the three docs in docs/, Phase 0 committed. Then on github.com: New repository (empty) and run the two push lines it shows.</p>
+    </div>
+    <figure class="illo grain" data-scene="repo" data-alt="Cairn presses a flagpole into the top of a mound marked git init; the orange flag reads main."></figure>
+  </div>
+  <aside class="notes" data-min="10">Put the three docs and INVENTORY.md in a new folder, cd into it, run claude, paste the prompt. Claude asks before running commands — read what it asks. Creating the GitHub repo by hand is deliberate: everyone should see where their code lives. The two lines are git remote add origin … and git push -u origin main.</aside>
+</section>
+
+<section class="slide grain" data-part="4" data-time="1:40" data-n="17">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>04 · Build</b><span class="t">1:40</span></p>
+      <h2>Keep the <em>data layer</em> apart from the <em>code layer</em></h2>
+      <ol class="steps">
+        <li><b>Copy, links and numbers live in <code>content/</code></b> — never typed into a component.</li>
+        <li><b>One module reads content</b> (<code>src/lib/content</code>). Components get data as props.</li>
+        <li><b>Content has a schema</b> — Astro's content collections reject a project with no title.</li>
+      </ol>
+      <p class="lead" style="font-size:30px">Then you can change words without touching code, redesign without touching words — and later swap files for a CMS or a database by rewriting <i>one</i> module.</p>
+      <p class="small muted">The case study did exactly that: its content moved from Markdown files to a database, and the page components never noticed.</p>
+    </div>
+    <figure class="illo grain" data-scene="layers" data-alt="Cairn stands on a wall keeping a pile of content pages on one side and gears of code on the other; one door in the wall is labelled lib/content."></figure>
+  </div>
+  <aside class="notes" data-min="5">This is the most important engineering idea of the day, and it's one sentence: content in one place, code in another, one door between them. Put it in CLAUDE.md so every session follows it. It's also what lets non-developers edit the site: they edit content/, never src/.</aside>
+</section>
+
+<section class="slide grain" data-part="4" data-time="1:45" data-n="18">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>04 · Build</b><span class="t">1:45</span></p>
+      <h2><em>CLAUDE.md</em>: the project's memory</h2>
+      <p class="lead" style="font-size:31px">Claude Code reads it at the start of every session. Keep it short: only what Claude can't work out from the code.</p>
+      <pre class="tree" style="font-size:21px"><span class="a"># my-site</span>
+Personal site. Astro → Cloudflare Workers.
+- Content lives in content/; only src/lib/content
+  reads it. Never hard-code copy in components.
+- Plan: docs/phased-plan.md — tick a phase when done.
+- Before any commit: npm run build must pass.
+- Every change adds a line to CHANGELOG.md.
+- Lessons: <span class="m">(add each gotcha here, one line)</span></pre>
+      <p class="small muted" style="margin-top:16px">Long procedures go in skills (<code>.claude/skills/</code>). A rule with zero exceptions goes in a hook.</p>
+    </div>
+    <figure class="illo grain" data-scene="memo" data-alt="Cairn presses a note labelled CLAUDE.md onto a post, pinned with an orange pin."></figure>
+  </div>
+  <aside class="notes" data-min="5">The "Lessons" line is how the site gets smarter: when something breaks and you fix it, ask Claude to add one line so no future session repeats it. The case study's CLAUDE.md is long because it's a big site; yours should fit on this slide for the first month.</aside>
+</section>
+
+<section class="slide grain" data-part="4" data-time="1:50" data-n="19">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>04 · Build</b><span class="t">1:50</span></p>
+      <h2>One phase = <em>one session</em></h2>
+      <p class="lead" style="font-size:31px">Context is the constraint: Claude gets less accurate as a conversation fills up. A fresh session per phase keeps it small; the docs carry everything across.</p>
+      <ol class="steps">
+        <li><b>Fresh session</b> — new chat, or <code>/clear</code></li>
+        <li><b>Plan mode</b> — <kbd>Shift</kbd>+<kbd>Tab</kbd>; read the plan, approve it</li>
+        <li><b>Build</b> — let it work; <kbd>Esc</kbd> to steer, <code>/rewind</code> to undo</li>
+        <li><b>Verify</b> — build, run, look (slide 21)</li>
+        <li><b>Commit + push</b>, then tick the phase in the plan</li>
+      </ol>
+    </div>
+    <figure class="illo grain" data-scene="loop" data-alt="A loop of five stations — fresh session, plan, build, verify, commit — with Cairn at the centre labelled one phase."></figure>
+  </div>
+  <aside class="notes" data-min="5">This loop is the whole method. People's instinct is one endless chat; that's where quality decays. When you come back tomorrow, you don't need to remember anything — the plan file says where you are. /rewind restores code and conversation to an earlier point when a turn goes wrong.</aside>
+</section>
+
+<section class="slide grain" data-part="4" data-time="1:55" data-n="20">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>04 · Build</b><span class="t">1:55 · Phase 1 now</span></p>
+      <h2>The phase prompt</h2>
+      <div class="prompt"><div class="pbar"><span>Prompt · Claude Code, plan mode</span><button>Copy</button></div><pre>Read CLAUDE.md and docs/phased-plan.md. We are doing <i>Phase 1</i> only.
+
+First make a plan: the files you'll create or change and how you'll verify each feature. Ask me anything unclear before you start.
+
+Keep content in content/ and read it only through src/lib/content. When done: run the build, start the dev server and check every page renders at phone and desktop width, add a line to CHANGELOG.md, tick Phase 1 in the plan, and commit.</pre></div>
+      <p class="check">Phase 1 running on localhost with your real content.</p>
+    </div>
+    <figure class="illo grain" data-scene="hatch" data-alt="Cairn feeds a single orange card marked Phase 1 into a slot in a large machine labelled Claude Code; cards 2, 3 and 4 wait on the ground."></figure>
+  </div>
+  <aside class="notes" data-min="20">The longest build-along block: about 20 minutes. Same prompt for every later phase — change the number. If a design comes out generic, give it taste: name two sites from the research and say what to borrow. Screenshots of sites you like work well as input too.</aside>
+</section>
+
+<section class="slide grain" data-part="4" data-time="2:05" data-n="21">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>04 · Build</b><span class="t">2:05</span></p>
+      <h2>Give Claude a way to <em>check its work</em></h2>
+      <ul class="pts">
+        <li><b>The build passes</b> — the cheapest test there is.</li>
+        <li><b>It runs and it looks right</b> — ask Claude to open each page in a browser and screenshot it at phone width; <code>/verify</code> does this.</li>
+        <li><b>A second pair of eyes</b> — <code>/code-review</code> reviews the diff in a fresh session that never saw the reasoning.</li>
+        <li><b>You</b> — click through it on your own phone.</li>
+      </ul>
+      <p class="pull">Done means deployed, and you looked at it.</p>
+    </div>
+    <figure class="illo grain" data-scene="level" data-alt="Cairn presses a spirit level against the side of a cairn to check it stands straight."></figure>
+  </div>
+  <aside class="notes" data-min="5">"It says it's done" is not done. The single most useful line in a CLAUDE.md is the command that checks the work. A reviewer that didn't write the code catches what the writer explained away.</aside>
+</section>
+
+<section class="slide grain" data-part="4" data-time="2:10" data-n="22">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>04 · Build</b><span class="t">2:10</span></p>
+      <h2>SEO, performance, <em>accessibility</em></h2>
+      <div class="prompt"><div class="pbar"><span>Prompt · Claude Code</span><button>Copy</button></div><pre style="font-size:19px">Audit the site for SEO, performance and accessibility. Build it and run Lighthouse (mobile) on every page. Check each page has a unique title, meta description, canonical URL and a 1200×630 Open Graph image; that sitemap.xml and robots.txt exist; every image has alt text, width and height, a modern format, under 200 KB; contrast and keyboard navigation. Report a table ranked by impact, fix the top items, show before/after scores.</pre></div>
+      <div class="chips" style="margin-top:22px"><span class="chip">Lighthouse ≥ 90</span><span class="chip">LCP &lt; 2.5 s</span><span class="chip">INP &lt; 200 ms</span><span class="chip">CLS &lt; 0.1</span><span class="chip acc">share card on every page</span></div>
+    </div>
+    <figure class="illo grain" data-scene="gauges" data-alt="Three gauges labelled SEO, perf and a11y; Cairn pushes the middle needle up."></figure>
+  </div>
+  <aside class="notes" data-min="10">Run this once now and then monthly. The chips are Google's "good" Core Web Vitals thresholds. Share cards matter more than people expect: a link that unfurls in WhatsApp or LinkedIn with a proper image gets clicked. Make "every page has its own card" a rule in CLAUDE.md.</aside>
+</section>
+
+<!-- ═════════ PART 5 · SHIP ═════════ -->
+<section class="slide grain" data-part="5" data-time="2:20" data-n="23">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>05 · Ship</b><span class="t">2:20</span></p>
+      <h2>Push to <em>GitHub</em></h2>
+      <pre class="term"><span class="c"># one branch per phase</span>
+git checkout -b phase-2
+git add -A
+git commit -m "Phase 2: projects page"
+git push -u origin phase-2
+<span class="c"># open a pull request, check its preview, merge to main</span></pre>
+      <p class="lead" style="font-size:30px;margin-top:24px">Or just say it: <i>“commit this and push it to a new branch called phase-2”</i>. Claude Code writes the commit message from the diff.</p>
+      <p class="check">your code on github.com, main branch, Phase 0 and 1 in the history.</p>
+    </div>
+    <figure class="illo grain" data-scene="ramp" data-alt="Cairn pushes an orange stone up a ramp marked git push toward a vault labelled GitHub."></figure>
+  </div>
+  <aside class="notes" data-min="5">For today, pushing straight to main is fine. Branches plus pull requests become valuable once deploys are wired: every branch gets its own preview URL, so you check a change on your phone before it's live.</aside>
+</section>
+
+<section class="slide grain" data-part="5" data-time="2:25" data-n="24">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>05 · Ship</b><span class="t">2:25</span></p>
+      <h2>Deploy on <em>Cloudflare</em></h2>
+      <ol class="steps">
+        <li>dash.cloudflare.com → <b>Workers &amp; Pages</b> → <b>Create</b></li>
+        <li><b>Import a repository</b> → connect GitHub, grant only this repo</li>
+        <li>Build command <code>npm run build</code>; output <code>dist</code> (Astro) — most frameworks are detected</li>
+        <li>Environment variables, if any. Secrets never go in the repo.</li>
+        <li><b>Deploy</b> → live at <code>your-site.&lt;you&gt;.workers.dev</code></li>
+      </ol>
+      <p class="lead" style="font-size:29px">From now on, a push to <b>main</b> is production and every other branch gets a <b>preview URL</b>.</p>
+      <p class="small muted">Cloudflare puts new features into Workers with static assets; Pages still works (the case study runs on Pages).</p>
+    </div>
+    <figure class="illo grain" data-scene="deploy" data-alt="Cairn presses a big orange button; an arc runs from a GitHub box to a globe, labelled every push."></figure>
+  </div>
+  <aside class="notes" data-min="10">If the build fails on Cloudflare but works locally, paste the build log into Claude Code — it's almost always a Node version or a missing environment variable. Have people open their workers.dev URL on their phones; that moment is the high point of the workshop.</aside>
+</section>
+
+<section class="slide grain" data-part="5" data-time="2:35" data-n="25">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>05 · Ship</b><span class="t">2:35</span></p>
+      <h2>Your <em>domain</em> and DNS</h2>
+      <ol class="steps">
+        <li><b>Buy a domain</b> — Cloudflare Registrar sells at cost, or any registrar</li>
+        <li>Bought elsewhere? <b>Add the site</b> to Cloudflare (free plan) and set the registrar's <b>nameservers</b> to the two Cloudflare gives you. Wait for “Active”.</li>
+        <li>Your Worker → <b>Settings → Domains &amp; Routes → Add → Custom domain</b>. Cloudflare creates the DNS record and the certificate.</li>
+        <li>Add <code>www</code> too, and redirect it to the bare domain with a Redirect Rule</li>
+        <li>Open <code>https://yourname.com</code> on your phone</li>
+      </ol>
+      <p class="check">your site on your own domain, over HTTPS. Nameserver changes can take a few hours — finish at home if needed.</p>
+    </div>
+    <figure class="illo grain" data-scene="domain" data-alt="Cairn, standing on a stone, pushes up a signboard reading yourname.com that sits on a small cairn."></figure>
+  </div>
+  <aside class="notes" data-min="5">Most people won't have a domain today, so demo this one on yours. The two traps: a domain answers on example.com but not www (hence step 4), and an old CNAME record blocks adding the custom domain — delete it first.</aside>
+</section>
+
+<!-- ═════════ PART 6 · CASE STUDY ═════════ -->
+<section class="slide grain" data-part="6" data-time="2:40" data-n="26">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>06 · Case study</b><span class="t">2:40</span></p>
+      <h2>sankettambare.in</h2>
+      <p class="lead" style="font-size:31px">A personal site built and grown this way: books, races, treks, projects, writing, a newsletter, and a chatbot over all of it.</p>
+      <div class="chips"><span class="chip">React 18 + Vite</span><span class="chip">Tailwind</span><span class="chip">Cloudflare Pages + Functions</span><span class="chip">GitHub</span><span class="chip acc">Claude Code</span></div>
+      <div class="big-n">
+        <div class="a"><b>31</b><span>major versions</span></div>
+        <div><b>43</b><span>routes, each with a share card</span></div>
+        <div><b>30</b><span>docs Claude reads before touching a part</span></div>
+      </div>
+      <p class="small muted">It has a database too (Supabase). We skip it today: start with files in <code>content/</code>. Because data and code are apart, moving later is one module's job.</p>
+    </div>
+    <figure class="illo grain" data-scene="big" data-alt="Cairn, small, stands at the foot of a very tall cairn, v1 at the bottom and v31 at the top."></figure>
+  </div>
+  <aside class="notes" data-min="4">Open the live site and click three things. Numbers come from the repo: the route manifest lists 43 routes; the changelog is at v31. The stack is not the one I'd pick from scratch today — that's why the framework slide was neutral.</aside>
+</section>
+
+<section class="slide grain" data-part="6" data-time="2:44" data-n="27">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>06 · Case study</b><span class="t">2:44</span></p>
+      <h2>What kept it <em>iterating</em></h2>
+      <div class="cols" style="gap:18px">
+        <div class="card"><p class="k">One source per fact</p><p>Name, bio, links in one file; every page and crawler reads it.</p></div>
+        <div class="card"><p class="k">Content apart from code</p><p>Components read through one data module, never raw.</p></div>
+        <div class="card"><p class="k">A changelog on every change</p><p>Same commit, same diff — 31 majors of readable history.</p></div>
+        <div class="card"><p class="k">Tests that guard the rules</p><p>A new route with no share card fails the build.</p></div>
+        <div class="card"><p class="k">Generated, never hand-edited</p><p>Sitemap, feeds, docs — rebuilt from the source.</p></div>
+        <div class="card"><p class="k">Lessons written down</p><p>Each gotcha is a line in CLAUDE.md, so no session repeats it.</p></div>
+      </div>
+    </div>
+    <figure class="illo grain" data-scene="daily" data-alt="Cairn lifts today's stone onto a small cairn beside a calendar with every past day marked and today in orange."></figure>
+  </div>
+  <aside class="notes" data-min="4">None of these were planned on day one; each arrived after something broke. Steal them in this order: changelog, content apart, lessons in CLAUDE.md. The guard test is the one that lets you move fast later — a rule the build enforces doesn't depend on anyone remembering it.</aside>
+</section>
+
+<section class="slide grain" data-part="6" data-time="2:48" data-n="28">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>06 · Case study</b><span class="t">2:48</span></p>
+      <h2>What broke, and <em>what it taught</em></h2>
+      <div class="card" style="margin-bottom:16px"><p class="k">Blank to crawlers</p><p>A React app renders in the browser; GPTBot, ClaudeBot and most crawlers don't run JavaScript. Fix: an edge middleware writes each page as plain HTML. <b>Lesson: pick a framework that renders HTML, or plan for it on day one.</b></p></div>
+      <div class="card" style="margin-bottom:16px"><p class="k">10 ms of CPU</p><p>Share images were drawn per request at the edge; one took ~400 ms, so production returned errors and links unfurled with no image. Fix: render them at build time and commit the PNGs. <b>Lesson: local dev doesn't enforce limits — test on the real deploy.</b></p></div>
+      <div class="card"><p class="k">Silent WebP</p><p>The card renderer drew nothing for WebP photos, with no error. <b>Lesson: write the gotcha in CLAUDE.md the day you find it.</b></p></div>
+    </div>
+    <figure class="illo grain" data-scene="cracked" data-alt="Cairn lifts a new orange stone to replace a cracked one in a cairn; three small stones beside it are labelled with the lessons."></figure>
+  </div>
+  <aside class="notes" data-min="4">Each of these cost a day. Each is now one line in the project's CLAUDE.md, which is why it never happened twice. Your site will have its own three; the habit of writing them down is what transfers.</aside>
+</section>
+
+<!-- ═════════ PART 7 · ITERATE ═════════ -->
+<section class="slide grain" data-part="7" data-time="2:52" data-n="29">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>07 · Iterate</b><span class="t">2:52</span></p>
+      <h2>From now on, a change<br>is <em>a prompt</em></h2>
+      <div class="cols3" style="margin-bottom:22px">
+        <div class="card"><p class="k">Laptop</p><p>Claude Code in the terminal, VS Code or the desktop app.</p></div>
+        <div class="card"><p class="k">Browser</p><p>Claude Code on the web runs in the cloud on your GitHub repo.</p></div>
+        <div class="card"><p class="k">Phone</p><p>The Claude app: describe it on the train, review the preview later.</p></div>
+      </div>
+      <p class="lead" style="font-size:31px"><b>prompt → branch → preview URL → merge → live.</b> The next iterations are about UI and content: one page, one section, one photo at a time.</p>
+      <ul class="pts tight"><li>Weekly: add what you did</li><li>Monthly: run the audit prompt</li><li>Quarterly: redesign one page, not the site</li></ul>
+    </div>
+    <figure class="illo grain" data-scene="anywhere" data-alt="A phone, a laptop and a cloud each send an arrow down to one cairn, where Cairn adds a stone."></figure>
+  </div>
+  <aside class="notes" data-min="4">This is the payoff for the setup: the hard part is done once. Show a change made from the phone if there's time — a one-line copy edit, pushed to a branch, preview link opened in the room.</aside>
+</section>
+
+<section class="slide grain" data-part="7" data-time="2:56" data-n="30">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>07 · Iterate</b><span class="t">2:56 · homework</span></p>
+      <h2>Seven days, <em>seven stones</em></h2>
+      <div class="cols" style="gap:30px">
+        <ol class="steps" style="margin:0">
+          <li>Live on workers.dev</li>
+          <li>Your own domain</li>
+          <li>Real content on every page</li>
+          <li>Run the audit prompt</li>
+          <li>One new section</li>
+          <li>A friend uses it on their phone — fix the first thing</li>
+          <li>Write about building it</li>
+        </ol>
+        <div class="small">
+          <h3>Take-aways</h3>
+          <p><a href="assets/stone-by-stone/prompt-pack.html">The prompt pack</a> — every prompt from today<br><a href="assets/stone-by-stone/prompt-pack.html#templates">Doc templates</a> — idea, concept, decisions, plan, CLAUDE.md</p>
+          <h3 style="margin-top:14px">Read</h3>
+          <p style="font-size:21px;line-height:1.5">
+            <a href="https://code.claude.com/docs/en/best-practices">Claude Code best practices</a><br>
+            <a href="https://docs.astro.build/en/guides/content-collections/">Astro content collections</a><br>
+            <a href="https://developers.cloudflare.com/workers/static-assets/">Cloudflare Workers static assets</a><br>
+            <a href="https://developers.cloudflare.com/workers/configuration/routing/custom-domains/">Cloudflare custom domains</a><br>
+            <a href="https://web.dev/articles/vitals">Core Web Vitals</a> · <a href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide">Google SEO starter guide</a></p>
+        </div>
+      </div>
+    </div>
+    <figure class="illo grain" data-scene="week" data-alt="A trail of seven cairns, Monday to Sunday, shrinking toward the horizon; Cairn waves from the first."></figure>
+  </div>
+  <aside class="notes" data-min="4">Close on the habit, not the stack. One stone a day for a week and the site is yours in a way no app builder gives you. Share the prompt pack link in the chat. Ask people to send their URL by Sunday.</aside>
+</section>
+
+<div id="hud"><span class="brand">Stone by Stone</span><div id="trail" aria-hidden="true"></div><span id="count"></span></div>
+</div></div>
+
+<div id="ctrl"><button id="prev" aria-label="Previous slide">←</button><button id="nbtn" aria-label="Toggle speaker notes">N</button><button id="full" aria-label="Full screen">F</button><button id="next" aria-label="Next slide">→</button></div>
+<div id="notes" aria-live="polite"></div>
+<p class="sr" id="live" aria-live="polite"></p>
+
+<script>
+/* ── Cairn: the mascot, and the props, drawn as riso-print SVG ──
+   Locked design: a smooth river pebble, wider than tall; pale halftone stone
+   body with a bold navy outline; two navy dot eyes, no mouth, no brows; stubby
+   round-capped navy limbs (contact/pressure only — no hands, no grip); ONE
+   accent: an orange trail-blaze dash on the crown. */
+(() => {
+const INK = '#1b2a6b', ACC = '#ff6a1a', PAPER = '#fbf7ee', SW = 6;
+const rnd = seed => { let s = Math.abs(Math.floor(seed * 7919)) % 233280 || 7; return () => (s = (s * 9301 + 49297) % 233280) / 233280; };
+const f = n => Math.round(n * 10) / 10;
+
+function pebble(w, h, seed = 1) {
+  const r = rnd(seed), j = () => (r() - .5) * .14, rx = w / 2, ry = h / 2, k = .56;
+  const t = ry * (1 + j()), b = ry * .86, l = rx * (1 + j()), rr = rx * (1 + j()), tx = rx * j() * 1.6;
+  return `M${f(-l)},${f(b*.12)} C${f(-l)},${f(-t*k)} ${f(-l*k+tx)},${f(-t)} ${f(tx)},${f(-t)} C${f(rr*k+tx)},${f(-t)} ${f(rr)},${f(-t*k)} ${f(rr)},${f(b*.1)} C${f(rr)},${f(b*k)} ${f(rr*k)},${f(b)} 0,${f(b)} C${f(-l*k)},${f(b)} ${f(-l)},${f(b*k)} ${f(-l)},${f(b*.12)}Z`;
+}
+function stone(cx, cy, w, h, o = {}) {
+  const fill = o.acc ? 'url(#hO)' : (o.fill || 'url(#hS)');
+  let s = `<g transform="translate(${f(cx)},${f(cy)})${o.rot ? ` rotate(${o.rot})` : ''}"><path d="${pebble(w, h, o.seed || (cx * 3 + cy))}" fill="${fill}" stroke="${INK}" stroke-width="${o.sw || SW}" stroke-linejoin="round"/>`;
+  if (o.crack) s += `<path d="M${-w*.1},${-h*.42} l${w*.07},${h*.25} l-${w*.06},${h*.18} l${w*.08},${h*.3}" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if (o.label) s += `<text y="${(o.ly || 0) + (o.fs || 30) * .32}" text-anchor="middle" class="lb" style="font-size:${o.fs || 30}px"${o.acc ? ` fill="${PAPER}"` : ''}>${o.label}</text>`;
+  return s + '</g>';
+}
+/* stack from a base line; returns {svg, top} */
+function stack(cx, base, list) {
+  let y = base, svg = '';
+  list.forEach(([w, h, o = {}], i) => {
+    const cy = y - h * .43;
+    svg += stone(cx + (o.dx || 0), cy, w, h, { seed: i * 13 + w, ...o });
+    y = cy - h * .5 + 4;
+  });
+  return { svg, top: y };
+}
+const ARMS = {
+  down: ['M-52,14 L-70,34', 'M52,14 L70,34'],
+  up: ['M-50,-8 L-72,-36', 'M50,-8 L72,-36'],
+  carry: ['M-34,-32 L-30,-66', 'M34,-32 L30,-66'],
+  push: ['M-52,14 L-70,34', 'M50,2 L86,-2'],
+  press: ['M-52,14 L-70,34', 'M50,4 L88,-2'],
+  wave: ['M-52,14 L-70,34', 'M50,-8 L74,-42'],
+  point: ['M-52,14 L-70,34', 'M52,-2 L94,-14'],
+  wide: ['M-54,0 L-92,-8', 'M54,0 L92,-8'],
+};
+/* (x,y) = where the feet touch the ground */
+function mascot(x, y, s = 1, pose = 'down', o = {}) {
+  const dx = o.look === 'l' ? -9 : o.look === 'r' ? 9 : 0, dy = o.up ? -6 : 0;
+  const fx = o.flip ? -1 : 1, [a, b] = ARMS[pose];
+  const legs = o.sit ? 'M-22,40 L-34,54 M22,40 L34,54' : 'M-20,40 L-21,60 M20,40 L21,60';
+  const limb = `fill="none" stroke="${INK}" stroke-width="9" stroke-linecap="round"`;
+  return `<g class="mascot" transform="translate(${f(x)},${f(y - 64 * s)}) scale(${fx * s},${s})">
+    <path d="${legs}" ${limb}/><path d="${a}" ${limb}/><path d="${b}" ${limb}/>
+    <path d="M-60,8 C-62,-26 -30,-46 2,-46 C38,-46 62,-28 61,4 C60,32 34,44 0,44 C-34,44 -58,34 -60,8Z" fill="url(#hS)" stroke="${INK}" stroke-width="6.5" stroke-linejoin="round"/>
+    <rect x="${-13 + dx * .6}" y="-39.5" width="26" height="9.5" rx="4.75" fill="${ACC}"/>
+    <circle cx="${-15 + dx}" cy="${-6 + dy}" r="5.6" fill="${INK}"/><circle cx="${15 + dx}" cy="${-6 + dy}" r="5.6" fill="${INK}"/>
+  </g>`;
+}
+const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" text-anchor="${o.a || 'middle'}" class="lb" style="font-size:${o.s || 32}px"${o.c ? ` fill="${o.c}"` : ''}${o.rot ? ` transform="rotate(${o.rot} ${x} ${y})"` : ''}>${t}</text>`;
+const L = (d, o = {}) => `<path d="${d}" fill="${o.fill || 'none'}" stroke="${o.c || INK}" stroke-width="${o.w || SW}" stroke-linecap="round" stroke-linejoin="round"${o.dash ? ` stroke-dasharray="${o.dash}"` : ''}/>`;
+function arrow(x1, y1, x2, y2, o = {}) {
+  const bend = o.bend ?? .18, mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+  const cx = mx - (y2 - y1) * bend, cy = my + (x2 - x1) * bend;
+  const ang = Math.atan2(y2 - cy, x2 - cx), hl = o.hl || 18, sp = .5;
+  const h1 = [x2 - hl * Math.cos(ang - sp), y2 - hl * Math.sin(ang - sp)], h2 = [x2 - hl * Math.cos(ang + sp), y2 - hl * Math.sin(ang + sp)];
+  return L(`M${f(x1)},${f(y1)} Q${f(cx)},${f(cy)} ${f(x2)},${f(y2)}`, { w: o.w || 5, c: o.c, dash: o.dash }) + L(`M${f(h1[0])},${f(h1[1])} L${f(x2)},${f(y2)} L${f(h2[0])},${f(h2[1])}`, { w: o.w || 5, c: o.c });
+}
+const ground = (y = 620, x1 = 30, x2 = 770) => L(`M${x1},${y} Q${(x1 + 400) / 2 + 40},${y - 7} 400,${y} T${x2},${y}`, { w: 5 }) +
+  [[90, 6], [180, 4], [520, 5], [640, 4], [720, 6]].map(([x, r]) => `<ellipse cx="${x}" cy="${y + 26}" rx="${r * 2}" ry="${r}" fill="${INK}" opacity=".18"/>`).join('');
+function page(x, y, w, h, o = {}) {
+  let s = `<g${o.rot ? ` transform="rotate(${o.rot} ${x + w / 2} ${y + h / 2})"` : ''}><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${o.fill || PAPER}" stroke="${INK}" stroke-width="${o.sw || 5}"/>`;
+  const top = o.title ? y + 34 : y + 22;
+  if (o.title) s += T(x + w / 2, y + 30, o.title, { s: o.ts || 26 });
+  const n = o.lines ?? 3;
+  for (let i = 0; i < n; i++) { const ly = top + 12 + i * ((h - (top - y) - 22) / Math.max(n, 1)); if (ly < y + h - 10) s += L(`M${x + 16},${f(ly)} L${f(x + w - 16 - (i % 2) * w * .22)},${f(ly)}`, { w: 3.5, c: 'rgba(27,42,107,.45)' }); }
+  return s + '</g>';
+}
+function gear(cx, cy, r, n = 9) {
+  let d = '';
+  for (let i = 0; i < n * 2; i++) {
+    const a0 = (i / (n * 2)) * Math.PI * 2, a1 = ((i + 1) / (n * 2)) * Math.PI * 2, R = i % 2 ? r : r + 13;
+    d += `${i ? 'L' : 'M'}${f(cx + R * Math.cos(a0))},${f(cy + R * Math.sin(a0))} L${f(cx + R * Math.cos(a1))},${f(cy + R * Math.sin(a1))} `;
+  }
+  return `<path d="${d}Z" fill="url(#hN)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><circle cx="${cx}" cy="${cy}" r="${r * .32}" fill="${PAPER}" stroke="${INK}" stroke-width="5"/>`;
+}
+const tick = (x, y, s = 1) => L(`M${x - 14 * s},${y} l${10 * s},${12 * s} l${22 * s},${-26 * s}`, { w: 6 });
+const motion = (x, y) => L(`M${x},${y} l14,-6 M${x + 4},${y + 14} l16,-2`, { w: 4 });
+
+const S = {
+  title() {
+    const st = stack(500, 640, [[240, 112], [196, 98], [160, 86], [128, 72], [98, 58]]);
+    return ground(640) + st.svg + stone(250, 610, 170, 70, { seed: 4 }) + mascot(250, 580, 1.3, 'carry', { look: 'r' }) +
+      stone(250, 378, 96, 54, { acc: true, seed: 9 }) + motion(316, 360) + L('M206,368 l-14,-6 M200,384 l-16,-2', { w: 4 });
+  },
+  agenda() {
+    const pts = [[120, 600], [235, 545], [345, 495], [455, 450], [560, 380], [655, 300], [735, 200]];
+    const names = ['Idea', 'Shape', 'Decide', 'Build', 'Ship', 'Case', 'Iterate'];
+    let s = L('M60,640 C230,630 210,520 370,488 S560,360 640,300 S740,200 760,150', { w: 5, dash: '4 16' });
+    pts.forEach(([x, y], i) => {
+      const n = i + 1, list = [];
+      for (let k = 0; k < Math.min(n, 5); k++) list.push([58 - k * 8, 26 - k * 2, { sw: 4, acc: i === 6 && k === Math.min(n, 5) - 1 }]);
+      s += stack(x, y, list).svg + T(x + (i % 2 ? -10 : 0), y + 44, names[i], { s: 28 });
+    });
+    return s + mascot(56, 704, .6, 'point', { look: 'r' });
+  },
+  sand() {
+    let s = L('M400,90 L400,650', { w: 3, dash: '6 14', c: 'rgba(27,42,107,.5)' });
+    s += L('M30,620 Q140,612 230,620 T390,620', { w: 5 });
+    s += `<path d="M120,620 L120,520 L250,520 L250,620 Z" fill="url(#hT)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
+    s += `<path d="M100,620 L100,470 L112,470 L112,456 L124,456 L124,470 L136,470 L136,456 L148,456 L148,620 Z" fill="url(#hT)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
+    s += `<path d="M226,620 L226,470 L238,470 L238,456 L250,456 L250,470 L262,470 L262,456 L274,456 L274,620 Z" fill="url(#hT)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
+    s += L('M168,620 L168,580 Q185,562 202,580 L202,620', { w: 5 }) + L('M250,456 L250,420 L276,430 L250,440', { w: 4 });
+    s += `<path d="M30,628 C40,540 120,520 150,575 C132,556 100,560 96,596 C120,600 160,610 200,640 L30,650Z" fill="url(#hN)" stroke="${INK}" stroke-width="5" stroke-linejoin="round" opacity=".95"/>`;
+    s += L('M40,560 q10,-14 22,-4', { w: 4 }) + T(190, 360, 'one-off', { s: 40 });
+    s += ground(620, 410, 770).replace(/<ellipse[^>]*>/g, '');
+    const st = stack(560, 620, [[160, 70], [126, 60], [96, 50]]);
+    s += st.svg + mascot(700, 620, .95, 'carry', { look: 'l', flip: false }) + stone(700, 474, 76, 42, { acc: true, seed: 3 });
+    s += arrow(668, 440, 590, st.top - 10, { bend: .3, w: 4 }) + T(590, 330, 'stone by stone', { s: 38 });
+    return s;
+  },
+  dome() {
+    let s = ground(620);
+    s += page(300, 450, 200, 150, { lines: 3, title: 'your site', ts: 28 });
+    s += `<path d="M250,620 C250,330 550,330 550,620" fill="rgba(27,42,107,.07)" stroke="${INK}" stroke-width="6"/>`;
+    s += L('M300,470 Q310,420 350,396', { w: 5, c: 'rgba(255,255,255,.95)' });
+    s += `<path d="M386,372 a14,14 0 0 1 28,0 v10 h-6 v-10 a8,8 0 0 0 -16,0 v10 h-6Z" fill="${INK}"/><rect x="378" y="380" width="44" height="34" rx="7" fill="url(#hO)" stroke="${INK}" stroke-width="4"/>`;
+    s += mascot(172, 620, 1.1, 'push', { look: 'r' }) + T(400, 300, 'their platform', { s: 34 }) + T(640, 470, 'no way in', { s: 32 });
+    return s + arrow(610, 485, 560, 520, { w: 4 });
+  },
+  stack() {
+    const st = stack(320, 650, [[310, 118, { label: 'Cloudflare', fs: 40 }], [254, 106, { label: 'GitHub', fs: 40 }], [204, 96, { label: 'framework', fs: 36 }]]);
+    let s = ground(650) + st.svg;
+    s += mascot(320, st.top + 6, 1, 'carry', { look: 'r' }) + stone(320, st.top - 128, 70, 40, { acc: true, seed: 2 });
+    const side = [[600, 600, 'the stage'], [580, 495, 'the memory'], [560, 395, 'the shape'], [560, 250, 'the builder']];
+    side.forEach(([x, y, t]) => { s += T(x + 40, y + 8, t, { s: 32 }); });
+    s += L('M480,600 L566,600', { w: 3.5, dash: '3 9' }) + L('M450,495 L550,495', { w: 3.5, dash: '3 9' }) + L('M424,395 L530,395', { w: 3.5, dash: '3 9' });
+    s += T(600, 210, 'Claude Code', { s: 40 }) + L('M400,232 L520,232', { w: 3.5, dash: '3 9' });
+    return s;
+  },
+  compound() {
+    const list = []; for (let i = 0; i < 10; i++) list.push([200 - i * 13, 54 - i * 2.2, { acc: i === 9 }]);
+    const st = stack(380, 660, list);
+    let s = ground(660) + st.svg + mascot(380, st.top + 4, .78, 'wave', { look: 'r' });
+    s += T(200, 640, 'v1', { s: 34 }) + T(220, 530, 'v10', { s: 32 }) + T(236, 400, 'v20', { s: 32 }) + T(258, st.top + 28, 'v31', { s: 34, c: ACC });
+    s += L('M226,630 L262,630', { w: 3, dash: '3 7' });
+    s += T(630, 360, 'one stone', { s: 34 }) + T(630, 396, 'a day', { s: 34 }) + arrow(600, 420, 470, 470, { w: 4, bend: -.2 });
+    return s;
+  },
+  prework() {
+    let s = ground(620);
+    const xs = [270, 400, 530, 660], names = ['Claude', 'GitHub', 'Cloudflare', 'Node'];
+    xs.forEach((x, i) => { s += stone(x, 590, 120, 64, { label: names[i], fs: i === 2 ? 25 : 30, seed: i + 5 }); s += tick(x + 4, 520); });
+    s += mascot(115, 620, 1, 'point', { look: 'r' });
+    s += T(470, 300, 'domain: optional', { s: 34 }) + stone(470, 390, 92, 44, { fill: 'url(#hP)', seed: 11, sw: 4 }) + T(470, 400, '?', { s: 36, c: ACC });
+    return s;
+  },
+  idea() {
+    let s = `<path d="M80,630 L720,630 L640,470 L170,470Z" fill="${PAPER}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
+    s += L('M230,500 L560,500', { w: 3.5, c: 'rgba(27,42,107,.4)' }) + L('M210,540 L470,540', { w: 3.5, c: 'rgba(27,42,107,.4)' });
+    s += L('M130,590 C150,570 170,600 190,582 S230,572 250,588 S286,598 292,590', { w: 5 });
+    s += `<g><rect x="330" y="568" width="230" height="36" rx="6" fill="url(#hS)" stroke="${INK}" stroke-width="5"/><path d="M330,568 L292,586 L330,604Z" fill="${PAPER}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><path d="M292,586 L306,579 L306,593Z" fill="${ACC}"/><rect x="540" y="568" width="20" height="36" fill="url(#hN)" stroke="${INK}" stroke-width="5"/></g>`;
+    s += mascot(650, 650, 1, 'push', { flip: true, look: 'l' });
+    s += T(400, 410, 'idea.md', { s: 48 }) + T(400, 446, 'rough on purpose', { s: 28 });
+    return s;
+  },
+  interview() {
+    let s = ground(620) + stone(220, 590, 170, 70, { seed: 21 }) + mascot(220, 560, 1.1, 'down', { sit: true, look: 'r', up: true });
+    s += `<rect x="500" y="420" width="220" height="140" rx="12" fill="${PAPER}" stroke="${INK}" stroke-width="5"/><path d="M480,560 L740,560 L768,592 L452,592Z" fill="url(#hN)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
+    s += L('M530,460 L680,460', { w: 3.5, c: 'rgba(27,42,107,.45)' }) + L('M530,490 L640,490', { w: 3.5, c: 'rgba(27,42,107,.45)' });
+    s += T(560, 380, '?', { s: 100 }) + T(450, 300, '?', { s: 88, c: ACC }) + T(330, 250, '?', { s: 76 });
+    s += L('M590,400 Q560,360 520,330', { w: 3.5, dash: '3 10' }) + L('M420,280 Q390,262 360,262', { w: 3.5, dash: '3 10' });
+    return s + T(560, 150, 'one batch at a time', { s: 36 });
+  },
+  research() {
+    let s = page(50, 250, 240, 300, { title: 'concept.md', ts: 30, lines: 6 });
+    s += `<circle cx="180" cy="420" r="72" fill="rgba(255,255,255,.55)" stroke="${ACC}" stroke-width="10"/><path d="M232,470 L282,522" stroke="${INK}" stroke-width="18" stroke-linecap="round"/>`;
+    s += mascot(355, 650, 1.1, 'up', { flip: true, look: 'l', up: true });
+    const ys = [95, 215, 335, 455, 575], names = ['peers', 'design', 'framework', 'hosting', 'SEO'];
+    ys.forEach((y, i) => { s += arrow(258, 400, 548, y + 30, { bend: 0, w: 4, dash: '2 10' }); s += page(560, y, 170, 66, { lines: 0 }); s += T(645, y + 52, names[i], { s: 28 }); });
+    return s;
+  },
+  three() {
+    let s = ground(650) + mascot(400, 650, 1.25, 'carry', { look: 'r' });
+    const y0 = 650 - 64 * 1.25 - 66 * 1.25;
+    const slab = (y, t, dx, acc) => `<rect x="${225 + dx}" y="${y}" width="350" height="52" rx="12" fill="${acc ? 'url(#hO)' : 'url(#hS)'}" stroke="${INK}" stroke-width="5.5"/>` + T(400 + dx, y + 37, t, { s: 31, c: acc ? PAPER : undefined });
+    s += slab(y0 - 52, 'phased-plan.md', 0, false) + slab(y0 - 106, 'technical-decisions.md', 8, false) + slab(y0 - 160, 'concept.md', -6, true);
+    s += motion(560, y0 - 90) + L('M236,' + (y0 - 84) + ' l-14,-6 M232,' + (y0 - 70) + ' l-16,-2', { w: 4 });
+    return s + T(400, 120, 'the hand-off to code', { s: 36 });
+  },
+  cuts() {
+    let s = ground(620);
+    s += `<path d="M150,480 L430,480 L410,580 L170,580Z" fill="url(#hN)" stroke="${INK}" stroke-width="5.5" stroke-linejoin="round"/><circle cx="210" cy="600" r="20" fill="${PAPER}" stroke="${INK}" stroke-width="5"/><circle cx="370" cy="600" r="20" fill="${PAPER}" stroke="${INK}" stroke-width="5"/>`;
+    [[190, 470], [245, 462], [300, 466], [355, 470], [272, 430]].forEach(([x, y], i) => { s += stone(x, y, 58, 36, { seed: 30 + i, sw: 4.5 }); });
+    s += T(290, 540, 'phase 1', { s: 36 }) + T(290, 380, '≤ 5', { s: 46, c: ACC });
+    s += mascot(520, 620, 1, 'push', { look: 'r' }) + stone(632, 590, 70, 52, { seed: 41 });
+    s += [[700, 600, 64], [745, 604, 50], [722, 568, 48]].map(([x, y, w], i) => stone(x, y, w, w * .62, { seed: 50 + i, sw: 4.5, fill: 'url(#hS2)' })).join('');
+    return s + T(720, 520, 'later.md', { s: 34 }) + motion(668, 560);
+  },
+  data() {
+    let s = ground(620);
+    const basket = (x, t) => `<path d="${`M${x - 95},500 L${x + 95},500 L${x + 75},612 L${x - 75},612Z`}" fill="url(#hT)" stroke="${INK}" stroke-width="5.5" stroke-linejoin="round"/>` +
+      L(`M${x - 88},532 L${x + 88},532`, { w: 3, c: 'rgba(27,42,107,.4)' }) + T(x, 590, t, { s: 34 });
+    s += stone(130, 492, 60, 34, { seed: 61 }) + stone(175, 488, 48, 30, { seed: 67 }) + stone(470, 490, 56, 32, { seed: 63 }) + stone(640, 490, 66, 34, { seed: 62 });
+    s += basket(150, 'text') + basket(650, 'links') + basket(430, 'images');
+    s += stone(366, 506, 64, 44, { acc: true, seed: 64, rot: 12 });
+    s += mascot(268, 620, 1, 'push', { look: 'r' });
+    s += stone(80, 650, 50, 26, { seed: 65, sw: 4 }) + stone(560, 655, 56, 28, { seed: 66, sw: 4 });
+    return s + T(400, 180, 'real content first', { s: 38 });
+  },
+  fork() {
+    let s = ground(620) + L('M470,620 L470,190', { w: 10 });
+    const board = (y, t, dir) => {
+      const x0 = dir > 0 ? 470 : 470 - 250, x1 = dir > 0 ? 470 + 250 : 470;
+      const tip = dir > 0 ? `L${x1 + 30},${y + 28} L${x1},${y + 56}` : `L${x0},${y + 56} L${x0 - 30},${y + 28}`;
+      const d = dir > 0 ? `M${x0},${y} L${x1},${y} ${tip} L${x0},${y + 56}Z` : `M${x1},${y} L${x0},${y} L${x0 - 30},${y + 28} L${x0},${y + 56} L${x1},${y + 56}Z`;
+      return `<path d="${d}" fill="${PAPER}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>` + T((x0 + x1) / 2 + dir * 8, y + 40, t, { s: 34 });
+    };
+    s += board(210, 'Astro', 1) + board(290, 'Next.js', -1) + board(370, 'SvelteKit', 1) + board(450, 'React + Vite', -1);
+    s += mascot(250, 640, 1.05, 'down', { look: 'r', up: true });
+    s += L('M290,660 Q420,650 560,676', { w: 3.5, dash: '3 11' }) + L('M270,666 Q330,690 380,712', { w: 3.5, dash: '3 11' });
+    return s;
+  },
+  balance() {
+    let s = ground(620);
+    s += `<path d="M350,620 L400,536 L450,620Z" fill="url(#hS2)" stroke="${INK}" stroke-width="5.5" stroke-linejoin="round"/>`;
+    s += `<g transform="rotate(-4 400 530)"><rect x="110" y="520" width="580" height="22" rx="8" fill="url(#hT)" stroke="${INK}" stroke-width="5"/>`;
+    s += stone(180, 494, 110, 54, { label: 'free tier', fs: 28, seed: 70 });
+    s += `<rect x="572" y="436" width="100" height="84" rx="10" fill="url(#hN)" stroke="${INK}" stroke-width="5"/>` + T(622, 488, 'limits', { s: 30 });
+    s += mascot(400, 522, 1, 'wide', { look: 'l' }) + '</g>';
+    return s + T(400, 210, 'weigh it, then pick', { s: 36 }) + L('M296,400 q-14,-10 -6,-24 M504,392 q14,-10 6,-24', { w: 4 });
+  },
+  repo() {
+    let s = ground(640);
+    s += `<path d="M150,640 C170,520 280,470 400,470 C520,470 630,520 650,640Z" fill="url(#hS2)" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`;
+    s += T(400, 590, 'git init', { s: 46 }) + L('M400,486 L400,220', { w: 9 });
+    s += `<path d="M404,226 L530,250 L404,284Z" fill="url(#hO)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>` + T(450, 264, 'main', { s: 26, c: PAPER });
+    s += mascot(492, 484, 1, 'press', { flip: true, look: 'l' });
+    return s + L('M380,300 l-12,-6 M376,316 l-14,0', { w: 4 });
+  },
+  layers() {
+    let s = ground(620);
+    s += `<path d="M370,620 L370,300 L430,300 L430,620 L430,620Z" fill="url(#hS2)" stroke="${INK}" stroke-width="5.5" stroke-linejoin="round"/>`;
+    for (let y = 330; y < 620; y += 32) s += L(`M370,${y} L430,${y}`, { w: 3, c: 'rgba(27,42,107,.45)' });
+    s += `<path d="M370,620 L370,560 Q400,520 430,560 L430,620Z" fill="${PAPER}" stroke="${INK}" stroke-width="5"/>`;
+    s += mascot(400, 300, .95, 'wide', { look: 'l' });
+    s += page(80, 470, 130, 150, { rot: -8, lines: 4 }) + page(170, 490, 130, 130, { rot: 6, lines: 3 }) + page(110, 400, 120, 90, { rot: -2, lines: 2 });
+    s += gear(560, 540, 56, 10) + gear(670, 470, 40, 8) + gear(680, 585, 30, 7);
+    s += arrow(250, 600, 560, 600, { bend: 0, w: 5, c: ACC });
+    s += T(170, 360, 'content/', { s: 38 }) + T(620, 380, 'src/', { s: 38 }) + T(400, 680, 'one door: lib/content', { s: 32 });
+    return s;
+  },
+  memo() {
+    let s = ground(620) + L('M470,620 L470,540', { w: 10 });
+    s += `<rect x="330" y="370" width="270" height="180" rx="10" fill="${PAPER}" stroke="${INK}" stroke-width="5.5" transform="rotate(2 465 460)"/>`;
+    s += T(470, 418, 'CLAUDE.md', { s: 40 });
+    [450, 478, 506, 530].forEach((y, i) => { s += L(`M356,${y} L${560 - i * 28},${y + 2}`, { w: 3.5, c: 'rgba(27,42,107,.45)' }); });
+    s += `<circle cx="470" cy="382" r="11" fill="${ACC}" stroke="${INK}" stroke-width="3.5"/>`;
+    s += mascot(232, 620, 1.3, 'press', { look: 'r' });
+    return s + T(470, 250, 'read every session', { s: 36 });
+  },
+  loop() {
+    const cx = 400, cy = 360, R = 240, n = 5, names = ['fresh session', 'plan', 'build', 'verify', 'commit'];
+    let s = '';
+    for (let i = 0; i < n; i++) {
+      const a0 = -Math.PI / 2 + i * 2 * Math.PI / n + .3, a1 = -Math.PI / 2 + (i + 1) * 2 * Math.PI / n - .3;
+      s += arrow(cx + R * Math.cos(a0), cy + R * Math.sin(a0), cx + R * Math.cos(a1), cy + R * Math.sin(a1), { bend: -.16, w: 5 });
+    }
+    for (let i = 0; i < n; i++) {
+      const a = -Math.PI / 2 + i * 2 * Math.PI / n, x = cx + R * Math.cos(a), y = cy + R * Math.sin(a);
+      s += stone(x, y, 80, 48, { acc: i === 0, seed: 80 + i });
+      const ly = y + (y < cy - 100 ? -42 : 62);
+      s += T(x, ly, names[i], { s: 30 });
+    }
+    s += stone(400, 432, 140, 56, { seed: 90 }) + mascot(400, 412, 1, 'up', { look: 'r' }) + T(400, 500, 'one phase', { s: 34 });
+    return s;
+  },
+  hatch() {
+    let s = ground(620);
+    s += `<rect x="440" y="230" width="300" height="390" rx="18" fill="url(#hN)" stroke="${INK}" stroke-width="6"/>`;
+    s += T(590, 300, 'Claude Code', { s: 40 }) + `<circle cx="540" cy="390" r="12" fill="${PAPER}" stroke="${INK}" stroke-width="4"/><circle cx="640" cy="390" r="12" fill="${PAPER}" stroke="${INK}" stroke-width="4"/>`;
+    s += `<rect x="432" y="500" width="22" height="84" rx="6" fill="${INK}"/>`;
+    s += `<rect x="350" y="520" width="110" height="52" rx="8" fill="url(#hO)" stroke="${INK}" stroke-width="5" transform="rotate(-3 405 546)"/>` + T(400, 556, 'phase 1', { s: 28, c: PAPER });
+    s += mascot(250, 620, 1.2, 'push', { look: 'r' });
+    s += [[46, 'phase 2'], [46, 'phase 3']].map(([x, t], i) => `<rect x="${x - 10}" y="${610 - 44 * i - 36}" width="94" height="40" rx="7" fill="${PAPER}" stroke="${INK}" stroke-width="4.5" transform="rotate(${i ? 5 : -4} ${x + 37} ${590})"/>` + T(x + 37, 600 - 44 * i, t, { s: 22 })).join('');
+    return s + T(84, 480, 'waiting', { s: 28 });
+  },
+  level() {
+    const st = stack(320, 640, [[230, 100], [186, 88], [150, 78], [116, 64]]);
+    let s = ground(640) + st.svg;
+    s += `<rect x="452" y="330" width="34" height="290" rx="8" fill="url(#hT)" stroke="${INK}" stroke-width="5"/><rect x="458" y="450" width="22" height="52" rx="10" fill="${PAPER}" stroke="${INK}" stroke-width="3.5"/><circle cx="469" cy="476" r="7" fill="${ACC}"/>`;
+    s += mascot(586, 640, 1.15, 'press', { flip: true, look: 'l' });
+    return s + T(400, 180, 'build · run · look', { s: 40 }) + T(640, 360, 'straight?', { s: 30 }) + arrow(620, 370, 500, 420, { w: 4 });
+  },
+  gauges() {
+    let s = ground(640);
+    const dial = (x, y, r, t, ang, lab = 0) => {
+      const a = ang * Math.PI / 180, nx = x + r * .8 * Math.cos(a), ny = y - r * .8 * Math.sin(a);
+      return `<circle cx="${x}" cy="${y}" r="${r}" fill="${PAPER}" stroke="${INK}" stroke-width="6"/>` +
+        [150, 115, 90, 65, 30].map(d => { const q = d * Math.PI / 180; return L(`M${f(x + r * .78 * Math.cos(q))},${f(y - r * .78 * Math.sin(q))} L${f(x + r * .92 * Math.cos(q))},${f(y - r * .92 * Math.sin(q))}`, { w: 4 }); }).join('') +
+        L(`M${x},${y} L${f(nx)},${f(ny)}`, { w: 7 }) + `<circle cx="${x}" cy="${y}" r="9" fill="${INK}"/>` + T(x, y - r - 18 + lab, t, { s: 34 });
+    };
+    s += L('M160,330 L160,640 M640,330 L640,640 M410,500 L410,640', { w: 7 });
+    s += dial(160, 250, 76, 'SEO', 40) + dial(640, 250, 76, 'a11y', 50);
+    s += `<circle cx="410" cy="420" r="92" fill="${PAPER}" stroke="${ACC}" stroke-width="7"/>`;
+    s += dial(410, 420, 92, 'perf', 200).replace(`stroke="${INK}" stroke-width="6"`, `stroke="${ACC}" stroke-width="7"`);
+    s += mascot(268, 640, 1.3, 'up', { look: 'r', up: true });
+    return s;
+  },
+  ramp() {
+    let s = ground(620);
+    s += `<path d="M60,620 L560,380 L560,620Z" fill="url(#hT)" stroke="${INK}" stroke-width="5.5" stroke-linejoin="round"/>`;
+    s += `<rect x="560" y="250" width="200" height="370" rx="14" fill="url(#hN)" stroke="${INK}" stroke-width="6"/><circle cx="660" cy="430" r="64" fill="${PAPER}" stroke="${INK}" stroke-width="6"/>`;
+    for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; s += L(`M660,430 L${f(660 + 44 * Math.cos(a))},${f(430 + 44 * Math.sin(a))}`, { w: 4 }); }
+    s += T(660, 310, 'GitHub', { s: 40 });
+    s += mascot(300, 505, 1, 'press', { look: 'r' }) + stone(420, 425, 72, 52, { acc: true, seed: 101, rot: -10 });
+    return s + T(260, 610, 'git push', { s: 36, rot: -25.6 }) + motion(470, 392);
+  },
+  deploy() {
+    let s = ground(620);
+    s += `<rect x="50" y="470" width="150" height="130" rx="14" fill="url(#hN)" stroke="${INK}" stroke-width="5.5"/>` + T(125, 545, 'GitHub', { s: 32 });
+    s += `<circle cx="590" cy="330" r="150" fill="url(#hP)" stroke="${INK}" stroke-width="6"/>`;
+    s += L('M440,330 L740,330 M590,180 L590,480', { w: 4 }) + `<ellipse cx="590" cy="330" rx="66" ry="150" fill="none" stroke="${INK}" stroke-width="4"/>` + L('M462,250 Q590,280 718,250 M462,410 Q590,380 718,410', { w: 4 });
+    s += arrow(140, 460, 470, 250, { bend: -.3, w: 5, dash: '2 12' }) + T(250, 300, 'every push', { s: 34 });
+    s += `<rect x="390" y="560" width="72" height="60" rx="8" fill="url(#hS2)" stroke="${INK}" stroke-width="5"/><ellipse cx="426" cy="556" rx="38" ry="14" fill="url(#hO)" stroke="${INK}" stroke-width="5"/>`;
+    s += mascot(316, 620, 1, 'press', { look: 'r' });
+    return s + T(590, 540, 'live', { s: 38 }) + L('M560,520 l-10,-8 M622,520 l10,-8', { w: 4 });
+  },
+  domain() {
+    const st = stack(330, 620, [[220, 90], [170, 76]]);
+    let s = ground(620) + st.svg + L(`M330,${st.top + 6} L330,420`, { w: 9 });
+    s += `<rect x="170" y="352" width="330" height="68" rx="10" fill="${PAPER}" stroke="${INK}" stroke-width="6" transform="rotate(-2 335 386)"/>` + T(335, 398, 'yourname.com', { s: 42 });
+    s += `<path d="M184,368 a8,8 0 0 1 16,0 v5 h-4 v-5 a4,4 0 0 0 -8,0 v5 h-4Z" fill="${INK}"/><rect x="180" y="372" width="24" height="18" rx="4" fill="${ACC}"/>`;
+    s += stone(590, 590, 170, 70, { seed: 111 }) + mascot(590, 560, 1.4, 'up', { flip: true, look: 'l', up: true });
+    return s + T(600, 200, 'nameservers → Cloudflare', { s: 30 }) + T(600, 236, 'DNS + SSL done for you', { s: 30 });
+  },
+  big() {
+    const list = []; for (let i = 0; i < 12; i++) list.push([300 - i * 19, 58 - i * 1.8, { acc: i === 11, label: i === 0 ? 'v1' : i === 11 ? 'v31' : '', fs: i === 11 ? 22 : 30 }]);
+    const st = stack(470, 670, list);
+    return ground(670) + st.svg + mascot(150, 670, .85, 'down', { look: 'r', up: true }) + T(160, 520, 'still', { s: 34 }) + T(160, 556, 'growing', { s: 34 });
+  },
+  daily() {
+    let s = ground(640);
+    const st = stack(220, 640, [[190, 84], [150, 70], [118, 60]]);
+    s += st.svg + mascot(350, 640, 1, 'carry', { flip: true, look: 'l' }) + stone(350, 498, 78, 42, { acc: true, seed: 121 }) + arrow(310, 470, 240, st.top - 8, { w: 4, bend: .3 });
+    s += `<rect x="450" y="190" width="300" height="250" rx="14" fill="${PAPER}" stroke="${INK}" stroke-width="5.5"/>` + L('M450,230 L750,230', { w: 4 });
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 7; c++) {
+      const x = 470 + c * 40, y = 248 + r * 46, k = r * 7 + c;
+      if (k > 25) continue;
+      s += `<rect x="${x}" y="${y}" width="32" height="36" rx="5" fill="${k === 25 ? ACC : 'none'}" stroke="${INK}" stroke-width="3"/>`;
+      if (k < 25) s += `<ellipse cx="${x + 16}" cy="${y + 20}" rx="9" ry="6" fill="${INK}" opacity=".75"/>`;
+    }
+    return s + T(600, 480, 'today', { s: 34 }) + arrow(640, 468, 728, 410, { w: 4 });
+  },
+  cracked() {
+    const st = stack(260, 640, [[220, 92], [180, 80, { crack: true }], [144, 70], [110, 58]]);
+    let s = ground(640) + st.svg;
+    s += mascot(450, 640, 1, 'carry', { flip: true, look: 'l' }) + stone(450, 500, 82, 46, { acc: true, seed: 131 }) + arrow(400, 520, 340, 540, { w: 4, bend: .3 });
+    s += stone(650, 610, 170, 50, { label: 'blank to bots', fs: 26, seed: 132 }) + stone(650, 560, 150, 48, { label: '10 ms CPU', fs: 26, seed: 133 }) + stone(650, 512, 112, 44, { label: 'WebP', fs: 26, seed: 134 });
+    return s + T(650, 440, 'lessons', { s: 34 }) + T(650, 470, '→ CLAUDE.md', { s: 28 });
+  },
+  anywhere() {
+    let s = ground(650);
+    s += `<rect x="96" y="120" width="92" height="160" rx="16" fill="${PAPER}" stroke="${INK}" stroke-width="5.5"/>` + L('M128,262 L156,262', { w: 4 });
+    s += `<rect x="300" y="140" width="200" height="120" rx="10" fill="${PAPER}" stroke="${INK}" stroke-width="5.5"/><path d="M280,260 L520,260 L540,286 L260,286Z" fill="url(#hN)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
+    s += `<path d="M600,250 C560,250 560,196 604,198 C608,156 676,150 690,190 C730,184 744,250 700,250Z" fill="url(#hN)" stroke="${INK}" stroke-width="5.5" stroke-linejoin="round"/>`;
+    s += T(142, 320, 'phone', { s: 30 }) + T(400, 326, 'laptop', { s: 30 }) + T(660, 296, 'cloud', { s: 30 });
+    s += arrow(142, 340, 360, 470, { w: 4, dash: '2 11', bend: -.15 }) + arrow(400, 340, 400, 460, { w: 4, dash: '2 11', bend: 0 }) + arrow(660, 316, 440, 470, { w: 4, dash: '2 11', bend: .15 });
+    const st = stack(400, 650, [[200, 76], [160, 64]]);
+    return s + st.svg + mascot(400, st.top + 4, .85, 'carry', { look: 'r' }) + stone(400, st.top - 112, 60, 34, { acc: true, seed: 141 });
+  },
+  week() {
+    let s = L('M90,690 C260,640 300,520 430,470 S620,330 720,170', { w: 4, dash: '3 14' });
+    const pts = [[180, 640, 1], [330, 545, .82], [450, 470, .68], [550, 390, .56], [625, 315, .46], [680, 245, .38], [722, 182, .3]];
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    pts.forEach(([x, y, k], i) => {
+      const st = stack(x, y, [[120 * k, 50 * k, { sw: Math.max(3, 5 * k) }], [92 * k, 40 * k, { sw: Math.max(3, 5 * k) }], [66 * k, 32 * k, { sw: Math.max(3, 5 * k), acc: i === 0 }]]);
+      s += st.svg + T(x + 70 * k + 18, y - 10, days[i], { s: Math.max(20, 32 * k), a: 'start' });
+    });
+    return s + mascot(62, 706, .7, 'wave', { look: 'r' });
+  },
+};
+
+document.querySelectorAll('figure.illo[data-scene]').forEach(fig => {
+  const fn = S[fig.dataset.scene]; if (!fn) return;
+  fig.innerHTML = `<svg viewBox="0 0 800 720" role="img" aria-label="${fig.dataset.alt || ''}"><g filter="url(#mis)">${fn()}</g></svg>`;
+});
+})();
+
+/* ── deck controller ── */
+(() => {
+  const params = new URLSearchParams(location.search);
+  const slides = [...document.querySelectorAll('.slide')], N = slides.length;
+  const stage = document.getElementById('stage'), trail = document.getElementById('trail');
+  const count = document.getElementById('count'), notes = document.getElementById('notes'), live = document.getElementById('live');
+  let i = 0, started = null;
+  slides.forEach((s, j) => { const e = document.createElement('i'); if (j && s.dataset.part !== slides[j - 1].dataset.part) e.className = 'sec'; trail.appendChild(e); });
+  const dots = [...trail.children];
+  const mmss = ms => { const m = Math.floor(ms / 60000); return Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0'); };
+  function renderNotes() {
+    const a = slides[i].querySelector('aside.notes');
+    const el = started ? mmss(Date.now() - started) : '0:00';
+    notes.innerHTML = `<div class="nh"><span>Slide ${i + 1} / ${N}</span><span>Planned ${slides[i].dataset.time}</span><span>Elapsed ${el}</span><span>~${a?.dataset.min || '?'} min on this slide</span><span>N hides · ← → move</span></div><p>${a ? a.innerHTML : ''}</p>`;
+  }
+  function go(k, fromHash) {
+    i = Math.max(0, Math.min(N - 1, k));
+    if (i > 0 && !started) started = Date.now();
+    slides.forEach((s, j) => { s.classList.toggle('is-active', j === i); s.setAttribute('aria-hidden', j === i ? 'false' : 'true'); });
+    dots.forEach((d, j) => { d.classList.toggle('on', j < i); d.classList.toggle('here', j === i); });
+    count.textContent = `${String(i + 1).padStart(2, '0')} / ${N} · ${slides[i].dataset.time}`;
+    live.textContent = `Slide ${i + 1} of ${N}`;
+    renderNotes();
+    if (!fromHash) history.replaceState(null, '', location.search + '#' + (i + 1));
+  }
+  setInterval(() => { if (document.body.classList.contains('show-notes')) renderNotes(); }, 15000);
+  const fit = () => { if (document.body.classList.contains('print')) return; const sc = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = `translate(-50%,-50%) scale(${sc})`; };
+  addEventListener('resize', fit);
+  const toggleNotes = () => { document.body.classList.toggle('show-notes'); renderNotes(); };
+  document.getElementById('prev').onclick = () => go(i - 1);
+  document.getElementById('next').onclick = () => go(i + 1);
+  document.getElementById('nbtn').onclick = toggleNotes;
+  document.getElementById('full').onclick = () => { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); };
+  addEventListener('keydown', e => {
+    if (e.target.closest('input,textarea') || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key) && !e.target.closest('button')) { e.preventDefault(); go(i + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(i - 1); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(N - 1);
+    else if (e.key === 'f' || e.key === 'F') document.getElementById('full').click();
+    else if (e.key === 'n' || e.key === 'N') toggleNotes();
+  });
+  let tx = null;
+  addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  addEventListener('touchend', e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1)); tx = null; });
+  addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+  document.querySelectorAll('.prompt button').forEach(b => b.addEventListener('click', async e => {
+    e.stopPropagation();
+    const text = b.closest('.prompt').querySelector('pre').innerText;
+    try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; b.classList.add('ok'); } catch { b.textContent = 'Select it'; }
+    setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('ok'); }, 1600);
+  }));
+  if (params.has('print')) {
+    document.body.classList.add('print');
+    slides.forEach(s => s.classList.add('is-active'));
+  } else {
+    const n = parseInt(location.hash.slice(1), 10);
+    go(n ? n - 1 : 0, true);
+    fit();
+    if (params.has('notes')) toggleNotes();
+  }
+  addEventListener('beforeprint', () => slides.forEach(s => s.classList.add('is-active')));
+  addEventListener('afterprint', () => { if (!params.has('print')) go(i, true); });
+})();
+</script>
+<script src="../assets/chrome/chrome.js" defer data-stop="build"></script>
+</body>
+</html>

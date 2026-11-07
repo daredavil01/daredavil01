@@ -78,6 +78,16 @@ presentations/
   assets/out-loud/                Screenshots (webp) used by that deck, plus the
                                    film in both shapes, its posters, captions and
                                    storyboard frames
+  stone-by-stone.html             Stone by Stone: the 30-slide illustrated
+                                   workshop deck (3-hour build-along) on building
+                                   a personal site you keep improving — idea,
+                                   Claude interview, deep research, three docs,
+                                   one Claude Code session per phase, GitHub,
+                                   Cloudflare, DNS; sankettambare.in as the case
+                                   study (Cairn the pebble, inline SVG); N for
+                                   speaker notes, ?print for PDF
+  assets/stone-by-stone/          prompt-pack.html (every prompt + templates,
+                                   printable) and templates/*.md
   digital-hub.html                The Digital Hub: the 30-slide illustrated tour
                                    of sankettambare.in — map, journey, passport,
                                    architecture, Ask the Archive (fixed 1920×1080
