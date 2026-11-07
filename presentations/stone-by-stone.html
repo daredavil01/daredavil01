@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>(function(){var t=null;try{t=localStorage.getItem('portfolio-theme')}catch(e){}if(/[?&]print\b/.test(location.search))t='light';if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)})();</script>
 <title>Portfolio in a Day</title>
-<meta name="description" content="Portfolio in a Day — and better every day after: a 3-hour build-along workshop in 41 animated slides, from a one-page idea to your own domain with Claude, Claude Code, GitHub, a web framework and Cloudflare.">
+<meta name="description" content="Portfolio in a Day — and better every day after: a 3-hour build-along workshop in 42 animated slides, with a 90-second whiteboard film,, from a one-page idea to your own domain with Claude, Claude Code, GitHub, a web framework and Cloudflare.">
 <meta property="og:title" content="Portfolio in a Day — and better every day after">
 <meta property="og:description" content="A 3-hour build-along workshop: idea → research → three docs → phased build with Claude Code → GitHub → Cloudflare → your domain.">
 <meta property="og:image" content="../assets/island/renders/og.jpg">
@@ -20,6 +20,26 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#0f2a47; --paper2:#13365b; --ink:#e3ebf5; --ink2:#a9bcd3; --acc:#ff8a45; --acc-soft:rgba(255,138,69,.16); --stone:#2a4a6e; --tint:#1d4068; --out:#091b31; --card:#13365b; --white:#163d66; --line:rgba(227,235,245,.16); --shadow:rgba(0,0,0,.35); --term:#071629; color-scheme:dark;}}
 :root[data-theme="dark"]{--paper:#0f2a47; --paper2:#13365b; --ink:#e3ebf5; --ink2:#a9bcd3; --acc:#ff8a45; --acc-soft:rgba(255,138,69,.16); --stone:#2a4a6e; --tint:#1d4068; --out:#091b31; --card:#13365b; --white:#163d66; --line:rgba(227,235,245,.16); --shadow:rgba(0,0,0,.35); --term:#071629; color-scheme:dark;}
+/* slide 03: the film */
+.film-slide .grid{grid-template-columns:360px 1fr;gap:60px}
+.film-lead{font:600 34px/1.3 var(--body);color:var(--ink2);margin:22px 0 26px}
+.film-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.film-list li{font:700 32px/1.2 var(--body);padding-left:34px;position:relative}
+.film-list li::before{content:"";position:absolute;left:0;top:.42em;width:16px;height:16px;border-radius:50%;background:var(--acc)}
+.film-hint{font:600 18px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin-top:34px}
+.film{margin:0;position:relative}
+.film-video{display:block;width:100%;aspect-ratio:16/9;border-radius:22px;background:#fbfaf6;box-shadow:0 18px 50px var(--shadow);border:3px solid var(--ink)}
+.film-poster{display:none;width:100%;border-radius:22px;border:3px solid var(--ink)}
+.film figcaption{margin-top:14px;text-align:right;font:600 20px var(--mono)}
+.film figcaption a{color:var(--acc)}
+body.print .film-video{display:none}
+body.print .film-poster{display:block}
+body.print .film-hint{display:none}
+body.print .film figcaption{display:none}
+body.reflow .film-slide .grid{gap:16px}
+body.reflow .film-video{aspect-ratio:9/16;max-height:82svh;width:auto;max-width:100%;margin:0 auto;border-radius:16px}
+body.reflow .film-hint,body.reflow .film-list{display:none}
+body.reflow .film figcaption{display:none}
 /* the illustrations stay riso prints on paper in either theme */
 figure.illo{--paper:#fbf7ee;--ink:#1b2a6b;--ink2:#4a5583;--acc:#ff6a1a;color:#1b2a6b}
 *{box-sizing:border-box}
@@ -451,7 +471,37 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="2">Thirty seconds on who I am, then why I'm the one teaching this: I'm not a web designer. Everything you'll see today was built in evenings and weekends, with Claude Code doing most of the typing. That's the point — the method matters more than the background. Background if asked: computer science at Rajarambapu Institute of Technology; technology policy at the Takshashila Institution; NAST fellow working on AI governance.</aside>
 </section>
 
-<section class="slide grain" data-part="0" data-time="0:03" data-n="03">
+<section class="slide grain film-slide" data-part="0" data-time="0:02" data-n="03">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>00 · Welcome</b><span class="t">0:02</span></p>
+      <h2>Before we <em>begin</em></h2>
+      <p class="film-lead">The next three hours, in ninety seconds.</p>
+      <ul class="film-list">
+        <li>What we'll build</li>
+        <li>The five steps</li>
+        <li>What to bring</li>
+        <li>What you take home</li>
+      </ul>
+      <p class="film-hint">Click the film to play · K plays or pauses</p>
+    </div>
+    <figure class="film">
+      <video class="film-video" controls preload="none" playsinline
+        poster="assets/stone-by-stone/film/before-we-begin.webp"
+        data-h="assets/stone-by-stone/film/before-we-begin.mp4" data-hp="assets/stone-by-stone/film/before-we-begin.webp"
+        data-v="assets/stone-by-stone/film/before-we-begin-vertical.mp4" data-vp="assets/stone-by-stone/film/before-we-begin-vertical.webp"
+        src="assets/stone-by-stone/film/before-we-begin.mp4"
+        aria-label="Before we begin: a 98-second narrated whiteboard film of the workshop">
+        <track kind="captions" srclang="en" label="English" src="assets/stone-by-stone/film/before-we-begin.vtt">
+      </video>
+      <img class="film-poster" src="assets/stone-by-stone/film/before-we-begin.webp" alt="The opening of the film: 3 hours from now, a browser at yourname.in that says Hi, I'm You.">
+      <figcaption><a href="assets/stone-by-stone/film/before-we-begin-vertical.mp4">Vertical cut for phones ↗</a></figcaption>
+    </figure>
+  </div>
+  <aside class="notes" data-min="2">Play the film before anything else — it is 98 seconds, narrated, and it answers the three questions everyone walks in with: what will we do, what do I need, what do I leave with. Lights down if you can. When it ends, ask: “Who has a folder of their stuff ready?” Hands up tells you who needs the first ten minutes of Gather. A vertical cut sits beside it for sharing on WhatsApp or Instagram before the session.</aside>
+</section>
+
+<section class="slide grain" data-part="0" data-time="0:03" data-n="04">
   <div class="grid">
     <div>
       <p class="kick"><b>00 · Welcome</b><span class="t">0:03</span></p>
@@ -468,7 +518,7 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="2">Name the room's real worry: "I'm not technical." The workshop is designed for that. The engineering decisions are made once, in documents, with research behind them — the same way you'd run any project. Say: when I showed you my site, the response every time was “I want one of these”. Today isn't about a website — it's a way of building you can repeat.</aside>
 </section>
 
-<section class="slide grain" data-part="0" data-time="0:05" data-n="04">
+<section class="slide grain" data-part="0" data-time="0:05" data-n="05">
   <div class="grid">
     <div>
       <p class="kick"><b>00 · Welcome</b><span class="t">0:05</span></p>
@@ -488,7 +538,7 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="2">Read the six out loud; they're also the six parts of the agenda. The checkpoint line is the promise — come back to it at the end and ask who has all four. Detail: shaping means an interview, deep research and three short documents; building means one Claude Code session per phase, checked before it counts; shipping means GitHub, Cloudflare and your domain.</aside>
 </section>
 
-<section class="slide grain" data-part="1" data-time="0:07" data-n="05">
+<section class="slide grain" data-part="1" data-time="0:07" data-n="06">
   <div class="grid">
     <div>
       <p class="kick"><b>01 · The idea</b><span class="t">0:07</span></p>
@@ -510,7 +560,7 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="2">This is build-along: laptops open, you type the prompts. Each part ends with a checkpoint — "you should now have…". If you fall behind, the prompt pack has every prompt, so you can catch up during the break. We spend most time on Shape and Build: a good plan is what makes the build fast.</aside>
 </section>
 
-<section class="slide grain" data-part="1" data-time="0:08" data-n="06">
+<section class="slide grain" data-part="1" data-time="0:08" data-n="07">
   <div class="grid">
     <div>
       <p class="kick"><b>01 · The idea</b><span class="t">0:08</span></p>
@@ -526,7 +576,7 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="3">Lovable, Bolt and v0 build a beautiful sandcastle in an afternoon. Then the tide comes: the idea changes, credits run out, the code lives in someone else's editor, and nobody adds a second wing. A house is built a room at a time, and every room stands on what is already there. Be fair to the app builders: excellent for a prototype or a one-week event page. Ask the room: who has built something on one of those tools — and who changed it a month later?</aside>
 </section>
 
-<section class="slide grain wide" data-part="1" data-time="0:10" data-n="07">
+<section class="slide grain wide" data-part="1" data-time="0:10" data-n="08">
   <div class="grid">
     <div>
       <p class="kick"><b>01 · The idea</b><span class="t">0:10</span></p>
@@ -546,7 +596,7 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="3">This is the test to run on any tool, including the one we use today. The right-hand column is what makes iteration cheap. Notice nothing in it is about AI — it's ownership, plain files and history. The AI part is what makes that ownership affordable for someone who isn't a developer. <b>Plain words:</b> Renting a furnished flat versus owning the house: the flat is quicker to move into, but you can't knock down a wall. Also: who can work on it? On an app builder, only that platform's agent; on your own stack, any agent, any developer, you.</aside>
 </section>
 
-<section class="slide grain" data-part="1" data-time="0:12" data-n="08">
+<section class="slide grain" data-part="1" data-time="0:12" data-n="09">
   <div class="grid">
     <div>
       <p class="kick"><b>01 · The idea</b><span class="t">0:12</span></p>
@@ -564,7 +614,7 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="3">Each stone does one job and can be swapped without touching the others — that's the scalable part. Framework is the only one we'll debate; the other three are the spine. Claude chat (with Research) shapes the plan; Claude Code builds it. <b>Plain words:</b> Building a house: Claude Code is the builder, GitHub the site diary and archive of blueprints, the framework the prefab kit, Cloudflare the plot on a busy street.</aside>
 </section>
 
-<section class="slide grain" data-part="1" data-time="0:14" data-n="09">
+<section class="slide grain" data-part="1" data-time="0:14" data-n="10">
   <div class="grid">
     <div>
       <p class="kick"><b>01 · The idea</b><span class="t">0:14</span></p>
@@ -582,7 +632,7 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="2">Thirty-one major versions: every one was a new page or a full redesign, and none started from scratch. That's what we want you to have: a site where adding is normal. The case study at the end shows the habits that made that possible. <b>Plain words:</b> Like a book's editions: each is the same book, a bit better, and nobody rewrites it from page one. Not traffic: scalable here means each change is small, reviewed, reversible and live in a minute. The numbers come from the case-study repo's route manifest and changelog.</aside>
 </section>
 
-<section class="slide grain" data-part="1" data-time="0:16" data-n="10">
+<section class="slide grain" data-part="1" data-time="0:16" data-n="11">
   <div class="grid">
     <div>
       <p class="kick"><b>01 · The idea</b><span class="t">0:16</span></p>
@@ -614,7 +664,7 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="5">This was the pre-work email; use these five minutes to fix anyone who's stuck. The usual blocker is the Node install on a locked-down work laptop — send those people to Claude Code on the web, which needs only a browser and a GitHub connection. <b>Plain words:</b> The terminal is texting your computer instead of tapping icons. You'll mostly paste what Claude suggests. Everything else can be set up by Claude Code through the terminal — the folder of your own material is the one thing nobody else can make. No laptop setup at all? Use Claude Code on the web at claude.ai/code.</aside>
 </section>
 
-<section class="slide grain wide gl" data-part="1" data-time="0:18" data-n="11">
+<section class="slide grain wide gl" data-part="1" data-time="0:18" data-n="12">
   <div class="grid">
     <div>
       <p class="kick"><b>01 · The idea</b><span class="t">0:18 · plain words</span></p>
@@ -627,7 +677,7 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
   <aside class="notes" data-min="2">Don't read the grid aloud. Point at three words people will hear most today — repo, deploy, domain — and tell them every dotted word on later slides can be tapped. For the developers in the room: this slide is for your neighbour; be the person who explains it. The full list of about fifty words is in the prompt pack, under “Words in plain English”.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:20" data-n="12">
+<section class="slide grain" data-part="2" data-time="0:20" data-n="13">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:20 · exercise, 10 min</span></p>
@@ -647,7 +697,7 @@ Time I'll give it</pre>
   <aside class="notes" data-min="10">Ten minutes, timer on screen. Walk the room. The two lines people skip are "what it must never be" and "time I'll give it" — those two decide most of the design. Someone who gives it 20 minutes a week needs a site that's easy to add to, not a showpiece. Prompts for each line: who is it for (one sentence); what should they do (hire, read, contact); what I already have (posts, photos, CV, projects); must never be (corporate? cluttered? slow?); time per week, honestly. A Google Doc or a text file is fine.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:30" data-n="13">
+<section class="slide grain" data-part="2" data-time="0:30" data-n="14">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:30 · Claude chat</span></p>
@@ -663,7 +713,7 @@ Keep asking until you could write the concept without guessing. Then rewrite it 
   <aside class="notes" data-min="10">The trick is "before you write anything". Without it Claude produces a polished concept full of guesses. Answer by voice if typing is slow. Two or three rounds is typical. If it asks nothing, tell it to ask — weak questions mean your idea.md is already clear, which is fine too. <b>Plain words:</b> This is a discovery call: Claude is the consultant who asks questions before writing the proposal.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:40" data-n="14">
+<section class="slide grain" data-part="2" data-time="0:40" data-n="15">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:40 · Research on</span></p>
@@ -683,7 +733,7 @@ Cite every claim with a link. Flag what you could not verify.">Using concept.md,
   <aside class="notes" data-min="10">Research runs for several minutes — start it, then use the wait to collect content (slide 13). Ask people to open two or three of the cited links: reading the sources is the point. Item 2 is where the good design ideas come from; push people to name the sites they admire. <b>Plain words:</b> Like asking an analyst for a briefing pack with footnotes — you still read the footnotes.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:50" data-n="15">
+<section class="slide grain" data-part="2" data-time="0:50" data-n="16">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:50</span></p>
@@ -704,7 +754,7 @@ Cite every claim with a link. Flag what you could not verify.">Using concept.md,
   <aside class="notes" data-min="7">These three files are the hand-off from chat to code. Claude Code will read them in every session, so they have to be short enough to read and precise enough to act on. The decisions doc uses a lightweight ADR shape — "what would make us revisit it" is the line that saves you later. <b>Plain words:</b> PRD, design doc and release plan. You've written all three before, just longer. What each holds: concept — audience, goals, non-goals, pages, success. Decisions — each choice with options, pros and cons, and when to revisit. Plan — Phase 0 setup, Phase 1 live, then at most five features a phase.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:57" data-n="16">
+<section class="slide grain" data-part="2" data-time="0:57" data-n="17">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:57</span></p>
@@ -723,7 +773,7 @@ Cite every claim with a link. Flag what you could not verify.">Using concept.md,
   <aside class="notes" data-min="3">This is the PM superpower in the room — you already know scope control. Apply it to yourself. Ask Claude: "cut this plan by half and tell me what we lose". Brief plans also keep Claude Code's context small, which keeps its work accurate. <b>Plain words:</b> Backlog grooming: this sprint versus the icebox.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="1:00" data-n="17">
+<section class="slide grain" data-part="2" data-time="1:00" data-n="18">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">1:00</span></p>
@@ -743,7 +793,7 @@ Cite every claim with a link. Flag what you could not verify.">Using concept.md,
   <aside class="notes" data-min="5">The most common reason a first version looks wrong is missing content. Prompt: "List every piece of content the site in concept.md needs, grouped by page, with the format and fields for each. Write it as INVENTORY.md." Then fill the gaps. You can keep collecting while we pick the stack. <b>Plain words:</b> Gather the ingredients before you cook. Lorem ipsum is cooking with plastic food. Formats: prose → Markdown, lists → JSON or YAML, images → content/images/. Prompt 05 in the pack asks Claude to write INVENTORY.md from concept.md. Lorem ipsum makes a layout that breaks the day you fill it.</aside>
 </section>
 
-<section class="slide grain" data-part="3" data-time="1:05" data-n="18">
+<section class="slide grain" data-part="3" data-time="1:05" data-n="19">
   <div class="grid">
     <div>
       <p class="kick"><b>03 · Decide</b><span class="t">1:05</span></p>
@@ -762,7 +812,7 @@ Cite every claim with a link. Flag what you could not verify.">Using concept.md,
   <aside class="notes" data-min="7">Rule of thumb: content first, choose Astro; app first, Next.js or SvelteKit; already fluent in React and need heavy interactivity, React + Vite — but plan for SEO on day one. The case study is React + Vite and paid for it in SEO work (slide 28). Let people choose; the rest of the workshop is the same either way. <b>Plain words:</b> Choosing a framework is like Word vs Google Docs vs Notion: all make documents, each is better at something. Detail: Astro ships no JavaScript unless a part needs it, validates content with content collections, and Cloudflare bought the Astro team in January 2026. Next.js is smoothest on Vercel. React + Vite renders in the browser, so crawlers see a blank page unless you add a fallback — the case study paid for that (slide 34).</aside>
 </section>
 
-<section class="slide grain" data-part="3" data-time="1:12" data-n="19">
+<section class="slide grain" data-part="3" data-time="1:12" data-n="20">
   <div class="grid">
     <div>
       <p class="kick"><b>03 · Decide</b><span class="t">1:12</span></p>
@@ -781,7 +831,7 @@ Cite every claim with a link. Flag what you could not verify.">Using concept.md,
   <aside class="notes" data-min="5">Cloudflare wins for a personal site on cost and on having the domain in the same dashboard. The one gotcha is the 10 ms CPU limit for code on the free plan — the case study hit it rendering images at request time (slide 28). Static pages don't count against it. Then: break, 10 minutes. <b>Plain words:</b> Hosting is renting shop space; the edge is having a branch in every city. Detail: static requests on Cloudflare Workers are free and unlimited; free Workers allow 10 ms of CPU per request — the case study hit that. New projects: Workers with static assets; Pages still works. Vercel Pro is per seat; Netlify pauses sites at the limit. Then: break, 10 minutes.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:30" data-n="20">
+<section class="slide grain" data-part="4" data-time="1:30" data-n="21">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:30 · Claude Code</span></p>
@@ -803,7 +853,7 @@ Cite every claim with a link. Flag what you could not verify.">Using concept.md,
   <aside class="notes" data-min="10">Put the three docs and INVENTORY.md in a new folder, cd into it, run claude, paste the prompt. Claude asks before running commands — read what it asks. Creating the GitHub repo by hand is deliberate: everyone should see where their code lives. The two lines are git remote add origin … and git push -u origin main. <b>Plain words:</b> A repo is a Google Doc's version history, for a whole folder of files. content/ holds what the site says (profile.json, projects/*.md, images/); src/ holds how it looks (lib/content, components, pages); docs/ holds the three documents.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:40" data-n="21">
+<section class="slide grain" data-part="4" data-time="1:40" data-n="22">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:40</span></p>
@@ -821,7 +871,7 @@ Cite every claim with a link. Flag what you could not verify.">Using concept.md,
   <aside class="notes" data-min="5">This is the most important engineering idea of the day, and it's one sentence: content in one place, code in another, one door between them. Put it in CLAUDE.md so every session follows it. It's also what lets non-developers edit the site: they edit content/, never src/. <b>Plain words:</b> A slide template versus what you type into it: change the template, keep the words. The case study did exactly this: its content moved from Markdown files to a database, and the page components never noticed. The module is src/lib/content; Astro content collections reject a project with no title.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:45" data-n="22">
+<section class="slide grain" data-part="4" data-time="1:45" data-n="23">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:45</span></p>
@@ -841,7 +891,7 @@ Astro → Cloudflare Workers.
   <aside class="notes" data-min="5">The "Lessons" line is how the site gets smarter: when something breaks and you fix it, ask Claude to add one line so no future session repeats it. The case study's CLAUDE.md is long because it's a big site; yours should fit on this slide for the first month. <b>Plain words:</b> CLAUDE.md is the onboarding doc you'd hand a new contractor on day one. Only what Claude can't work out from the code. Long procedures go in skills (.claude/skills/); a rule with zero exceptions goes in a hook.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:50" data-n="23">
+<section class="slide grain" data-part="4" data-time="1:50" data-n="24">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:50</span></p>
@@ -861,7 +911,7 @@ Astro → Cloudflare Workers.
   <aside class="notes" data-min="5">This loop is the whole method. People's instinct is one endless chat; that's where quality decays. When you come back tomorrow, you don't need to remember anything — the plan file says where you are. /rewind restores code and conversation to an earlier point when a turn goes wrong. <b>Plain words:</b> A three-hour meeting with no minutes: by the end, the first hour is fuzzy. Fresh meeting, same minutes doc. Why: context is the constraint — Claude gets less accurate as a conversation fills up. A fresh session per phase keeps it small; the plan file carries the memory. /rewind restores code and conversation to an earlier point.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:55" data-n="24">
+<section class="slide grain" data-part="4" data-time="1:55" data-n="25">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:55 · Phase 1 now</span></p>
@@ -879,7 +929,7 @@ Keep content in content/ and read it only through src/lib/content. When done: ru
   <aside class="notes" data-min="20">The longest build-along block: about 20 minutes. Same prompt for every later phase — change the number. If a design comes out generic, give it taste: name two sites from the research and say what to borrow. Screenshots of sites you like work well as input too. <b>Plain words:</b> Hand the contractor one work order at a time, not the whole renovation.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="2:05" data-n="25">
+<section class="slide grain" data-part="4" data-time="2:05" data-n="26">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">2:05</span></p>
@@ -898,7 +948,7 @@ Keep content in content/ and read it only through src/lib/content. When done: ru
   <aside class="notes" data-min="2">"It says it's done" is not done. The single most useful line in a CLAUDE.md is the command that checks the work. A reviewer that didn't write the code catches what the writer explained away. <b>Plain words:</b> Proofread before you send — and have someone else proofread too. /verify has Claude open each page in a browser and screenshot it; /code-review reviews the diff in a fresh session that never saw the reasoning.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="2:10" data-n="26">
+<section class="slide grain" data-part="4" data-time="2:10" data-n="27">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">2:10</span></p>
@@ -912,7 +962,7 @@ Keep content in content/ and read it only through src/lib/content. When done: ru
   <aside class="notes" data-min="10">Run this once now and then monthly. The chips are Google's "good" Core Web Vitals thresholds. Share cards matter more than people expect: a link that unfurls in WhatsApp or LinkedIn with a proper image gets clicked. Make "every page has its own card" a rule in CLAUDE.md. <b>Plain words:</b> An annual health check: blood pressure, pulse, reflexes — for a web page. The full prompt also checks titles, descriptions, canonical URLs, 1200×630 share images, sitemap.xml, robots.txt, alt text, image sizes under 200 KB, contrast and keyboard navigation. INP under 200 ms is the third Core Web Vital.</aside>
 </section>
 
-<section class="slide grain" data-part="5" data-time="2:20" data-n="27">
+<section class="slide grain" data-part="5" data-time="2:20" data-n="28">
   <div class="grid">
     <div>
       <p class="kick"><b>05 · Ship</b><span class="t">2:20</span></p>
@@ -929,7 +979,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="5">For today, pushing straight to main is fine. Branches plus pull requests become valuable once deploys are wired: every branch gets its own preview URL, so you check a change on your phone before it's live. <b>Plain words:</b> A branch is 'Save a copy'; a pull request is asking your manager to approve it before it replaces the original. Then open a pull request, check its preview, merge to main. For today, pushing straight to main is fine.</aside>
 </section>
 
-<section class="slide grain" data-part="5" data-time="2:25" data-n="28">
+<section class="slide grain" data-part="5" data-time="2:25" data-n="29">
   <div class="grid">
     <div>
       <p class="kick"><b>05 · Ship</b><span class="t">2:25</span></p>
@@ -948,7 +998,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="10">If the build fails on Cloudflare but works locally, paste the build log into Claude Code — it's almost always a Node version or a missing environment variable. Have people open their workers.dev URL on their phones; that moment is the high point of the workshop. <b>Plain words:</b> Pushing to main is publishing; a preview URL is the printer's proof. Grant access to only this repo. Environment variables go in the dashboard, never in the repo. Cloudflare puts new features into Workers with static assets; Pages still works (the case study runs on Pages).</aside>
 </section>
 
-<section class="slide grain" data-part="5" data-time="2:35" data-n="29">
+<section class="slide grain" data-part="5" data-time="2:35" data-n="30">
   <div class="grid">
     <div>
       <p class="kick"><b>05 · Ship</b><span class="t">2:35</span></p>
@@ -967,7 +1017,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="3">Most people won't have a domain today, so demo this one on yours. The two traps: a domain answers on example.com but not www (hence step 4), and an old CNAME record blocks adding the custom domain — delete it first. <b>Plain words:</b> Buying a domain is getting a phone number; DNS is the directory listing that rings your phone. Cloudflare Registrar sells at cost. Custom domain is under Settings → Domains &amp; Routes; Cloudflare creates the DNS record and certificate. Nameserver changes can take a few hours.</aside>
 </section>
 
-<section class="slide grain" data-part="6" data-time="2:38" data-n="30">
+<section class="slide grain" data-part="6" data-time="2:38" data-n="31">
   <div class="grid">
     <div>
       <p class="kick"><b>06 · Case study</b><span class="t">2:38</span></p>
@@ -986,7 +1036,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="4">Open the live site and click three things. Numbers come from the repo: the route manifest lists 43 routes; the changelog is at v31. The stack is not the one I'd pick from scratch today — that's why the framework slide was neutral. <b>Plain words:</b> Start with a notebook (files); move to a filing cabinet (database) only when the notebook is full. A personal site grown this way: books, races, treks, projects, writing, a newsletter and a chatbot over all of it. Because data and code are apart, moving to a database later is one module's job.</aside>
 </section>
 
-<section class="slide grain" data-part="6" data-time="2:40" data-n="31">
+<section class="slide grain" data-part="6" data-time="2:40" data-n="32">
   <div class="grid" style="grid-template-columns:1fr 470px;gap:46px;align-items:start">
     <div>
       <p class="kick"><b>06 · Case study</b><span class="t">2:40 · possibilities</span></p>
@@ -1015,7 +1065,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="2">This is the "what's possible" slide — every tile is a live page on sankettambare.in, and every one was a single phase of the method you learned today. None of them was planned on day one. Encourage people to write their own list into later.md. <b>Plain words:</b> A house you extend one room at a time, not a mansion you build in one go. Captions in full: every trek, race and post on one globe; answers from your own posts, with sources; every essay mapped by meaning; every Strava activity; a newsletter drafted from what the site recorded; numbers computed, never typed.</aside>
 </section>
 
-<section class="slide grain" data-part="6" data-time="2:42" data-n="32">
+<section class="slide grain" data-part="6" data-time="2:42" data-n="33">
   <div class="grid">
     <div>
       <p class="kick"><b>06 · Case study</b><span class="t">2:42</span></p>
@@ -1035,7 +1085,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="4">None of these were planned on day one; each arrived after something broke. Steal them in this order: changelog, content apart, lessons in CLAUDE.md. The guard test is the one that lets you move fast later — a rule the build enforces doesn't depend on anyone remembering it. <b>Plain words:</b> Like a checklist on a cockpit door: the rule is enforced, not remembered. Examples: a new page with no share card fails the build; 31 majors of readable history come from the changelog-in-the-same-commit habit. Steal them in this order: changelog, content apart, lessons in CLAUDE.md.</aside>
 </section>
 
-<section class="slide grain" data-part="6" data-time="2:44" data-n="33">
+<section class="slide grain" data-part="6" data-time="2:44" data-n="34">
   <div class="grid">
     <div>
       <p class="kick"><b>06 · Case study</b><span class="t">2:44</span></p>
@@ -1050,7 +1100,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="4">Each of these cost a day. Each is now one line in the project's CLAUDE.md, which is why it never happened twice. Your site will have its own three; the habit of writing them down is what transfers. <b>Plain words:</b> Every team has a 'lessons learned' doc nobody reads. Putting the lesson in CLAUDE.md means the next session reads it automatically. Detail: a React app renders in the browser and GPTBot, ClaudeBot and most crawlers don't run JavaScript — fixed with an edge middleware that writes the page as HTML. Share images drawn per request took ~400 ms against a 10 ms limit — fixed by rendering them at build time. The card renderer drew nothing for WebP photos.</aside>
 </section>
 
-<section class="slide grain proj" data-part="7" data-time="2:46" data-n="34">
+<section class="slide grain proj" data-part="7" data-time="2:46" data-n="35">
   <div class="grid">
     <div>
       <p class="kick"><b>07 · Featured projects</b><span class="t">2:46 · 1 of 4</span></p>
@@ -1075,7 +1125,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="2">Show it live: flip the card, change the theme, copy the URL. Point out that the URL holds the state — the same idea as keeping data apart from code. This is what I'd suggest anyone build first if a whole site feels too big. <b>Plain words:</b> One business card that reprints itself for each person you hand it to. Views: General, Developer, Runner, Trekker, Writer. Stack: Vite, TypeScript, Cloudflare Pages, built with Claude Code. The perfect first project: small, personal, live in an evening.</aside>
 </section>
 
-<section class="slide grain proj" data-part="7" data-time="2:48" data-n="35">
+<section class="slide grain proj" data-part="7" data-time="2:48" data-n="36">
   <div class="grid">
     <div>
       <p class="kick"><b>07 · Featured projects</b><span class="t">2:48 · 2 of 4</span></p>
@@ -1103,7 +1153,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="2">The data is the hero here: the site pulls the week's sightings from eBird, so it keeps itself current during the event without anyone editing it. That's the data layer apart from the code, with a public API as the data layer. <b>Plain words:</b> A noticeboard that updates itself from the birders' own logbooks. For the Vetal Tekdi Bachav Kruti Samiti: every sighting becomes evidence for saving Pune's last wild hill. A bird guide filtered by habitat and season, scoring and registration. Astro, Tailwind, Cloudflare Pages + Functions, the eBird API.</aside>
 </section>
 
-<section class="slide grain proj" data-part="7" data-time="2:50" data-n="36">
+<section class="slide grain proj" data-part="7" data-time="2:50" data-n="37">
   <div class="grid">
     <div>
       <p class="kick"><b>07 · Featured projects</b><span class="t">2:50 · 3 of 4</span></p>
@@ -1131,7 +1181,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="2">Same stack, bigger ambition: a multi-user product. It started exactly like today — a concept doc and a phased plan — and grew phase by phase. Same Cloudflare + Astro foundation the workshop recommends. <b>Plain words:</b> A trophy cabinet you can share as one link. Still in progress: Strava sync is switched off for now and coming back. A multi-user product on the same foundation — Astro, Cloudflare Workers, Supabase, R2 — started with a concept doc and a phased plan.</aside>
 </section>
 
-<section class="slide grain proj" data-part="7" data-time="2:51" data-n="37">
+<section class="slide grain proj" data-part="7" data-time="2:51" data-n="38">
   <div class="grid">
     <div>
       <p class="kick"><b>07 · Featured projects</b><span class="t">2:51 · 4 of 4</span></p>
@@ -1154,7 +1204,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="1">Here the deep-research step is the product: every figure cites its document. The same Claude research prompt you used this morning is how a site like this gets its facts — with you checking the sources. <b>Plain words:</b> Every claim comes with its receipt. Also a story, a timeline, a glossary, a map and a daily news sync, in English and Marathi. Proof the method isn't only for portfolios.</aside>
 </section>
 
-<section class="slide grain" data-part="8" data-time="2:52" data-n="38">
+<section class="slide grain" data-part="8" data-time="2:52" data-n="39">
   <div class="grid">
     <div>
       <p class="kick"><b>08 · Iterate</b><span class="t">2:52</span></p>
@@ -1174,7 +1224,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="4">This is the payoff for the setup: the hard part is done once. Show a change made from the phone if there's time — a one-line copy edit, pushed to a branch, preview link opened in the room. <b>Plain words:</b> Like editing a shared doc from your phone: the document lives online, so any device works. Where to type it: Claude Code in the terminal or VS Code; Claude Code on the web (claude.ai/code), which works on your GitHub repo in the cloud; or the Claude app on your phone. Rhythm: weekly, add what you did; monthly, run the audit prompt; quarterly, redesign one page — not the site.</aside>
 </section>
 
-<section class="slide grain" data-part="8" data-time="2:54" data-n="39">
+<section class="slide grain" data-part="8" data-time="2:54" data-n="40">
   <div class="grid">
     <div>
       <p class="kick"><b>08 · Iterate</b><span class="t">2:54 · homework</span></p>
@@ -1203,7 +1253,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="4">Close on the habit, not the stack. One stone a day for a week and the site is yours in a way no app builder gives you. Share the prompt pack link in the chat. Ask people to send their URL by Sunday. <b>Plain words:</b> Seven small habits beat one big weekend. Day 6 in full: a friend uses it on their phone — fix the first thing they trip on. More reading: Cloudflare custom domains, Core Web Vitals (web.dev/articles/vitals), Google's SEO starter guide — all linked from the prompt pack.</aside>
 </section>
 
-<section class="slide grain" data-part="9" data-time="2:56" data-n="40">
+<section class="slide grain" data-part="9" data-time="2:56" data-n="41">
   <div class="grid">
     <div>
       <p class="kick"><b>09 · Close</b><span class="t">2:56 · your turn</span></p>
@@ -1222,7 +1272,7 @@ git push -u origin phase-2</pre>
   <aside class="notes" data-min="3">Go round the room for question 2 — one sentence each; write the answers on the whiteboard. Collect the rest in the chat or by email. The answers to 4 and 5 shape the next run of this workshop. Also ask for one word for today. Question 3: docs, repo, workers.dev, or your own domain? Ask for URLs by Sunday.</aside>
 </section>
 
-<section class="slide grain" data-part="9" data-time="2:59" data-n="41">
+<section class="slide grain" data-part="9" data-time="2:59" data-n="42">
   <div class="grid">
     <div>
       <p class="kick"><b>09 · Close</b><span class="t">2:59</span></p>
@@ -1825,7 +1875,7 @@ document.querySelectorAll('figure.illo[data-scene]').forEach(fig => {
     if (reflow) { slides[k].scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth', block: 'start' }); return; }
     slides.forEach((s, j) => {
       s.classList.toggle('is-active', j === k); s.setAttribute('aria-hidden', j === k ? 'false' : 'true');
-      if (j !== k) s.classList.remove('play');
+      if (j !== k) { s.classList.remove('play'); s.querySelectorAll('video').forEach(v => v.pause()); }
     });
     play(slides[k]); setCurrent(k);
     if (!fromHash) history.replaceState(null, '', location.search + '#' + (k + 1));
@@ -1839,7 +1889,7 @@ document.querySelectorAll('figure.illo[data-scene]').forEach(fig => {
   addEventListener('resize', fit);
 
   /* phones: stacked slides; play each as it scrolls in, track the one at mid-screen */
-  const ioPlay = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { if (!e.target.classList.contains('play')) play(e.target); } else e.target.classList.remove('play'); }), { threshold: .12 });
+  const ioPlay = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { if (!e.target.classList.contains('play')) play(e.target); } else { e.target.classList.remove('play'); e.target.querySelectorAll('video').forEach(v => v.pause()); } }), { threshold: .12 });
   const ioCur = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return;
     const k = slides.indexOf(e.target);
@@ -1848,6 +1898,11 @@ document.querySelectorAll('figure.illo[data-scene]').forEach(fig => {
   function setMode() {
     reflow = !isPrint && (params.has('reflow') || phone.matches);
     body.classList.toggle('reflow', reflow); hideTip();
+    /* the film: vertical cut on phones, landscape on the stage */
+    document.querySelectorAll('video[data-v]').forEach(v => {
+      const src = reflow ? v.dataset.v : v.dataset.h;
+      if (!v.getAttribute('src')?.endsWith(src) && v.paused) { v.poster = reflow ? v.dataset.vp : v.dataset.hp; v.src = src; }
+    });
     if (reflow) {
       stage.style.transform = '';
       slides.forEach(s => { s.classList.add('is-active'); s.setAttribute('aria-hidden', 'false'); s.classList.remove('play'); ioPlay.observe(s); ioCur.observe(s); });
@@ -1867,7 +1922,8 @@ document.querySelectorAll('figure.illo[data-scene]').forEach(fig => {
   addEventListener('keydown', e => {
     if (e.target.closest('input,textarea') || e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key === 'Escape') { hideTip(); return; }
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key) && !e.target.closest('button,dfn')) { e.preventDefault(); go(i + 1); }
+    if ((e.key === 'k' || e.key === 'K') && slides[i].querySelector('video')) { const v = slides[i].querySelector('video'); v.paused ? v.play() : v.pause(); return; }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key) && !e.target.closest('button,dfn,video')) { e.preventDefault(); go(i + 1); }
     else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(i - 1); }
     else if (e.key === 'Home') go(0);
     else if (e.key === 'End') go(N - 1);

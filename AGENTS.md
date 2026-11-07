@@ -78,7 +78,7 @@ presentations/
   assets/out-loud/                Screenshots (webp) used by that deck, plus the
                                    film in both shapes, its posters, captions and
                                    storyboard frames
-  stone-by-stone.html             Portfolio in a Day: the 41-slide animated,
+  stone-by-stone.html             Portfolio in a Day: the 42-slide animated,
                                    projector-sized workshop deck (3-hour
                                    build-along, plain-words strips + glossary +
                                    tap-to-explain terms, phone reflow, light/dark)
@@ -88,11 +88,16 @@ presentations/
                                    GitHub, Cloudflare, DNS; sankettambare.in as
                                    the case study, four featured projects,
                                    feedback, thank you (Pip the pebble, inline
-                                   SVG); N for speaker notes, ?print for PDF
+                                   SVG); slide 3 plays a 98-second narrated
+                                   whiteboard film of the session (K plays,
+                                   vertical cut on phones); N for speaker
+                                   notes, ?print for PDF
   assets/stone-by-stone/          prompt-pack.html (every prompt, a plain-English
                                    glossary, templates; light/dark, printable),
-                                   templates/*.md, the deck's screenshots (webp)
-                                   and portfolio-in-a-day.pdf
+                                   templates/*.md, the deck's screenshots (webp),
+                                   portfolio-in-a-day.pdf and film/ (the
+                                   whiteboard film, 16:9 and 9:16, posters,
+                                   captions)
   digital-hub.html                The Digital Hub: the 30-slide illustrated tour
                                    of sankettambare.in — map, journey, passport,
                                    architecture, Ask the Archive (fixed 1920×1080

@@ -1,0 +1,201 @@
+WEBVTT
+
+1
+00:00:00.445 --> 00:00:01.800
+Three hours from now,
+
+2
+00:00:01.820 --> 00:00:04.184
+this address will be live on the internet.
+
+3
+00:00:04.782 --> 00:00:05.748
+Your name.
+
+4
+00:00:06.316 --> 00:00:07.236
+Your work.
+
+5
+00:00:07.805 --> 00:00:10.180
+Built by talking, not by coding.
+
+6
+00:00:10.645 --> 00:00:12.705
+Most portfolios are built once,
+
+7
+00:00:12.725 --> 00:00:13.872
+on an app builder.
+
+8
+00:00:14.459 --> 00:00:16.947
+They look fine, and then they never change.
+
+9
+00:00:17.504 --> 00:00:19.004
+That's a sandcastle.
+
+10
+00:00:19.595 --> 00:00:21.280
+Today, we build a house:
+
+11
+00:00:21.300 --> 00:00:23.129
+one you keep adding rooms to.
+
+12
+00:00:23.595 --> 00:00:24.742
+Here's the plan.
+
+13
+00:00:25.317 --> 00:00:25.934
+One:
+
+14
+00:00:25.954 --> 00:00:28.124
+write your idea on one page.
+
+15
+00:00:28.715 --> 00:00:29.172
+Two:
+
+16
+00:00:29.192 --> 00:00:30.650
+let Claude interview you,
+
+17
+00:00:30.670 --> 00:00:31.874
+and research for you.
+
+18
+00:00:32.499 --> 00:00:33.104
+Three:
+
+19
+00:00:33.124 --> 00:00:35.295
+turn it into three short documents.
+
+20
+00:00:35.885 --> 00:00:36.479
+Four:
+
+21
+00:00:36.499 --> 00:00:37.934
+build it with Claude Code,
+
+22
+00:00:37.954 --> 00:00:39.431
+one phase at a time.
+
+23
+00:00:39.988 --> 00:00:40.718
+And five:
+
+24
+00:00:40.738 --> 00:00:43.218
+push to GitHub, deploy on Cloudflare,
+
+25
+00:00:43.238 --> 00:00:44.942
+and connect your own domain.
+
+26
+00:00:45.408 --> 00:00:46.499
+What do you need?
+
+27
+00:00:47.074 --> 00:00:48.017
+A laptop.
+
+28
+00:00:48.630 --> 00:00:50.187
+A free GitHub account.
+
+29
+00:00:50.744 --> 00:00:52.247
+And a folder of your stuff:
+
+30
+00:00:52.267 --> 00:00:55.221
+photos, projects, a few lines about you.
+
+31
+00:00:55.812 --> 00:00:57.142
+Plus curiosity.
+
+32
+00:00:57.733 --> 00:00:58.960
+Ask questions.
+
+33
+00:00:59.562 --> 00:01:00.630
+Break things.
+
+34
+00:01:01.096 --> 00:01:02.905
+In three hours, you walk out with a
+
+35
+00:01:02.925 --> 00:01:04.803
+live site on your own domain,
+
+36
+00:01:04.823 --> 00:01:07.144
+a prompt pack, ready templates,
+
+37
+00:01:07.164 --> 00:01:08.871
+and a way to make it better every
+
+38
+00:01:08.891 --> 00:01:09.778
+single day.
+
+39
+00:01:10.243 --> 00:01:11.618
+This isn't theory.
+
+40
+00:01:12.205 --> 00:01:13.366
+With the same method,
+
+41
+00:01:13.386 --> 00:01:14.923
+I built my own site,
+
+42
+00:01:14.943 --> 00:01:16.980
+a visiting card with five themes,
+
+43
+00:01:17.000 --> 00:01:19.048
+the Vetal Tekdi birding marathon,
+
+44
+00:01:19.068 --> 00:01:22.443
+RunFolio, and a data story on pumped storage.
+
+45
+00:01:22.909 --> 00:01:24.386
+So what's the limit?
+
+46
+00:01:24.938 --> 00:01:25.881
+Not code.
+
+47
+00:01:26.427 --> 00:01:27.495
+Not tools.
+
+48
+00:01:28.040 --> 00:01:29.654
+Only your imagination.
+
+49
+00:01:30.222 --> 00:01:31.495
+So let it fly.
+
+50
+00:01:32.109 --> 00:01:33.200
+Let's begin!
