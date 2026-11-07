@@ -78,7 +78,7 @@ presentations/
   assets/out-loud/                Screenshots (webp) used by that deck, plus the
                                    film in both shapes, its posters, captions and
                                    storyboard frames
-  portfolio-in-a-day.html         Portfolio in a Day: the 41-slide animated,
+  stone-by-stone.html             Portfolio in a Day: the 41-slide animated,
                                    projector-sized workshop deck (3-hour
                                    build-along, plain-words strips + glossary +
                                    tap-to-explain terms, phone reflow, light/dark)
@@ -89,13 +89,10 @@ presentations/
                                    the case study, four featured projects,
                                    feedback, thank you (Pip the pebble, inline
                                    SVG); N for speaker notes, ?print for PDF
-  assets/portfolio-in-a-day/      prompt-pack.html (every prompt, a plain-English
+  assets/stone-by-stone/          prompt-pack.html (every prompt, a plain-English
                                    glossary, templates; light/dark, printable),
                                    templates/*.md, the deck's screenshots (webp)
                                    and portfolio-in-a-day.pdf
-  stone-by-stone.html             Redirect stub → portfolio-in-a-day.html (the
-                                   deck's old address); assets/stone-by-stone/
-                                   prompt-pack.html redirects the same way
   digital-hub.html                The Digital Hub: the 30-slide illustrated tour
                                    of sankettambare.in — map, journey, passport,
                                    architecture, Ask the Archive (fixed 1920×1080

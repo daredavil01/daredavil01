@@ -1,7 +1,7 @@
 # Portfolio in a Day — doc templates
 
 Templates for the *Portfolio in a Day* workshop
-([deck](../../portfolio-in-a-day.html) · [prompt pack](../prompt-pack.html)).
+([deck](../../stone-by-stone.html) · [prompt pack](../prompt-pack.html)).
 
 | File | When | Who writes it |
 |---|---|---|
