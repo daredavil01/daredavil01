@@ -1,0 +1,2 @@
+{"name":"before-we-begin","private":true,"type":"module",
+ "dependencies":{"remotion":"4.0.380","@remotion/cli":"4.0.380","@remotion/renderer":"4.0.380","@remotion/bundler":"4.0.380","@remotion/paths":"4.0.380","@remotion/layout-utils":"4.0.380","@remotion/noise":"4.0.380","react":"18.3.1","react-dom":"18.3.1"}}

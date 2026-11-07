@@ -1,5 +1,7 @@
+node_modules/
 vo/
-frames-*/
-mix-*.wav
+out/
 film-*.json
-*.mp4
+events.cjs
+public/mix-*.wav
+public/shots/

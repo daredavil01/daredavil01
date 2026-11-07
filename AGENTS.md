@@ -49,6 +49,9 @@ tools/                            Authoring + QA only — the site never needs i
   capture.mjs                     Renders illustrations/ and renders/
   qa.mjs                          Playwright QA: links, console, registry, screenshots
   lib/                            Shared Playwright + static-server helpers
+  films/portfolio-in-a-day/       Remotion source of the Portfolio in a Day
+                                   "Before we begin" film (timeline, narration,
+                                   sound mix)
 docs/
   personal-website-redesign.html  "The Wanderer's Atlas" design dossier (deck)
   yung-foundation-site-overview.html  Yung Foundation site: routes + architecture
@@ -88,7 +91,7 @@ presentations/
                                    GitHub, Cloudflare, DNS; sankettambare.in as
                                    the case study, four featured projects,
                                    feedback, thank you (Pip the pebble, inline
-                                   SVG); slide 3 plays a 98-second narrated
+                                   SVG); slide 3 plays a 99-second narrated
                                    whiteboard film of the session (K plays,
                                    vertical cut on phones); N for speaker
                                    notes, ?print for PDF

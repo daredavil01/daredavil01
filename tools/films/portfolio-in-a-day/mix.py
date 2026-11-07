@@ -138,6 +138,36 @@ for s in F["scenes"][1:]:
     env_ = np.sin(np.pi * tt / 0.75) ** 2
     add(sfx, i, (bandpass(rng.standard_normal(n).astype(np.float32), 300, 2500) * env_ * 0.09).astype(np.float32))
 
+# ---- effect cues: pops, boings, sparkles, the stamp ----
+def tone(f0, f1, dur, amp, decay=18):
+    n = int(dur * SR); tt = np.arange(n) / SR
+    f = f0 + (f1 - f0) * tt / dur
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    return (np.sin(ph) * np.exp(-tt * decay) * np.minimum(1, tt / 0.003) * amp).astype(np.float32)
+def nz(dur, lo, hi, amp, shape):
+    n = int(dur * SR); x = bandpass(rng.standard_normal(n).astype(np.float32), lo, hi)
+    x /= np.abs(x).max() + 1e-9; tt = np.arange(n) / dur / SR
+    return (x * shape(tt) * amp).astype(np.float32)
+for c in F.get("pops", []):
+    i = int(c["t"] * SR); k = c["k"]
+    if i < 0 or i >= N: continue
+    if k == "pop": add(sfx, i, tone(880, 420, 0.09, 0.10, 30))
+    elif k == "tick": add(sfx, i, tone(1400, 1200, 0.05, 0.06, 60))
+    elif k == "boing":
+        n = int(0.22 * SR); tt = np.arange(n) / SR
+        f = 260 + 300 * np.sin(np.pi * tt / 0.22) + 20 * np.sin(2 * np.pi * 28 * tt)
+        add(sfx, i, (np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-tt * 10) * 0.08).astype(np.float32))
+    elif k in ("sparkle", "confetti"):
+        m = 5 if k == "sparkle" else 9
+        for j in range(m):
+            add(sfx, i + int(j * 0.045 * SR), tone(rng.uniform(2200, 4200), rng.uniform(2600, 5000), 0.12, 0.035, 26))
+        if k == "confetti": add(sfx, i, nz(0.4, 2000, 8000, 0.05, lambda u: np.exp(-u * 5)))
+    elif k in ("swoosh", "whoosh"):
+        d = 0.35 if k == "swoosh" else 0.7
+        add(sfx, i, nz(d, 400, 3000, 0.08, lambda u: np.sin(np.pi * u) ** 2))
+    elif k == "splash": add(sfx, i, nz(0.5, 200, 2500, 0.10, lambda u: np.exp(-u * 6)))
+    elif k == "stamp":
+        add(sfx, i, tone(110, 55, 0.35, 0.35, 12)); add(sfx, i, nz(0.12, 100, 1500, 0.15, lambda u: np.exp(-u * 8)))
 mix = voice + music + sfx
 mix = np.tanh(mix * 1.1) / np.tanh(1.1)
 mix = mix[: int(T * SR)]
