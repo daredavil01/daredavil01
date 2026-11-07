@@ -1,7 +1,7 @@
-# Stone by Stone — doc templates
+# Portfolio in a Day — doc templates
 
-Templates for the *Stone by Stone* workshop
-([deck](../../stone-by-stone.html) · [prompt pack](../prompt-pack.html)).
+Templates for the *Portfolio in a Day* workshop
+([deck](../../portfolio-in-a-day.html) · [prompt pack](../prompt-pack.html)).
 
 | File | When | Who writes it |
 |---|---|---|

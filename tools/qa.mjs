@@ -39,8 +39,17 @@ function walk(dir, out = []) {
   }
   return out;
 }
-const pages = walk(REPO).sort();
-const html = Object.fromEntries(pages.map((p) => [p, readFileSync(join(REPO, p), 'utf8')]));
+const allPages = walk(REPO).sort();
+const html = Object.fromEntries(allPages.map((p) => [p, readFileSync(join(REPO, p), 'utf8')]));
+// a moved page leaves a redirect stub at its old address so outside links keep working;
+// stubs are checked for a live target, not for a homepage card or a return chip
+const isStub = (p) => /http-equiv="refresh"/i.test(html[p]);
+const stubs = allPages.filter(isStub);
+const pages = allPages.filter((p) => !isStub(p));
+for (const p of stubs) {
+  const to = (html[p].match(/http-equiv="refresh"[^>]*url=([^"#]+)/i) || [])[1];
+  check(to && existsSync(join(REPO, dirname(p), to)), `${p} redirects to ${to || '(no target)'}`);
+}
 const ids = (src) => new Set([...src.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
 const indexIds = ids(html['index.html']);
 

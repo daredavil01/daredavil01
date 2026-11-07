@@ -78,21 +78,24 @@ presentations/
   assets/out-loud/                Screenshots (webp) used by that deck, plus the
                                    film in both shapes, its posters, captions and
                                    storyboard frames
-  stone-by-stone.html             Stone by Stone: the 41-slide animated,
-                                   illustrated workshop deck (3-hour build-along,
-                                   plain-words strips + glossary + tap-to-explain
-                                   terms, phone reflow, light/dark) on building
-                                   a personal site you keep improving — intro,
-                                   idea, Claude interview, deep research, three
-                                   docs, one Claude Code session per phase,
+  portfolio-in-a-day.html         Portfolio in a Day: the 41-slide animated,
+                                   projector-sized workshop deck (3-hour
+                                   build-along, plain-words strips + glossary +
+                                   tap-to-explain terms, phone reflow, light/dark)
+                                   on building a portfolio you keep improving —
+                                   intro, idea, Claude interview, deep research,
+                                   three docs, one Claude Code session per phase,
                                    GitHub, Cloudflare, DNS; sankettambare.in as
                                    the case study, four featured projects,
-                                   feedback, thank you (Cairn the pebble, inline
+                                   feedback, thank you (Pip the pebble, inline
                                    SVG); N for speaker notes, ?print for PDF
-  assets/stone-by-stone/          prompt-pack.html (every prompt, a plain-English
+  assets/portfolio-in-a-day/      prompt-pack.html (every prompt, a plain-English
                                    glossary, templates; light/dark, printable),
                                    templates/*.md, the deck's screenshots (webp)
-                                   and stone-by-stone.pdf
+                                   and portfolio-in-a-day.pdf
+  stone-by-stone.html             Redirect stub → portfolio-in-a-day.html (the
+                                   deck's old address); assets/stone-by-stone/
+                                   prompt-pack.html redirects the same way
   digital-hub.html                The Digital Hub: the 30-slide illustrated tour
                                    of sankettambare.in — map, journey, passport,
                                    architecture, Ask the Archive (fixed 1920×1080
