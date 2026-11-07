@@ -88,8 +88,8 @@ presentations/
                                    feedback, thank you (Cairn the pebble, inline
                                    SVG); N for speaker notes, ?print for PDF
   assets/stone-by-stone/          prompt-pack.html (every prompt + templates,
-                                   printable), templates/*.md, and the deck's
-                                   screenshots (webp)
+                                   printable), templates/*.md, the deck's
+                                   screenshots (webp) and stone-by-stone.pdf
   digital-hub.html                The Digital Hub: the 30-slide illustrated tour
                                    of sankettambare.in — map, journey, passport,
                                    architecture, Ask the Archive (fixed 1920×1080
