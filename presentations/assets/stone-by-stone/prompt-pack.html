@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function(){var t=null;try{t=localStorage.getItem('sbs-theme')}catch(e){}if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)})();</script>
 <title>Stone by Stone prompts</title>
-<meta name="description" content="Every prompt from the Stone by Stone workshop, in order, plus the five doc templates — idea, concept, technical decisions, phased plan and CLAUDE.md.">
+<meta name="description" content="Every prompt from the Stone by Stone workshop, in order, the technical words in plain English, and the five doc templates — idea, concept, technical decisions, phased plan and CLAUDE.md.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--paper:#fbf7ee;--ink:#1b2a6b;--ink2:#4a5583;--acc:#ff6a1a;--tint:#dfe3ef}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#0f1a3d;--ink:#e7ebf7;--ink2:#a9b3d6;--tint:#1b2a5b}}
-:root[data-theme="dark"]{--paper:#0f1a3d;--ink:#e7ebf7;--ink2:#a9b3d6;--tint:#1b2a5b}
+:root{--paper:#fbf7ee;--ink:#1b2a6b;--ink2:#4a5583;--acc:#ff6a1a;--tint:#dfe3ef;--line:rgba(27,42,107,.16)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#0f2a47;--ink:#e3ebf5;--ink2:#a9bcd3;--acc:#ff8a45;--tint:#1d4068;--line:rgba(227,235,245,.16);color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#0f2a47;--ink:#e3ebf5;--ink2:#a9bcd3;--acc:#ff8a45;--tint:#1d4068;--line:rgba(227,235,245,.16);color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:18px/1.55 "Source Serif 4",Georgia,serif}
 main{max-width:880px;margin:0 auto;padding:72px 16px 80px}
@@ -36,16 +37,24 @@ p.keys{font:700 12px "JetBrains Mono",monospace;letter-spacing:.1em;text-transfo
 pre{margin:0;padding:14px 16px 16px;background:var(--tint);font:14.5px/1.55 "JetBrains Mono",monospace;white-space:pre-wrap;overflow-wrap:anywhere}
 .tpl pre{max-height:none}
 [data-island-return]{position:fixed;top:12px;left:12px;font:600 13px "JetBrains Mono",monospace;color:var(--ink);background:var(--paper);padding:5px 9px;border-radius:8px}
+#theme{position:fixed;top:12px;right:12px;z-index:10;font:700 12px "JetBrains Mono",monospace;letter-spacing:.06em;background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:7px 12px;cursor:pointer}
+#theme:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+dl.gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px 22px;margin:0}
+dl.gl div{border-top:2px solid var(--line);padding-top:8px}
+dl.gl dt{font:800 18px "Bricolage Grotesque",sans-serif}
+dl.gl dd{margin:2px 0 0;font-size:16px;color:var(--ink2)}
+@media print{#theme{display:none} :root,:root[data-theme]{--paper:#fbf7ee;--ink:#1b2a6b;--ink2:#4a5583;--acc:#ff6a1a;--tint:#dfe3ef;--line:rgba(27,42,107,.16)}}
 @media print{[data-island-return],.p button{display:none} main{padding-top:0} body{font-size:13px} pre{font-size:11px}}
 </style>
 </head>
 <body>
 <a data-island-return href="../../../index.html#build/stone-by-stone-prompts">← Home</a>
+<button id="theme" type="button">◐ Auto</button>
 <main>
 <p class="kick">Stone by Stone · the take-away</p>
 <h1>The <em>prompt</em> pack</h1>
 <p class="lede">Every prompt from the workshop, in the order you use them, plus the five doc templates. Copy, paste, change the brackets. Print it from your browser for a paper copy.</p>
-<p class="links"><a href="../../stone-by-stone.html">← the deck</a><a href="#templates">doc templates</a><a href="https://github.com/daredavil01/daredavil01/tree/main/presentations/assets/stone-by-stone/templates">templates on GitHub ↗</a></p>
+<p class="links"><a href="../../stone-by-stone.html">← the deck</a><a href="#templates">doc templates</a><a href="#words">words in plain English</a><a href="https://github.com/daredavil01/daredavil01/tree/main/presentations/assets/stone-by-stone/templates">templates on GitHub ↗</a></p>
 <p class="keys">Presenting? ← → step through the prompts.</p>
 <h3 class="sec">Prompts</h3>
 <article class="p"><header><span class="n">01</span><span class="part">Shape · 0:30</span><h2>Let Claude interview you</h2><button class="cp" type="button">Copy</button></header><p class="where">Claude chat, in a Project for this site. Paste idea.md under it.</p><pre>Here is idea.md, a rough idea for my personal website. Before you write anything, interview me. Ask at most 5 questions at a time, most important first: audience, the one thing a visitor should do, content I already have, tone, what it must never be, and time I can give it each week.
@@ -77,6 +86,61 @@ Keep content in content/ and read it only through src/lib/content. When done: ru
 <article class="p"><header><span class="n">12</span><span class="part">Ship · 2:30</span><h2>The build failed on Cloudflare</h2><button class="cp" type="button">Copy</button></header><p class="where">Claude Code. Paste the whole build log in place of the brackets.</p><pre>Cloudflare&#x27;s build failed. Here is the log: [paste]. Find the cause, fix it in the repo, and tell me if I also need to change a setting in the dashboard (Node version, environment variable, build command).</pre></article>
 <article class="p"><header><span class="n">13</span><span class="part">Iterate · after</span><h2>Write the lesson down</h2><button class="cp" type="button">Copy</button></header><p class="where">Claude Code, after anything that broke and got fixed.</p><pre>Add one line to the Lessons section of CLAUDE.md about what we just learned, so no future session repeats it.</pre></article>
 <article class="p"><header><span class="n">14</span><span class="part">Iterate · after</span><h2>Every change from now on</h2><button class="cp" type="button">Copy</button></header><p class="where">Claude Code — laptop, browser (claude.ai/code) or phone.</p><pre>Read CLAUDE.md. Add [the change] to [the page]. Keep content in content/. Verify it at phone width, add a line to CHANGELOG.md, and push it to a new branch so I can check the preview URL before merging.</pre></article>
+<h3 class="sec" id="words">Words in plain English</h3>
+<p class="lede">Every technical word from the workshop, explained without jargon.</p>
+<dl class="gl">
+<div><dt>Alt text</dt><dd>A short description of an image, read aloud to people who can&#x27;t see it.</dd></div>
+<div><dt>API</dt><dd>A way for one program to ask another for data — here, a website asking eBird for sightings.</dd></div>
+<div><dt>Astro</dt><dd>A framework made for content sites: pages ship as plain HTML with almost no JavaScript.</dd></div>
+<div><dt>Branch</dt><dd>A safe copy of the project to try a change without touching the live site.</dd></div>
+<div><dt>Build</dt><dd>Turning your source files into the finished website files.</dd></div>
+<div><dt>Changelog</dt><dd>A dated list of every change to the site.</dd></div>
+<div><dt>Claude Code</dt><dd>Claude working directly on the files of your project: it reads them, edits them and runs commands.</dd></div>
+<div><dt>CLAUDE.md</dt><dd>A short note in your project that Claude reads at the start of every session — its onboarding doc.</dd></div>
+<div><dt>Cloudflare</dt><dd>A company whose servers in 300+ cities show your site to the world — and can hold your domain too.</dd></div>
+<div><dt>Commit</dt><dd>A saved checkpoint with a short note saying what changed.</dd></div>
+<div><dt>Context</dt><dd>How much of the conversation Claude can keep in mind at once. Long chats crowd it out.</dd></div>
+<div><dt>CPU time</dt><dd>How long the server may spend thinking for each visit. The free plan allows 10 milliseconds.</dd></div>
+<div><dt>Crawler</dt><dd>A robot that reads websites for a search engine or AI assistant.</dd></div>
+<div><dt>Data layer / code layer</dt><dd>What the site says (words, photos, links) versus how it looks and works. Keep them in separate folders.</dd></div>
+<div><dt>Deep research</dt><dd>A Claude mode that reads many web pages for several minutes and writes a report with links.</dd></div>
+<div><dt>Deploy</dt><dd>Putting the built website on the internet for everyone.</dd></div>
+<div><dt>Dev server / localhost</dt><dd>A preview of the site running only on your own laptop.</dd></div>
+<div><dt>DNS</dt><dd>The internet&#x27;s phonebook: it turns a name like yourname.com into the address of a computer.</dd></div>
+<div><dt>Domain</dt><dd>Your site&#x27;s name, like yourname.com.</dd></div>
+<div><dt>eBird</dt><dd>A public bird-sighting database run by the Cornell Lab of Ornithology.</dd></div>
+<div><dt>Edge</dt><dd>Copies of your site kept in cities around the world, so it loads fast wherever the visitor is.</dd></div>
+<div><dt>Environment variable</dt><dd>A setting or secret kept outside the code — like an API key.</dd></div>
+<div><dt>Framework</dt><dd>A starter kit with rules for building pages, so you don&#x27;t start from a blank file. Astro is one.</dd></div>
+<div><dt>Frontmatter</dt><dd>A few labelled lines at the top of a Markdown file — title, date, tags.</dd></div>
+<div><dt>Git</dt><dd>The tool that records versions of your files. GitHub is a website that stores Git projects online.</dd></div>
+<div><dt>GitHub</dt><dd>A website that stores your project and its full history online, and triggers a deploy on every push.</dd></div>
+<div><dt>Hook</dt><dd>A rule Claude Code&#x27;s tool enforces automatically, every time, rather than one Claude may forget.</dd></div>
+<div><dt>Host / hosting</dt><dd>The computers that send your site to each visitor — like renting shop space.</dd></div>
+<div><dt>JavaScript</dt><dd>Code that runs in the visitor&#x27;s browser. Less of it usually means a faster page.</dd></div>
+<div><dt>JSON / YAML</dt><dd>Plain-text formats for lists of things — like a spreadsheet written as text.</dd></div>
+<div><dt>Lighthouse</dt><dd>Google&#x27;s free report card for a page: speed, accessibility, SEO and best practice, each out of 100.</dd></div>
+<div><dt>Markdown</dt><dd>Plain text where # makes a heading and - makes a bullet. Easy for people and AI to read.</dd></div>
+<div><dt>Nameservers</dt><dd>Whoever keeps your domain&#x27;s phonebook entry. Pointing them at Cloudflare lets Cloudflare manage it.</dd></div>
+<div><dt>Node.js</dt><dd>The engine that runs website tools on your laptop. You install it once.</dd></div>
+<div><dt>Open Graph image</dt><dd>The preview picture shown when your link is shared on WhatsApp, LinkedIn or Slack.</dd></div>
+<div><dt>PB</dt><dd>Personal best — your fastest time at a distance.</dd></div>
+<div><dt>Plan mode</dt><dd>Claude writes a plan and waits for your OK before it changes any file.</dd></div>
+<div><dt>Preview URL</dt><dd>A private test link for one branch, so you can check a change before it goes live.</dd></div>
+<div><dt>Pull request</dt><dd>A page asking to merge a branch back in, where the change can be reviewed first.</dd></div>
+<div><dt>Push</dt><dd>Upload your saved checkpoints from your laptop to GitHub.</dd></div>
+<div><dt>R2</dt><dd>Cloudflare&#x27;s storage for files such as photos.</dd></div>
+<div><dt>Repository (repo)</dt><dd>A project folder that remembers every version of every file — like a Google Doc&#x27;s version history, for a whole folder.</dd></div>
+<div><dt>Schema</dt><dd>The rules a piece of content must follow — for example, every project needs a title.</dd></div>
+<div><dt>SEO</dt><dd>Search engine optimisation: helping Google and AI search find and show your pages.</dd></div>
+<div><dt>SSL / HTTPS</dt><dd>The padlock in the address bar: traffic between visitor and site is encrypted.</dd></div>
+<div><dt>Static assets</dt><dd>Files sent exactly as they are — pages, images, styles — with nothing computed per visit.</dd></div>
+<div><dt>Supabase</dt><dd>A hosted database with sign-in built in.</dd></div>
+<div><dt>Terminal</dt><dd>A window where you type commands to your computer instead of clicking icons.</dd></div>
+<div><dt>vCard</dt><dd>A contact file your phone can save in one tap.</dd></div>
+<div><dt>WebP</dt><dd>A modern, smaller image format.</dd></div>
+<div><dt>Workers</dt><dd>Cloudflare&#x27;s service for running sites and small programs on its servers worldwide.</dd></div>
+</dl>
 <h3 class="sec" id="templates">Doc templates</h3>
 <p class="lede">idea.md is yours to write. Claude writes the next three from it; CLAUDE.md goes in the repo root in Phase 0.</p>
 <article class="p tpl"><header><span class="n">md</span><h2>idea.md</h2><button class="dl" type="button" data-name="idea.md">Download</button><button class="cp" type="button">Copy</button></header><pre># idea.md
@@ -213,6 +277,19 @@ Personal site. &lt;Framework&gt; → Cloudflare Workers (static assets).
 </pre></article>
 </main>
 <script>
+(() => {
+  const b = document.getElementById('theme'), root = document.documentElement;
+  const T = ['auto', 'dark', 'light'], L = { auto: '◐ Auto', dark: '☾ Dark', light: '☀ Light' };
+  let t = root.getAttribute('data-theme') || 'auto';
+  const show = () => { b.textContent = L[t]; b.setAttribute('aria-label', 'Colour theme: ' + t + '. Press to change.'); };
+  show();
+  b.onclick = () => {
+    t = T[(T.indexOf(t) + 1) % 3];
+    if (t === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', t);
+    try { t === 'auto' ? localStorage.removeItem('sbs-theme') : localStorage.setItem('sbs-theme', t); } catch {}
+    show();
+  };
+})();
 const cards = [...document.querySelectorAll('.p')]; let at = -1;
 addEventListener('keydown', e => {
   if (e.metaKey || e.ctrlKey || e.altKey || e.target.closest('button,input,textarea')) return;

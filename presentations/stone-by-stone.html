@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function(){var t=null;try{t=localStorage.getItem('sbs-theme')}catch(e){}if(/[?&]print\b/.test(location.search))t='light';if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)})();</script>
 <title>Stone by Stone — build a site you keep improving</title>
-<meta name="description" content="A 3-hour build-along workshop in 40 illustrated slides: from a one-page idea to your own domain with Claude, Claude Code, GitHub, a web framework and Cloudflare — with sankettambare.in and four featured projects as case studies.">
+<meta name="description" content="A 3-hour build-along workshop in 41 animated, illustrated slides: from a one-page idea to your own domain with Claude, Claude Code, GitHub, a web framework and Cloudflare — with sankettambare.in and four featured projects as case studies.">
 <meta property="og:title" content="Stone by Stone — build a site you keep improving">
 <meta property="og:description" content="A 3-hour build-along workshop: idea → research → three docs → phased build with Claude Code → GitHub → Cloudflare → your domain.">
 <meta property="og:image" content="../assets/island/renders/og.jpg">
@@ -13,11 +14,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#fbf7ee; --paper2:#f3eddd; --ink:#1b2a6b; --ink2:#4a5583; --acc:#ff6a1a; --acc-soft:#ffe2cf;
-  --stone:#e6dec9; --tint:#dfe3ef; --out:#e4ddcb;
+  --paper:#fbf7ee; --paper2:#f3eddd; --ink:#1b2a6b; --ink2:#4a5583; --acc:#ff6a1a; --acc-soft:#ffe2cf; --stone:#e6dec9; --tint:#dfe3ef; --out:#e4ddcb; --card:#fffdf8; --white:#fff; --line:rgba(27,42,107,.16); --shadow:rgba(27,42,107,.14); --term:#1b2a6b;
   --disp:"Bricolage Grotesque",system-ui,sans-serif; --body:"Source Serif 4",Georgia,serif;
   --mono:"JetBrains Mono",ui-monospace,monospace; --hand:"Caveat",cursive;
 }
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#0f2a47; --paper2:#13365b; --ink:#e3ebf5; --ink2:#a9bcd3; --acc:#ff8a45; --acc-soft:rgba(255,138,69,.16); --stone:#2a4a6e; --tint:#1d4068; --out:#091b31; --card:#13365b; --white:#163d66; --line:rgba(227,235,245,.16); --shadow:rgba(0,0,0,.35); --term:#071629; color-scheme:dark;}}
+:root[data-theme="dark"]{--paper:#0f2a47; --paper2:#13365b; --ink:#e3ebf5; --ink2:#a9bcd3; --acc:#ff8a45; --acc-soft:rgba(255,138,69,.16); --stone:#2a4a6e; --tint:#1d4068; --out:#091b31; --card:#13365b; --white:#163d66; --line:rgba(227,235,245,.16); --shadow:rgba(0,0,0,.35); --term:#071629; color-scheme:dark;}
+/* the illustrations stay riso prints on paper in either theme */
+figure.illo{--paper:#fbf7ee;--ink:#1b2a6b;--ink2:#4a5583;--acc:#ff6a1a;color:#1b2a6b}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--out);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
 body{overflow:hidden}
@@ -26,7 +30,7 @@ body{overflow:hidden}
 .grain{background-color:var(--paper);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.16 0 0 0 0 0.42 0 0 0 .08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 .slide{position:absolute;inset:0;padding:92px 120px 130px;opacity:0;visibility:hidden;transition:opacity .35s ease;overflow:hidden}
 .slide.is-active{opacity:1;visibility:visible}
-.slide::before{content:"";position:absolute;inset:34px;border:2px solid rgba(27,42,107,.16);border-radius:30px;pointer-events:none}
+.slide::before{content:"";position:absolute;inset:34px;border:2px solid var(--line);border-radius:30px;pointer-events:none}
 .grid{display:grid;grid-template-columns:1fr 720px;gap:80px;height:100%;align-items:center;position:relative}
 .wide .grid{grid-template-columns:1fr 380px;align-items:start}
 .wide .grid > figure{margin-top:40px}
@@ -50,18 +54,18 @@ ol.steps{list-style:none;counter-reset:s;margin:0;padding:0}
 ol.steps li{counter-increment:s;position:relative;padding-left:66px;font-size:27px;line-height:1.35;margin-bottom:16px}
 ol.steps li::before{content:counter(s);position:absolute;left:0;top:-2px;width:46px;height:40px;display:grid;place-items:center;font:700 22px var(--mono);color:var(--paper);background:var(--ink);border-radius:52% 48% 46% 54% / 58% 56% 44% 42%}
 code,kbd{font-family:var(--mono);font-size:.82em;background:var(--tint);padding:2px 8px;border-radius:6px}
-kbd{border:2px solid var(--ink);background:#fff}
+kbd{border:2px solid var(--ink);background:var(--white)}
 b,strong{font-weight:600}
 a{color:var(--ink);text-decoration-color:var(--acc);text-decoration-thickness:3px;text-underline-offset:5px}
 .pull{font:700 46px/1.15 var(--disp);letter-spacing:-.015em;border-left:10px solid var(--acc);padding:6px 0 6px 30px;margin:34px 0 0;max-width:980px}
 .check{font:600 22px/1.4 var(--mono);background:var(--acc-soft);border-left:8px solid var(--acc);padding:14px 20px;border-radius:0 12px 12px 0;margin-top:26px}
 .check::before{content:"✓ YOU SHOULD NOW HAVE  ";color:var(--acc);letter-spacing:.06em}
 .chips{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}
-.chip{font:600 20px var(--mono);border:2.5px solid var(--ink);border-radius:999px;padding:8px 16px;background:#fff}
+.chip{font:600 20px var(--mono);border:2.5px solid var(--ink);border-radius:999px;padding:8px 16px;background:var(--white)}
 .chip.acc{background:var(--acc);color:#fff;border-color:var(--acc)}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:34px}
 .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
-.card{border:3px solid var(--ink);border-radius:20px;padding:22px 24px;background:#fffdf8;box-shadow:7px 7px 0 rgba(27,42,107,.14)}
+.card{border:3px solid var(--ink);border-radius:20px;padding:22px 24px;background:var(--card);box-shadow:7px 7px 0 var(--shadow)}
 .card p{font-size:23px;line-height:1.38;margin:0}
 .card .k{font:700 17px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:8px}
 figure.illo{width:720px;aspect-ratio:800/720;margin:0;border:3px solid var(--ink);border-radius:28px;box-shadow:12px 12px 0 rgba(255,106,26,.24);overflow:hidden;position:relative}
@@ -70,22 +74,22 @@ figure.illo svg{display:block;width:100%;height:100%}
 figure.illo figcaption{position:absolute;left:18px;bottom:12px;font:600 15px var(--mono);letter-spacing:.1em;color:var(--ink2);text-transform:uppercase}
 .lb{font-family:var(--hand);font-weight:700;fill:var(--ink)}
 /* prompt cards */
-.prompt{border:3px solid var(--ink);border-radius:18px;background:#fff;box-shadow:8px 8px 0 var(--ink);margin-top:10px}
+.prompt{border:3px solid var(--ink);border-radius:18px;background:var(--white);box-shadow:8px 8px 0 var(--ink);margin-top:10px}
 .prompt .pbar{display:flex;justify-content:space-between;align-items:center;background:var(--ink);color:var(--paper);font:700 17px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:10px 12px 10px 20px;border-radius:14px 14px 0 0}
 .prompt .pbar span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--acc);margin-right:12px;vertical-align:1px}
 .prompt button{font:700 15px var(--mono);letter-spacing:.1em;text-transform:uppercase;background:var(--paper);color:var(--ink);border:0;border-radius:8px;padding:7px 12px;cursor:pointer}
 .prompt button.ok{background:var(--acc);color:#fff}
 .prompt pre{margin:0;padding:18px 24px 20px;font:400 20.5px/1.46 var(--mono);white-space:pre-wrap;color:var(--ink)}
 .prompt pre i{font-style:normal;color:var(--acc);font-weight:700}
-pre.term{margin:0;font:400 21px/1.5 var(--mono);background:var(--ink);color:var(--paper);border-radius:16px;padding:20px 26px;white-space:pre-wrap}
+pre.term{margin:0;font:400 21px/1.5 var(--mono);background:var(--term);color:#fbf7ee;border-radius:16px;padding:20px 26px;white-space:pre-wrap}
 pre.term .c{color:#9fb0e8}
-pre.tree{margin:0;font:400 22px/1.45 var(--mono);background:#fffdf8;border:3px solid var(--ink);border-radius:16px;padding:20px 26px;white-space:pre}
+pre.tree{margin:0;font:400 22px/1.45 var(--mono);background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:20px 26px;white-space:pre}
 pre.tree .a{color:var(--acc);font-weight:700}
 pre.tree .m{color:var(--ink2)}
 /* tables */
 table.t{border-collapse:collapse;width:100%;font:21px/1.34 var(--body)}
 table.t th{font:700 16px var(--mono);letter-spacing:.12em;text-transform:uppercase;text-align:left;padding:10px 14px;border-bottom:3px solid var(--ink);color:var(--ink2)}
-table.t td{padding:12px 14px;border-bottom:2px solid rgba(27,42,107,.16);vertical-align:top}
+table.t td{padding:12px 14px;border-bottom:2px solid var(--line);vertical-align:top}
 table.t td:first-child{font:700 25px var(--disp);letter-spacing:-.01em;white-space:nowrap}
 table.t td .best{display:block;font:600 15px var(--mono);letter-spacing:.06em;color:var(--acc);text-transform:uppercase;margin-top:4px;white-space:normal}
 table.t .p::before{content:"+ ";font-weight:700;color:var(--ink)}
@@ -103,12 +107,12 @@ table.cmp td:nth-child(3){background:rgba(255,106,26,.08)}
 .title-slide figure.illo{width:760px}
 .title-meta{font:600 22px var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-top:44px;color:var(--ink2);line-height:1.7}
 .agenda{display:grid;grid-template-columns:150px 1fr;gap:0;font-size:26px;line-height:1.3}
-.agenda div{padding:8px 0;border-bottom:2px solid rgba(27,42,107,.14)}
+.agenda div{padding:8px 0;border-bottom:2px solid var(--line)}
 .agenda .tm{font:700 21px var(--mono);color:var(--acc);padding-top:15px}
 .agenda .brk{color:var(--ink2);font-style:italic}
 /* screenshots + project slides */
 .proj .grid{grid-template-columns:700px 1fr;gap:60px}
-.shots{position:relative;width:100%;height:800px}
+.shots{position:relative;width:100%;height:760px}
 .shot{position:absolute;margin:0;border:3px solid var(--ink);border-radius:16px;overflow:hidden;background:#fff;box-shadow:12px 12px 0 rgba(255,106,26,.24)}
 .shot .bar{height:30px;background:var(--ink);display:flex;gap:7px;align-items:center;padding:0 12px}
 .shot .bar i{width:10px;height:10px;border-radius:50%;background:var(--paper);opacity:.55}
@@ -117,26 +121,188 @@ table.cmp td:nth-child(3){background:rgba(255,106,26,.08)}
 .shot.phone{border-width:4px;border-radius:28px}
 .shot figcaption{position:absolute;right:10px;bottom:10px;font:700 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:5px 9px;border-radius:7px}
 figure.illo.mini{position:absolute;width:250px;border-width:3px;box-shadow:8px 8px 0 rgba(255,106,26,.24);z-index:3}
-.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0}
 .facts div{border-top:4px solid var(--ink);padding-top:8px}
 .facts b{display:block;font:800 50px/1 var(--disp);letter-spacing:-.02em}
 .facts span{font-size:19px;line-height:1.3;display:block;margin-top:4px;color:var(--ink2)}
 .facts .a b{color:var(--acc)}
 .visit{font:700 22px var(--mono);margin-top:18px}
 .visit a{text-decoration-thickness:3px}
-.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 22px;max-width:1100px}
 .thumbs figure{margin:0}
-.thumbs .shot{position:relative;box-shadow:7px 7px 0 rgba(27,42,107,.14)}
-.thumbs figcaption{font-size:20px;line-height:1.3;margin-top:10px}
-.thumbs figcaption b{font:800 23px var(--disp);display:block}
+.thumbs .shot{position:relative;box-shadow:7px 7px 0 var(--shadow)}
+.thumbs figcaption{font-size:18px;line-height:1.25;margin-top:8px}
+.thumbs figcaption b{font:800 21px var(--disp);display:block}
 .qa{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .qa .card h3{font-size:28px}
 .connect{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 34px;font:600 25px var(--mono);margin-top:26px}
 .connect a{text-decoration:none;border-bottom:3px solid var(--acc);padding-bottom:3px}
 .connect span{display:block;font:700 15px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-bottom:2px}
 .qrbox{display:flex;gap:22px;align-items:center;margin-top:34px}
-.qrbox svg.qr{width:170px;height:170px;color:var(--ink);background:#fff;padding:12px;border:3px solid var(--ink);border-radius:14px}
+.qrbox svg.qr{width:170px;height:170px;color:#1b2a6b;background:#fff;padding:12px;border:3px solid var(--ink);border-radius:14px}
 .qrbox p{font:600 22px/1.45 var(--mono);margin:0}
+
+/* plain words: strip, glossary, tap-to-explain */
+.plain{position:absolute;left:120px;right:120px;bottom:88px;margin:0;font:19px/1.4 var(--body);color:var(--ink);background:var(--acc-soft);border-radius:12px;padding:9px 18px;z-index:4}
+.plain span{font:700 13px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-right:10px}
+.slide:has(.plain){padding-bottom:176px}
+.gl .grid{grid-template-columns:1fr 300px!important}
+.gl h2{margin-bottom:14px}
+.gloss{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 22px}
+.gloss div{font:15.5px/1.32 var(--body);border-top:2px solid var(--line);padding-top:7px}
+.gloss b{display:block;font:700 17.5px var(--disp);letter-spacing:-.01em;margin-bottom:2px}
+.dotted{border-bottom:3px dotted var(--acc)}
+dfn.tip{font-style:normal;border-bottom:2.5px dotted var(--acc);cursor:help}
+dfn.tip:focus-visible{outline:3px solid var(--acc);outline-offset:2px;border-radius:3px}
+#tipbox{position:fixed;z-index:60;max-width:min(380px,calc(100vw - 20px));background:#1b2a6b;color:#fbf7ee;font:15px/1.45 "Source Serif 4",Georgia,serif;padding:10px 14px;border-radius:10px;border-left:5px solid #ff6a1a;box-shadow:0 10px 30px rgba(0,0,0,.25);pointer-events:none}
+#tipbox b{display:block;font:700 12px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:#ffb386;margin-bottom:3px}
+#tipbox[hidden]{display:none}
+/* motion: a scene plays its idea when its slide opens (.play), then idles; without .play every drawing is its final frame */
+@keyframes drop{from{transform:translateY(-70px);opacity:0}65%{transform:translateY(5px);opacity:1}to{transform:none}}
+@keyframes fadeIn{from{opacity:0}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes float{50%{transform:translateY(-9px)}}
+@keyframes march{to{stroke-dashoffset:-60}}
+@keyframes wave{50%{transform:translateX(16px)}}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-12deg)}40%{transform:rotate(9deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(3deg)}}
+@keyframes pop{from{transform:scale(0);opacity:0}70%{transform:scale(1.18);opacity:1}to{transform:none}}
+@keyframes rise{from{transform:translateY(60px);opacity:0}to{transform:none}}
+@keyframes pushL{from{transform:translateX(110px)}}
+@keyframes slideR{from{transform:translateX(-90px)}}
+@keyframes swing{from{transform:scaleX(0)}70%{transform:scaleX(1.05)}to{transform:none}}
+@keyframes teeter{0%,100%{transform:rotate(0)}25%{transform:rotate(2.5deg)}75%{transform:rotate(-2.5deg)}}
+@keyframes flag{50%{transform:skewY(-7deg) scaleX(.94)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes needle{from{transform:rotate(-90deg)}60%{transform:rotate(12deg)}80%{transform:rotate(-5deg)}to{transform:none}}
+@keyframes bubble{from{transform:translateY(-60px)}60%{transform:translateY(9px)}80%{transform:translateY(-4px)}to{transform:none}}
+@keyframes ramp{from{transform:translate(-100px,48px)}}
+@keyframes press{0%,100%{transform:none}45%,60%{transform:translateY(8px)}}
+@keyframes glow{50%{opacity:.35}}
+@keyframes lift{from{transform:translateY(70px);opacity:0}}
+@keyframes toss{from{transform:translate(-120px,180px) rotate(-320deg) scale(.4);opacity:0}to{transform:none}}
+@keyframes hop{from{transform:translate(-170px,0)}40%{transform:translate(-85px,-110px)}75%{transform:translate(0,6px)}to{transform:none}}
+@keyframes peck{0%,70%,100%{transform:none}80%{transform:translateY(-12px)}90%{transform:translateY(2px)}}
+@keyframes run{from{transform:translateX(-320px)}to{transform:none}}
+@keyframes scan{50%{transform:translate(12px,-10px)}}
+.a-eyes,.a-shake,.a-pop,.a-toss,.a-spin,.a-swing,.a-press{transform-box:fill-box;transform-origin:center}
+.a-swing{transform-origin:left center}
+.a-teeter{transform-box:view-box;transform-origin:400px 530px}
+.a-flag{transform-box:view-box;transform-origin:404px 255px}
+.a-needle{transform-box:view-box}
+.play figure.illo .lb{animation:fadeIn .5s .55s both}
+.play .a-drop{animation:drop .55s cubic-bezier(.3,1.25,.5,1) both;animation-delay:calc(.15s + var(--d,0)*.11s)}
+.play .a-draw{stroke-dasharray:1;animation:draw .9s ease-out both;animation-delay:calc(.35s + var(--d,0)*.18s)}
+.play .a-draw.a-slow{animation-duration:1.7s}
+.play .a-head{animation:fadeIn .25s both;animation-delay:calc(1.15s + var(--d,0)*.18s)}
+.play .a-fade{animation:fadeIn .6s both;animation-delay:calc(.4s + var(--d,0)*.12s)}
+.play .a-bob{animation:bob 3.4s ease-in-out 1.6s infinite}
+.play .a-eyes{animation:blink 5s 2.4s infinite}
+.play .a-float{animation:float 2.8s ease-in-out 1.2s infinite}
+.play .a-march{animation:march 3s linear infinite}
+.play .a-wave{animation:wave 2.6s ease-in-out infinite}
+.play .a-shake{animation:shake .7s ease .9s 2}
+.play .a-pop{animation:pop .5s cubic-bezier(.3,1.4,.5,1) both;animation-delay:calc(.2s + var(--d,0)*.12s)}
+.play .a-rise{animation:rise .7s ease-out both;animation-delay:calc(.3s + var(--d,0)*.12s)}
+.play .a-push-l{animation:pushL 1.6s ease-out .2s both}
+.play .a-slide-r{animation:slideR 1s cubic-bezier(.2,.8,.3,1) .25s both}
+.play .a-swing{animation:swing .55s cubic-bezier(.3,1.3,.5,1) both;animation-delay:calc(.2s + var(--d,0)*.11s)}
+.play .a-teeter{animation:teeter 3.6s ease-in-out .3s infinite}
+.play .a-flag{animation:flag 1.4s ease-in-out infinite}
+.play .a-spin{animation:spin 9s linear infinite}
+.play .a-spin.a-rev{animation-direction:reverse;animation-duration:6s}
+.play .a-needle{animation:needle 1.3s cubic-bezier(.3,1.2,.5,1) .5s both}
+.play .a-bubble{animation:bubble 1.1s ease-out .6s both}
+.play .a-ramp{animation:ramp 1.4s cubic-bezier(.2,.8,.3,1) .2s both}
+.play .a-press{animation:press .6s ease .9s 1}
+.play .a-glow{animation:glow 1.6s ease-in-out 1.4s infinite}
+.play .a-lift{animation:lift .8s cubic-bezier(.3,1.2,.5,1) .4s both}
+.play .a-toss{animation:toss 1.1s cubic-bezier(.2,.9,.3,1.1) .2s both}
+.play .a-hop{animation:hop 1s ease-in-out .3s both}
+.play .a-peck{animation:peck 2.2s ease-in-out 1s infinite}
+.play .a-run{animation:run 1.2s cubic-bezier(.2,.8,.3,1) .2s both}
+.play .a-scan{animation:scan 2.4s ease-in-out .5s infinite}
+@media (prefers-reduced-motion: reduce){.slide *,.slide *::before{animation:none!important;transition:none!important}}
+/* theme button */
+#ctrl #theme{min-width:92px}
+/* phones: each slide becomes a stacked, scrollable card */
+body.reflow{overflow:auto;height:auto}
+body.reflow #viewport{position:static}
+body.reflow #stage{position:static;width:auto;height:auto;transform:none!important}
+body.reflow .slide{position:relative;inset:auto;opacity:1;visibility:visible;min-height:100svh;padding:60px 18px 46px!important;transition:none;overflow:visible}
+body.reflow .slide::before{inset:8px;border-radius:18px}
+body.reflow .grid{display:flex!important;flex-direction:column;gap:22px;height:auto;align-items:stretch}
+body.reflow .grid > *{min-width:0}
+body.reflow figure.illo{width:100%!important;max-width:520px;margin:0 auto!important;box-shadow:6px 6px 0 rgba(255,106,26,.24)}
+body.reflow figure.illo.mini{position:relative!important;left:auto!important;bottom:auto!important;width:62%!important;max-width:300px;margin:4px auto 0!important}
+body.reflow h1{font-size:54px!important}
+body.reflow h2{font-size:33px!important;margin-bottom:14px}
+body.reflow h3{font-size:19px;margin-top:10px!important}
+body.reflow .kick{font-size:11px;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+body.reflow .kick b{padding:5px 8px 4px}
+body.reflow .lead{font-size:18px!important;margin-bottom:12px}
+body.reflow .small{font-size:14.5px!important}
+body.reflow ul.pts li,body.reflow ol.steps li{font-size:16.5px!important;margin-bottom:9px}
+body.reflow ul.pts li{padding-left:30px}
+body.reflow ul.pts li::before{width:15px;height:11px;left:2px;border-width:2px}
+body.reflow ol.steps li{padding-left:44px}
+body.reflow ol.steps li::before{width:32px;height:28px;font-size:15px}
+body.reflow .pull{font-size:21px!important;border-left-width:6px;padding-left:16px;margin-top:18px}
+body.reflow .check{font-size:13px;padding:10px 12px;margin-top:16px}
+body.reflow .cols,body.reflow .cols3,body.reflow .qa,body.reflow .connect{grid-template-columns:1fr!important;gap:12px!important}
+body.reflow .card{padding:14px 16px;box-shadow:4px 4px 0 var(--shadow)}
+body.reflow .card p{font-size:15px}
+body.reflow .card .k{font-size:12px}
+body.reflow .chips{gap:8px}
+body.reflow .chip{font-size:12px;padding:6px 11px}
+body.reflow .big-n{gap:12px}
+body.reflow .big-n b{font-size:40px}
+body.reflow .big-n span{font-size:13.5px}
+body.reflow .facts b{font-size:24px}
+body.reflow .facts span{font-size:12.5px}
+body.reflow .agenda{grid-template-columns:58px 1fr;font-size:15px}
+body.reflow .agenda .tm{font-size:13px;padding-top:10px}
+body.reflow .prompt{box-shadow:5px 5px 0 var(--ink)}
+body.reflow .prompt .pbar{font-size:11px;padding:8px 8px 8px 12px}
+body.reflow .prompt button{font-size:11px}
+body.reflow .prompt pre{font-size:13px!important;padding:12px 14px}
+body.reflow pre.term,body.reflow pre.tree{font-size:12.5px!important;padding:12px 14px;overflow-x:auto}
+body.reflow table.t,body.reflow table.t tbody,body.reflow table.t tr,body.reflow table.t td{display:block;width:auto!important}
+body.reflow table.t tr:first-child{display:none}
+body.reflow table.t tr{border:2px solid var(--ink);border-radius:14px;padding:10px 12px;margin-bottom:12px;background:var(--card)}
+body.reflow table.t td{border:0;padding:4px 0;font-size:14.5px}
+body.reflow table.t td:first-child{font-size:19px;white-space:normal}
+body.reflow table.cmp td:nth-child(2)::before{content:"App builder: ";font-weight:700}
+body.reflow table.cmp td:nth-child(3){background:none}
+body.reflow table.cmp td:nth-child(3)::before{content:"Your own stack: ";font-weight:700;color:var(--acc)}
+body.reflow .shots{height:auto;display:flex;flex-direction:column;gap:14px}
+body.reflow .shot{position:relative!important;left:auto!important;top:auto!important;width:100%!important;box-shadow:5px 5px 0 rgba(255,106,26,.24)}
+body.reflow .shot.phone{width:56%!important;align-self:center}
+body.reflow .shot .bar{height:22px}
+body.reflow .shot .bar span{font-size:11px}
+body.reflow .thumbs{grid-template-columns:1fr 1fr;gap:12px}
+body.reflow .thumbs figcaption{font-size:13px}
+body.reflow .thumbs figcaption b{font-size:15px}
+body.reflow .gloss{grid-template-columns:1fr;gap:8px}
+body.reflow .gloss div{font-size:14.5px}
+body.reflow .gloss b{font-size:16px}
+body.reflow .plain{position:static;font-size:14px;margin-top:18px;padding:10px 12px}
+body.reflow .plain span{font-size:11px;display:block;margin-bottom:3px}
+body.reflow .connect{font-size:15px}
+body.reflow .connect span{font-size:11px}
+body.reflow .qrbox svg.qr{width:120px;height:120px}
+body.reflow .qrbox p{font-size:14px}
+body.reflow .visit{font-size:15px}
+body.reflow .title-meta{font-size:12px;margin-top:20px}
+body.reflow #hud{position:fixed;left:auto;right:10px;bottom:10px;gap:0;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:6px 12px;font-size:11px;z-index:20}
+body.reflow #hud .brand,body.reflow #trail{display:none}
+body.reflow #count{min-width:0}
+body.reflow #prev,body.reflow #next,body.reflow #nbtn,body.reflow #full{display:none}
+body.reflow #ctrl{top:10px;right:10px}
+body.reflow #ctrl #theme{min-width:0;font-size:11px;padding:6px 9px}
+body.reflow #notes{display:none!important}
+@media print{:root,:root[data-theme]{--paper:#fbf7ee; --paper2:#f3eddd; --ink:#1b2a6b; --ink2:#4a5583; --acc:#ff6a1a; --acc-soft:#ffe2cf; --stone:#e6dec9; --tint:#dfe3ef; --out:#e4ddcb; --card:#fffdf8; --white:#fff; --line:rgba(27,42,107,.16); --shadow:rgba(27,42,107,.14); --term:#1b2a6b;color-scheme:light}}
 /* hud */
 #hud{position:absolute;left:120px;right:120px;bottom:52px;display:flex;align-items:center;gap:28px;font:600 17px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);z-index:5;pointer-events:none}
 #hud .brand{white-space:nowrap}
@@ -149,7 +315,7 @@ figure.illo.mini{position:absolute;width:250px;border-width:3px;box-shadow:8px 8
 #ctrl{position:fixed;right:14px;top:12px;display:flex;gap:8px;z-index:20}
 #ctrl button{font:700 13px var(--mono);letter-spacing:.08em;background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:10px;padding:8px 11px;cursor:pointer}
 #ctrl button:hover{background:var(--ink);color:var(--paper)}
-#notes{position:fixed;left:0;right:0;bottom:0;max-height:36vh;overflow:auto;background:var(--ink);color:var(--paper);padding:16px 24px 56px;font:17px/1.5 var(--body);display:none;z-index:15;border-top:4px solid var(--acc)}
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:36vh;overflow:auto;background:#1b2a6b;color:#fbf7ee;padding:16px 24px 56px;font:17px/1.5 var(--body);display:none;z-index:15;border-top:4px solid var(--acc)}
 body.show-notes #notes{display:block}
 #notes .nh{font:700 13px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#ffb386;margin-bottom:6px;display:flex;gap:22px;flex-wrap:wrap}
 #notes p{margin:0 0 8px;max-width:1100px}
@@ -325,7 +491,8 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
     </div>
     <figure class="illo grain" data-scene="dome" data-alt="Cairn pushes against a locked glass dome over a small website, unable to reach it."></figure>
   </div>
-  <aside class="notes" data-min="3">This is the test to run on any tool, including the one we use today. The right-hand column is what makes iteration cheap. Notice nothing in it is about AI — it's ownership, plain files and history. The AI part is what makes that ownership affordable for someone who isn't a developer.</aside>
+  <p class="plain"><span>In plain words</span> <b>Export</b> download the code to run somewhere else · <b>changelog</b> a dated list of every change.</p>
+  <aside class="notes" data-min="3">This is the test to run on any tool, including the one we use today. The right-hand column is what makes iteration cheap. Notice nothing in it is about AI — it's ownership, plain files and history. The AI part is what makes that ownership affordable for someone who isn't a developer. <b>Plain words:</b> Renting a furnished flat versus owning the house: the flat is quicker to move into, but you can't knock down a wall.</aside>
 </section>
 
 <section class="slide grain" data-part="1" data-time="0:12" data-n="08">
@@ -342,7 +509,8 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
     </div>
     <figure class="illo grain" data-scene="stack" data-alt="An explainer cairn: Cloudflare is the bottom stone, GitHub above it, then the framework; Cairn, labelled Claude Code, stands on top adding a stone."></figure>
   </div>
-  <aside class="notes" data-min="3">Each stone does one job and can be swapped without touching the others — that's the scalable part. Framework is the only one we'll debate; the other three are the spine. Claude chat (with Research) shapes the plan; Claude Code builds it.</aside>
+  <p class="plain"><span>In plain words</span> <b>Claude Code</b> an AI that edits your project's files · <b>GitHub</b> online storage that keeps every version · <b>framework</b> a starter kit for pages · <b>Cloudflare</b> the servers that show your site to the world.</p>
+  <aside class="notes" data-min="3">Each stone does one job and can be swapped without touching the others — that's the scalable part. Framework is the only one we'll debate; the other three are the spine. Claude chat (with Research) shapes the plan; Claude Code builds it. <b>Plain words:</b> Building a house: Claude Code is the builder, GitHub the site diary and archive of blueprints, the framework the prefab kit, Cloudflare the plot on a busy street.</aside>
 </section>
 
 <section class="slide grain" data-part="1" data-time="0:14" data-n="09">
@@ -360,7 +528,8 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
     </div>
     <figure class="illo grain" data-scene="compound" data-alt="A tall cairn of ten stones marked v1 at the bottom to v31 at the top; Cairn waves from the summit."></figure>
   </div>
-  <aside class="notes" data-min="2">Thirty-one major versions: every one was a new page or a full redesign, and none started from scratch. That's what we want you to have: a site where adding is normal. The case study at the end shows the habits that made that possible.</aside>
+  <p class="plain"><span>In plain words</span> <b>Major version</b> a release big enough to be a new edition — a new page or a redesign · <b>route</b> one page address, like /about.</p>
+  <aside class="notes" data-min="2">Thirty-one major versions: every one was a new page or a full redesign, and none started from scratch. That's what we want you to have: a site where adding is normal. The case study at the end shows the habits that made that possible. <b>Plain words:</b> Like a book's editions: each is the same book, a bit better, and nobody rewrites it from page one.</aside>
 </section>
 
 <section class="slide grain" data-part="1" data-time="0:16" data-n="10">
@@ -392,11 +561,25 @@ body.print .slide:last-of-type{page-break-after:auto;break-after:auto}
     </div>
     <figure class="illo grain" data-scene="prework" data-alt="Cairn points along a row of four stones, each ticked: Claude, GitHub, Cloudflare, Node."></figure>
   </div>
-  <aside class="notes" data-min="5">This was the pre-work email; use these five minutes to fix anyone who's stuck. The usual blocker is the Node install on a locked-down work laptop — send those people to Claude Code on the web, which needs only a browser and a GitHub connection.</aside>
+  <p class="plain"><span>In plain words</span> <b>Node.js</b> the engine that runs website tools on your laptop · <b>Git</b> the tool that records versions · <b>terminal</b> a window where you type commands.</p>
+  <aside class="notes" data-min="5">This was the pre-work email; use these five minutes to fix anyone who's stuck. The usual blocker is the Node install on a locked-down work laptop — send those people to Claude Code on the web, which needs only a browser and a GitHub connection. <b>Plain words:</b> The terminal is texting your computer instead of tapping icons. You'll mostly paste what Claude suggests.</aside>
+</section>
+
+<section class="slide grain wide gl" data-part="1" data-time="0:18" data-n="11">
+  <div class="grid">
+    <div>
+      <p class="kick"><b>01 · The idea</b><span class="t">0:18 · plain words</span></p>
+      <h2>Words we'll use <em>today</em></h2>
+      <p class="lead" style="font-size:26px;margin-bottom:18px">No jargon needed. On every later slide, a <span class="dotted">dotted word</span> shows this meaning when you hover over it or tap it.</p>
+      <div class="gloss"><div><b>Repository (repo)</b>A project folder that remembers every version of every file — like a Google Doc&#x27;s version history, for a whole folder.</div><div><b>Commit</b>A saved checkpoint with a short note saying what changed.</div><div><b>Push</b>Upload your saved checkpoints from your laptop to GitHub.</div><div><b>Branch</b>A safe copy of the project to try a change without touching the live site.</div><div><b>Pull request</b>A page asking to merge a branch back in, where the change can be reviewed first.</div><div><b>Framework</b>A starter kit with rules for building pages, so you don&#x27;t start from a blank file. Astro is one.</div><div><b>Build</b>Turning your source files into the finished website files.</div><div><b>Deploy</b>Putting the built website on the internet for everyone.</div><div><b>Host / hosting</b>The computers that send your site to each visitor — like renting shop space.</div><div><b>Edge</b>Copies of your site kept in cities around the world, so it loads fast wherever the visitor is.</div><div><b>Domain</b>Your site&#x27;s name, like yourname.com.</div><div><b>DNS</b>The internet&#x27;s phonebook: it turns a name like yourname.com into the address of a computer.</div><div><b>Nameservers</b>Whoever keeps your domain&#x27;s phonebook entry. Pointing them at Cloudflare lets Cloudflare manage it.</div><div><b>SSL / HTTPS</b>The padlock in the address bar: traffic between visitor and site is encrypted.</div><div><b>Context</b>How much of the conversation Claude can keep in mind at once. Long chats crowd it out.</div><div><b>Plan mode</b>Claude writes a plan and waits for your OK before it changes any file.</div><div><b>CLAUDE.md</b>A short note in your project that Claude reads at the start of every session — its onboarding doc.</div><div><b>Data layer / code layer</b>What the site says (words, photos, links) versus how it looks and works. Keep them in separate folders.</div><div><b>Markdown</b>Plain text where # makes a heading and - makes a bullet. Easy for people and AI to read.</div><div><b>JSON / YAML</b>Plain-text formats for lists of things — like a spreadsheet written as text.</div><div><b>SEO</b>Search engine optimisation: helping Google and AI search find and show your pages.</div><div><b>Lighthouse</b>Google&#x27;s free report card for a page: speed, accessibility, SEO and best practice, each out of 100.</div><div><b>Open Graph image</b>The preview picture shown when your link is shared on WhatsApp, LinkedIn or Slack.</div><div><b>Terminal</b>A window where you type commands to your computer instead of clicking icons.</div></div>
+    </div>
+    <figure class="illo grain" data-scene="words" data-alt="Cairn points at a big open dictionary labelled plain words, a to z."></figure>
+  </div>
+  <aside class="notes" data-min="2">Don't read the grid aloud. Point at three words people will hear most today — repo, deploy, domain — and tell them every dotted word on later slides can be tapped. For the developers in the room: this slide is for your neighbour; be the person who explains it.</aside>
 </section>
 
 <!-- ═════════ PART 2 · SHAPE ═════════ -->
-<section class="slide grain" data-part="2" data-time="0:20" data-n="11">
+<section class="slide grain" data-part="2" data-time="0:20" data-n="12">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:20 · exercise, 10 min</span></p>
@@ -416,7 +599,7 @@ Time I'll give it       <span class="m">per week, honestly</span></pre>
   <aside class="notes" data-min="10">Ten minutes, timer on screen. Walk the room. The two lines people skip are "what it must never be" and "time I'll give it" — those two decide most of the design. Someone who gives it 20 minutes a week needs a site that's easy to add to, not a showpiece.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:30" data-n="12">
+<section class="slide grain" data-part="2" data-time="0:30" data-n="13">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:30 · Claude chat</span></p>
@@ -428,10 +611,11 @@ Keep asking until you could write the concept without guessing. Then rewrite it 
     </div>
     <figure class="illo grain" data-scene="interview" data-alt="Cairn sits on a stone while three question marks drift out of a laptop toward it, labelled one batch at a time."></figure>
   </div>
-  <aside class="notes" data-min="10">The trick is "before you write anything". Without it Claude produces a polished concept full of guesses. Answer by voice if typing is slow. Two or three rounds is typical. If it asks nothing, tell it to ask — weak questions mean your idea.md is already clear, which is fine too.</aside>
+  <p class="plain"><span>In plain words</span> <b>Claude Project</b> a folder in Claude chat that keeps the files and conversations for one thing together.</p>
+  <aside class="notes" data-min="10">The trick is "before you write anything". Without it Claude produces a polished concept full of guesses. Answer by voice if typing is slow. Two or three rounds is typical. If it asks nothing, tell it to ask — weak questions mean your idea.md is already clear, which is fine too. <b>Plain words:</b> This is a discovery call: Claude is the consultant who asks questions before writing the proposal.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:40" data-n="13">
+<section class="slide grain" data-part="2" data-time="0:40" data-n="14">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:40 · Research on</span></p>
@@ -447,10 +631,11 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
     </div>
     <figure class="illo grain" data-scene="research" data-alt="Cairn presses a magnifier over concept.md; five rays fan out to pages for peers, design, framework, hosting and SEO."></figure>
   </div>
-  <aside class="notes" data-min="10">Research runs for several minutes — start it, then use the wait to collect content (slide 13). Ask people to open two or three of the cited links: reading the sources is the point. Item 2 is where the good design ideas come from; push people to name the sites they admire.</aside>
+  <p class="plain"><span>In plain words</span> <b>Research</b> a Claude mode that reads many pages for minutes and writes a cited report · <b>SEO</b> helping Google find your pages.</p>
+  <aside class="notes" data-min="10">Research runs for several minutes — start it, then use the wait to collect content (slide 13). Ask people to open two or three of the cited links: reading the sources is the point. Item 2 is where the good design ideas come from; push people to name the sites they admire. <b>Plain words:</b> Like asking an analyst for a briefing pack with footnotes — you still read the footnotes.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:50" data-n="14">
+<section class="slide grain" data-part="2" data-time="0:50" data-n="15">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:50</span></p>
@@ -464,10 +649,11 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
     </div>
     <figure class="illo grain" data-scene="three" data-alt="Cairn carries three stacked slabs over its head: concept, decisions, plan."></figure>
   </div>
-  <aside class="notes" data-min="7">These three files are the hand-off from chat to code. Claude Code will read them in every session, so they have to be short enough to read and precise enough to act on. The decisions doc uses a lightweight ADR shape — "what would make us revisit it" is the line that saves you later.</aside>
+  <p class="plain"><span>In plain words</span> <b>.md (Markdown)</b> a plain-text file where # makes a heading and - makes a bullet — readable by people and AI alike.</p>
+  <aside class="notes" data-min="7">These three files are the hand-off from chat to code. Claude Code will read them in every session, so they have to be short enough to read and precise enough to act on. The decisions doc uses a lightweight ADR shape — "what would make us revisit it" is the line that saves you later. <b>Plain words:</b> PRD, design doc and release plan. You've written all three before, just longer.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="0:57" data-n="15">
+<section class="slide grain" data-part="2" data-time="0:57" data-n="16">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">0:57</span></p>
@@ -482,10 +668,11 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
     </div>
     <figure class="illo grain" data-scene="cuts" data-alt="Cairn pushes an extra stone out of a small cart marked phase 1, at most five, toward a pile marked later."></figure>
   </div>
-  <aside class="notes" data-min="3">This is the PM superpower in the room — you already know scope control. Apply it to yourself. Ask Claude: "cut this plan by half and tell me what we lose". Brief plans also keep Claude Code's context small, which keeps its work accurate.</aside>
+  <p class="plain"><span>In plain words</span> <b>Phase 1</b> the smallest version that is useful and live · <b>later.md</b> a parking lot for ideas.</p>
+  <aside class="notes" data-min="3">This is the PM superpower in the room — you already know scope control. Apply it to yourself. Ask Claude: "cut this plan by half and tell me what we lose". Brief plans also keep Claude Code's context small, which keeps its work accurate. <b>Plain words:</b> Backlog grooming: this sprint versus the icebox.</aside>
 </section>
 
-<section class="slide grain" data-part="2" data-time="1:00" data-n="16">
+<section class="slide grain" data-part="2" data-time="1:00" data-n="17">
   <div class="grid">
     <div>
       <p class="kick"><b>02 · Shape</b><span class="t">1:00</span></p>
@@ -499,11 +686,12 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
     </div>
     <figure class="illo grain" data-scene="data" data-alt="Cairn pushes a stone into one of three baskets labelled text, images and links."></figure>
   </div>
-  <aside class="notes" data-min="5">The most common reason a first version looks wrong is missing content. Prompt: "List every piece of content the site in concept.md needs, grouped by page, with the format and fields for each. Write it as INVENTORY.md." Then fill the gaps. You can keep collecting while we pick the stack.</aside>
+  <p class="plain"><span>In plain words</span> <b>Markdown</b> plain text for writing · <b>JSON / YAML</b> plain text for lists · <b>frontmatter</b> labelled lines at the top of a file (title, date).</p>
+  <aside class="notes" data-min="5">The most common reason a first version looks wrong is missing content. Prompt: "List every piece of content the site in concept.md needs, grouped by page, with the format and fields for each. Write it as INVENTORY.md." Then fill the gaps. You can keep collecting while we pick the stack. <b>Plain words:</b> Gather the ingredients before you cook. Lorem ipsum is cooking with plastic food.</aside>
 </section>
 
 <!-- ═════════ PART 3 · DECIDE ═════════ -->
-<section class="slide grain wide" data-part="3" data-time="1:05" data-n="17">
+<section class="slide grain wide" data-part="3" data-time="1:05" data-n="18">
   <div class="grid">
     <div>
       <p class="kick"><b>03 · Decide</b><span class="t">1:05</span></p>
@@ -518,10 +706,11 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
     </div>
     <figure class="illo grain" data-scene="fork" data-alt="Cairn looks up at a signpost with four arms: Astro, Next.js, SvelteKit, React plus Vite."></figure>
   </div>
-  <aside class="notes" data-min="7">Rule of thumb: content first, choose Astro; app first, Next.js or SvelteKit; already fluent in React and need heavy interactivity, React + Vite — but plan for SEO on day one. The case study is React + Vite and paid for it in SEO work (slide 28). Let people choose; the rest of the workshop is the same either way.</aside>
+  <p class="plain"><span>In plain words</span> <b>JavaScript</b> code that runs in the visitor's browser — less is faster · <b>crawler</b> a robot that reads sites for search engines and AI.</p>
+  <aside class="notes" data-min="7">Rule of thumb: content first, choose Astro; app first, Next.js or SvelteKit; already fluent in React and need heavy interactivity, React + Vite — but plan for SEO on day one. The case study is React + Vite and paid for it in SEO work (slide 28). Let people choose; the rest of the workshop is the same either way. <b>Plain words:</b> Choosing a framework is like Word vs Google Docs vs Notion: all make documents, each is better at something.</aside>
 </section>
 
-<section class="slide grain wide" data-part="3" data-time="1:12" data-n="18">
+<section class="slide grain wide" data-part="3" data-time="1:12" data-n="19">
   <div class="grid">
     <div>
       <p class="kick"><b>03 · Decide</b><span class="t">1:12</span></p>
@@ -537,11 +726,12 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
     </div>
     <figure class="illo grain" data-scene="balance" data-alt="Cairn balances on a plank resting on a stone, free tier on one end and limits on the other."></figure>
   </div>
-  <aside class="notes" data-min="5">Cloudflare wins for a personal site on cost and on having the domain in the same dashboard. The one gotcha is the 10 ms CPU limit for code on the free plan — the case study hit it rendering images at request time (slide 28). Static pages don't count against it. Then: break, 10 minutes.</aside>
+  <p class="plain"><span>In plain words</span> <b>Host</b> the computers that serve your site · <b>edge</b> copies of it in cities near visitors · <b>CPU limit</b> how long your code may think per visit.</p>
+  <aside class="notes" data-min="5">Cloudflare wins for a personal site on cost and on having the domain in the same dashboard. The one gotcha is the 10 ms CPU limit for code on the free plan — the case study hit it rendering images at request time (slide 28). Static pages don't count against it. Then: break, 10 minutes. <b>Plain words:</b> Hosting is renting shop space; the edge is having a branch in every city.</aside>
 </section>
 
 <!-- ═════════ PART 4 · BUILD ═════════ -->
-<section class="slide grain" data-part="4" data-time="1:30" data-n="19">
+<section class="slide grain" data-part="4" data-time="1:30" data-n="20">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:30 · Claude Code</span></p>
@@ -565,10 +755,11 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
     </div>
     <figure class="illo grain" data-scene="repo" data-alt="Cairn presses a flagpole into the top of a mound marked git init; the orange flag reads main."></figure>
   </div>
-  <aside class="notes" data-min="10">Put the three docs and INVENTORY.md in a new folder, cd into it, run claude, paste the prompt. Claude asks before running commands — read what it asks. Creating the GitHub repo by hand is deliberate: everyone should see where their code lives. The two lines are git remote add origin … and git push -u origin main.</aside>
+  <p class="plain"><span>In plain words</span> <b>Repo</b> a project folder that remembers every version · <b>commit</b> a saved checkpoint with a note · <b>scaffold</b> the starter files a framework creates.</p>
+  <aside class="notes" data-min="10">Put the three docs and INVENTORY.md in a new folder, cd into it, run claude, paste the prompt. Claude asks before running commands — read what it asks. Creating the GitHub repo by hand is deliberate: everyone should see where their code lives. The two lines are git remote add origin … and git push -u origin main. <b>Plain words:</b> A repo is a Google Doc's version history, for a whole folder of files.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:40" data-n="20">
+<section class="slide grain" data-part="4" data-time="1:40" data-n="21">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:40</span></p>
@@ -583,10 +774,11 @@ Cite every claim with a link. Flag what you could not verify.</pre></div>
     </div>
     <figure class="illo grain" data-scene="layers" data-alt="Cairn stands on a wall keeping a pile of content pages on one side and gears of code on the other; one door in the wall is labelled lib/content."></figure>
   </div>
-  <aside class="notes" data-min="5">This is the most important engineering idea of the day, and it's one sentence: content in one place, code in another, one door between them. Put it in CLAUDE.md so every session follows it. It's also what lets non-developers edit the site: they edit content/, never src/.</aside>
+  <p class="plain"><span>In plain words</span> <b>Data layer</b> what the site says · <b>code layer</b> how it looks and works · <b>schema</b> rules content must follow, e.g. every project has a title.</p>
+  <aside class="notes" data-min="5">This is the most important engineering idea of the day, and it's one sentence: content in one place, code in another, one door between them. Put it in CLAUDE.md so every session follows it. It's also what lets non-developers edit the site: they edit content/, never src/. <b>Plain words:</b> A slide template versus what you type into it: change the template, keep the words.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:45" data-n="21">
+<section class="slide grain" data-part="4" data-time="1:45" data-n="22">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:45</span></p>
@@ -604,10 +796,11 @@ Personal site. Astro → Cloudflare Workers.
     </div>
     <figure class="illo grain" data-scene="memo" data-alt="Cairn presses a note labelled CLAUDE.md onto a post, pinned with an orange pin."></figure>
   </div>
-  <aside class="notes" data-min="5">The "Lessons" line is how the site gets smarter: when something breaks and you fix it, ask Claude to add one line so no future session repeats it. The case study's CLAUDE.md is long because it's a big site; yours should fit on this slide for the first month.</aside>
+  <p class="plain"><span>In plain words</span> <b>CLAUDE.md</b> a note Claude reads every session · <b>skill</b> a saved how-to it opens only when needed · <b>hook</b> a rule enforced automatically.</p>
+  <aside class="notes" data-min="5">The "Lessons" line is how the site gets smarter: when something breaks and you fix it, ask Claude to add one line so no future session repeats it. The case study's CLAUDE.md is long because it's a big site; yours should fit on this slide for the first month. <b>Plain words:</b> CLAUDE.md is the onboarding doc you'd hand a new contractor on day one.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:50" data-n="22">
+<section class="slide grain" data-part="4" data-time="1:50" data-n="23">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:50</span></p>
@@ -623,10 +816,11 @@ Personal site. Astro → Cloudflare Workers.
     </div>
     <figure class="illo grain" data-scene="loop" data-alt="A loop of five stations — fresh session, plan, build, verify, commit — with Cairn at the centre labelled one phase."></figure>
   </div>
-  <aside class="notes" data-min="5">This loop is the whole method. People's instinct is one endless chat; that's where quality decays. When you come back tomorrow, you don't need to remember anything — the plan file says where you are. /rewind restores code and conversation to an earlier point when a turn goes wrong.</aside>
+  <p class="plain"><span>In plain words</span> <b>Context</b> how much of the chat Claude can hold in mind · <b>/clear</b> start a fresh chat · <b>plan mode</b> Claude proposes, you approve, then it edits.</p>
+  <aside class="notes" data-min="5">This loop is the whole method. People's instinct is one endless chat; that's where quality decays. When you come back tomorrow, you don't need to remember anything — the plan file says where you are. /rewind restores code and conversation to an earlier point when a turn goes wrong. <b>Plain words:</b> A three-hour meeting with no minutes: by the end, the first hour is fuzzy. Fresh meeting, same minutes doc.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="1:55" data-n="23">
+<section class="slide grain" data-part="4" data-time="1:55" data-n="24">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">1:55 · Phase 1 now</span></p>
@@ -640,10 +834,11 @@ Keep content in content/ and read it only through src/lib/content. When done: ru
     </div>
     <figure class="illo grain" data-scene="hatch" data-alt="Cairn feeds a single orange card marked Phase 1 into a slot in a large machine labelled Claude Code; cards 2, 3 and 4 wait on the ground."></figure>
   </div>
-  <aside class="notes" data-min="20">The longest build-along block: about 20 minutes. Same prompt for every later phase — change the number. If a design comes out generic, give it taste: name two sites from the research and say what to borrow. Screenshots of sites you like work well as input too.</aside>
+  <p class="plain"><span>In plain words</span> <b>Dev server / localhost</b> a private preview running on your own laptop · <b>CHANGELOG.md</b> a running list of what changed.</p>
+  <aside class="notes" data-min="20">The longest build-along block: about 20 minutes. Same prompt for every later phase — change the number. If a design comes out generic, give it taste: name two sites from the research and say what to borrow. Screenshots of sites you like work well as input too. <b>Plain words:</b> Hand the contractor one work order at a time, not the whole renovation.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="2:05" data-n="24">
+<section class="slide grain" data-part="4" data-time="2:05" data-n="25">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">2:05</span></p>
@@ -658,10 +853,11 @@ Keep content in content/ and read it only through src/lib/content. When done: ru
     </div>
     <figure class="illo grain" data-scene="level" data-alt="Cairn presses a spirit level against the side of a cairn to check it stands straight."></figure>
   </div>
-  <aside class="notes" data-min="5">"It says it's done" is not done. The single most useful line in a CLAUDE.md is the command that checks the work. A reviewer that didn't write the code catches what the writer explained away.</aside>
+  <p class="plain"><span>In plain words</span> <b>Build</b> turning your files into the finished site · <b>code review</b> a second reader checking a change before it ships.</p>
+  <aside class="notes" data-min="5">"It says it's done" is not done. The single most useful line in a CLAUDE.md is the command that checks the work. A reviewer that didn't write the code catches what the writer explained away. <b>Plain words:</b> Proofread before you send — and have someone else proofread too.</aside>
 </section>
 
-<section class="slide grain" data-part="4" data-time="2:10" data-n="25">
+<section class="slide grain" data-part="4" data-time="2:10" data-n="26">
   <div class="grid">
     <div>
       <p class="kick"><b>04 · Build</b><span class="t">2:10</span></p>
@@ -671,11 +867,12 @@ Keep content in content/ and read it only through src/lib/content. When done: ru
     </div>
     <figure class="illo grain" data-scene="gauges" data-alt="Three gauges labelled SEO, perf and a11y; Cairn pushes the middle needle up."></figure>
   </div>
-  <aside class="notes" data-min="10">Run this once now and then monthly. The chips are Google's "good" Core Web Vitals thresholds. Share cards matter more than people expect: a link that unfurls in WhatsApp or LinkedIn with a proper image gets clicked. Make "every page has its own card" a rule in CLAUDE.md.</aside>
+  <p class="plain"><span>In plain words</span> <b>Lighthouse</b> Google's free report card · <b>LCP / INP / CLS</b> how fast the main content shows, how fast a tap responds, how much the page jumps · <b>alt text</b> image descriptions for screen readers.</p>
+  <aside class="notes" data-min="10">Run this once now and then monthly. The chips are Google's "good" Core Web Vitals thresholds. Share cards matter more than people expect: a link that unfurls in WhatsApp or LinkedIn with a proper image gets clicked. Make "every page has its own card" a rule in CLAUDE.md. <b>Plain words:</b> An annual health check: blood pressure, pulse, reflexes — for a web page.</aside>
 </section>
 
 <!-- ═════════ PART 5 · SHIP ═════════ -->
-<section class="slide grain" data-part="5" data-time="2:20" data-n="26">
+<section class="slide grain" data-part="5" data-time="2:20" data-n="27">
   <div class="grid">
     <div>
       <p class="kick"><b>05 · Ship</b><span class="t">2:20</span></p>
@@ -691,10 +888,11 @@ git push -u origin phase-2
     </div>
     <figure class="illo grain" data-scene="ramp" data-alt="Cairn pushes an orange stone up a ramp marked git push toward a vault labelled GitHub."></figure>
   </div>
-  <aside class="notes" data-min="5">For today, pushing straight to main is fine. Branches plus pull requests become valuable once deploys are wired: every branch gets its own preview URL, so you check a change on your phone before it's live.</aside>
+  <p class="plain"><span>In plain words</span> <b>Push</b> upload your checkpoints to GitHub · <b>branch</b> a safe copy to try a change · <b>pull request</b> asking to merge that copy, with a review page.</p>
+  <aside class="notes" data-min="5">For today, pushing straight to main is fine. Branches plus pull requests become valuable once deploys are wired: every branch gets its own preview URL, so you check a change on your phone before it's live. <b>Plain words:</b> A branch is 'Save a copy'; a pull request is asking your manager to approve it before it replaces the original.</aside>
 </section>
 
-<section class="slide grain" data-part="5" data-time="2:25" data-n="27">
+<section class="slide grain" data-part="5" data-time="2:25" data-n="28">
   <div class="grid">
     <div>
       <p class="kick"><b>05 · Ship</b><span class="t">2:25</span></p>
@@ -711,10 +909,11 @@ git push -u origin phase-2
     </div>
     <figure class="illo grain" data-scene="deploy" data-alt="Cairn presses a big orange button; an arc runs from a GitHub box to a globe, labelled every push."></figure>
   </div>
-  <aside class="notes" data-min="10">If the build fails on Cloudflare but works locally, paste the build log into Claude Code — it's almost always a Node version or a missing environment variable. Have people open their workers.dev URL on their phones; that moment is the high point of the workshop.</aside>
+  <p class="plain"><span>In plain words</span> <b>Deploy</b> put the built site online · <b>build command</b> the instruction that makes the files · <b>preview URL</b> a test link per branch · <b>environment variable</b> a setting kept out of the code.</p>
+  <aside class="notes" data-min="10">If the build fails on Cloudflare but works locally, paste the build log into Claude Code — it's almost always a Node version or a missing environment variable. Have people open their workers.dev URL on their phones; that moment is the high point of the workshop. <b>Plain words:</b> Pushing to main is publishing; a preview URL is the printer's proof.</aside>
 </section>
 
-<section class="slide grain" data-part="5" data-time="2:35" data-n="28">
+<section class="slide grain" data-part="5" data-time="2:35" data-n="29">
   <div class="grid">
     <div>
       <p class="kick"><b>05 · Ship</b><span class="t">2:35</span></p>
@@ -730,11 +929,12 @@ git push -u origin phase-2
     </div>
     <figure class="illo grain" data-scene="domain" data-alt="Cairn, standing on a stone, pushes up a signboard reading yourname.com that sits on a small cairn."></figure>
   </div>
-  <aside class="notes" data-min="5">Most people won't have a domain today, so demo this one on yours. The two traps: a domain answers on example.com but not www (hence step 4), and an old CNAME record blocks adding the custom domain — delete it first.</aside>
+  <p class="plain"><span>In plain words</span> <b>Domain</b> your site's name · <b>DNS</b> the internet's phonebook · <b>nameservers</b> who keeps your entry in it · <b>SSL / HTTPS</b> the padlock: traffic is encrypted.</p>
+  <aside class="notes" data-min="5">Most people won't have a domain today, so demo this one on yours. The two traps: a domain answers on example.com but not www (hence step 4), and an old CNAME record blocks adding the custom domain — delete it first. <b>Plain words:</b> Buying a domain is getting a phone number; DNS is the directory listing that rings your phone.</aside>
 </section>
 
 <!-- ═════════ PART 6 · CASE STUDY ═════════ -->
-<section class="slide grain" data-part="6" data-time="2:38" data-n="29">
+<section class="slide grain" data-part="6" data-time="2:38" data-n="30">
   <div class="grid">
     <div>
       <p class="kick"><b>06 · Case study</b><span class="t">2:38</span></p>
@@ -750,10 +950,11 @@ git push -u origin phase-2
     </div>
     <figure class="illo grain" data-scene="big" data-alt="Cairn, small, stands at the foot of a very tall cairn, v1 at the bottom and v31 at the top."></figure>
   </div>
-  <aside class="notes" data-min="4">Open the live site and click three things. Numbers come from the repo: the route manifest lists 43 routes; the changelog is at v31. The stack is not the one I'd pick from scratch today — that's why the framework slide was neutral.</aside>
+  <p class="plain"><span>In plain words</span> <b>Pages Functions</b> small programs that run on Cloudflare when someone visits · <b>database</b> an organised store for many records — skipped today.</p>
+  <aside class="notes" data-min="4">Open the live site and click three things. Numbers come from the repo: the route manifest lists 43 routes; the changelog is at v31. The stack is not the one I'd pick from scratch today — that's why the framework slide was neutral. <b>Plain words:</b> Start with a notebook (files); move to a filing cabinet (database) only when the notebook is full.</aside>
 </section>
 
-<section class="slide grain" data-part="6" data-time="2:40" data-n="30">
+<section class="slide grain" data-part="6" data-time="2:40" data-n="31">
   <div class="grid" style="grid-template-columns:1fr 420px;gap:50px;align-items:start">
     <div>
       <p class="kick"><b>06 · Case study</b><span class="t">2:40 · possibilities</span></p>
@@ -768,7 +969,7 @@ git push -u origin phase-2
       </div>
     </div>
     <div style="position:relative">
-      <h3 style="margin-top:100px">Start with four pages.<br>Then add a room at a time:</h3>
+      <h3 style="margin-top:70px">Start with four pages.<br>Then add a room at a time:</h3>
       <ul class="pts tight" style="margin-top:14px">
         <li>Books you've read, with notes</li>
         <li>Races, treks, travel — with photos</li>
@@ -779,13 +980,13 @@ git push -u origin phase-2
         <li>Tags that link it all together</li>
         <li>A share card for every page</li>
       </ul>
-      <figure class="illo grain mini" style="position:relative;margin-top:14px;width:220px" data-scene="rooms" data-alt="Cairn adds a small room-shaped stone to a cairn of rooms."></figure>
+      <figure class="illo grain mini" style="position:relative;margin-top:10px;width:170px" data-scene="rooms" data-alt="Cairn adds a small room-shaped stone to a cairn of rooms."></figure>
     </div>
   </div>
-  <aside class="notes" data-min="2">This is the "what's possible" slide — every tile is a live page on sankettambare.in, and every one was a single phase of the method you learned today. None of them was planned on day one. Encourage people to write their own list into later.md.</aside>
+  <aside class="notes" data-min="2">This is the "what's possible" slide — every tile is a live page on sankettambare.in, and every one was a single phase of the method you learned today. None of them was planned on day one. Encourage people to write their own list into later.md. <b>Plain words:</b> A house you extend one room at a time, not a mansion you build in one go.</aside>
 </section>
 
-<section class="slide grain" data-part="6" data-time="2:42" data-n="31">
+<section class="slide grain" data-part="6" data-time="2:42" data-n="32">
   <div class="grid">
     <div>
       <p class="kick"><b>06 · Case study</b><span class="t">2:42</span></p>
@@ -801,10 +1002,11 @@ git push -u origin phase-2
     </div>
     <figure class="illo grain" data-scene="daily" data-alt="Cairn lifts today's stone onto a small cairn beside a calendar with every past day marked and today in orange."></figure>
   </div>
-  <aside class="notes" data-min="4">None of these were planned on day one; each arrived after something broke. Steal them in this order: changelog, content apart, lessons in CLAUDE.md. The guard test is the one that lets you move fast later — a rule the build enforces doesn't depend on anyone remembering it.</aside>
+  <p class="plain"><span>In plain words</span> <b>Source of truth</b> the one place a fact is written · <b>test</b> an automatic check that fails if a rule is broken · <b>generated</b> made by a script, never by hand.</p>
+  <aside class="notes" data-min="4">None of these were planned on day one; each arrived after something broke. Steal them in this order: changelog, content apart, lessons in CLAUDE.md. The guard test is the one that lets you move fast later — a rule the build enforces doesn't depend on anyone remembering it. <b>Plain words:</b> Like a checklist on a cockpit door: the rule is enforced, not remembered.</aside>
 </section>
 
-<section class="slide grain" data-part="6" data-time="2:44" data-n="32">
+<section class="slide grain" data-part="6" data-time="2:44" data-n="33">
   <div class="grid">
     <div>
       <p class="kick"><b>06 · Case study</b><span class="t">2:44</span></p>
@@ -815,11 +1017,12 @@ git push -u origin phase-2
     </div>
     <figure class="illo grain" data-scene="cracked" data-alt="Cairn lifts a new orange stone to replace a cracked one in a cairn; three small stones beside it are labelled with the lessons."></figure>
   </div>
-  <aside class="notes" data-min="4">Each of these cost a day. Each is now one line in the project's CLAUDE.md, which is why it never happened twice. Your site will have its own three; the habit of writing them down is what transfers.</aside>
+  <p class="plain"><span>In plain words</span> <b>Renders in the browser</b> the page is assembled by JavaScript after loading, so robots that don't run it see a blank page · <b>WebP</b> a modern image format.</p>
+  <aside class="notes" data-min="4">Each of these cost a day. Each is now one line in the project's CLAUDE.md, which is why it never happened twice. Your site will have its own three; the habit of writing them down is what transfers. <b>Plain words:</b> Every team has a 'lessons learned' doc nobody reads. Putting the lesson in CLAUDE.md means the next session reads it automatically.</aside>
 </section>
 
 <!-- ═════════ FEATURED PROJECTS ═════════ -->
-<section class="slide grain proj" data-part="7" data-time="2:46" data-n="33">
+<section class="slide grain proj" data-part="7" data-time="2:46" data-n="34">
   <div class="grid">
     <div>
       <p class="kick"><b>07 · Featured projects</b><span class="t">2:46 · 1 of 4</span></p>
@@ -842,10 +1045,11 @@ git push -u origin phase-2
       <figure class="illo grain mini" style="left:10px;bottom:0" data-scene="flipcard" data-alt="Cairn tosses a visiting card into the air."></figure>
     </div>
   </div>
-  <aside class="notes" data-min="2">Show it live: flip the card, change the theme, copy the URL. Point out that the URL holds the state — the same idea as keeping data apart from code. This is what I'd suggest anyone build first if a whole site feels too big.</aside>
+  <p class="plain"><span>In plain words</span> <b>vCard</b> a contact file your phone saves in one tap · <b>URL parameter</b> the ?theme=… part of a link that carries a choice.</p>
+  <aside class="notes" data-min="2">Show it live: flip the card, change the theme, copy the URL. Point out that the URL holds the state — the same idea as keeping data apart from code. This is what I'd suggest anyone build first if a whole site feels too big. <b>Plain words:</b> One business card that reprints itself for each person you hand it to.</aside>
 </section>
 
-<section class="slide grain proj" data-part="7" data-time="2:48" data-n="34">
+<section class="slide grain proj" data-part="7" data-time="2:48" data-n="35">
   <div class="grid">
     <div>
       <p class="kick"><b>07 · Featured projects</b><span class="t">2:48 · 2 of 4</span></p>
@@ -866,15 +1070,16 @@ git push -u origin phase-2
     </div>
     <div class="shots">
       <figure class="shot" style="left:0;top:0;width:760px"><div class="bar"><i></i><i></i><i></i><span>vtbm.in</span></div><img src="assets/stone-by-stone/vtbm-desk.webp" alt="The VTBM homepage: Edition 4, Day 3 of 8, over a photo of the hill." loading="lazy" decoding="async"></figure>
-      <figure class="shot" style="left:160px;top:380px;width:640px"><div class="bar"><i></i><i></i><i></i><span>vtbm.in/birds</span></div><img src="assets/stone-by-stone/vtbm-birds.webp" alt="The Birds of Vetal Tekdi page with habitat and season filters and bird photos." loading="lazy" decoding="async"></figure>
+      <figure class="shot" style="left:160px;top:340px;width:640px"><div class="bar"><i></i><i></i><i></i><span>vtbm.in/birds</span></div><img src="assets/stone-by-stone/vtbm-birds.webp" alt="The Birds of Vetal Tekdi page with habitat and season filters and bird photos." loading="lazy" decoding="async"></figure>
       <figure class="shot phone" style="left:800px;top:60px;width:200px"><img src="assets/stone-by-stone/vtbm-phone.webp" alt="The VTBM homepage on a phone." loading="lazy" decoding="async"></figure>
       <figure class="illo grain mini" style="left:0;bottom:-10px" data-scene="bird" data-alt="Cairn looks up at a bird on a tree branch."></figure>
     </div>
   </div>
-  <aside class="notes" data-min="2">The data is the hero here: the site pulls the week's sightings from eBird, so it keeps itself current during the event without anyone editing it. That's the data layer apart from the code, with a public API as the data layer.</aside>
+  <p class="plain"><span>In plain words</span> <b>API</b> a way for one site to ask another for data — here, eBird's sightings · <b>bilingual</b> every page in English and Marathi.</p>
+  <aside class="notes" data-min="2">The data is the hero here: the site pulls the week's sightings from eBird, so it keeps itself current during the event without anyone editing it. That's the data layer apart from the code, with a public API as the data layer. <b>Plain words:</b> A noticeboard that updates itself from the birders' own logbooks.</aside>
 </section>
 
-<section class="slide grain proj" data-part="7" data-time="2:50" data-n="35">
+<section class="slide grain proj" data-part="7" data-time="2:50" data-n="36">
   <div class="grid">
     <div>
       <p class="kick"><b>07 · Featured projects</b><span class="t">2:50 · 3 of 4</span></p>
@@ -896,19 +1101,20 @@ git push -u origin phase-2
     </div>
     <div class="shots">
       <figure class="shot" style="left:0;top:0;width:760px"><div class="bar"><i></i><i></i><i></i><span>runfolio.in</span></div><img src="assets/stone-by-stone/runfolio-desk.webp" alt="The RunFolio homepage: Every finish line, worth framing." loading="lazy" decoding="async"></figure>
-      <figure class="shot" style="left:230px;top:360px;width:720px"><div class="bar"><i></i><i></i><i></i><span>runfolio.in/runner/sankettambare</span></div><img src="assets/stone-by-stone/runfolio-profile.webp" alt="A RunFolio runner profile with a race photo, bio and totals." loading="lazy" decoding="async"></figure>
+      <figure class="shot" style="left:230px;top:330px;width:720px"><div class="bar"><i></i><i></i><i></i><span>runfolio.in/runner/sankettambare</span></div><img src="assets/stone-by-stone/runfolio-profile.webp" alt="A RunFolio runner profile with a race photo, bio and totals." loading="lazy" decoding="async"></figure>
       <figure class="illo grain mini" style="left:0;bottom:-10px" data-scene="finish" data-alt="Cairn runs under a finish-line banner."></figure>
     </div>
   </div>
-  <aside class="notes" data-min="2">Same stack, bigger ambition: a multi-user product. It started exactly like today — a concept doc and a phased plan — and grew phase by phase. Same Cloudflare + Astro foundation the workshop recommends.</aside>
+  <p class="plain"><span>In plain words</span> <b>Supabase</b> a hosted database with sign-in built in · <b>R2</b> Cloudflare's storage for photos · <b>PB</b> personal best.</p>
+  <aside class="notes" data-min="2">Same stack, bigger ambition: a multi-user product. It started exactly like today — a concept doc and a phased plan — and grew phase by phase. Same Cloudflare + Astro foundation the workshop recommends. <b>Plain words:</b> A trophy cabinet you can share as one link.</aside>
 </section>
 
-<section class="slide grain proj" data-part="7" data-time="2:51" data-n="36">
+<section class="slide grain proj" data-part="7" data-time="2:51" data-n="37">
   <div class="grid">
     <div>
       <p class="kick"><b>07 · Featured projects</b><span class="t">2:51 · 4 of 4</span></p>
       <h2>Pumped Storage: <em>are they useful?</em></h2>
-      <p class="lead" style="font-size:29px">An independent, bilingual data story on Maharashtra's push for pumped storage projects in the Sahyadri — the trees and forest first, then the clearances and the people.</p>
+      <p class="lead" style="font-size:26px">An independent, bilingual data story on Maharashtra's push for pumped storage projects in the Sahyadri — the trees and forest first, then the clearances and the people.</p>
       <ul class="pts tight">
         <li><b>Every number has a source</b> — an ⓘ bubble quotes the document and page</li>
         <li><b>Projects sorted by trees to be felled</b>, with forest land and capacity</li>
@@ -916,20 +1122,21 @@ git push -u origin phase-2
         <li>Open data downloads; English and Marathi</li>
       </ul>
       <div class="chips"><span class="chip">Astro 5</span><span class="chip">Cloudflare Pages</span><span class="chip acc">sources, not opinions</span></div>
-      <p class="small muted">Proof the method isn't only for portfolios: a public-interest site, researched and built the same way.</p>
+      <p class="small muted" style="font-size:22px;margin-bottom:8px">Proof the method isn't only for portfolios.</p>
       <p class="visit">→ are-psp-useful.pages.dev</p>
     </div>
     <div class="shots">
       <figure class="shot" style="left:0;top:0;width:760px"><div class="bar"><i></i><i></i><i></i><span>are-psp-useful.pages.dev</span></div><img src="assets/stone-by-stone/psp-desk.webp" alt="The Pumped Storage homepage: a photo of the Sahyadri and the question in the title." loading="lazy" decoding="async"></figure>
-      <figure class="shot" style="left:200px;top:380px;width:700px"><div class="bar"><i></i><i></i><i></i><span>/projects</span></div><img src="assets/stone-by-stone/psp-projects.webp" alt="The Projects page: a table sorted by trees to be felled, each figure with a source bubble." loading="lazy" decoding="async"></figure>
+      <figure class="shot" style="left:200px;top:330px;width:700px"><div class="bar"><i></i><i></i><i></i><span>/projects</span></div><img src="assets/stone-by-stone/psp-projects.webp" alt="The Projects page: a table sorted by trees to be felled, each figure with a source bubble." loading="lazy" decoding="async"></figure>
       <figure class="illo grain mini" style="left:0;bottom:-10px" data-scene="hills" data-alt="Cairn stands beside a tree on a hill, pointing at a source note."></figure>
     </div>
   </div>
-  <aside class="notes" data-min="1">Here the deep-research step is the product: every figure cites its document. The same Claude research prompt you used this morning is how a site like this gets its facts — with you checking the sources.</aside>
+  <p class="plain"><span>In plain words</span> <b>Data story</b> an article built on figures you can check · <b>open data</b> the numbers offered as downloads.</p>
+  <aside class="notes" data-min="1">Here the deep-research step is the product: every figure cites its document. The same Claude research prompt you used this morning is how a site like this gets its facts — with you checking the sources. <b>Plain words:</b> Every claim comes with its receipt.</aside>
 </section>
 
 <!-- ═════════ PART 8 · ITERATE ═════════ -->
-<section class="slide grain" data-part="8" data-time="2:52" data-n="37">
+<section class="slide grain" data-part="8" data-time="2:52" data-n="38">
   <div class="grid">
     <div>
       <p class="kick"><b>08 · Iterate</b><span class="t">2:52</span></p>
@@ -944,10 +1151,11 @@ git push -u origin phase-2
     </div>
     <figure class="illo grain" data-scene="anywhere" data-alt="A phone, a laptop and a cloud each send an arrow down to one cairn, where Cairn adds a stone."></figure>
   </div>
-  <aside class="notes" data-min="4">This is the payoff for the setup: the hard part is done once. Show a change made from the phone if there's time — a one-line copy edit, pushed to a branch, preview link opened in the room.</aside>
+  <p class="plain"><span>In plain words</span> <b>Claude Code on the web</b> Claude Code running in the cloud on your GitHub repo — nothing to install.</p>
+  <aside class="notes" data-min="4">This is the payoff for the setup: the hard part is done once. Show a change made from the phone if there's time — a one-line copy edit, pushed to a branch, preview link opened in the room. <b>Plain words:</b> Like editing a shared doc from your phone: the document lives online, so any device works.</aside>
 </section>
 
-<section class="slide grain" data-part="8" data-time="2:54" data-n="38">
+<section class="slide grain" data-part="8" data-time="2:54" data-n="39">
   <div class="grid">
     <div>
       <p class="kick"><b>08 · Iterate</b><span class="t">2:54 · homework</span></p>
@@ -977,10 +1185,11 @@ git push -u origin phase-2
     </div>
     <figure class="illo grain" data-scene="week" data-alt="A trail of seven cairns, Monday to Sunday, shrinking toward the horizon; Cairn waves from the first."></figure>
   </div>
-  <aside class="notes" data-min="4">Close on the habit, not the stack. One stone a day for a week and the site is yours in a way no app builder gives you. Share the prompt pack link in the chat. Ask people to send their URL by Sunday.</aside>
+  <p class="plain"><span>In plain words</span> <b>workers.dev</b> the free address Cloudflare gives your site before you have a domain.</p>
+  <aside class="notes" data-min="4">Close on the habit, not the stack. One stone a day for a week and the site is yours in a way no app builder gives you. Share the prompt pack link in the chat. Ask people to send their URL by Sunday. <b>Plain words:</b> Seven small habits beat one big weekend.</aside>
 </section>
 
-<section class="slide grain" data-part="9" data-time="2:56" data-n="39">
+<section class="slide grain" data-part="9" data-time="2:56" data-n="40">
   <div class="grid">
     <div>
       <p class="kick"><b>09 · Close</b><span class="t">2:56 · your turn</span></p>
@@ -999,7 +1208,7 @@ git push -u origin phase-2
   <aside class="notes" data-min="3">Go round the room for question 2 — one sentence each; write the answers on the whiteboard. Collect the rest in the chat or by email. The answers to 4 and 5 shape the next run of this workshop.</aside>
 </section>
 
-<section class="slide grain" data-part="9" data-time="2:59" data-n="40">
+<section class="slide grain" data-part="9" data-time="2:59" data-n="41">
   <div class="grid">
     <div>
       <p class="kick"><b>09 · Close</b><span class="t">2:59</span></p>
@@ -1025,7 +1234,8 @@ git push -u origin phase-2
 <div id="hud"><span class="brand">Stone by Stone</span><div id="trail" aria-hidden="true"></div><span id="count"></span></div>
 </div></div>
 
-<div id="ctrl"><button id="prev" aria-label="Previous slide">←</button><button id="nbtn" aria-label="Toggle speaker notes">N</button><button id="full" aria-label="Full screen">F</button><button id="next" aria-label="Next slide">→</button></div>
+<div id="tipbox" role="tooltip" hidden></div>
+<div id="ctrl"><button id="theme" type="button">◐ Auto</button><button id="prev" aria-label="Previous slide">←</button><button id="nbtn" aria-label="Toggle speaker notes">N</button><button id="full" aria-label="Full screen">F</button><button id="next" aria-label="Next slide">→</button></div>
 <div id="notes" aria-live="polite"></div>
 <p class="sr" id="live" aria-live="polite"></p>
 
@@ -1053,11 +1263,11 @@ function stone(cx, cy, w, h, o = {}) {
   return s + '</g>';
 }
 /* stack from a base line; returns {svg, top} */
-function stack(cx, base, list) {
+function stack(cx, base, list, d0 = 0) {
   let y = base, svg = '';
   list.forEach(([w, h, o = {}], i) => {
     const cy = y - h * .43;
-    svg += stone(cx + (o.dx || 0), cy, w, h, { seed: i * 13 + w, ...o });
+    svg += A('a-drop', stone(cx + (o.dx || 0), cy, w, h, { seed: i * 13 + w, ...o }), `--d:${d0 + i}`);
     y = cy - h * .5 + 4;
   });
   return { svg, top: y };
@@ -1078,21 +1288,23 @@ function mascot(x, y, s = 1, pose = 'down', o = {}) {
   const fx = o.flip ? -1 : 1, [a, b] = ARMS[pose];
   const legs = o.sit ? 'M-22,40 L-34,54 M22,40 L34,54' : 'M-20,40 L-21,60 M20,40 L21,60';
   const limb = `fill="none" stroke="${INK}" stroke-width="9" stroke-linecap="round"`;
-  return `<g class="mascot" transform="translate(${f(x)},${f(y - 64 * s)}) scale(${fx * s},${s})">
+  return `<g class="a-bob"><g class="mascot" transform="translate(${f(x)},${f(y - 64 * s)}) scale(${fx * s},${s})">
     <path d="${legs}" ${limb}/><path d="${a}" ${limb}/><path d="${b}" ${limb}/>
     <path d="M-60,8 C-62,-26 -30,-46 2,-46 C38,-46 62,-28 61,4 C60,32 34,44 0,44 C-34,44 -58,34 -60,8Z" fill="url(#hS)" stroke="${INK}" stroke-width="6.5" stroke-linejoin="round"/>
     <rect x="${-13 + dx * .6}" y="-39.5" width="26" height="9.5" rx="4.75" fill="${ACC}"/>
-    <circle cx="${-15 + dx}" cy="${-6 + dy}" r="5.6" fill="${INK}"/><circle cx="${15 + dx}" cy="${-6 + dy}" r="5.6" fill="${INK}"/>
-  </g>`;
+    <g class="a-eyes"><circle cx="${-15 + dx}" cy="${-6 + dy}" r="5.6" fill="${INK}"/><circle cx="${15 + dx}" cy="${-6 + dy}" r="5.6" fill="${INK}"/></g>
+  </g></g>`;
 }
 const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" text-anchor="${o.a || 'middle'}" class="lb" style="font-size:${o.s || 32}px"${o.c ? ` fill="${o.c}"` : ''}${o.rot ? ` transform="rotate(${o.rot} ${x} ${y})"` : ''}>${t}</text>`;
-const L = (d, o = {}) => `<path d="${d}" fill="${o.fill || 'none'}" stroke="${o.c || INK}" stroke-width="${o.w || SW}" stroke-linecap="round" stroke-linejoin="round"${o.dash ? ` stroke-dasharray="${o.dash}"` : ''}/>`;
+const L = (d, o = {}) => `<path d="${d}" fill="${o.fill || 'none'}" stroke="${o.c || INK}" stroke-width="${o.w || SW}" stroke-linecap="round" stroke-linejoin="round"${o.dash ? ` stroke-dasharray="${o.dash}"` : ''}${o.cls ? ` class="${o.cls}"` : ''}${o.pl ? ' pathLength="1"' : ''}${o.d != null ? ` style="--d:${o.d}"` : ''}/>`;
+/* a wrapper group that an animation class can move without touching the drawing's own transform */
+const A = (cls, inner, st) => `<g class="${cls}"${st ? ` style="${st}"` : ''}>${inner}</g>`;
 function arrow(x1, y1, x2, y2, o = {}) {
   const bend = o.bend ?? .18, mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
   const cx = mx - (y2 - y1) * bend, cy = my + (x2 - x1) * bend;
   const ang = Math.atan2(y2 - cy, x2 - cx), hl = o.hl || 18, sp = .5;
   const h1 = [x2 - hl * Math.cos(ang - sp), y2 - hl * Math.sin(ang - sp)], h2 = [x2 - hl * Math.cos(ang + sp), y2 - hl * Math.sin(ang + sp)];
-  return L(`M${f(x1)},${f(y1)} Q${f(cx)},${f(cy)} ${f(x2)},${f(y2)}`, { w: o.w || 5, c: o.c, dash: o.dash }) + L(`M${f(h1[0])},${f(h1[1])} L${f(x2)},${f(y2)} L${f(h2[0])},${f(h2[1])}`, { w: o.w || 5, c: o.c });
+  return L(`M${f(x1)},${f(y1)} Q${f(cx)},${f(cy)} ${f(x2)},${f(y2)}`, { w: o.w || 5, c: o.c, dash: o.dash, cls: o.dash ? 'a-fade' : 'a-draw', pl: !o.dash, d: o.d }) + L(`M${f(h1[0])},${f(h1[1])} L${f(x2)},${f(y2)} L${f(h2[0])},${f(h2[1])}`, { w: o.w || 5, c: o.c, cls: o.dash ? 'a-fade' : 'a-head', d: o.d });
 }
 const ground = (y = 620, x1 = 30, x2 = 770) => L(`M${x1},${y} Q${(x1 + 400) / 2 + 40},${y - 7} 400,${y} T${x2},${y}`, { w: 5 }) +
   [[90, 6], [180, 4], [520, 5], [640, 4], [720, 6]].map(([x, r]) => `<ellipse cx="${x}" cy="${y + 26}" rx="${r * 2}" ry="${r}" fill="${INK}" opacity=".18"/>`).join('');
@@ -1119,16 +1331,16 @@ const S = {
   title() {
     const st = stack(500, 640, [[240, 112], [196, 98], [160, 86], [128, 72], [98, 58]]);
     return ground(640) + st.svg + stone(250, 610, 170, 70, { seed: 4 }) + mascot(250, 580, 1.3, 'carry', { look: 'r' }) +
-      stone(250, 378, 96, 54, { acc: true, seed: 9 }) + motion(316, 360) + L('M206,368 l-14,-6 M200,384 l-16,-2', { w: 4 });
+      A('a-float', stone(250, 378, 96, 54, { acc: true, seed: 9 })) + motion(316, 360) + L('M206,368 l-14,-6 M200,384 l-16,-2', { w: 4 });
   },
   agenda() {
     const pts = [[120, 600], [235, 545], [345, 495], [455, 450], [560, 380], [655, 300], [735, 200]];
     const names = ['Idea', 'Shape', 'Decide', 'Build', 'Ship', 'Case', 'Iterate'];
-    let s = L('M60,640 C230,630 210,520 370,488 S560,360 640,300 S740,200 760,150', { w: 5, dash: '4 16' });
+    let s = L('M60,640 C230,630 210,520 370,488 S560,360 640,300 S740,200 760,150', { w: 5, dash: '4 16', cls: 'a-march' });
     pts.forEach(([x, y], i) => {
       const n = i + 1, list = [];
       for (let k = 0; k < Math.min(n, 5); k++) list.push([58 - k * 8, 26 - k * 2, { sw: 4, acc: i === 6 && k === Math.min(n, 5) - 1 }]);
-      s += stack(x, y, list).svg + T(x + (i % 2 ? -10 : 0), y + 44, names[i], { s: 28 });
+      s += stack(x, y, list, i * 2).svg + T(x + (i % 2 ? -10 : 0), y + 44, names[i], { s: 28 });
     });
     return s + mascot(56, 704, .6, 'point', { look: 'r' });
   },
@@ -1139,11 +1351,11 @@ const S = {
     s += `<path d="M100,620 L100,470 L112,470 L112,456 L124,456 L124,470 L136,470 L136,456 L148,456 L148,620 Z" fill="url(#hT)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
     s += `<path d="M226,620 L226,470 L238,470 L238,456 L250,456 L250,470 L262,470 L262,456 L274,456 L274,620 Z" fill="url(#hT)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
     s += L('M168,620 L168,580 Q185,562 202,580 L202,620', { w: 5 }) + L('M250,456 L250,420 L276,430 L250,440', { w: 4 });
-    s += `<path d="M30,628 C40,540 120,520 150,575 C132,556 100,560 96,596 C120,600 160,610 200,640 L30,650Z" fill="url(#hN)" stroke="${INK}" stroke-width="5" stroke-linejoin="round" opacity=".95"/>`;
+    s += A('a-wave', `<path d="M30,628 C40,540 120,520 150,575 C132,556 100,560 96,596 C120,600 160,610 200,640 L30,650Z" fill="url(#hN)" stroke="${INK}" stroke-width="5" stroke-linejoin="round" opacity=".95"/>`);
     s += L('M40,560 q10,-14 22,-4', { w: 4 }) + T(190, 360, 'one-off', { s: 40 });
     s += ground(620, 410, 770).replace(/<ellipse[^>]*>/g, '');
     const st = stack(560, 620, [[160, 70], [126, 60], [96, 50]]);
-    s += st.svg + mascot(700, 620, .95, 'carry', { look: 'l', flip: false }) + stone(700, 474, 76, 42, { acc: true, seed: 3 });
+    s += st.svg + mascot(700, 620, .95, 'carry', { look: 'l', flip: false }) + A('a-float', stone(700, 474, 76, 42, { acc: true, seed: 3 }));
     s += arrow(668, 440, 590, st.top - 10, { bend: .3, w: 4 }) + T(590, 330, 'stone by stone', { s: 38 });
     return s;
   },
@@ -1152,14 +1364,14 @@ const S = {
     s += page(300, 450, 200, 150, { lines: 3, title: 'your site', ts: 28 });
     s += `<path d="M250,620 C250,330 550,330 550,620" fill="rgba(27,42,107,.07)" stroke="${INK}" stroke-width="6"/>`;
     s += L('M300,470 Q310,420 350,396', { w: 5, c: 'rgba(255,255,255,.95)' });
-    s += `<path d="M386,372 a14,14 0 0 1 28,0 v10 h-6 v-10 a8,8 0 0 0 -16,0 v10 h-6Z" fill="${INK}"/><rect x="378" y="380" width="44" height="34" rx="7" fill="url(#hO)" stroke="${INK}" stroke-width="4"/>`;
+    s += A('a-shake', `<path d="M386,372 a14,14 0 0 1 28,0 v10 h-6 v-10 a8,8 0 0 0 -16,0 v10 h-6Z" fill="${INK}"/><rect x="378" y="380" width="44" height="34" rx="7" fill="url(#hO)" stroke="${INK}" stroke-width="4"/>`);
     s += mascot(172, 620, 1.1, 'push', { look: 'r' }) + T(400, 300, 'their platform', { s: 34 }) + T(640, 470, 'no way in', { s: 32 });
     return s + arrow(610, 485, 560, 520, { w: 4 });
   },
   stack() {
     const st = stack(320, 650, [[310, 118, { label: 'Cloudflare', fs: 40 }], [254, 106, { label: 'GitHub', fs: 40 }], [204, 96, { label: 'framework', fs: 36 }]]);
     let s = ground(650) + st.svg;
-    s += mascot(320, st.top + 6, 1, 'carry', { look: 'r' }) + stone(320, st.top - 128, 70, 40, { acc: true, seed: 2 });
+    s += mascot(320, st.top + 6, 1, 'carry', { look: 'r' }) + A('a-float', stone(320, st.top - 128, 70, 40, { acc: true, seed: 2 }));
     const side = [[600, 600, 'the stage'], [580, 495, 'the memory'], [560, 395, 'the shape'], [560, 250, 'the builder']];
     side.forEach(([x, y, t]) => { s += T(x + 40, y + 8, t, { s: 32 }); });
     s += L('M480,600 L566,600', { w: 3.5, dash: '3 9' }) + L('M450,495 L550,495', { w: 3.5, dash: '3 9' }) + L('M424,395 L530,395', { w: 3.5, dash: '3 9' });
@@ -1178,7 +1390,7 @@ const S = {
   prework() {
     let s = ground(620);
     const xs = [270, 400, 530, 660], names = ['Claude', 'GitHub', 'Cloudflare', 'Node'];
-    xs.forEach((x, i) => { s += stone(x, 590, 120, 64, { label: names[i], fs: i === 2 ? 25 : 30, seed: i + 5 }); s += tick(x + 4, 520); });
+    xs.forEach((x, i) => { s += stone(x, 590, 120, 64, { label: names[i], fs: i === 2 ? 25 : 30, seed: i + 5 }); s += A('a-pop', tick(x + 4, 520), `--d:${i + 3}`); });
     s += mascot(115, 620, 1, 'point', { look: 'r' });
     s += T(470, 300, 'domain: optional', { s: 34 }) + stone(470, 390, 92, 44, { fill: 'url(#hP)', seed: 11, sw: 4 }) + T(470, 400, '?', { s: 36, c: ACC });
     return s;
@@ -1186,9 +1398,9 @@ const S = {
   idea() {
     let s = `<path d="M80,630 L720,630 L640,470 L170,470Z" fill="${PAPER}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
     s += L('M230,500 L560,500', { w: 3.5, c: 'rgba(27,42,107,.4)' }) + L('M210,540 L470,540', { w: 3.5, c: 'rgba(27,42,107,.4)' });
-    s += L('M130,590 C150,570 170,600 190,582 S230,572 250,588 S286,598 292,590', { w: 5 });
-    s += `<g><rect x="330" y="568" width="230" height="36" rx="6" fill="url(#hS)" stroke="${INK}" stroke-width="5"/><path d="M330,568 L292,586 L330,604Z" fill="${PAPER}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><path d="M292,586 L306,579 L306,593Z" fill="${ACC}"/><rect x="540" y="568" width="20" height="36" fill="url(#hN)" stroke="${INK}" stroke-width="5"/></g>`;
-    s += mascot(650, 650, 1, 'push', { flip: true, look: 'l' });
+    s += L('M130,590 C150,570 170,600 190,582 S230,572 250,588 S286,598 292,590', { w: 5, cls: 'a-draw a-slow', pl: true });
+    s += `<g class="a-push-l"><rect x="330" y="568" width="230" height="36" rx="6" fill="url(#hS)" stroke="${INK}" stroke-width="5"/><path d="M330,568 L292,586 L330,604Z" fill="${PAPER}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><path d="M292,586 L306,579 L306,593Z" fill="${ACC}"/><rect x="540" y="568" width="20" height="36" fill="url(#hN)" stroke="${INK}" stroke-width="5"/></g>`;
+    s += A('a-push-l', mascot(650, 650, 1, 'push', { flip: true, look: 'l' }));
     s += T(400, 410, 'idea.md', { s: 48 }) + T(400, 446, 'rough on purpose', { s: 28 });
     return s;
   },
@@ -1196,23 +1408,23 @@ const S = {
     let s = ground(620) + stone(220, 590, 170, 70, { seed: 21 }) + mascot(220, 560, 1.1, 'down', { sit: true, look: 'r', up: true });
     s += `<rect x="500" y="420" width="220" height="140" rx="12" fill="${PAPER}" stroke="${INK}" stroke-width="5"/><path d="M480,560 L740,560 L768,592 L452,592Z" fill="url(#hN)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
     s += L('M530,460 L680,460', { w: 3.5, c: 'rgba(27,42,107,.45)' }) + L('M530,490 L640,490', { w: 3.5, c: 'rgba(27,42,107,.45)' });
-    s += T(560, 380, '?', { s: 100 }) + T(450, 300, '?', { s: 88, c: ACC }) + T(330, 250, '?', { s: 76 });
+    s += A('a-rise', T(560, 380, '?', { s: 100 }), '--d:0') + A('a-rise', T(450, 300, '?', { s: 88, c: ACC }), '--d:3') + A('a-rise', T(330, 250, '?', { s: 76 }), '--d:6');
     s += L('M590,400 Q560,360 520,330', { w: 3.5, dash: '3 10' }) + L('M420,280 Q390,262 360,262', { w: 3.5, dash: '3 10' });
     return s + T(560, 150, 'one batch at a time', { s: 36 });
   },
   research() {
     let s = page(50, 250, 240, 300, { title: 'concept.md', ts: 30, lines: 6 });
-    s += `<circle cx="180" cy="420" r="72" fill="rgba(255,255,255,.55)" stroke="${ACC}" stroke-width="10"/><path d="M232,470 L282,522" stroke="${INK}" stroke-width="18" stroke-linecap="round"/>`;
+    s += A('a-scan', `<circle cx="180" cy="420" r="72" fill="rgba(255,255,255,.55)" stroke="${ACC}" stroke-width="10"/><path d="M232,470 L282,522" stroke="${INK}" stroke-width="18" stroke-linecap="round"/>`);
     s += mascot(355, 650, 1.1, 'up', { flip: true, look: 'l', up: true });
     const ys = [95, 215, 335, 455, 575], names = ['peers', 'design', 'framework', 'hosting', 'SEO'];
-    ys.forEach((y, i) => { s += arrow(258, 400, 548, y + 30, { bend: 0, w: 4, dash: '2 10' }); s += page(560, y, 170, 66, { lines: 0 }); s += T(645, y + 52, names[i], { s: 28 }); });
+    ys.forEach((y, i) => { s += arrow(258, 400, 548, y + 30, { bend: 0, w: 4, dash: '2 10', d: i * 2 }); s += page(560, y, 170, 66, { lines: 0 }); s += T(645, y + 52, names[i], { s: 28 }); });
     return s;
   },
   three() {
     let s = ground(650) + mascot(400, 650, 1.25, 'carry', { look: 'r' });
     const y0 = 650 - 64 * 1.25 - 66 * 1.25;
     const slab = (y, t, dx, acc) => `<rect x="${225 + dx}" y="${y}" width="350" height="52" rx="12" fill="${acc ? 'url(#hO)' : 'url(#hS)'}" stroke="${INK}" stroke-width="5.5"/>` + T(400 + dx, y + 37, t, { s: 31, c: acc ? PAPER : undefined });
-    s += slab(y0 - 52, 'phased-plan.md', 0, false) + slab(y0 - 106, 'technical-decisions.md', 8, false) + slab(y0 - 160, 'concept.md', -6, true);
+    s += A('a-float', A('a-drop', slab(y0 - 52, 'phased-plan.md', 0, false), '--d:2') + A('a-drop', slab(y0 - 106, 'technical-decisions.md', 8, false), '--d:4') + A('a-drop', slab(y0 - 160, 'concept.md', -6, true), '--d:6'));
     s += motion(560, y0 - 90) + L('M236,' + (y0 - 84) + ' l-14,-6 M232,' + (y0 - 70) + ' l-16,-2', { w: 4 });
     return s + T(400, 120, 'the hand-off to code', { s: 36 });
   },
@@ -1221,7 +1433,7 @@ const S = {
     s += `<path d="M150,480 L430,480 L410,580 L170,580Z" fill="url(#hN)" stroke="${INK}" stroke-width="5.5" stroke-linejoin="round"/><circle cx="210" cy="600" r="20" fill="${PAPER}" stroke="${INK}" stroke-width="5"/><circle cx="370" cy="600" r="20" fill="${PAPER}" stroke="${INK}" stroke-width="5"/>`;
     [[190, 470], [245, 462], [300, 466], [355, 470], [272, 430]].forEach(([x, y], i) => { s += stone(x, y, 58, 36, { seed: 30 + i, sw: 4.5 }); });
     s += T(290, 540, 'phase 1', { s: 36 }) + T(290, 380, '≤ 5', { s: 46, c: ACC });
-    s += mascot(520, 620, 1, 'push', { look: 'r' }) + stone(632, 590, 70, 52, { seed: 41 });
+    s += A('a-slide-r', mascot(520, 620, 1, 'push', { look: 'r' }) + stone(632, 590, 70, 52, { seed: 41 }));
     s += [[700, 600, 64], [745, 604, 50], [722, 568, 48]].map(([x, y, w], i) => stone(x, y, w, w * .62, { seed: 50 + i, sw: 4.5, fill: 'url(#hS2)' })).join('');
     return s + T(720, 520, 'later.md', { s: 34 }) + motion(668, 560);
   },
@@ -1231,8 +1443,7 @@ const S = {
       L(`M${x - 88},532 L${x + 88},532`, { w: 3, c: 'rgba(27,42,107,.4)' }) + T(x, 590, t, { s: 34 });
     s += stone(130, 492, 60, 34, { seed: 61 }) + stone(175, 488, 48, 30, { seed: 67 }) + stone(470, 490, 56, 32, { seed: 63 }) + stone(640, 490, 66, 34, { seed: 62 });
     s += basket(150, 'text') + basket(650, 'links') + basket(430, 'images');
-    s += stone(366, 506, 64, 44, { acc: true, seed: 64, rot: 12 });
-    s += mascot(268, 620, 1, 'push', { look: 'r' });
+    s += A('a-slide-r', stone(366, 506, 64, 44, { acc: true, seed: 64, rot: 12 }) + mascot(268, 620, 1, 'push', { look: 'r' }));
     s += stone(80, 650, 50, 26, { seed: 65, sw: 4 }) + stone(560, 655, 56, 28, { seed: 66, sw: 4 });
     return s + T(400, 180, 'real content first', { s: 38 });
   },
@@ -1244,7 +1455,7 @@ const S = {
       const d = dir > 0 ? `M${x0},${y} L${x1},${y} ${tip} L${x0},${y + 56}Z` : `M${x1},${y} L${x0},${y} L${x0 - 30},${y + 28} L${x0},${y + 56} L${x1},${y + 56}Z`;
       return `<path d="${d}" fill="${PAPER}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>` + T((x0 + x1) / 2 + dir * 8, y + 40, t, { s: 34 });
     };
-    s += board(210, 'Astro', 1) + board(290, 'Next.js', -1) + board(370, 'SvelteKit', 1) + board(450, 'React + Vite', -1);
+    [[210, 'Astro', 1], [290, 'Next.js', -1], [370, 'SvelteKit', 1], [450, 'React + Vite', -1]].forEach(([y, t, d], i) => { s += A('a-swing', board(y, t, d), `--d:${i * 2};transform-origin:${d > 0 ? 'left' : 'right'} center`); });
     s += mascot(250, 640, 1.05, 'down', { look: 'r', up: true });
     s += L('M290,660 Q420,650 560,676', { w: 3.5, dash: '3 11' }) + L('M270,666 Q330,690 380,712', { w: 3.5, dash: '3 11' });
     return s;
@@ -1252,17 +1463,17 @@ const S = {
   balance() {
     let s = ground(620);
     s += `<path d="M350,620 L400,536 L450,620Z" fill="url(#hS2)" stroke="${INK}" stroke-width="5.5" stroke-linejoin="round"/>`;
-    s += `<g transform="rotate(-4 400 530)"><rect x="110" y="520" width="580" height="22" rx="8" fill="url(#hT)" stroke="${INK}" stroke-width="5"/>`;
+    s += `<g class="a-teeter"><g transform="rotate(-4 400 530)"><rect x="110" y="520" width="580" height="22" rx="8" fill="url(#hT)" stroke="${INK}" stroke-width="5"/>`;
     s += stone(180, 494, 110, 54, { label: 'free tier', fs: 28, seed: 70 });
     s += `<rect x="572" y="436" width="100" height="84" rx="10" fill="url(#hN)" stroke="${INK}" stroke-width="5"/>` + T(622, 488, 'limits', { s: 30 });
-    s += mascot(400, 522, 1, 'wide', { look: 'l' }) + '</g>';
+    s += mascot(400, 522, 1, 'wide', { look: 'l' }) + '</g></g>';
     return s + T(400, 210, 'weigh it, then pick', { s: 36 }) + L('M296,400 q-14,-10 -6,-24 M504,392 q14,-10 6,-24', { w: 4 });
   },
   repo() {
     let s = ground(640);
     s += `<path d="M150,640 C170,520 280,470 400,470 C520,470 630,520 650,640Z" fill="url(#hS2)" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`;
     s += T(400, 590, 'git init', { s: 46 }) + L('M400,486 L400,220', { w: 9 });
-    s += `<path d="M404,226 L530,250 L404,284Z" fill="url(#hO)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>` + T(450, 264, 'main', { s: 26, c: PAPER });
+    s += A('a-flag', `<path d="M404,226 L530,250 L404,284Z" fill="url(#hO)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>` + T(450, 264, 'main', { s: 26, c: PAPER }));
     s += mascot(492, 484, 1, 'press', { flip: true, look: 'l' });
     return s + L('M380,300 l-12,-6 M376,316 l-14,0', { w: 4 });
   },
@@ -1273,7 +1484,7 @@ const S = {
     s += `<path d="M370,620 L370,560 Q400,520 430,560 L430,620Z" fill="${PAPER}" stroke="${INK}" stroke-width="5"/>`;
     s += mascot(400, 300, .95, 'wide', { look: 'l' });
     s += page(80, 470, 130, 150, { rot: -8, lines: 4 }) + page(170, 490, 130, 130, { rot: 6, lines: 3 }) + page(110, 400, 120, 90, { rot: -2, lines: 2 });
-    s += gear(560, 540, 56, 10) + gear(670, 470, 40, 8) + gear(680, 585, 30, 7);
+    s += A('a-spin', gear(560, 540, 56, 10)) + A('a-spin a-rev', gear(670, 470, 40, 8)) + A('a-spin a-rev', gear(680, 585, 30, 7));
     s += arrow(250, 600, 560, 600, { bend: 0, w: 5, c: ACC });
     s += T(170, 360, 'content/', { s: 38 }) + T(620, 380, 'src/', { s: 38 }) + T(400, 680, 'one door: lib/content', { s: 32 });
     return s;
@@ -1283,7 +1494,7 @@ const S = {
     s += `<rect x="330" y="370" width="270" height="180" rx="10" fill="${PAPER}" stroke="${INK}" stroke-width="5.5" transform="rotate(2 465 460)"/>`;
     s += T(470, 418, 'CLAUDE.md', { s: 40 });
     [450, 478, 506, 530].forEach((y, i) => { s += L(`M356,${y} L${560 - i * 28},${y + 2}`, { w: 3.5, c: 'rgba(27,42,107,.45)' }); });
-    s += `<circle cx="470" cy="382" r="11" fill="${ACC}" stroke="${INK}" stroke-width="3.5"/>`;
+    s += A('a-pop', `<circle cx="470" cy="382" r="11" fill="${ACC}" stroke="${INK}" stroke-width="3.5"/>`, '--d:6');
     s += mascot(232, 620, 1.3, 'press', { look: 'r' });
     return s + T(470, 250, 'read every session', { s: 36 });
   },
@@ -1292,7 +1503,7 @@ const S = {
     let s = '';
     for (let i = 0; i < n; i++) {
       const a0 = -Math.PI / 2 + i * 2 * Math.PI / n + .3, a1 = -Math.PI / 2 + (i + 1) * 2 * Math.PI / n - .3;
-      s += arrow(cx + R * Math.cos(a0), cy + R * Math.sin(a0), cx + R * Math.cos(a1), cy + R * Math.sin(a1), { bend: -.16, w: 5 });
+      s += arrow(cx + R * Math.cos(a0), cy + R * Math.sin(a0), cx + R * Math.cos(a1), cy + R * Math.sin(a1), { bend: -.16, w: 5, d: i * 2 });
     }
     for (let i = 0; i < n; i++) {
       const a = -Math.PI / 2 + i * 2 * Math.PI / n, x = cx + R * Math.cos(a), y = cy + R * Math.sin(a);
@@ -1308,15 +1519,14 @@ const S = {
     s += `<rect x="440" y="230" width="300" height="390" rx="18" fill="url(#hN)" stroke="${INK}" stroke-width="6"/>`;
     s += T(590, 300, 'Claude Code', { s: 40 }) + `<circle cx="540" cy="390" r="12" fill="${PAPER}" stroke="${INK}" stroke-width="4"/><circle cx="640" cy="390" r="12" fill="${PAPER}" stroke="${INK}" stroke-width="4"/>`;
     s += `<rect x="432" y="500" width="22" height="84" rx="6" fill="${INK}"/>`;
-    s += `<rect x="350" y="520" width="110" height="52" rx="8" fill="url(#hO)" stroke="${INK}" stroke-width="5" transform="rotate(-3 405 546)"/>` + T(400, 556, 'phase 1', { s: 28, c: PAPER });
-    s += mascot(250, 620, 1.2, 'push', { look: 'r' });
+    s += A('a-slide-r', `<rect x="350" y="520" width="110" height="52" rx="8" fill="url(#hO)" stroke="${INK}" stroke-width="5" transform="rotate(-3 405 546)"/>` + T(400, 556, 'phase 1', { s: 28, c: PAPER }) + mascot(250, 620, 1.2, 'push', { look: 'r' }));
     s += [[46, 'phase 2'], [46, 'phase 3']].map(([x, t], i) => `<rect x="${x - 10}" y="${610 - 44 * i - 36}" width="94" height="40" rx="7" fill="${PAPER}" stroke="${INK}" stroke-width="4.5" transform="rotate(${i ? 5 : -4} ${x + 37} ${590})"/>` + T(x + 37, 600 - 44 * i, t, { s: 22 })).join('');
     return s + T(84, 480, 'waiting', { s: 28 });
   },
   level() {
     const st = stack(320, 640, [[230, 100], [186, 88], [150, 78], [116, 64]]);
     let s = ground(640) + st.svg;
-    s += `<rect x="452" y="330" width="34" height="290" rx="8" fill="url(#hT)" stroke="${INK}" stroke-width="5"/><rect x="458" y="450" width="22" height="52" rx="10" fill="${PAPER}" stroke="${INK}" stroke-width="3.5"/><circle cx="469" cy="476" r="7" fill="${ACC}"/>`;
+    s += `<rect x="452" y="330" width="34" height="290" rx="8" fill="url(#hT)" stroke="${INK}" stroke-width="5"/><rect x="458" y="450" width="22" height="52" rx="10" fill="${PAPER}" stroke="${INK}" stroke-width="3.5"/><circle class="a-bubble" cx="469" cy="476" r="7" fill="${ACC}"/>`;
     s += mascot(586, 640, 1.15, 'press', { flip: true, look: 'l' });
     return s + T(400, 180, 'build · run · look', { s: 40 }) + T(640, 360, 'straight?', { s: 30 }) + arrow(620, 370, 500, 420, { w: 4 });
   },
@@ -1326,7 +1536,7 @@ const S = {
       const a = ang * Math.PI / 180, nx = x + r * .8 * Math.cos(a), ny = y - r * .8 * Math.sin(a);
       return `<circle cx="${x}" cy="${y}" r="${r}" fill="${PAPER}" stroke="${INK}" stroke-width="6"/>` +
         [150, 115, 90, 65, 30].map(d => { const q = d * Math.PI / 180; return L(`M${f(x + r * .78 * Math.cos(q))},${f(y - r * .78 * Math.sin(q))} L${f(x + r * .92 * Math.cos(q))},${f(y - r * .92 * Math.sin(q))}`, { w: 4 }); }).join('') +
-        L(`M${x},${y} L${f(nx)},${f(ny)}`, { w: 7 }) + `<circle cx="${x}" cy="${y}" r="9" fill="${INK}"/>` + T(x, y - r - 18 + lab, t, { s: 34 });
+        A('a-needle', L(`M${x},${y} L${f(nx)},${f(ny)}`, { w: 7 }), `transform-origin:${x}px ${y}px`) + `<circle cx="${x}" cy="${y}" r="9" fill="${INK}"/>` + T(x, y - r - 18 + lab, t, { s: 34 });
     };
     s += L('M160,330 L160,640 M640,330 L640,640 M410,500 L410,640', { w: 7 });
     s += dial(160, 250, 76, 'SEO', 40) + dial(640, 250, 76, 'a11y', 50);
@@ -1341,7 +1551,7 @@ const S = {
     s += `<rect x="560" y="250" width="200" height="370" rx="14" fill="url(#hN)" stroke="${INK}" stroke-width="6"/><circle cx="660" cy="430" r="64" fill="${PAPER}" stroke="${INK}" stroke-width="6"/>`;
     for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; s += L(`M660,430 L${f(660 + 44 * Math.cos(a))},${f(430 + 44 * Math.sin(a))}`, { w: 4 }); }
     s += T(660, 310, 'GitHub', { s: 40 });
-    s += mascot(300, 505, 1, 'press', { look: 'r' }) + stone(420, 425, 72, 52, { acc: true, seed: 101, rot: -10 });
+    s += A('a-ramp', mascot(300, 505, 1, 'press', { look: 'r' }) + stone(420, 425, 72, 52, { acc: true, seed: 101, rot: -10 }));
     return s + T(260, 610, 'git push', { s: 36, rot: -25.6 }) + motion(470, 392);
   },
   deploy() {
@@ -1350,15 +1560,14 @@ const S = {
     s += `<circle cx="590" cy="330" r="150" fill="url(#hP)" stroke="${INK}" stroke-width="6"/>`;
     s += L('M440,330 L740,330 M590,180 L590,480', { w: 4 }) + `<ellipse cx="590" cy="330" rx="66" ry="150" fill="none" stroke="${INK}" stroke-width="4"/>` + L('M462,250 Q590,280 718,250 M462,410 Q590,380 718,410', { w: 4 });
     s += arrow(140, 460, 470, 250, { bend: -.3, w: 5, dash: '2 12' }) + T(250, 300, 'every push', { s: 34 });
-    s += `<rect x="390" y="560" width="72" height="60" rx="8" fill="url(#hS2)" stroke="${INK}" stroke-width="5"/><ellipse cx="426" cy="556" rx="38" ry="14" fill="url(#hO)" stroke="${INK}" stroke-width="5"/>`;
+    s += `<rect x="390" y="560" width="72" height="60" rx="8" fill="url(#hS2)" stroke="${INK}" stroke-width="5"/><ellipse class="a-press" cx="426" cy="556" rx="38" ry="14" fill="url(#hO)" stroke="${INK}" stroke-width="5"/>`;
     s += mascot(316, 620, 1, 'press', { look: 'r' });
-    return s + T(590, 540, 'live', { s: 38 }) + L('M560,520 l-10,-8 M622,520 l10,-8', { w: 4 });
+    return s + A('a-glow', T(590, 540, 'live', { s: 38 }) + L('M560,520 l-10,-8 M622,520 l10,-8', { w: 4 }));
   },
   domain() {
     const st = stack(330, 620, [[220, 90], [170, 76]]);
     let s = ground(620) + st.svg + L(`M330,${st.top + 6} L330,420`, { w: 9 });
-    s += `<rect x="170" y="352" width="330" height="68" rx="10" fill="${PAPER}" stroke="${INK}" stroke-width="6" transform="rotate(-2 335 386)"/>` + T(335, 398, 'yourname.com', { s: 42 });
-    s += `<path d="M184,368 a8,8 0 0 1 16,0 v5 h-4 v-5 a4,4 0 0 0 -8,0 v5 h-4Z" fill="${INK}"/><rect x="180" y="372" width="24" height="18" rx="4" fill="${ACC}"/>`;
+    s += A('a-lift', `<rect x="170" y="352" width="330" height="68" rx="10" fill="${PAPER}" stroke="${INK}" stroke-width="6" transform="rotate(-2 335 386)"/>` + T(335, 398, 'yourname.com', { s: 42 }) + `<path d="M184,368 a8,8 0 0 1 16,0 v5 h-4 v-5 a4,4 0 0 0 -8,0 v5 h-4Z" fill="${INK}"/><rect x="180" y="372" width="24" height="18" rx="4" fill="${ACC}"/>`);
     s += stone(590, 590, 170, 70, { seed: 111 }) + mascot(590, 560, 1.4, 'up', { flip: true, look: 'l', up: true });
     return s + T(600, 200, 'nameservers → Cloudflare', { s: 30 }) + T(600, 236, 'DNS + SSL done for you', { s: 30 });
   },
@@ -1370,12 +1579,12 @@ const S = {
   daily() {
     let s = ground(640);
     const st = stack(220, 640, [[190, 84], [150, 70], [118, 60]]);
-    s += st.svg + mascot(350, 640, 1, 'carry', { flip: true, look: 'l' }) + stone(350, 498, 78, 42, { acc: true, seed: 121 }) + arrow(310, 470, 240, st.top - 8, { w: 4, bend: .3 });
+    s += st.svg + mascot(350, 640, 1, 'carry', { flip: true, look: 'l' }) + A('a-float', stone(350, 498, 78, 42, { acc: true, seed: 121 })) + arrow(310, 470, 240, st.top - 8, { w: 4, bend: .3 });
     s += `<rect x="450" y="190" width="300" height="250" rx="14" fill="${PAPER}" stroke="${INK}" stroke-width="5.5"/>` + L('M450,230 L750,230', { w: 4 });
     for (let r = 0; r < 4; r++) for (let c = 0; c < 7; c++) {
       const x = 470 + c * 40, y = 248 + r * 46, k = r * 7 + c;
       if (k > 25) continue;
-      s += `<rect x="${x}" y="${y}" width="32" height="36" rx="5" fill="${k === 25 ? ACC : 'none'}" stroke="${INK}" stroke-width="3"/>`;
+      s += `<rect${k === 25 ? ' class="a-glow"' : ''} x="${x}" y="${y}" width="32" height="36" rx="5" fill="${k === 25 ? ACC : 'none'}" stroke="${INK}" stroke-width="3"/>`;
       if (k < 25) s += `<ellipse cx="${x + 16}" cy="${y + 20}" rx="9" ry="6" fill="${INK}" opacity=".75"/>`;
     }
     return s + T(600, 480, 'today', { s: 34 }) + arrow(640, 468, 728, 410, { w: 4 });
@@ -1383,8 +1592,8 @@ const S = {
   cracked() {
     const st = stack(260, 640, [[220, 92], [180, 80, { crack: true }], [144, 70], [110, 58]]);
     let s = ground(640) + st.svg;
-    s += mascot(450, 640, 1, 'carry', { flip: true, look: 'l' }) + stone(450, 500, 82, 46, { acc: true, seed: 131 }) + arrow(400, 520, 340, 540, { w: 4, bend: .3 });
-    s += stone(650, 610, 170, 50, { label: 'blank to bots', fs: 26, seed: 132 }) + stone(650, 560, 150, 48, { label: '10 ms CPU', fs: 26, seed: 133 }) + stone(650, 512, 112, 44, { label: 'WebP', fs: 26, seed: 134 });
+    s += mascot(450, 640, 1, 'carry', { flip: true, look: 'l' }) + A('a-float', stone(450, 500, 82, 46, { acc: true, seed: 131 })) + arrow(400, 520, 340, 540, { w: 4, bend: .3 });
+    s += A('a-drop', stone(650, 610, 170, 50, { label: 'blank to bots', fs: 26, seed: 132 }), '--d:5') + A('a-drop', stone(650, 560, 150, 48, { label: '10 ms CPU', fs: 26, seed: 133 }), '--d:6') + A('a-drop', stone(650, 512, 112, 44, { label: 'WebP', fs: 26, seed: 134 }), '--d:7');
     return s + T(650, 440, 'lessons', { s: 34 }) + T(650, 470, '→ CLAUDE.md', { s: 28 });
   },
   anywhere() {
@@ -1393,33 +1602,33 @@ const S = {
     s += `<rect x="300" y="140" width="200" height="120" rx="10" fill="${PAPER}" stroke="${INK}" stroke-width="5.5"/><path d="M280,260 L520,260 L540,286 L260,286Z" fill="url(#hN)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
     s += `<path d="M600,250 C560,250 560,196 604,198 C608,156 676,150 690,190 C730,184 744,250 700,250Z" fill="url(#hN)" stroke="${INK}" stroke-width="5.5" stroke-linejoin="round"/>`;
     s += T(142, 320, 'phone', { s: 30 }) + T(400, 326, 'laptop', { s: 30 }) + T(660, 296, 'cloud', { s: 30 });
-    s += arrow(142, 340, 360, 470, { w: 4, dash: '2 11', bend: -.15 }) + arrow(400, 340, 400, 460, { w: 4, dash: '2 11', bend: 0 }) + arrow(660, 316, 440, 470, { w: 4, dash: '2 11', bend: .15 });
+    s += arrow(142, 340, 360, 470, { w: 4, dash: '2 11', bend: -.15, d: 0 }) + arrow(400, 340, 400, 460, { w: 4, dash: '2 11', bend: 0, d: 3 }) + arrow(660, 316, 440, 470, { w: 4, dash: '2 11', bend: .15, d: 6 });
     const st = stack(400, 650, [[200, 76], [160, 64]]);
-    return s + st.svg + mascot(400, st.top + 4, .85, 'carry', { look: 'r' }) + stone(400, st.top - 112, 60, 34, { acc: true, seed: 141 });
+    return s + st.svg + mascot(400, st.top + 4, .85, 'carry', { look: 'r' }) + A('a-float', stone(400, st.top - 112, 60, 34, { acc: true, seed: 141 }));
   },
   week() {
-    let s = L('M90,690 C260,640 300,520 430,470 S620,330 720,170', { w: 4, dash: '3 14' });
+    let s = L('M90,690 C260,640 300,520 430,470 S620,330 720,170', { w: 4, dash: '3 14', cls: 'a-march' });
     const pts = [[180, 640, 1], [330, 545, .82], [450, 470, .68], [550, 390, .56], [625, 315, .46], [680, 245, .38], [722, 182, .3]];
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     pts.forEach(([x, y, k], i) => {
-      const st = stack(x, y, [[120 * k, 50 * k, { sw: Math.max(3, 5 * k) }], [92 * k, 40 * k, { sw: Math.max(3, 5 * k) }], [66 * k, 32 * k, { sw: Math.max(3, 5 * k), acc: i === 0 }]]);
+      const st = stack(x, y, [[120 * k, 50 * k, { sw: Math.max(3, 5 * k) }], [92 * k, 40 * k, { sw: Math.max(3, 5 * k) }], [66 * k, 32 * k, { sw: Math.max(3, 5 * k), acc: i === 0 }]], i * 2);
       s += st.svg + T(x + 70 * k + 18, y - 10, days[i], { s: Math.max(20, 32 * k), a: 'start' });
     });
     return s + mascot(62, 706, .7, 'wave', { look: 'r' });
   },  hello() {
     let s = ground(640) + mascot(400, 640, 1.35, 'carry', { look: 'r' });
     const y = 640 - 64 * 1.35 - 66 * 1.35;
-    s += `<g transform="rotate(-4 400 ${y - 90})"><rect x="230" y="${y - 176}" width="340" height="176" rx="14" fill="${PAPER}" stroke="${INK}" stroke-width="6"/>`;
+    s += `<g class="a-float"><g transform="rotate(-4 400 ${y - 90})"><rect x="230" y="${y - 176}" width="340" height="176" rx="14" fill="${PAPER}" stroke="${INK}" stroke-width="6"/>`;
     s += `<rect x="252" y="${y - 154}" width="30" height="30" rx="6" fill="url(#hO)" stroke="${INK}" stroke-width="3.5" transform="rotate(45 267 ${y - 139})"/>`;
     s += T(410, y - 118, 'Sanket Tambare', { s: 40 }) + T(410, y - 84, 'developer · runner · writer', { s: 25 });
-    s += L(`M260,${y - 50} L540,${y - 50}`, { w: 3, c: 'rgba(27,42,107,.4)' }) + T(400, y - 22, 'Pune', { s: 24 }) + '</g>';
+    s += L(`M260,${y - 50} L540,${y - 50}`, { w: 3, c: 'rgba(27,42,107,.4)' }) + T(400, y - 22, 'Pune', { s: 24 }) + '</g></g>';
     return s + motion(600, y - 120) + L(`M196,${y - 130} l-14,-6 M192,${y - 114} l-16,-2`, { w: 4 }) + T(400, 120, 'hello!', { s: 46 });
   },
   why() {
     const list = []; for (let i = 0; i < 8; i++) list.push([170 - i * 13, 50 - i * 2, {}]);
     const st = stack(210, 640, list);
     let s = ground(640) + st.svg + T(210, st.top - 30, 'sankettambare.in', { s: 30 });
-    s += `<ellipse cx="610" cy="626" rx="120" ry="26" fill="none" stroke="${ACC}" stroke-width="5" stroke-dasharray="8 12"/>` + T(610, 690, 'yours?', { s: 40, c: ACC });
+    s += `<ellipse cx="610" cy="626" rx="120" ry="26" fill="none" stroke="${ACC}" stroke-width="5" stroke-dasharray="8 12" class="a-march"/>` + T(610, 690, 'yours?', { s: 40, c: ACC });
     s += mascot(420, 640, 1.05, 'point', { look: 'r' }) + arrow(530, 520, 590, 590, { w: 4, bend: -.25 });
     return s;
   },
@@ -1428,24 +1637,24 @@ const S = {
     s += L('M80,600 q20,-10 40,0 M300,620 q20,-10 40,0 M540,598 q20,-10 40,0', { w: 3.5 });
     const xs = [130, 300, 470, 640], names = ['idea', 'docs', 'code', 'live'];
     xs.forEach((x, i) => { s += stone(x, 580, 120, 50, { seed: 150 + i, acc: i === 3 }) + T(x, 652, names[i], { s: 32, c: i === 3 ? ACC : undefined }); });
-    s += mascot(300, 560, 1, 'wave', { look: 'r' });
-    s += L('M340,440 Q390,370 450,470', { w: 4, dash: '3 10' }) + L('M500,470 Q560,380 620,500', { w: 4, dash: '3 10' });
+    s += A('a-hop', mascot(300, 560, 1, 'wave', { look: 'r' }));
+    s += L('M340,440 Q390,370 450,470', { w: 4, dash: '3 10', cls: 'a-march' }) + L('M500,470 Q560,380 620,500', { w: 4, dash: '3 10', cls: 'a-march' });
     return s + T(400, 180, 'four stones, one afternoon', { s: 36 });
   },
   rooms() {
     const st = stack(330, 640, [[230, 96, { label: 'home', fs: 32 }], [196, 86, { label: 'about', fs: 30 }], [162, 76, { label: 'work', fs: 30 }], [128, 66, { label: 'books', fs: 28 }]]);
-    return ground(640) + st.svg + mascot(560, 640, 1.2, 'carry', { flip: true, look: 'l' }) + stone(560, 470, 110, 50, { acc: true, label: 'next', fs: 30, seed: 160 }) + arrow(520, 430, 370, st.top - 10, { w: 4, bend: .3 });
+    return ground(640) + st.svg + mascot(560, 640, 1.2, 'carry', { flip: true, look: 'l' }) + A('a-float', stone(560, 470, 110, 50, { acc: true, label: 'next', fs: 30, seed: 160 })) + arrow(520, 430, 370, st.top - 10, { w: 4, bend: .3 });
   },
   flipcard() {
     let s = ground(640) + mascot(330, 640, 1.3, 'up', { look: 'r', up: true });
-    s += `<g transform="rotate(-18 520 300)"><rect x="410" y="230" width="230" height="130" rx="12" fill="${PAPER}" stroke="${INK}" stroke-width="6"/><rect x="430" y="250" width="70" height="12" rx="6" fill="${ACC}"/>` + L('M430,290 L600,290 M430,320 L560,320', { w: 4, c: 'rgba(27,42,107,.45)' }) + '</g>';
+    s += `<g class="a-toss"><g transform="rotate(-18 520 300)"><rect x="410" y="230" width="230" height="130" rx="12" fill="${PAPER}" stroke="${INK}" stroke-width="6"/><rect x="430" y="250" width="70" height="12" rx="6" fill="${ACC}"/>` + L('M430,290 L600,290 M430,320 L560,320', { w: 4, c: 'rgba(27,42,107,.45)' }) + '</g></g>';
     s += L('M440,420 Q470,380 520,390', { w: 4, dash: '3 10' }) + L('M640,240 q30,20 10,60', { w: 4 }) + L('M380,180 q-30,10 -30,50', { w: 4 });
     return s + T(560, 520, 'flip it', { s: 44 });
   },
   bird() {
     let s = ground(640) + L('M560,640 L560,360 M560,450 L470,380', { w: 12 });
     s += `<path d="M420,380 C380,250 520,170 600,220 C700,180 760,300 700,380 C680,430 560,440 520,420 C470,440 420,420 420,380Z" fill="url(#hN)" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`;
-    s += `<path d="M450,372 C460,352 492,348 502,364 L520,356 L506,372 C500,384 470,388 452,380Z" fill="${INK}"/><circle cx="492" cy="360" r="2.5" fill="${PAPER}"/>` + L('M480,384 L478,398 M490,384 L490,398', { w: 3 });
+    s += A('a-peck', `<path d="M450,372 C460,352 492,348 502,364 L520,356 L506,372 C500,384 470,388 452,380Z" fill="${INK}"/><circle cx="492" cy="360" r="2.5" fill="${PAPER}"/>` + L('M480,384 L478,398 M490,384 L490,398', { w: 3 }));
     s += mascot(240, 640, 1.25, 'down', { look: 'r', up: true });
     s += stone(240, 470, 110, 50, { fill: 'url(#hO)', seed: 170, label: '164', fs: 34, acc: true });
     return s + T(240, 150, 'every bird', { s: 40 }) + T(240, 194, 'counted', { s: 40 });
@@ -1454,21 +1663,30 @@ const S = {
     let s = ground(640) + L('M150,640 L150,230 M650,640 L650,230', { w: 10 });
     s += `<rect x="140" y="200" width="520" height="80" rx="10" fill="url(#hO)" stroke="${INK}" stroke-width="6"/>` + T(400, 255, 'FINISH', { s: 54, c: PAPER });
     s += L('M150,600 L650,600', { w: 4, dash: '14 10' });
-    s += mascot(420, 640, 1.3, 'up', { look: 'r' }) + L('M250,500 l-60,0 M260,540 l-80,0 M250,580 l-50,0', { w: 5 });
+    s += A('a-run', mascot(420, 640, 1.3, 'up', { look: 'r' })) + L('M250,500 l-60,0 M260,540 l-80,0 M250,580 l-50,0', { w: 5, cls: 'a-fade', d: 6 });
     return s;
   },
   hills() {
     let s = `<path d="M30,640 L200,420 L300,520 L460,330 L620,500 L770,400 L770,640Z" fill="url(#hS2)" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`;
     s += L('M560,640 L560,500', { w: 9 }) + `<circle cx="560" cy="460" r="62" fill="url(#hN)" stroke="${INK}" stroke-width="6"/>`;
-    s += `<circle cx="640" cy="300" r="40" fill="${PAPER}" stroke="${ACC}" stroke-width="6"/>` + T(640, 316, 'i', { s: 48, c: ACC });
+    s += A('a-pop', `<circle cx="640" cy="300" r="40" fill="${PAPER}" stroke="${ACC}" stroke-width="6"/>` + T(640, 316, 'i', { s: 48, c: ACC }), '--d:5');
     s += mascot(380, 640, 1.2, 'point', { look: 'r', up: true });
     return s + T(260, 180, 'trees first', { s: 44 });
   },
   feedback() {
     let s = ground(640) + stone(200, 610, 170, 70, { seed: 180 }) + mascot(200, 580, 1.15, 'down', { sit: true, look: 'r' });
-    [360, 450, 540, 630, 720].forEach((x, i) => { s += stone(x, 610, 70 + i * 4, 44 + i * 2, { seed: 181 + i, acc: i === 4, label: String(i + 1), fs: 30 }); });
-    s += `<path d="M300,200 h360 a24,24 0 0 1 24,24 v120 a24,24 0 0 1 -24,24 h-250 l-60,50 l10,-50 h-60 a24,24 0 0 1 -24,-24 v-120 a24,24 0 0 1 24,-24Z" fill="${PAPER}" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`;
-    return s + T(480, 300, 'your turn', { s: 56 });
+    [360, 450, 540, 630, 720].forEach((x, i) => { s += A('a-drop', stone(x, 610, 70 + i * 4, 44 + i * 2, { seed: 181 + i, acc: i === 4, label: String(i + 1), fs: 30 }), `--d:${i + 2}`); });
+    s += A('a-pop', `<path d="M300,200 h360 a24,24 0 0 1 24,24 v120 a24,24 0 0 1 -24,24 h-250 l-60,50 l10,-50 h-60 a24,24 0 0 1 -24,-24 v-120 a24,24 0 0 1 24,-24Z" fill="${PAPER}" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>` + T(480, 300, 'your turn', { s: 56 }), '--d:1');
+    return s;
+  },
+  words() {
+    let s = ground(640);
+    s += `<path d="M150,560 L400,600 L650,560 L650,250 L400,290 L150,250Z" fill="${PAPER}" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>` + L('M400,290 L400,600', { w: 5 });
+    [330, 370, 410, 450, 490].forEach((y, i) => { s += L(`M190,${y + i * 2} L${360 - (i % 2) * 40},${y + 6 + i * 2}`, { w: 3.5, c: 'rgba(27,42,107,.4)', cls: 'a-draw', pl: true, d: i }); s += L(`M440,${y + 6 + i * 2} L${610 - (i % 3) * 30},${y + i * 2}`, { w: 3.5, c: 'rgba(27,42,107,.4)', cls: 'a-draw', pl: true, d: i + 1 }); });
+    s += T(275, 310, 'a — m', { s: 30 }) + T(525, 310, 'n — z', { s: 30 });
+    s += A('a-pop', `<circle cx="640" cy="200" r="38" fill="url(#hO)" stroke="${INK}" stroke-width="5"/>` + T(640, 214, '?', { s: 46, c: PAPER }), '--d:4');
+    s += mascot(140, 660, 1, 'point', { look: 'r', up: true });
+    return s + T(400, 120, 'plain words', { s: 44 });
   },
   thanks() {
     const list = []; for (let i = 0; i < 7; i++) list.push([230 - i * 22, 66 - i * 3, {}]);
@@ -1485,11 +1703,79 @@ document.querySelectorAll('figure.illo[data-scene]').forEach(fig => {
 
 /* ── deck controller ── */
 (() => {
+  const TERMS = [["Repository (repo)", "A project folder that remembers every version of every file — like a Google Doc's version history, for a whole folder.", "\\b(repository|repo)s?\\b"], ["Commit", "A saved checkpoint with a short note saying what changed.", "\\bcommit(s|ted)?\\b"], ["Push", "Upload your saved checkpoints from your laptop to GitHub.", "\\bpush(es|ed)?\\b"], ["Branch", "A safe copy of the project to try a change without touching the live site.", "\\bbranch(es)?\\b"], ["Pull request", "A page asking to merge a branch back in, where the change can be reviewed first.", "\\bpull requests?\\b"], ["Framework", "A starter kit with rules for building pages, so you don't start from a blank file. Astro is one.", "\\bframeworks?\\b"], ["Build", "Turning your source files into the finished website files.", "\\b(the build|build command)\\b"], ["Deploy", "Putting the built website on the internet for everyone.", "\\bdeploy(s|ed|ment)?\\b"], ["Host / hosting", "The computers that send your site to each visitor — like renting shop space.", "\\bhost(ing)?\\b"], ["Edge", "Copies of your site kept in cities around the world, so it loads fast wherever the visitor is.", "\\bedge\\b"], ["Domain", "Your site's name, like yourname.com.", "\\bdomains?\\b"], ["DNS", "The internet's phonebook: it turns a name like yourname.com into the address of a computer.", "\\bDNS\\b"], ["Nameservers", "Whoever keeps your domain's phonebook entry. Pointing them at Cloudflare lets Cloudflare manage it.", "\\bnameservers?\\b"], ["SSL / HTTPS", "The padlock in the address bar: traffic between visitor and site is encrypted.", "\\b(SSL|HTTPS)\\b"], ["Context", "How much of the conversation Claude can keep in mind at once. Long chats crowd it out.", "\\bcontext\\b"], ["Plan mode", "Claude writes a plan and waits for your OK before it changes any file.", "\\bplan mode\\b"], ["CLAUDE.md", "A short note in your project that Claude reads at the start of every session — its onboarding doc.", "CLAUDE\\.md"], ["Data layer / code layer", "What the site says (words, photos, links) versus how it looks and works. Keep them in separate folders.", "\\b(data|code) layer\\b"], ["Markdown", "Plain text where # makes a heading and - makes a bullet. Easy for people and AI to read.", "\\bMarkdown\\b"], ["JSON / YAML", "Plain-text formats for lists of things — like a spreadsheet written as text.", "\\b(JSON|YAML)\\b"], ["SEO", "Search engine optimisation: helping Google and AI search find and show your pages.", "\\bSEO\\b"], ["Lighthouse", "Google's free report card for a page: speed, accessibility, SEO and best practice, each out of 100.", "\\bLighthouse\\b"], ["Open Graph image", "The preview picture shown when your link is shared on WhatsApp, LinkedIn or Slack.", "\\bOpen Graph\\b"], ["Terminal", "A window where you type commands to your computer instead of clicking icons.", "\\bterminal\\b"], ["Node.js", "The engine that runs website tools on your laptop. You install it once.", "\\bNode(\\.js)?\\b"], ["Git", "The tool that records versions of your files. GitHub is a website that stores Git projects online.", "\\bGit\\b"], ["GitHub", "A website that stores your project and its full history online, and triggers a deploy on every push.", "\\bGitHub\\b"], ["Cloudflare", "A company whose servers in 300+ cities show your site to the world — and can hold your domain too.", "\\bCloudflare\\b"], ["Claude Code", "Claude working directly on the files of your project: it reads them, edits them and runs commands.", "\\bClaude Code\\b"], ["Astro", "A framework made for content sites: pages ship as plain HTML with almost no JavaScript.", "\\bAstro\\b"], ["Crawler", "A robot that reads websites for a search engine or AI assistant.", "\\bcrawlers?\\b"], ["JavaScript", "Code that runs in the visitor's browser. Less of it usually means a faster page.", "\\bJavaScript\\b"], ["API", "A way for one program to ask another for data — here, a website asking eBird for sightings.", "\\bAPI\\b"], ["Workers", "Cloudflare's service for running sites and small programs on its servers worldwide.", "\\bWorkers\\b"], ["CPU time", "How long the server may spend thinking for each visit. The free plan allows 10 milliseconds.", "\\bCPU\\b"], ["Schema", "The rules a piece of content must follow — for example, every project needs a title.", "\\bschema\\b"], ["Hook", "A rule Claude Code's tool enforces automatically, every time, rather than one Claude may forget.", "\\bhook\\b"], ["Preview URL", "A private test link for one branch, so you can check a change before it goes live.", "\\bpreview URLs?\\b"], ["Dev server / localhost", "A preview of the site running only on your own laptop.", "\\b(dev server|localhost)\\b"], ["Environment variable", "A setting or secret kept outside the code — like an API key.", "\\benvironment variables?\\b"], ["Static assets", "Files sent exactly as they are — pages, images, styles — with nothing computed per visit.", "\\bstatic (assets|requests|site|pages)\\b"], ["Changelog", "A dated list of every change to the site.", "\\bchangelog\\b"], ["Alt text", "A short description of an image, read aloud to people who can't see it.", "\\balt text\\b"], ["Frontmatter", "A few labelled lines at the top of a Markdown file — title, date, tags.", "\\bfrontmatter\\b"], ["vCard", "A contact file your phone can save in one tap.", "\\bvCard\\b"], ["Supabase", "A hosted database with sign-in built in.", "\\bSupabase\\b"], ["R2", "Cloudflare's storage for files such as photos.", "\\bR2\\b"], ["WebP", "A modern, smaller image format.", "\\bWebP\\b"], ["eBird", "A public bird-sighting database run by the Cornell Lab of Ornithology.", "\\beBird\\b"], ["PB", "Personal best — your fastest time at a distance.", "\\bPBs?\\b"], ["Deep research", "A Claude mode that reads many web pages for several minutes and writes a report with links.", "\\b(deep )?research\\b"]];
   const params = new URLSearchParams(location.search);
+  const root = document.documentElement, body = document.body;
   const slides = [...document.querySelectorAll('.slide')], N = slides.length;
   const stage = document.getElementById('stage'), trail = document.getElementById('trail');
   const count = document.getElementById('count'), notes = document.getElementById('notes'), live = document.getElementById('live');
-  let i = 0, started = null;
+  const isPrint = params.has('print');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const phone = matchMedia('(max-width: 820px) and (orientation: portrait), (max-width: 560px)');
+  let i = 0, started = null, reflow = false;
+
+  /* theme: auto → dark → light, remembered per browser */
+  const themeBtn = document.getElementById('theme');
+  const THEMES = ['auto', 'dark', 'light'], LABEL = { auto: '◐ Auto', dark: '☾ Dark', light: '☀ Light' };
+  const saved = (() => { try { return localStorage.getItem('sbs-theme'); } catch { return null; } })();
+  let theme = THEMES.includes(saved) ? saved : 'auto';
+  function applyTheme() {
+    const t = isPrint ? 'light' : theme;
+    if (t === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', t);
+    themeBtn.textContent = LABEL[theme];
+    themeBtn.setAttribute('aria-label', `Colour theme: ${theme}. Press to change.`);
+  }
+  applyTheme();
+  themeBtn.onclick = () => {
+    theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    try { theme === 'auto' ? localStorage.removeItem('sbs-theme') : localStorage.setItem('sbs-theme', theme); } catch {}
+    applyTheme();
+  };
+
+  /* tap-to-explain: the first use of each glossary term on a slide gets a dotted underline */
+  const SKIP = 'pre,code,kbd,a,dfn,h1,h2,button,figure,aside,.kick,.chip,.plain,.prompt,.visit,.gloss,.connect,.agenda .tm,.title-meta,th,.big-n b,.facts b';
+  slides.forEach(sl => {
+    if (sl.querySelector('.gloss')) return;
+    TERMS.forEach(([term, tip, src]) => {
+      const re = new RegExp(src, /[A-Z]/.test(src.replace(/\\[a-zA-Z]/g, '')) ? '' : 'i');
+      const walk = document.createTreeWalker(sl, NodeFilter.SHOW_TEXT, { acceptNode: n => (!n.nodeValue.trim() || n.parentElement.closest(SKIP)) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+      let n;
+      while ((n = walk.nextNode())) {
+        const m = re.exec(n.nodeValue);
+        if (!m) continue;
+        const hit = n.splitText(m.index); hit.splitText(m[0].length);
+        const d = document.createElement('dfn');
+        d.className = 'tip'; d.tabIndex = 0; d.dataset.term = term; d.dataset.tip = tip; d.textContent = hit.nodeValue;
+        hit.replaceWith(d);
+        break;
+      }
+    });
+  });
+  const tipbox = document.getElementById('tipbox');
+  let tipFor = null, shownAt = 0;
+  function showTip(d) {
+    tipFor = d; shownAt = Date.now();
+    tipbox.innerHTML = `<b></b><span></span>`;
+    tipbox.firstChild.textContent = d.dataset.term; tipbox.lastChild.textContent = d.dataset.tip;
+    tipbox.hidden = false;
+    const r = d.getBoundingClientRect(), w = tipbox.offsetWidth, h = tipbox.offsetHeight;
+    tipbox.style.left = Math.max(10, Math.min(r.left, innerWidth - w - 10)) + 'px';
+    let y = r.bottom + 8; if (y + h > innerHeight - 10) y = Math.max(10, r.top - h - 8);
+    tipbox.style.top = y + 'px';
+  }
+  function hideTip() { tipFor = null; tipbox.hidden = true; }
+  document.addEventListener('mouseover', e => { const d = e.target.closest?.('dfn.tip'); if (d && d !== tipFor) showTip(d); });
+  document.addEventListener('mouseout', e => { if (e.target.closest?.('dfn.tip') && !e.relatedTarget?.closest?.('dfn.tip')) hideTip(); });
+  document.addEventListener('focusin', e => { const d = e.target.closest?.('dfn.tip'); if (d) showTip(d); });
+  document.addEventListener('focusout', e => { if (e.target.closest?.('dfn.tip')) hideTip(); });
+  document.addEventListener('click', e => {
+    const d = e.target.closest('dfn.tip');
+    if (d) { e.preventDefault(); if (tipFor === d && Date.now() - shownAt > 400) hideTip(); else showTip(d); }
+    else hideTip();
+  });
+  addEventListener('scroll', hideTip, { passive: true });
+
+  /* progress, notes */
   slides.forEach((s, j) => { const e = document.createElement('i'); if (j && s.dataset.part !== slides[j - 1].dataset.part) e.className = 'sec'; trail.appendChild(e); });
   const dots = [...trail.children];
   const mmss = ms => { const m = Math.floor(ms / 60000); return Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0'); };
@@ -1498,27 +1784,67 @@ document.querySelectorAll('figure.illo[data-scene]').forEach(fig => {
     const el = started ? mmss(Date.now() - started) : '0:00';
     notes.innerHTML = `<div class="nh"><span>Slide ${i + 1} / ${N}</span><span>Planned ${slides[i].dataset.time}</span><span>Elapsed ${el}</span><span>~${a?.dataset.min || '?'} min on this slide</span><span>N hides · ← → move</span></div><p>${a ? a.innerHTML : ''}</p>`;
   }
-  function go(k, fromHash) {
-    i = Math.max(0, Math.min(N - 1, k));
+  function setCurrent(k) {
+    i = k;
     if (i > 0 && !started) started = Date.now();
-    slides.forEach((s, j) => { s.classList.toggle('is-active', j === i); s.setAttribute('aria-hidden', j === i ? 'false' : 'true'); });
     dots.forEach((d, j) => { d.classList.toggle('on', j < i); d.classList.toggle('here', j === i); });
     count.textContent = `${String(i + 1).padStart(2, '0')} / ${N} · ${slides[i].dataset.time}`;
     live.textContent = `Slide ${i + 1} of ${N}`;
     renderNotes();
-    if (!fromHash) history.replaceState(null, '', location.search + '#' + (i + 1));
   }
-  setInterval(() => { if (document.body.classList.contains('show-notes')) renderNotes(); }, 15000);
-  const fit = () => { if (document.body.classList.contains('print')) return; const sc = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = `translate(-50%,-50%) scale(${sc})`; };
+  /* a scene plays from the start each time its slide opens */
+  function play(s) {
+    if (isPrint || reduce.matches) return;
+    s.classList.remove('play'); void s.getBoundingClientRect(); s.classList.add('play');
+  }
+  function go(k, fromHash) {
+    k = Math.max(0, Math.min(N - 1, k)); hideTip();
+    if (reflow) { slides[k].scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth', block: 'start' }); return; }
+    slides.forEach((s, j) => {
+      s.classList.toggle('is-active', j === k); s.setAttribute('aria-hidden', j === k ? 'false' : 'true');
+      if (j !== k) s.classList.remove('play');
+    });
+    play(slides[k]); setCurrent(k);
+    if (!fromHash) history.replaceState(null, '', location.search + '#' + (k + 1));
+  }
+  setInterval(() => { if (body.classList.contains('show-notes')) renderNotes(); }, 15000);
+  const fit = () => {
+    if (isPrint || reflow) return;
+    const sc = Math.min(innerWidth / 1920, innerHeight / 1080);
+    stage.style.transform = `translate(-50%,-50%) scale(${sc})`;
+  };
   addEventListener('resize', fit);
-  const toggleNotes = () => { document.body.classList.toggle('show-notes'); renderNotes(); };
+
+  /* phones: stacked slides; play each as it scrolls in, track the one at mid-screen */
+  const ioPlay = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { if (!e.target.classList.contains('play')) play(e.target); } else e.target.classList.remove('play'); }), { threshold: .12 });
+  const ioCur = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const k = slides.indexOf(e.target);
+    if (k !== i || !count.textContent) { setCurrent(k); history.replaceState(null, '', location.search + '#' + (k + 1)); }
+  }), { rootMargin: '-50% 0px -50% 0px' });
+  function setMode() {
+    reflow = !isPrint && (params.has('reflow') || phone.matches);
+    body.classList.toggle('reflow', reflow); hideTip();
+    if (reflow) {
+      stage.style.transform = '';
+      slides.forEach(s => { s.classList.add('is-active'); s.setAttribute('aria-hidden', 'false'); s.classList.remove('play'); ioPlay.observe(s); ioCur.observe(s); });
+      setCurrent(i);
+      requestAnimationFrame(() => slides[i].scrollIntoView({ block: 'start' }));
+    } else {
+      ioPlay.disconnect(); ioCur.disconnect(); fit(); go(i, true);
+    }
+  }
+  phone.addEventListener?.('change', setMode);
+
+  const toggleNotes = () => { body.classList.toggle('show-notes'); renderNotes(); };
   document.getElementById('prev').onclick = () => go(i - 1);
   document.getElementById('next').onclick = () => go(i + 1);
   document.getElementById('nbtn').onclick = toggleNotes;
-  document.getElementById('full').onclick = () => { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); };
+  document.getElementById('full').onclick = () => { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen?.(); };
   addEventListener('keydown', e => {
     if (e.target.closest('input,textarea') || e.metaKey || e.ctrlKey || e.altKey) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key) && !e.target.closest('button')) { e.preventDefault(); go(i + 1); }
+    if (e.key === 'Escape') { hideTip(); return; }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key) && !e.target.closest('button,dfn')) { e.preventDefault(); go(i + 1); }
     else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(i - 1); }
     else if (e.key === 'Home') go(0);
     else if (e.key === 'End') go(N - 1);
@@ -1527,25 +1853,28 @@ document.querySelectorAll('figure.illo[data-scene]').forEach(fig => {
   });
   let tx = null;
   addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
-  addEventListener('touchend', e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1)); tx = null; });
-  addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (n) go(n - 1, true); });
+  addEventListener('touchend', e => {
+    if (tx == null || reflow) { tx = null; return; }
+    const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1)); tx = null;
+  });
+  addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (n && n - 1 !== i) go(n - 1, true); });
   document.querySelectorAll('.prompt button').forEach(b => b.addEventListener('click', async e => {
     e.stopPropagation();
     const text = b.closest('.prompt').querySelector('pre').innerText;
     try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; b.classList.add('ok'); } catch { b.textContent = 'Select it'; }
     setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('ok'); }, 1600);
   }));
-  if (params.has('print')) {
-    document.body.classList.add('print');
+  if (isPrint) {
+    body.classList.add('print');
     slides.forEach(s => s.classList.add('is-active'));
   } else {
     const n = parseInt(location.hash.slice(1), 10);
-    go(n ? n - 1 : 0, true);
-    fit();
+    i = n ? Math.min(N, n) - 1 : 0;
+    setMode();
     if (params.has('notes')) toggleNotes();
   }
-  addEventListener('beforeprint', () => slides.forEach(s => s.classList.add('is-active')));
-  addEventListener('afterprint', () => { if (!params.has('print')) go(i, true); });
+  addEventListener('beforeprint', () => slides.forEach(s => { s.classList.add('is-active'); s.classList.remove('play'); }));
+  addEventListener('afterprint', () => { if (!isPrint) setMode(); });
 })();
 </script>
 <script src="../assets/chrome/chrome.js" defer data-stop="build"></script>
